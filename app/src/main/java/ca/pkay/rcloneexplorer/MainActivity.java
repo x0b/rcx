@@ -1,11 +1,16 @@
 package ca.pkay.rcloneexplorer;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +27,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
+    private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private Rclone rclone;
 
     @Override
@@ -48,6 +54,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        requestPermissions();
 
         rclone = new Rclone(this);
     }
@@ -125,5 +133,11 @@ public class MainActivity extends AppCompatActivity
         intent.setType("*/*");
 
         startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
+    public void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
+        }
     }
 }
