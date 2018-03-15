@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_remotes) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_import) {
             importConfigFile();
         }
