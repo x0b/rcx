@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:id="@+id/nav_top"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_remotes"
+            android:icon="@drawable/ic_cloud"
+            android:title="Remotes" />
+    </group>
+
+    <group
+        android:id="@+id/nav_bottom"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_import"
+            android:icon="@drawable/ic_import"
+            android:title="Import rclone config" />
+    </group>
+</menu>
