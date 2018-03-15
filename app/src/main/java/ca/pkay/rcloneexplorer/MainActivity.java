@@ -1,5 +1,8 @@
 package ca.pkay.rcloneexplorer;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,8 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
+    private Rclone rclone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,26 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        rclone = new Rclone(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // result from file picker (for importing config file)
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri uri;
+            if (data != null) {
+                uri = data.getData();
+                try {
+                    rclone.copyConfigFile(uri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -83,11 +111,19 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_remotes) {
             // Handle the camera action
         } else if (id == R.id.nav_import) {
-
+            importConfigFile();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void importConfigFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+
+        startActivityForResult(intent, READ_REQUEST_CODE);
     }
 }
