@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
@@ -16,11 +19,15 @@ import ca.pkay.rcloneexplorer.R;
 public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecyclerViewAdapter.ViewHolder>{
 
     private final List<String> remotes;
+    private final HashMap<String, String> remoteTypes;
     private final RemotesFragment.OnRemoteClickListener clickListener;
 
-    public RemotesRecyclerViewAdapter(List<String> remotes, RemotesFragment.OnRemoteClickListener clickListener) {
+    public RemotesRecyclerViewAdapter(ArrayList<String> remotes, HashMap<String, String> remoteTypes, RemotesFragment.OnRemoteClickListener clickListener) {
         this.remotes = remotes;
+        this.remoteTypes = remoteTypes;
         this.clickListener = clickListener;
+
+        Collections.sort(this.remotes);
     }
 
     @Override
@@ -35,6 +42,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         holder.remoteName = remoteName;
         holder.tvName.setText(remoteName);
         // TODO set icon
+
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override

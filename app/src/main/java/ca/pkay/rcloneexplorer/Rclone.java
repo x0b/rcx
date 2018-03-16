@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,10 +58,30 @@ public class Rclone {
             return null;
         }
     }
-    public ArrayList<String> getRemotes() {
-        String command = rclone + " --config " + rcloneConf + " listremotes";
-        return runCommand(command);
+    private JSONObject runCommandForJSON(String command) {
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+            return new JSONObject(output.toString());
+
+        } catch (IOException | InterruptedException | JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+    public JSONObject getRemotes() {
+        String command = rclone + " --config " + rcloneConf + " config dump";
+        return runCommandForJSON(command);
+    }
+
     public boolean isConfigFileCreated() {
         String appsFileDir = activity.getFilesDir().getPath();
         String configFile = appsFileDir + "/rclone.conf";

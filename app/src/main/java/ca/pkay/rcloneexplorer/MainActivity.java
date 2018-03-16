@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -148,6 +149,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRemoteClick(String remote) {
-
+        Log.i("MAIN", "click: " + remote);
     }
 }

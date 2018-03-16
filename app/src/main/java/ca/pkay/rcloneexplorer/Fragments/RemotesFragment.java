@@ -11,7 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -22,6 +27,7 @@ public class RemotesFragment extends Fragment {
     private static final String ARG_REMOTES = "remotes-array";
     private Rclone rclone;
     private ArrayList<String> remotes;
+    private HashMap<String, String> remoteTypes;
     private OnRemoteClickListener clickListener;
 
     /**
@@ -40,8 +46,11 @@ public class RemotesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        remotes = new ArrayList<>();
+        remoteTypes = new HashMap<>();
         rclone = new Rclone((AppCompatActivity) getActivity());
-        remotes = rclone.getRemotes();
+        JSONObject remotesJSON = rclone.getRemotes();
+        processJSON(remotesJSON);
     }
 
     @Nullable
@@ -54,7 +63,7 @@ public class RemotesFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new RemotesRecyclerViewAdapter(remotes, clickListener));
+            recyclerView.setAdapter(new RemotesRecyclerViewAdapter(remotes, remoteTypes, clickListener));
         }
         return view;
     }
@@ -77,5 +86,21 @@ public class RemotesFragment extends Fragment {
 
     public interface OnRemoteClickListener {
         void onRemoteClick(String remote);
+    }
+
+    private void processJSON(JSONObject remotesJSON) {
+        Iterator<String> keys = remotesJSON.keys();
+        while (keys.hasNext()) {
+            String type = null;
+            String key = keys.next();
+            JSONObject values = remotesJSON.optJSONObject(key);
+            try {
+                type = values.getString("type");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            remotes.add(key);
+            remoteTypes.put(key, type);
+        }
     }
 }
