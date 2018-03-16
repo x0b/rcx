@@ -11,12 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -46,11 +43,10 @@ public class RemotesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         getActivity().setTitle("Remotes");
-        remotes = new ArrayList<>();
-        remoteTypes = new HashMap<>();
         rclone = new Rclone((AppCompatActivity) getActivity());
-        JSONObject remotesJSON = rclone.getRemotes();
-        processJSON(remotesJSON);
+        remotes = new ArrayList<>();
+        remoteTypes = rclone.getRemotesAndTypes();
+        processRemotes();
     }
 
     @Nullable
@@ -88,19 +84,9 @@ public class RemotesFragment extends Fragment {
         void onRemoteClick(String remote);
     }
 
-    private void processJSON(JSONObject remotesJSON) {
-        Iterator<String> keys = remotesJSON.keys();
-        while (keys.hasNext()) {
-            String type = null;
-            String key = keys.next();
-            JSONObject values = remotesJSON.optJSONObject(key);
-            try {
-                type = values.getString("type");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            remotes.add(key);
-            remoteTypes.put(key, type);
+    private void processRemotes() {
+        for (Map.Entry<String, String> entry : remoteTypes.entrySet()) {
+            remotes.add(entry.getKey());
         }
     }
 }

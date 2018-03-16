@@ -42,7 +42,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         String remoteType = remoteTypes.get(remoteName);
         holder.remoteName = remoteName;
         holder.tvName.setText(remoteName);
-        // TODO set icon
+
         switch (remoteType) {
             case "crypt":
                 holder.ivIcon.setImageResource(R.drawable.ic_crypt);

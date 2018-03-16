@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class Rclone {
@@ -77,9 +79,31 @@ public class Rclone {
             return null;
         }
     }
-    public JSONObject getRemotes() {
-        String command = rclone + " --config " + rcloneConf + " config dump";
-        return runCommandForJSON(command);
+
+    private String createCommand(String arg) {
+        return rclone + " --config " + rcloneConf + " " + arg;
+    }
+
+    public HashMap<String, String> getRemotesAndTypes() {
+        HashMap<String, String> remotes = new HashMap<>();
+        String command = createCommand("config dump");
+        JSONObject results = runCommandForJSON(command);
+
+        assert results != null;
+        Iterator<String> keys = results.keys();
+        while (keys.hasNext()) {
+            String type;
+            String key = keys.next();
+            JSONObject values = results.optJSONObject(key);
+            try {
+                type = values.getString("type");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                type = "unknown";
+            }
+            remotes.put(key, type);
+        }
+        return remotes;
     }
 
     public boolean isConfigFileCreated() {

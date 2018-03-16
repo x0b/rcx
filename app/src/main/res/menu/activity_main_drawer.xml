@@ -16,7 +16,7 @@
     <group
         android:id="@+id/nav_bottom"
         android:checkableBehavior="none"
-        android:title="">
+        android:title="Settings">
         <item
             android:id="@+id/nav_import"
             android:icon="@drawable/ic_import"
