@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity
         requestPermissions();
 
         rclone = new Rclone(this);
+
+        Fragment fragment = RemotesFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
     }
 
     @Override

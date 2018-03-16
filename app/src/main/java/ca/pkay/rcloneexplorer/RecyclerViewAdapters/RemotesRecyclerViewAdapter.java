@@ -81,7 +81,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                     holder.ivIcon.setImageResource(R.drawable.ic_unknown);
                     break;
         }
-        
+
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

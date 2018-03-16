@@ -45,6 +45,7 @@ public class RemotesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getActivity().setTitle("Remotes");
         remotes = new ArrayList<>();
         remoteTypes = new HashMap<>();
         rclone = new Rclone((AppCompatActivity) getActivity());
