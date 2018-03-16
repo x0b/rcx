@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -141,8 +142,28 @@ public class Rclone {
 
     private void createRcloneBinary() throws IOException {
         String appsFileDir = activity.getFilesDir().getPath();
+        String rcloneArchitecture = null;
+        String[] supportedAbis = Build.SUPPORTED_ABIS;
+        if (supportedAbis[0].toUpperCase().contains("ARM")) {
+            if (supportedAbis[0].contains("64")) {
+                rcloneArchitecture = "rclone-arm64";
+            } else {
+                rcloneArchitecture = "rclone-arm32";
+            }
+        } else if (supportedAbis[0].toUpperCase().contains("X86")) {
+            if (supportedAbis[0].contains("64")) {
+                rcloneArchitecture = "rclone-x86_64";
+            } else {
+                rcloneArchitecture = "rclone-x86_32";
+            }
+        } else {
+            Log.e("Rclone", "Unsupported architecture '" + supportedAbis[0] + "'");
+            System.exit(1);
+        }
+        Log.i("Rclone", "Architecture: " + supportedAbis[0]);
+
         String exeFilePath = appsFileDir + "/rclone";
-        InputStream inputStream = activity.getAssets().open("rclone-arm32");
+        InputStream inputStream = activity.getAssets().open(rcloneArchitecture);
         File outFile = new File(appsFileDir, "rclone");
         FileOutputStream fileOutputStream = new FileOutputStream(outFile);
 
