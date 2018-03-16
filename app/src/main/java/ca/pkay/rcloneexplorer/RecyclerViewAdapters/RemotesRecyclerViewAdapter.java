@@ -39,11 +39,49 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         String remoteName = remotes.get(position);
+        String remoteType = remoteTypes.get(remoteName);
         holder.remoteName = remoteName;
         holder.tvName.setText(remoteName);
         // TODO set icon
-
-
+        switch (remoteType) {
+            case "crypt":
+                holder.ivIcon.setImageResource(R.drawable.ic_crypt);
+                break;
+            case "amazon cloud drive":
+                holder.ivIcon.setImageResource(R.drawable.ic_amazon_cloud_drive);
+                break;
+            case "b2":
+                holder.ivIcon.setImageResource(R.drawable.ic_b2);
+                break;
+            case "drive":
+                holder.ivIcon.setImageResource(R.drawable.ic_drive);
+                break;
+            case "dropbox":
+                holder.ivIcon.setImageResource(R.drawable.ic_dropbox);
+                break;
+            case "google cloud storage":
+                holder.ivIcon.setImageResource(R.drawable.ic_google_cloud_storage);
+                break;
+            case "swift":
+                holder.ivIcon.setImageResource(R.drawable.ic_swift);
+                break;
+            case "hubic":
+                holder.ivIcon.setImageResource(R.drawable.ic_hubic);
+                break;
+            case "onedrive":
+                holder.ivIcon.setImageResource(R.drawable.ic_onedrive);
+                break;
+            case "s3":
+                holder.ivIcon.setImageResource(R.drawable.ic_s3);
+                break;
+            case "yandex":
+                holder.ivIcon.setImageResource(R.drawable.ic_yandex);
+                break;
+            default:
+                    holder.ivIcon.setImageResource(R.drawable.ic_unknown);
+                    break;
+        }
+        
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

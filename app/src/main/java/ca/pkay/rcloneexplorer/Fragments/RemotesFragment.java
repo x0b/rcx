@@ -24,7 +24,6 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 
 public class RemotesFragment extends Fragment {
 
-    private static final String ARG_REMOTES = "remotes-array";
     private Rclone rclone;
     private ArrayList<String> remotes;
     private HashMap<String, String> remoteTypes;
