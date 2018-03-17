@@ -63,10 +63,7 @@ public class MainActivity extends AppCompatActivity
         requestPermissions();
 
         rclone = new Rclone(this);
-
-        Fragment fragment = RemotesFragment.newInstance();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
+        startRemotesFragment();
     }
 
     @Override
@@ -80,6 +77,7 @@ public class MainActivity extends AppCompatActivity
                 uri = data.getData();
                 try {
                     rclone.copyConfigFile(uri);
+                    startRemotesFragment();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -125,9 +123,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_remotes) {
-            Fragment fragment = RemotesFragment.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
+            startRemotesFragment();
         } else if (id == R.id.nav_import) {
             importConfigFile();
         }
@@ -135,6 +131,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startRemotesFragment() {
+        Fragment fragment = RemotesFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
     }
 
     public void importConfigFile() {
