@@ -52,7 +52,13 @@ public class RemotesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_remotes_list, container, false);
+
+        View view;
+        if (!rclone.isConfigFileCreated()) {
+            view = inflater.inflate(R.layout.empty_state_config_file, container, false);
+            return view;
+        }
+        view = inflater.inflate(R.layout.fragment_remotes_list, container, false);
 
         // set the adapter
         if (view instanceof RecyclerView) {
