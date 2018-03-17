@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/empty_state_ic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_empty_box"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="Empty state icon" />
+
+    <TextView
+        android:id="@+id/empty_state_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/empty_state_ic"
+        android:layout_centerHorizontal="true"
+        android:text="Ooops!"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/empty_state_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/empty_state_title"
+        android:layout_centerHorizontal="true"
+        android:text="No configuration file found"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/empty_state_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/empty_state_message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Import configuration"/>
+</RelativeLayout>
