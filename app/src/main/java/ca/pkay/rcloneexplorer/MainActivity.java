@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -125,7 +127,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_remotes) {
             startRemotesFragment();
         } else if (id == R.id.nav_import) {
-            importConfigFile();
+            if (rclone.isConfigFileCreated()) {
+                warnUserAboutOverwritingConfiguration();
+            } else {
+                importConfigFile();
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -137,6 +143,26 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
+    }
+
+    private void warnUserAboutOverwritingConfiguration() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Replace current configuration file?");
+        builder.setMessage("Your current configuration will be lost");
+        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+                importConfigFile();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.show();
     }
 
     public void importConfigFile() {
