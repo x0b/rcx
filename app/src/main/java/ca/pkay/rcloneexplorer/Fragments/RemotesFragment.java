@@ -10,11 +10,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
@@ -56,6 +58,12 @@ public class RemotesFragment extends Fragment {
         View view;
         if (!rclone.isConfigFileCreated()) {
             view = inflater.inflate(R.layout.empty_state_config_file, container, false);
+            view.findViewById(R.id.empty_state_btn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity)getActivity()).importConfigFile();
+                }
+            });
             return view;
         }
         view = inflater.inflate(R.layout.fragment_remotes_list, container, false);

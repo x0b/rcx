@@ -22,12 +22,23 @@
         android:text="Ooops!"
         android:textColor="@color/colorAccent"
         android:textStyle="bold"
-        android:textSize="30sp"/>
+        android:textSize="30sp" />
 
     <TextView
+        android:id="@+id/empty_state_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/empty_state_title"
         android:layout_centerHorizontal="true"
-        android:text="No configuration file imported"/>
+        android:text="No configuration file imported"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/empty_state_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/empty_state_message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Import configuration"/>
 </RelativeLayout>
