@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/empty_state_title"
         android:layout_centerHorizontal="true"
-        android:text="No configuration file imported"
+        android:text="No configuration file found"
         android:layout_marginTop="8dp" />
 
     <Button
