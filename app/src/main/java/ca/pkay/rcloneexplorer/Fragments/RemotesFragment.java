@@ -57,7 +57,7 @@ public class RemotesFragment extends Fragment {
 
         View view;
         if (!rclone.isConfigFileCreated()) {
-            view = inflater.inflate(R.layout.empty_state_config_file, container, false);
+            view = inflater.inflate(R.layout.empty_state_config_file2, container, false);
             view.findViewById(R.id.empty_state_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
