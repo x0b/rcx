@@ -2,25 +2,46 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/empty_desert">
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/empty_state_message"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/empty_desert"/>
+
+    <View
+        android:id="@+id/anchor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true" />
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/empty_state_btn"
-        android:text="No configuration file found" />
+        android:layout_below="@+id/anchor"
+        android:paddingTop="80dp"
+        android:paddingBottom="1dp">
 
-    <Button
-        android:id="@+id/empty_state_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
-        android:text="Import configuration" />
+        <TextView
+            android:id="@+id/empty_state_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:text="No configuration file found" />
+
+        <Button
+            android:id="@+id/empty_state_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/empty_state_message"
+            android:layout_marginTop="16dp"
+            android:text="Import configuration" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
