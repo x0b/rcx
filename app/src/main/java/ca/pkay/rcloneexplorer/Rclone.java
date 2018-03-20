@@ -152,7 +152,7 @@ public class Rclone {
             }
         } else if (supportedAbis[0].toUpperCase().contains("X86")) {
             if (supportedAbis[0].contains("64")) {
-                rcloneArchitecture = "rclone-x86_64";
+                rcloneArchitecture = "rclone-x86_32";
             } else {
                 rcloneArchitecture = "rclone-x86_32";
             }
