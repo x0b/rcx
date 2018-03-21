@@ -90,6 +90,6 @@ public class RemotesFragment extends Fragment {
     }
 
     public interface OnRemoteClickListener {
-        void onRemoteClick(String remote);
+        void onRemoteClick(RemoteItem remote);
     }
 }

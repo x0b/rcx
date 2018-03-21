@@ -14,7 +14,7 @@ import ca.pkay.rcloneexplorer.R;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
-    private final List<FileItem> files;
+    private List<FileItem> files;
 
     public FileExplorerRecyclerViewAdapter(List<FileItem> files) {
         this.files = files;
@@ -36,7 +36,16 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     @Override
     public int getItemCount() {
-        return files.size();
+        if (files == null) {
+            return 0;
+        } else {
+            return files.size();
+        }
+    }
+
+    public void newData(List<FileItem> data) {
+        files = data;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
