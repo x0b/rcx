@@ -35,7 +35,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         String remoteName = remotes.get(position).getName();
         String remoteType = remotes.get(position).getType();
         holder.remoteName = remoteName;
@@ -84,7 +84,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
             @Override
             public void onClick(View view) {
                 if (null != clickListener) {
-                    clickListener.onRemoteClick(holder.remoteName);
+                    clickListener.onRemoteClick(remotes.get(holder.getAdapterPosition()));
                 }
             }
         });

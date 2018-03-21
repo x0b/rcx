@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
@@ -182,8 +183,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRemoteClick(String remote) {
-        Fragment fragment = FileExplorerFragment.newInstance(remote);
+    public void onRemoteClick(RemoteItem remote) {
+        Log.i("MainActivity", "remote clicked: '" + remote.getName() + "'");
+        Fragment fragment = FileExplorerFragment.newInstance(remote.getName(), null);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);

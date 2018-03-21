@@ -1,6 +1,8 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -22,8 +23,11 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapt
 public class FileExplorerFragment extends Fragment {
 
     private static final String ARG_REMOTE = "remote_param";
+    private static final String ARG_PATH = "path_param";
     private Rclone rclone;
     private String remote;
+    private String path;
+    private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -33,10 +37,11 @@ public class FileExplorerFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
-    public static FileExplorerFragment newInstance(String remote) {
+    public static FileExplorerFragment newInstance(String remote, String path) {
         FileExplorerFragment fragment = new FileExplorerFragment();
         Bundle args = new Bundle();
         args.putString(ARG_REMOTE, remote);
+        args.putString(ARG_PATH, path);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,9 +51,12 @@ public class FileExplorerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             remote = getArguments().getString(ARG_REMOTE);
+            path = getArguments().getString(ARG_PATH);
         }
         getActivity().setTitle(remote);
         rclone = new Rclone((AppCompatActivity) getActivity());
+
+        new FetchDirectoryContent().execute();
     }
 
     @Nullable
@@ -62,13 +70,26 @@ public class FileExplorerFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            List<FileItem> list = new ArrayList<>(); // TODO temp
-            for (int i = 0; i < 10; i++) {
-                list.add(new FileItem("path", "Google Drive", 5, "today", false));
-            }
-
-            recyclerView.setAdapter(new FileExplorerRecyclerViewAdapter(list));
+            recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(null);
+            recyclerView.setAdapter(recyclerViewAdapter);
         }
         return view;
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class FetchDirectoryContent extends AsyncTask<Void, Void, List<FileItem>> {
+
+        @Override
+        protected List<FileItem> doInBackground(Void... voids) {
+            List<FileItem> fileItemList;
+            fileItemList = rclone.getDirectoryContent(remote, path);
+            return fileItemList;
+        }
+
+        @Override
+        protected void onPostExecute(List<FileItem> fileItems) {
+            super.onPostExecute(fileItems);
+            recyclerViewAdapter.newData(fileItems);
+        }
     }
 }

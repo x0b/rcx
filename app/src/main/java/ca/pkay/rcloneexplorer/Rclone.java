@@ -90,8 +90,13 @@ public class Rclone {
         return rclone + " --config " + rcloneConf + " " + arg;
     }
 
-    public List<FileItem> getDirectoryContent(String remote) {
-        String command = createCommand("lsjson " + remote + ":");
+    public List<FileItem> getDirectoryContent(String remote, String path) {
+        String arg = remote + ":";
+        if (path != null) {
+            arg += path;
+        }
+        String command = createCommand("lsjson " + arg);
+
         JSONArray results = runCommandForJSON(command);
 
         assert results != null;
@@ -100,13 +105,13 @@ public class Rclone {
         for (int i = 0; i < results.length(); i++) {
             try {
                 JSONObject jsonObject = results.getJSONObject(i);
-                String path = jsonObject.getString("Path");
-                String name = jsonObject.getString("Name");
-                long size = jsonObject.getLong("Size");
-                String modTime = jsonObject.getString("ModTime");
-                boolean isDir = jsonObject.getBoolean("IsDir");
+                String filePath = jsonObject.getString("Path");
+                String fileName = jsonObject.getString("Name");
+                long fileSize = jsonObject.getLong("Size");
+                String fileModTime = jsonObject.getString("ModTime");
+                boolean fileIsDir = jsonObject.getBoolean("IsDir");
 
-                FileItem fileItem = new FileItem(path, name, size, modTime, isDir);
+                FileItem fileItem = new FileItem(filePath, fileName, fileSize, fileModTime, fileIsDir);
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
