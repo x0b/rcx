@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class Rclone {
 
@@ -61,7 +65,8 @@ public class Rclone {
             return null;
         }
     }
-    private JSONObject runCommandForJSON(String command) {
+
+    private JSONArray runCommandForJSON(String command) {
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -73,7 +78,7 @@ public class Rclone {
             while ((line = reader.readLine()) != null) {
                 output.append(line);
             }
-            return new JSONObject(output.toString());
+            return new JSONArray(output.toString());
 
         } catch (IOException | InterruptedException | JSONException e) {
             e.printStackTrace();
@@ -85,26 +90,46 @@ public class Rclone {
         return rclone + " --config " + rcloneConf + " " + arg;
     }
 
-    public HashMap<String, String> getRemotesAndTypes() {
-        HashMap<String, String> remotes = new HashMap<>();
-        String command = createCommand("config dump");
-        JSONObject results = runCommandForJSON(command);
+    public List<FileItem> getDirectoryContent(String remote) {
+        String command = createCommand("lsjson " + remote + ":");
+        JSONArray results = runCommandForJSON(command);
 
         assert results != null;
-        Iterator<String> keys = results.keys();
-        while (keys.hasNext()) {
-            String type;
-            String key = keys.next();
-            JSONObject values = results.optJSONObject(key);
+
+        List<FileItem> fileItemList = new ArrayList<>();
+        for (int i = 0; i < results.length(); i++) {
             try {
-                type = values.getString("type");
+                JSONObject jsonObject = results.getJSONObject(i);
+                String path = jsonObject.getString("Path");
+                String name = jsonObject.getString("Name");
+                long size = jsonObject.getLong("Size");
+                String modTime = jsonObject.getString("ModTime");
+                boolean isDir = jsonObject.getBoolean("IsDir");
+
+                FileItem fileItem = new FileItem(path, name, size, modTime, isDir);
+                fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
-                type = "unknown";
+                return null;
             }
-            remotes.put(key, type);
         }
-        return remotes;
+        return fileItemList;
+    }
+
+    public List<RemoteItem> getRemotes() {
+        String command = createCommand("listremotes -l");
+        ArrayList<String> result = runCommand(command);
+
+        assert result != null;
+
+        List<RemoteItem> remoteItemList = new ArrayList<>();
+        for (String line : result) {
+            String[] split = line.split(":");
+            RemoteItem remoteItem = new RemoteItem(split[0], split[1].trim());
+            remoteItemList.add(remoteItem);
+        }
+
+        return remoteItemList;
     }
 
     public boolean isConfigFileCreated() {

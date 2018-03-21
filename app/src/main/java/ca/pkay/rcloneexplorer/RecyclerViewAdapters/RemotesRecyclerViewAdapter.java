@@ -14,20 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 
 public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecyclerViewAdapter.ViewHolder>{
 
-    private final List<String> remotes;
-    private final HashMap<String, String> remoteTypes;
+    private final List<RemoteItem> remotes;
     private final RemotesFragment.OnRemoteClickListener clickListener;
 
-    public RemotesRecyclerViewAdapter(ArrayList<String> remotes, HashMap<String, String> remoteTypes, RemotesFragment.OnRemoteClickListener clickListener) {
+    public RemotesRecyclerViewAdapter(List<RemoteItem> remotes, RemotesFragment.OnRemoteClickListener clickListener) {
         this.remotes = remotes;
-        this.remoteTypes = remoteTypes;
         this.clickListener = clickListener;
-
-        Collections.sort(this.remotes);
     }
 
     @Override
@@ -38,8 +35,8 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        String remoteName = remotes.get(position);
-        String remoteType = remoteTypes.get(remoteName);
+        String remoteName = remotes.get(position).getName();
+        String remoteType = remotes.get(position).getType();
         holder.remoteName = remoteName;
         holder.tvName.setText(remoteName);
 

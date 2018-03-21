@@ -10,12 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -24,8 +22,7 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 public class RemotesFragment extends Fragment {
 
     private Rclone rclone;
-    private ArrayList<String> remotes;
-    private HashMap<String, String> remoteTypes;
+    private List<RemoteItem> remotes;
     private OnRemoteClickListener clickListener;
 
     /**
@@ -46,9 +43,7 @@ public class RemotesFragment extends Fragment {
 
         getActivity().setTitle("Remotes");
         rclone = new Rclone((AppCompatActivity) getActivity());
-        remotes = new ArrayList<>();
-        remoteTypes = rclone.getRemotesAndTypes();
-        processRemotes();
+        remotes = rclone.getRemotes();
     }
 
     @Nullable
@@ -73,7 +68,7 @@ public class RemotesFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new RemotesRecyclerViewAdapter(remotes, remoteTypes, clickListener));
+            recyclerView.setAdapter(new RemotesRecyclerViewAdapter(remotes, clickListener));
         }
         return view;
     }
@@ -96,11 +91,5 @@ public class RemotesFragment extends Fragment {
 
     public interface OnRemoteClickListener {
         void onRemoteClick(String remote);
-    }
-
-    private void processRemotes() {
-        for (Map.Entry<String, String> entry : remoteTypes.entrySet()) {
-            remotes.add(entry.getKey());
-        }
     }
 }
