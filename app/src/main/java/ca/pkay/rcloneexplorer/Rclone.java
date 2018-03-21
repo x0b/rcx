@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Items.FileItem;
+
 public class Rclone {
 
     private AppCompatActivity activity;
@@ -61,6 +63,7 @@ public class Rclone {
             return null;
         }
     }
+
     private JSONObject runCommandForJSON(String command) {
         Process process;
         try {
@@ -83,6 +86,14 @@ public class Rclone {
 
     private String createCommand(String arg) {
         return rclone + " --config " + rcloneConf + " " + arg;
+    }
+
+    public List<FileItem> getDirectoryContent(String remote) {
+        String command = createCommand("lsjson " + remote + ":");
+        JSONObject results = runCommandForJSON(command);
+
+        assert results != null;
+        return null;
     }
 
     public HashMap<String, String> getRemotesAndTypes() {
