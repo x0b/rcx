@@ -1,6 +1,8 @@
 package ca.pkay.rcloneexplorer.Items;
 
-public class RemoteItem {
+import android.support.annotation.NonNull;
+
+public class RemoteItem implements Comparable<RemoteItem> {
 
     private String name;
     private String type;
@@ -16,5 +18,10 @@ public class RemoteItem {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public int compareTo(@NonNull RemoteItem remoteItem) {
+        return name.compareTo(remoteItem.getName());
     }
 }
