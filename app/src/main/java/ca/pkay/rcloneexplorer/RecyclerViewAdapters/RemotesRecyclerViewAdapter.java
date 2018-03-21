@@ -24,6 +24,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
     public RemotesRecyclerViewAdapter(List<RemoteItem> remotes, RemotesFragment.OnRemoteClickListener clickListener) {
         this.remotes = remotes;
+        Collections.sort(remotes);
         this.clickListener = clickListener;
     }
 
