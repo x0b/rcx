@@ -23,7 +23,7 @@
             android:id="@+id/remoteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="72dp"
+            android:paddingStart="32dp"
             android:paddingEnd="16dp"
             android:textAppearance="?attr/textAppearanceListItem"
             android:fontFamily="sans-serif"
