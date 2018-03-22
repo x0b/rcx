@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
