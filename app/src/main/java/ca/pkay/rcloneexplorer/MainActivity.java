@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
+    private NavigationView navigationView;
     private Rclone rclone;
 
     @Override
@@ -64,9 +65,8 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         requestPermissions();
 
         rclone = new Rclone(this);
@@ -147,7 +147,14 @@ public class MainActivity extends AppCompatActivity
     private void startRemotesFragment() {
         Fragment fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
+
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+            fragmentManager.popBackStack();
+        }
+
         fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
+
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     private void warnUserAboutOverwritingConfiguration() {
@@ -191,6 +198,8 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        navigationView.getMenu().getItem(0).setChecked(false);
     }
 
     @Override

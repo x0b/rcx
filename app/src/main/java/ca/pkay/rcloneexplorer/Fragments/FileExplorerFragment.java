@@ -69,6 +69,11 @@ public class FileExplorerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
 
         progressBar = view.findViewById(R.id.progress_bar);
+        if (null != directoryContent) {
+            progressBar.setVisibility(View.INVISIBLE);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
