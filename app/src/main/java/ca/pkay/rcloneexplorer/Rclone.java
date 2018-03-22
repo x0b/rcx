@@ -28,6 +28,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class Rclone {
 
+    private final String TAG = "Rclone";
     private AppCompatActivity activity;
     private String rclone;
     private String rcloneConf;
@@ -79,6 +80,15 @@ public class Rclone {
                 output.append(line);
             }
 
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            StringBuilder error = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                error.append(line);
+            }
+            if (error.length() != 0) {
+                Log.e(TAG, error.toString());
+            }
+
             return new JSONArray(output.toString());
 
         } catch (IOException | InterruptedException | JSONException e) {
@@ -118,7 +128,8 @@ public class Rclone {
         for (int i = 0; i < results.length(); i++) {
             try {
                 JSONObject jsonObject = results.getJSONObject(i);
-                String filePath = jsonObject.getString("Path");
+                String filePath = (path != null) ? path + "/" : "";
+                filePath += jsonObject.getString("Path");
                 String fileName = jsonObject.getString("Name");
                 long fileSize = jsonObject.getLong("Size");
                 String fileModTime = jsonObject.getString("ModTime");
