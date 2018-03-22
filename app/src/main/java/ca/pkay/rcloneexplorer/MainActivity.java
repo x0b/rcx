@@ -30,11 +30,13 @@ import java.io.IOException;
 
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
+import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    RemotesFragment.OnRemoteClickListener {
+                    RemotesFragment.OnRemoteClickListener,
+                    FileExplorerFragment.OnFileClickListener {
 
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
@@ -184,11 +186,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRemoteClick(RemoteItem remote) {
-        Log.i("MainActivity", "remote clicked: '" + remote.getName() + "'");
         Fragment fragment = FileExplorerFragment.newInstance(remote.getName(), null);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onFileClicked(FileItem file) {
+        if (file.isDir()) {
+            Fragment fragment = FileExplorerFragment.newInstance(file.getRemote(), file.getPath());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.flFragment, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }

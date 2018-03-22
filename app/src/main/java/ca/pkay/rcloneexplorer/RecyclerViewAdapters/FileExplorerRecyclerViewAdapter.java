@@ -9,15 +9,18 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private List<FileItem> files;
+    private FileExplorerFragment.OnFileClickListener listener;
 
-    public FileExplorerRecyclerViewAdapter(List<FileItem> files) {
+    public FileExplorerRecyclerViewAdapter(List<FileItem> files, FileExplorerFragment.OnFileClickListener listener) {
         this.files = files;
+        this.listener = listener;
     }
 
     @Override
@@ -28,10 +31,19 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        FileItem item = files.get(position);
+        final FileItem item = files.get(position);
 
         holder.fileItem = item;
         holder.fileName.setText(item.getName());
+
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onFileClicked(item);
+                }
+            }
+        });
     }
 
     @Override
