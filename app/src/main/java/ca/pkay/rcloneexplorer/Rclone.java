@@ -47,7 +47,7 @@ public class Rclone {
         this.rcloneConf = activity.getFilesDir().getPath() + "/rclone.conf";
     }
 
-    private ArrayList<String> runCommand(String command) {
+    private ArrayList<String> runCommand(String[] command) {
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -66,7 +66,7 @@ public class Rclone {
         }
     }
 
-    private JSONArray runCommandForJSON(String command) {
+    private JSONArray runCommandForJSON(String[] command) {
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -87,16 +87,28 @@ public class Rclone {
         }
     }
 
-    private String createCommand(String arg) {
-        return rclone + " --config " + rcloneConf + " " + arg;
+    private String[] createCommand(String ...args) {
+        int arraySize = args.length + 3;
+        String[] command = new String[arraySize];
+
+        command[0] = rclone;
+        command[1] = "--config";
+        command[2] = rcloneConf;
+
+        int i = 3;
+        for (String arg : args) {
+            command[i++] = arg;
+        }
+        return command;
     }
 
     public List<FileItem> getDirectoryContent(String remote, String path) {
-        String arg = remote + ":";
+        String remoteAndPath = remote + ":";
         if (path != null) {
-            arg += path;
+            remoteAndPath += path;
         }
-        String command = createCommand("lsjson " + arg);
+
+        String[] command = createCommand("lsjson", remoteAndPath);
 
         JSONArray results = runCommandForJSON(command);
 
@@ -123,7 +135,7 @@ public class Rclone {
     }
 
     public List<RemoteItem> getRemotes() {
-        String command = createCommand("listremotes -l");
+        String[] command = createCommand("listremotes", "-l");
         ArrayList<String> result = runCommand(command);
 
         assert result != null;
