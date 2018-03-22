@@ -25,6 +25,7 @@ public class FileExplorerFragment extends Fragment {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_PATH = "path_param";
+    private OnFileClickListener listener;
     private List<FileItem> directoryContent;
     private Rclone rclone;
     private String remote;
@@ -72,10 +73,30 @@ public class FileExplorerFragment extends Fragment {
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, listener);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFileClickListener) {
+            listener = (OnFileClickListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnFileClickListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    public interface OnFileClickListener {
+        void onFileClicked(FileItem file);
     }
 
     @SuppressLint("StaticFieldLeak")

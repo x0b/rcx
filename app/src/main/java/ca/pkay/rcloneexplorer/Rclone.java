@@ -78,6 +78,7 @@ public class Rclone {
             while ((line = reader.readLine()) != null) {
                 output.append(line);
             }
+
             return new JSONArray(output.toString());
 
         } catch (IOException | InterruptedException | JSONException e) {
@@ -111,7 +112,7 @@ public class Rclone {
                 String fileModTime = jsonObject.getString("ModTime");
                 boolean fileIsDir = jsonObject.getBoolean("IsDir");
 
-                FileItem fileItem = new FileItem(filePath, fileName, fileSize, fileModTime, fileIsDir);
+                FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, fileIsDir);
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
