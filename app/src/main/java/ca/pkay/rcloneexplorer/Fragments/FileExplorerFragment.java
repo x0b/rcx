@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +32,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 
-public class FileExplorerFragment extends Fragment {
+public class FileExplorerFragment extends Fragment implements FileExplorerRecyclerViewAdapter.OnClickListener {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_PATH = "path_param";
@@ -69,6 +70,10 @@ public class FileExplorerFragment extends Fragment {
                 default: return AlphaDescending;
             }
         }
+    }
+
+    public interface OnFileClickListener {
+        void onFileClicked(FileItem file);
     }
 
     /**
@@ -121,7 +126,7 @@ public class FileExplorerFragment extends Fragment {
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, listener);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         return view;
@@ -245,8 +250,20 @@ public class FileExplorerFragment extends Fragment {
         listener = null;
     }
 
-    public interface OnFileClickListener {
-        void onFileClicked(FileItem file);
+    @Override
+    public void onFileClicked(FileItem fileItem) {
+        listener.onFileClicked(fileItem);
+    }
+
+    @Override
+    public void onDirectoryClicked(FileItem fileItem) {
+        progressBar.setVisibility(View.VISIBLE);
+        if (null != fetchDirectoryTask) {
+            fetchDirectoryTask.cancel(true);
+        }
+        path = fileItem.getPath();
+        recyclerViewAdapter.clear();
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
 
     @SuppressLint("StaticFieldLeak")

@@ -16,9 +16,14 @@ import ca.pkay.rcloneexplorer.R;
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private List<FileItem> files;
-    private FileExplorerFragment.OnFileClickListener listener;
+    private OnClickListener listener;
 
-    public FileExplorerRecyclerViewAdapter(List<FileItem> files, FileExplorerFragment.OnFileClickListener listener) {
+    public interface OnClickListener {
+        void onFileClicked(FileItem fileItem);
+        void onDirectoryClicked(FileItem fileItem);
+    }
+
+    public FileExplorerRecyclerViewAdapter(List<FileItem> files, OnClickListener listener) {
         this.files = files;
         this.listener = listener;
     }
@@ -52,7 +57,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) {
+                if (item.isDir() && null != listener) {
+                    listener.onDirectoryClicked(item);
+                } else if (!item.isDir() && null != listener) {
                     listener.onFileClicked(item);
                 }
             }
@@ -66,6 +73,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else {
             return files.size();
         }
+    }
+
+    public void clear() {
+        files.clear();
+        notifyDataSetChanged();
     }
 
     public void newData(List<FileItem> data) {

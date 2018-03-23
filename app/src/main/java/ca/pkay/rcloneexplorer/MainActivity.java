@@ -202,17 +202,10 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public void onFileClicked(FileItem file) {
-        if (file.isDir()) {
-            Fragment fragment = FileExplorerFragment.newInstance(file.getRemote(), file.getPath());
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.flFragment, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
+        Log.i("PKAY", "File clicked");
     }
 }
