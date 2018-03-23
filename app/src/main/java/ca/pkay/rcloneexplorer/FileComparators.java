@@ -25,9 +25,9 @@ public class FileComparators {
             @Override
             public int compare(FileItem fileItem, FileItem t1) {
                 if (fileItem.isDir() && !t1.isDir()) {
-                    return 1;
-                } else if (!fileItem.isDir() && t1.isDir()) {
                     return -1;
+                } else if (!fileItem.isDir() && t1.isDir()) {
+                    return 1;
                 }
 
                 return t1.getName().compareTo(fileItem.getName());
@@ -63,9 +63,9 @@ public class FileComparators {
             @Override
             public int compare(FileItem fileItem, FileItem t1) {
                 if (fileItem.isDir() && !t1.isDir()) {
-                    return 1;
+                    return -1;
                 } else if (!fileItem.isDir() && t1.isDir()) {
-                    return 11;
+                    return 1;
                 }
 
                 if (fileItem.isDir() && t1.isDir()) {
@@ -107,9 +107,9 @@ public class FileComparators {
             @Override
             public int compare(FileItem fileItem, FileItem t1) {
                 if (fileItem.isDir() && !t1.isDir()) {
-                    return 1;
-                } else if (!fileItem.isDir() && t1.isDir()) {
                     return -1;
+                } else if (!fileItem.isDir() && t1.isDir()) {
+                    return 1;
                 }
 
                 if (fileItem.getModTime() == t1.getModTime()) {
