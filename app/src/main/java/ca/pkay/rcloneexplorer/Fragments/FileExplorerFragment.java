@@ -9,14 +9,21 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.shehabic.droppy.DroppyClickCallbackInterface;
+import com.shehabic.droppy.DroppyMenuPopup;
+
+import java.util.Collections;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -26,7 +33,6 @@ public class FileExplorerFragment extends Fragment {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_PATH = "path_param";
-    private static final String ARG_DIR_CONTENT = "dir_content";
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
     private Rclone rclone;
@@ -61,6 +67,7 @@ public class FileExplorerFragment extends Fragment {
             path = getArguments().getString(ARG_PATH);
         }
         getActivity().setTitle(remote);
+        setHasOptionsMenu(true);
         rclone = new Rclone((AppCompatActivity) getActivity());
 
         fetchDirectoryTask = new FetchDirectoryContent().execute();
@@ -85,6 +92,56 @@ public class FileExplorerFragment extends Fragment {
         recyclerView.setAdapter(recyclerViewAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sort, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_sort) {
+            showSortMenu();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showSortMenu() {
+        DroppyMenuPopup droppyMenu;
+        DroppyMenuPopup.Builder droppyBuilder = new DroppyMenuPopup.Builder(getContext(), getActivity().findViewById(R.id.action_sort));
+        droppyMenu = droppyBuilder.fromMenu(R.menu.sort_menu)
+                .triggerOnAnchorClick(false)
+                .setXOffset(5)
+                .setYOffset(5)
+                .setOnClick(new DroppyClickCallbackInterface() {
+                    @Override
+                    public void call(View v, int id) {
+                        sortDirectory(id);
+                    }
+                })
+                .build();
+        droppyMenu.show();
+    }
+
+    private void sortDirectory(int id) {
+        switch (id) {
+            case R.id.sort_alpha:
+                Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
+                break;
+            case R.id.sort_date:
+                Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
+                break;
+            case R.id.sort_size:
+                Collections.sort(directoryContent, new FileComparators.SortSizeDescending());
+                break;
+        }
+        recyclerViewAdapter.newData(directoryContent);
     }
 
     @Override
@@ -131,6 +188,7 @@ public class FileExplorerFragment extends Fragment {
         protected void onPostExecute(List<FileItem> fileItems) {
             super.onPostExecute(fileItems);
             directoryContent = fileItems;
+            Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
             if (recyclerViewAdapter != null) {
                 recyclerViewAdapter.newData(fileItems);
             }

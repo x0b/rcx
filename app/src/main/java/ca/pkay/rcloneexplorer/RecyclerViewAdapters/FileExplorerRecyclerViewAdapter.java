@@ -1,6 +1,5 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Collections;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
@@ -22,9 +20,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public FileExplorerRecyclerViewAdapter(List<FileItem> files, FileExplorerFragment.OnFileClickListener listener) {
         this.files = files;
-        if (files != null) {
-            Collections.sort(files);
-        }
         this.listener = listener;
     }
 
@@ -45,9 +40,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileIcon.setImageResource(R.drawable.ic_file);
         }
         holder.fileName.setText(item.getName());
-        holder.fileModTime.setText(item.getModTime());
+        holder.fileModTime.setText(item.getHumanReadableModTime());
         if (!item.isDir()) {
-            holder.fileSize.setText(item.getSize());
+            holder.fileSize.setText(item.getHumanReadableSize());
             holder.interpunct.setVisibility(View.VISIBLE);
         } else {
             holder.interpunct.setVisibility(View.GONE);
@@ -74,7 +69,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public void newData(List<FileItem> data) {
         files = data;
-        Collections.sort(files);
         notifyDataSetChanged();
     }
 
