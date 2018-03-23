@@ -188,6 +188,7 @@ public class FileExplorerFragment extends Fragment {
                     sortOrder = SortOrder.SizeAscending;
                 } else {
                     Collections.sort(directoryContent, new FileComparators.SortSizeDescending());
+                    sortOrder = SortOrder.SizeDescending;
                 }
                 break;
         }
