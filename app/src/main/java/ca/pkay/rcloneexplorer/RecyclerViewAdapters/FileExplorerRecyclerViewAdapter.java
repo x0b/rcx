@@ -45,6 +45,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileSize.setText(item.getHumanReadableSize());
             holder.interpunct.setVisibility(View.VISIBLE);
         } else {
+            holder.fileSize.setVisibility(View.GONE);
             holder.interpunct.setVisibility(View.GONE);
         }
 

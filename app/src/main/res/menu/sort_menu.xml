@@ -4,20 +4,17 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/sort_alpha"
-            app:showAsAction="never"
             android:title="Name"
             android:icon="@drawable/ic_sort_by_alpha" />
 
         <item
             android:id="@+id/sort_date"
             android:title="Date"
-            app:showAsAction="never"
             android:icon="@drawable/ic_sort_by_date" />
 
         <item
             android:id="@+id/sort_size"
             android:title="Size"
-            android:icon="@drawable/ic_sort_by_size"
-            app:showAsAction="never" />
+            android:icon="@drawable/ic_sort_by_size" />
     </group>
 </menu>

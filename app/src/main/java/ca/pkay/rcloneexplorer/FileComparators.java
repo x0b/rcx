@@ -44,6 +44,10 @@ public class FileComparators {
                     return 1;
                 }
 
+                if (fileItem.isDir() && t1.isDir()) {
+                    return fileItem.getName().compareTo(t1.getName());
+                }
+
                 if (fileItem.getSize() == t1.getSize()) {
                     return 0;
                 } else if (fileItem.getSize() > t1.getSize()) {
@@ -58,7 +62,23 @@ public class FileComparators {
 
             @Override
             public int compare(FileItem fileItem, FileItem t1) {
-                return 0;
+                if (fileItem.isDir() && !t1.isDir()) {
+                    return 1;
+                } else if (!fileItem.isDir() && t1.isDir()) {
+                    return 11;
+                }
+
+                if (fileItem.isDir() && t1.isDir()) {
+                    return fileItem.getName().compareTo(t1.getName());
+                }
+
+                if (fileItem.getSize() == t1.getSize()) {
+                    return 0;
+                } else if (fileItem.getSize() > t1.getSize()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
             }
         }
 
@@ -86,7 +106,19 @@ public class FileComparators {
 
             @Override
             public int compare(FileItem fileItem, FileItem t1) {
-                return 0;
+                if (fileItem.isDir() && !t1.isDir()) {
+                    return 1;
+                } else if (!fileItem.isDir() && t1.isDir()) {
+                    return -1;
+                }
+
+                if (fileItem.getModTime() == t1.getModTime()) {
+                    return 0;
+                } else if (fileItem.getModTime() > t1.getModTime()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
             }
         }
 }

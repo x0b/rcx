@@ -41,6 +41,16 @@ public class FileExplorerFragment extends Fragment {
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private ProgressBar progressBar;
     private AsyncTask fetchDirectoryTask;
+    private SortOrder sortOrder;
+
+    private enum SortOrder {
+        AlphaDescending,
+        AlphaAscending,
+        ModTimeDescending,
+        ModTimeAscending,
+        SizeDescending,
+        SizeAscending
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -132,13 +142,30 @@ public class FileExplorerFragment extends Fragment {
     private void sortDirectory(int id) {
         switch (id) {
             case R.id.sort_alpha:
-                Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
+                if (sortOrder == SortOrder.AlphaDescending) {
+                    Collections.sort(directoryContent, new FileComparators.SortAlphaAscending());
+                    sortOrder = SortOrder.AlphaAscending;
+                } else {
+                    Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
+                    sortOrder = SortOrder.AlphaDescending;
+                }
                 break;
             case R.id.sort_date:
-                Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
+                if (sortOrder == SortOrder.ModTimeDescending) {
+                    Collections.sort(directoryContent, new FileComparators.SortModTimeAscending());
+                    sortOrder = SortOrder.ModTimeAscending;
+                } else {
+                    Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
+                    sortOrder = SortOrder.ModTimeDescending;
+                }
                 break;
             case R.id.sort_size:
-                Collections.sort(directoryContent, new FileComparators.SortSizeDescending());
+                if (sortOrder == SortOrder.SizeDescending) {
+                    Collections.sort(directoryContent, new FileComparators.SortSizeAscending());
+                    sortOrder = SortOrder.SizeAscending;
+                } else {
+                    Collections.sort(directoryContent, new FileComparators.SortSizeDescending());
+                }
                 break;
         }
         recyclerViewAdapter.newData(directoryContent);
