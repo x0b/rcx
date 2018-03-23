@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class FileExplorerFragment extends Fragment {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_PATH = "path_param";
+    private static final String ARG_DIR_CONTENT = "dir_content";
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
     private Rclone rclone;
@@ -32,6 +34,7 @@ public class FileExplorerFragment extends Fragment {
     private String path;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private ProgressBar progressBar;
+    private AsyncTask fetchDirectoryTask;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,7 +63,7 @@ public class FileExplorerFragment extends Fragment {
         getActivity().setTitle(remote);
         rclone = new Rclone((AppCompatActivity) getActivity());
 
-        new FetchDirectoryContent().execute();
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
 
     @Nullable
@@ -69,7 +72,7 @@ public class FileExplorerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
 
         progressBar = view.findViewById(R.id.progress_bar);
-        if (null != directoryContent) {
+        if (null != directoryContent && null != fetchDirectoryTask) {
             progressBar.setVisibility(View.INVISIBLE);
         } else {
             progressBar.setVisibility(View.VISIBLE);
@@ -97,6 +100,7 @@ public class FileExplorerFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        fetchDirectoryTask.cancel(true);
         listener = null;
     }
 
