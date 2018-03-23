@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sort_alpha"
+            android:title="Name"
+            android:icon="@drawable/ic_sort_by_alpha" />
+
+        <item
+            android:id="@+id/sort_date"
+            android:title="Date"
+            android:icon="@drawable/ic_sort_by_date" />
+
+        <item
+            android:id="@+id/sort_size"
+            android:title="Size"
+            android:icon="@drawable/ic_sort_by_size" />
+    </group>
+</menu>
