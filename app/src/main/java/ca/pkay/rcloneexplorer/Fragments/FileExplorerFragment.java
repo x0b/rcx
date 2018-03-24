@@ -22,8 +22,12 @@ import android.widget.ProgressBar;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -39,6 +43,9 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
+    private Stack<List<FileItem>> directoryContentStack;
+    private Stack<String> pathStack;
+    private Map<String, List<FileItem>> directoryCache;
     private Rclone rclone;
     private String remote;
     private String path;
@@ -107,6 +114,9 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
         rclone = new Rclone((AppCompatActivity) getActivity());
+        directoryContentStack = new Stack<>();
+        pathStack = new Stack<>();
+        directoryCache = new HashMap<>();
 
         fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
@@ -115,6 +125,8 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
+
+
 
         progressBar = view.findViewById(R.id.progress_bar);
         if (null != directoryContent && null != fetchDirectoryTask) {
@@ -250,6 +262,17 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         listener = null;
     }
 
+    public boolean onBackButtonPressed() {
+        if (pathStack.isEmpty() || directoryContentStack.isEmpty()) {
+            return false;
+        } else {
+            path = pathStack.pop();
+            directoryContent = directoryContentStack.pop();
+            recyclerViewAdapter.newData(directoryContent);
+        }
+        return true;
+    }
+
     @Override
     public void onFileClicked(FileItem fileItem) {
         listener.onFileClicked(fileItem);
@@ -258,6 +281,8 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     @Override
     public void onDirectoryClicked(FileItem fileItem) {
         progressBar.setVisibility(View.VISIBLE);
+        pathStack.push(path);
+        directoryContentStack.push(new ArrayList<FileItem>(directoryContent));
         if (null != fetchDirectoryTask) {
             fetchDirectoryTask.cancel(true);
         }
