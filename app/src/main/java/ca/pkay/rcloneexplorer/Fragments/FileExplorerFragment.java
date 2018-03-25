@@ -43,7 +43,6 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
-    private Stack<List<FileItem>> directoryContentStack;
     private Stack<String> pathStack;
     private Map<String, List<FileItem>> directoryCache;
     private Rclone rclone;
@@ -114,7 +113,6 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
         rclone = new Rclone((AppCompatActivity) getActivity());
-        directoryContentStack = new Stack<>();
         pathStack = new Stack<>();
         directoryCache = new HashMap<>();
 
@@ -263,11 +261,12 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     }
 
     public boolean onBackButtonPressed() {
-        if (pathStack.isEmpty() || directoryContentStack.isEmpty()) {
+        if (pathStack.isEmpty() || directoryCache.isEmpty()) {
             return false;
         } else {
+            fetchDirectoryTask.cancel(true);
             path = pathStack.pop();
-            directoryContent = directoryContentStack.pop();
+            directoryContent = directoryCache.get(path);
             recyclerViewAdapter.newData(directoryContent);
         }
         return true;
@@ -282,13 +281,22 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     public void onDirectoryClicked(FileItem fileItem) {
         progressBar.setVisibility(View.VISIBLE);
         pathStack.push(path);
-        directoryContentStack.push(new ArrayList<FileItem>(directoryContent));
+        directoryCache.put(path, new ArrayList<>(directoryContent));
+
         if (null != fetchDirectoryTask) {
             fetchDirectoryTask.cancel(true);
+        }
+        if (directoryCache.containsKey(fileItem.getPath())) {
+            path = fileItem.getPath();
+            directoryContent = directoryCache.get(path);
+            recyclerViewAdapter.newData(directoryContent);
+            progressBar.setVisibility(View.INVISIBLE);
+            return;
         }
         path = fileItem.getPath();
         recyclerViewAdapter.clear();
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -315,11 +323,21 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
             super.onPostExecute(fileItems);
             directoryContent = fileItems;
             sortDirectory();
+            directoryCache.put(path, new ArrayList<>(directoryContent));
+
             if (recyclerViewAdapter != null) {
                 recyclerViewAdapter.newData(fileItems);
             }
 
             if (progressBar != null) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (null != progressBar) {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         }
