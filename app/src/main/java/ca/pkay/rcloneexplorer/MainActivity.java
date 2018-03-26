@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private NavigationView navigationView;
     private Rclone rclone;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +100,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        } else if (null != fragment && fragment instanceof FileExplorerFragment) {
+            if (((FileExplorerFragment) fragment).onBackButtonPressed())
+                return;
         }
+        super.onBackPressed();
     }
 
     @Override
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startRemotesFragment() {
-        Fragment fragment = RemotesFragment.newInstance();
+        fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
@@ -195,24 +198,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRemoteClick(RemoteItem remote) {
-        Fragment fragment = FileExplorerFragment.newInstance(remote.getName(), null);
+        fragment = FileExplorerFragment.newInstance(remote.getName(), null);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public void onFileClicked(FileItem file) {
-        if (file.isDir()) {
-            Fragment fragment = FileExplorerFragment.newInstance(file.getRemote(), file.getPath());
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.flFragment, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
+        Log.i("PKAY", "File clicked");
     }
 }

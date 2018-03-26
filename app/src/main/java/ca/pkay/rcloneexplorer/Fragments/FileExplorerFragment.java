@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,8 +22,12 @@ import android.widget.ProgressBar;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -31,13 +36,15 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 
-public class FileExplorerFragment extends Fragment {
+public class FileExplorerFragment extends Fragment implements FileExplorerRecyclerViewAdapter.OnClickListener {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_PATH = "path_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
+    private Stack<String> pathStack;
+    private Map<String, List<FileItem>> directoryCache;
     private Rclone rclone;
     private String remote;
     private String path;
@@ -71,6 +78,10 @@ public class FileExplorerFragment extends Fragment {
         }
     }
 
+    public interface OnFileClickListener {
+        void onFileClicked(FileItem file);
+    }
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -102,6 +113,8 @@ public class FileExplorerFragment extends Fragment {
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
         rclone = new Rclone((AppCompatActivity) getActivity());
+        pathStack = new Stack<>();
+        directoryCache = new HashMap<>();
 
         fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
@@ -110,6 +123,8 @@ public class FileExplorerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
+
+
 
         progressBar = view.findViewById(R.id.progress_bar);
         if (null != directoryContent && null != fetchDirectoryTask) {
@@ -121,7 +136,7 @@ public class FileExplorerFragment extends Fragment {
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, listener);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         return view;
@@ -245,8 +260,43 @@ public class FileExplorerFragment extends Fragment {
         listener = null;
     }
 
-    public interface OnFileClickListener {
-        void onFileClicked(FileItem file);
+    public boolean onBackButtonPressed() {
+        if (pathStack.isEmpty() || directoryCache.isEmpty()) {
+            return false;
+        } else {
+            fetchDirectoryTask.cancel(true);
+            path = pathStack.pop();
+            directoryContent = directoryCache.get(path);
+            recyclerViewAdapter.newData(directoryContent);
+        }
+        return true;
+    }
+
+    @Override
+    public void onFileClicked(FileItem fileItem) {
+        listener.onFileClicked(fileItem);
+    }
+
+    @Override
+    public void onDirectoryClicked(FileItem fileItem) {
+        progressBar.setVisibility(View.VISIBLE);
+        pathStack.push(path);
+        directoryCache.put(path, new ArrayList<>(directoryContent));
+
+        if (null != fetchDirectoryTask) {
+            fetchDirectoryTask.cancel(true);
+        }
+        if (directoryCache.containsKey(fileItem.getPath())) {
+            path = fileItem.getPath();
+            directoryContent = directoryCache.get(path);
+            recyclerViewAdapter.newData(directoryContent);
+            progressBar.setVisibility(View.INVISIBLE);
+            return;
+        }
+        path = fileItem.getPath();
+        recyclerViewAdapter.clear();
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -273,11 +323,21 @@ public class FileExplorerFragment extends Fragment {
             super.onPostExecute(fileItems);
             directoryContent = fileItems;
             sortDirectory();
+            directoryCache.put(path, new ArrayList<>(directoryContent));
+
             if (recyclerViewAdapter != null) {
                 recyclerViewAdapter.newData(fileItems);
             }
 
             if (progressBar != null) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (null != progressBar) {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         }
