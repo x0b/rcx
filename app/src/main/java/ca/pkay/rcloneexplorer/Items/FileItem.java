@@ -103,6 +103,9 @@ public class FileItem {
         }
 
         CharSequence humanReadable = DateUtils.getRelativeTimeSpanString(dateInMillis, now, DateUtils.MINUTE_IN_MILLIS);
+        if (humanReadable.toString().startsWith("In")) {
+            humanReadable = "Now";
+        }
         return humanReadable.toString();
     }
 }
