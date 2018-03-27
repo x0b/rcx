@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +37,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 
-public class FileExplorerFragment extends Fragment implements FileExplorerRecyclerViewAdapter.OnClickListener {
+public class FileExplorerFragment extends Fragment implements FileExplorerRecyclerViewAdapter.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_PATH = "path_param";
@@ -50,6 +51,7 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     private String path;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private AsyncTask fetchDirectoryTask;
     private SortOrder sortOrder;
 
@@ -124,8 +126,8 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
 
-
-
+        swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
+        swipeRefreshLayout.setOnRefreshListener(this);
         progressBar = view.findViewById(R.id.progress_bar);
         if (null != directoryContent && null != fetchDirectoryTask) {
             progressBar.setVisibility(View.INVISIBLE);
@@ -158,6 +160,17 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+     * Swipe to refresh
+     */
+    @Override
+    public void onRefresh() {
+        if (null != fetchDirectoryTask) {
+            fetchDirectoryTask.cancel(true);
+        }
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
 
     private void showSortMenu() {
