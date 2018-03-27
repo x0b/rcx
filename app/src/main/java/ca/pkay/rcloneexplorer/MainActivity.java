@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRemoteClick(RemoteItem remote) {
-        fragment = FileExplorerFragment.newInstance(remote.getName(), null);
+        fragment = FileExplorerFragment.newInstance(remote.getName(), remote.getType());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);
