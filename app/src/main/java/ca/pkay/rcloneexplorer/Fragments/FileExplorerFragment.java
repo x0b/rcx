@@ -50,7 +50,6 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     private String remote;
     private String path;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
-    private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private AsyncTask fetchDirectoryTask;
     private SortOrder sortOrder;
@@ -128,11 +127,10 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
-        progressBar = view.findViewById(R.id.progress_bar);
         if (null != directoryContent && null != fetchDirectoryTask) {
-            progressBar.setVisibility(View.INVISIBLE);
+            swipeRefreshLayout.setRefreshing(false);
         } else {
-            progressBar.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setRefreshing(true);
         }
 
         Context context = view.getContext();
@@ -292,7 +290,7 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
 
     @Override
     public void onDirectoryClicked(FileItem fileItem) {
-        progressBar.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setRefreshing(true);
         pathStack.push(path);
         directoryCache.put(path, new ArrayList<>(directoryContent));
 
@@ -303,7 +301,7 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
             path = fileItem.getPath();
             directoryContent = directoryCache.get(path);
             recyclerViewAdapter.newData(directoryContent);
-            progressBar.setVisibility(View.INVISIBLE);
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
         path = fileItem.getPath();
@@ -319,8 +317,8 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if (progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
+            if (null != swipeRefreshLayout) {
+                swipeRefreshLayout.setRefreshing(true);
             }
         }
 
@@ -342,16 +340,16 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
                 recyclerViewAdapter.newData(fileItems);
             }
 
-            if (progressBar != null) {
-                progressBar.setVisibility(View.INVISIBLE);
+            if (null != swipeRefreshLayout) {
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            if (null != progressBar) {
-                progressBar.setVisibility(View.INVISIBLE);
+            if (null != swipeRefreshLayout) {
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
     }

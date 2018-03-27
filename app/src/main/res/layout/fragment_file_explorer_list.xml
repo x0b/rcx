@@ -21,13 +21,4 @@
             tools:listitem="@layout/fragment_file_explorer_item" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:paddingTop="64dp"/>
-
 </RelativeLayout>
