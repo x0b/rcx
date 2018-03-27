@@ -8,19 +8,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/file_explorer_srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/file_explorer_list"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/fragment_file_explorer_item" />
+        android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:paddingTop="64dp"/>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/file_explorer_list"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/fragment_file_explorer_item" />
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>
