@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +44,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
+    private String originalToolbarTitle;
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
     private Stack<String> pathStack;
@@ -113,6 +113,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             remoteType = getArguments().getString(ARG_REMOTE_TYPE);
             path = "//" + getArguments().getString(ARG_REMOTE);
         }
+        originalToolbarTitle = getActivity().getTitle().toString();
         getActivity().setTitle(remoteType);
         setHasOptionsMenu(true);
 
@@ -281,6 +282,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fetchDirectoryTask.cancel(true);
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
+        getActivity().setTitle(originalToolbarTitle);
         listener = null;
     }
 
