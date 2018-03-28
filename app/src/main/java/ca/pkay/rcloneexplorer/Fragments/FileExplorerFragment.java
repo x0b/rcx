@@ -328,6 +328,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     @Override
+    public void onLongClick(boolean longClick) {
+        int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
+        String title = (numOfSelected > 0) ? numOfSelected + " selected" : remoteType;
+        getActivity().setTitle(title);
+    }
+
+    @Override
     public void onBreadCrumbClicked(String path) {
         if (this.path.equals(path)) {
             return;

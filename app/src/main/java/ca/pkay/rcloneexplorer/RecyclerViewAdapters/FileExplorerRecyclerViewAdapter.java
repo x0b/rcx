@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
@@ -17,15 +18,20 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     private List<FileItem> files;
     private OnClickListener listener;
+    private Boolean isInSelectMode;
+    private List<FileItem> selectedItems;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
         void onDirectoryClicked(FileItem fileItem);
+        void onLongClick(boolean longClick);
     }
 
     public FileExplorerRecyclerViewAdapter(List<FileItem> files, OnClickListener listener) {
         this.files = files;
         this.listener = listener;
+        isInSelectMode = false;
+        selectedItems = new ArrayList<>();
     }
 
     @Override
@@ -35,7 +41,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final FileItem item = files.get(position);
 
         holder.fileItem = item;
@@ -54,15 +60,30 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileSize.setVisibility(View.GONE);
             holder.interpunct.setVisibility(View.GONE);
         }
+        if (isInSelectMode) {
+            if (selectedItems.contains(item)) {
+                holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
+            } else {
+                holder.view.setBackgroundColor(0x00000000);
+            }
+        }
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (item.isDir() && null != listener) {
-                    listener.onDirectoryClicked(item);
-                } else if (!item.isDir() && null != listener) {
-                    listener.onFileClicked(item);
+                if (isInSelectMode) {
+                    onLongClickAction(item, holder);
+                } else {
+                    onClickAction(item);
                 }
+            }
+        });
+
+        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                onLongClickAction(item, holder);
+                return true;
             }
         });
     }
@@ -83,7 +104,42 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public void newData(List<FileItem> data) {
         files = data;
+        isInSelectMode = false;
+        selectedItems.clear();
         notifyDataSetChanged();
+    }
+
+    public List<FileItem> getSelectedItems() {
+        return selectedItems;
+    }
+
+    public int getNumberOfSelectedItems() {
+        return selectedItems.size();
+    }
+
+    private void onClickAction(FileItem item) {
+        if (item.isDir() && null != listener) {
+            listener.onDirectoryClicked(item);
+        } else if (!item.isDir() && null != listener) {
+            listener.onFileClicked(item);
+        }
+    }
+
+    private void onLongClickAction(FileItem item, ViewHolder holder) {
+        if (selectedItems.contains(item)) {
+            selectedItems.remove(item);
+            holder.view.setBackgroundColor(0x00000000);
+            if (selectedItems.size() == 0) {
+                isInSelectMode = false;
+                listener.onLongClick(false);
+            }
+            listener.onLongClick(true);
+        } else {
+            selectedItems.add(item);
+            isInSelectMode = true;
+            holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
+            listener.onLongClick(true);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
