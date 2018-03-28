@@ -11,13 +11,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class BreadcrumbView extends HorizontalScrollView {
 
     private LinearLayout childFrame;
     private TextView previousCrumb;
     private Context context;
     private int numberOfCrumbs;
-    private int lastCrumbPosition;
+    private List<String> pathList;
+    private Map<String, TextView> textViewMap;
+    private Map<String, ImageView> imageViewMap;
     private OnClickListener onClickListener;
 
     public interface OnClickListener {
@@ -40,8 +47,10 @@ public class BreadcrumbView extends HorizontalScrollView {
         childFrame.setLayoutParams(layoutParams);
         this.context = context;
         addView(childFrame, layoutParams);
+        pathList = new ArrayList<>();
+        textViewMap = new HashMap<>();
+        imageViewMap = new HashMap<>();
         numberOfCrumbs = 0;
-        lastCrumbPosition = -1;
     }
 
     public void setOnClickListener(OnClickListener listener) {
@@ -50,13 +59,12 @@ public class BreadcrumbView extends HorizontalScrollView {
 
     public void addCrumb(String crumbTitle, final String path) {
         if (numberOfCrumbs >= 1) {
-            addArrow();
+            addArrow(path);
             previousCrumb.setTypeface(null, Typeface.NORMAL);
             previousCrumb.setElevation(0);
         }
 
         numberOfCrumbs++;
-        lastCrumbPosition++;
         final TextView textViewCrumb = new TextView(context);
         textViewCrumb.setText(crumbTitle);
         textViewCrumb.setTypeface(null, Typeface.BOLD);
@@ -73,6 +81,8 @@ public class BreadcrumbView extends HorizontalScrollView {
             }
         });
         previousCrumb = textViewCrumb;
+        pathList.add(path);
+        textViewMap.put(path, textViewCrumb);
         childFrame.addView(textViewCrumb);
         childFrame.post(new Runnable() {
             @Override
@@ -82,11 +92,36 @@ public class BreadcrumbView extends HorizontalScrollView {
         });
     }
 
+    public void removeCrumbsUpTo(String path) {
+        int crumbIndex = pathList.indexOf(path);
+        int lastCrumbIndex = pathList.size() - 1;
+
+        for (int i = lastCrumbIndex; i > crumbIndex; i--) {
+            String p = pathList.get(i);
+            View textView = textViewMap.get(p);
+            View imageView = imageViewMap.get(p);
+
+            pathList.remove(p);
+            textViewMap.remove(p);
+            imageViewMap.remove(p);
+
+            childFrame.removeView(textView);
+            childFrame.removeView(imageView);
+        }
+    }
+
     public void removeLastCrumb() {
-        View child = childFrame.getChildAt(lastCrumbPosition--);
-        View child2 = childFrame.getChildAt(lastCrumbPosition--);
-        childFrame.removeView(child);
-        childFrame.removeView(child2);
+        int lastCrumbIndex = pathList.size() - 1;
+        String path = pathList.get(lastCrumbIndex);
+        View textView = textViewMap.get(path);
+        View imageView = imageViewMap.get(path);
+
+        pathList.remove(path);
+        textViewMap.remove(path);
+        imageViewMap.remove(path);
+
+        childFrame.removeView(textView);
+        childFrame.removeView(imageView);
     }
 
     public void clearCrumbs() {
@@ -94,20 +129,11 @@ public class BreadcrumbView extends HorizontalScrollView {
         numberOfCrumbs = 0;
     }
 
-    private void addArrow() {
+    private void addArrow(String path) {
         ImageView imageView = new ImageView(context);
         imageView.setImageResource(R.drawable.ic_arrow_right);
         childFrame.addView(imageView);
-        lastCrumbPosition++;
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        /*View child = childFrame.getChildAt(numberOfCrumbs);
-        if (null != child) {
-            smoothScrollTo(child.getLeft(), 0);
-        }*/
+        imageViewMap.put(path, imageView);
     }
 }
 

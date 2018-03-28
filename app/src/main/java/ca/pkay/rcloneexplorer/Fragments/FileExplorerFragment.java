@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -147,7 +148,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView = getActivity().findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
-        breadcrumbView.addCrumb(remote, remote);
+        breadcrumbView.addCrumb(remote, "//" + remote);
 
         return view;
     }
@@ -326,10 +327,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public void onBreadCrumbClicked(String path) {
+        if (this.path.equals(path)) {
+            return;
+        }
+
         if (null != fetchDirectoryTask) {
             fetchDirectoryTask.cancel(true);
         }
-
+        this.path = path;
+        while (!pathStack.pop().equals(path)) {
+            // pop stack until we find path
+        }
+        directoryContent = directoryCache.get(path);
+        breadcrumbView.removeCrumbsUpTo(path);
+        recyclerViewAdapter.newData(directoryContent);
     }
 
     /***********************************************************************************************
