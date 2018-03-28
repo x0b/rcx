@@ -19,6 +19,5 @@
             android:id="@+id/file_explorer_list"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/fragment_file_explorer_item" />
-
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

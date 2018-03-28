@@ -48,6 +48,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         holder.fileModTime.setText(item.getHumanReadableModTime());
         if (!item.isDir()) {
             holder.fileSize.setText(item.getHumanReadableSize());
+            holder.fileSize.setVisibility(View.VISIBLE);
             holder.interpunct.setVisibility(View.VISIBLE);
         } else {
             holder.fileSize.setVisibility(View.GONE);

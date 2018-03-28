@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -37,17 +38,21 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 
-public class FileExplorerFragment extends Fragment implements FileExplorerRecyclerViewAdapter.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
+                                                                SwipeRefreshLayout.OnRefreshListener,
+                                                                BreadcrumbView.OnClickListener {
 
     private static final String ARG_REMOTE = "remote_param";
-    private static final String ARG_PATH = "path_param";
+    private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
     private Stack<String> pathStack;
     private Map<String, List<FileItem>> directoryCache;
+    private BreadcrumbView breadcrumbView;
     private Rclone rclone;
     private String remote;
+    private String remoteType;
     private String path;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -91,11 +96,11 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     }
 
     @SuppressWarnings("unused")
-    public static FileExplorerFragment newInstance(String remote, String path) {
+    public static FileExplorerFragment newInstance(String remote, String remoteType) {
         FileExplorerFragment fragment = new FileExplorerFragment();
         Bundle args = new Bundle();
         args.putString(ARG_REMOTE, remote);
-        args.putString(ARG_PATH, path);
+        args.putString(ARG_REMOTE_TYPE, remoteType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -105,9 +110,10 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             remote = getArguments().getString(ARG_REMOTE);
-            path = getArguments().getString(ARG_PATH);
+            remoteType = getArguments().getString(ARG_REMOTE_TYPE);
+            path = "//" + getArguments().getString(ARG_REMOTE);
         }
-        getActivity().setTitle(remote);
+        getActivity().setTitle(remoteType);
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
@@ -138,6 +144,11 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, this);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        breadcrumbView = getActivity().findViewById(R.id.breadcrumb_view);
+        breadcrumbView.setOnClickListener(this);
+        breadcrumbView.setVisibility(View.VISIBLE);
+        breadcrumbView.addCrumb(remote, "//" + remote);
 
         return view;
     }
@@ -268,6 +279,8 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
     public void onDetach() {
         super.onDetach();
         fetchDirectoryTask.cancel(true);
+        breadcrumbView.clearCrumbs();
+        breadcrumbView.setVisibility(View.GONE);
         listener = null;
     }
 
@@ -278,6 +291,7 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
             fetchDirectoryTask.cancel(true);
             path = pathStack.pop();
             directoryContent = directoryCache.get(path);
+            breadcrumbView.removeLastCrumb();
             recyclerViewAdapter.newData(directoryContent);
         }
         return true;
@@ -290,6 +304,7 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
 
     @Override
     public void onDirectoryClicked(FileItem fileItem) {
+        breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(path);
         directoryCache.put(path, new ArrayList<>(directoryContent));
@@ -310,6 +325,27 @@ public class FileExplorerFragment extends Fragment implements FileExplorerRecycl
 
     }
 
+    @Override
+    public void onBreadCrumbClicked(String path) {
+        if (this.path.equals(path)) {
+            return;
+        }
+
+        if (null != fetchDirectoryTask) {
+            fetchDirectoryTask.cancel(true);
+        }
+        this.path = path;
+        while (!pathStack.pop().equals(path)) {
+            // pop stack until we find path
+        }
+        directoryContent = directoryCache.get(path);
+        breadcrumbView.removeCrumbsUpTo(path);
+        recyclerViewAdapter.newData(directoryContent);
+    }
+
+    /***********************************************************************************************
+     * AsyncTask classes
+     ***********************************************************************************************/
     @SuppressLint("StaticFieldLeak")
     private class FetchDirectoryContent extends AsyncTask<Void, Void, List<FileItem>> {
 
