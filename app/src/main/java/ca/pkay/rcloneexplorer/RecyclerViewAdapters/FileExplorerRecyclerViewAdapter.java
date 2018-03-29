@@ -10,7 +10,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
 
@@ -24,7 +23,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
         void onDirectoryClicked(FileItem fileItem);
-        void onLongClick(boolean longClick);
+        void onFilesSelected(boolean selection);
     }
 
     public FileExplorerRecyclerViewAdapter(List<FileItem> files, OnClickListener listener) {
@@ -66,6 +65,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             } else {
                 holder.view.setBackgroundColor(0x00000000);
             }
+        } else {
+            holder.view.setBackgroundColor(0x00000000);
         }
 
         holder.view.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +100,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public void clear() {
         files.clear();
+        isInSelectMode = false;
+        selectedItems.clear();
+        listener.onFilesSelected(false);
         notifyDataSetChanged();
     }
 
@@ -106,7 +110,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         files = data;
         isInSelectMode = false;
         selectedItems.clear();
+        listener.onFilesSelected(false);
         notifyDataSetChanged();
+    }
+
+    public Boolean isInSelectMode() {
+        return isInSelectMode;
     }
 
     public List<FileItem> getSelectedItems() {
@@ -125,20 +134,27 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
+    public void cancelSelection() {
+        isInSelectMode = false;
+        selectedItems.clear();
+        listener.onFilesSelected(false);
+        notifyDataSetChanged();
+    }
+
     private void onLongClickAction(FileItem item, ViewHolder holder) {
         if (selectedItems.contains(item)) {
             selectedItems.remove(item);
             holder.view.setBackgroundColor(0x00000000);
             if (selectedItems.size() == 0) {
                 isInSelectMode = false;
-                listener.onLongClick(false);
+                listener.onFilesSelected(false);
             }
-            listener.onLongClick(true);
+            listener.onFilesSelected(true);
         } else {
             selectedItems.add(item);
             isInSelectMode = true;
             holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
-            listener.onLongClick(true);
+            listener.onFilesSelected(true);
         }
     }
 

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_bar"
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:orientation="horizontal"
     android:layout_alignParentBottom="true"
     android:background="@color/colorPrimary"
     android:elevation="8dp"
-    tools:showIn="@layout/fragment_file_explorer_list" >
+    android:visibility="gone"
+    tools:showIn="@layout/fragment_file_explorer_list">
 
     <Space
         android:layout_width="0dp"
@@ -17,6 +18,7 @@
     </Space>
 
     <LinearLayout
+        android:id="@+id/file_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -48,6 +50,7 @@
     </Space>
 
     <LinearLayout
+        android:id="@+id/file_move"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -79,6 +82,7 @@
     </Space>
 
     <LinearLayout
+        android:id="@+id/file_rename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -110,6 +114,7 @@
     </Space>
 
     <LinearLayout
+        android:id="@+id/file_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

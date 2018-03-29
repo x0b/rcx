@@ -162,6 +162,17 @@ public class Rclone {
         return remoteItemList;
     }
 
+    public void deleteItems(String remote, List<FileItem> deleteList) {
+        String[] command;
+        String filePath;
+
+        for (FileItem item : deleteList) {
+            filePath = remote + ":" + item.getPath();
+            command = createCommand("delete", filePath);
+            runCommand(command);
+        }
+    }
+
     public boolean isConfigFileCreated() {
         String appsFileDir = activity.getFilesDir().getPath();
         String configFile = appsFileDir + "/rclone.conf";

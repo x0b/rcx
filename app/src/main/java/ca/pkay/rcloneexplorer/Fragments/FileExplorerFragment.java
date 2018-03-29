@@ -2,12 +2,14 @@ package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +20,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -151,6 +155,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setVisibility(View.VISIBLE);
         breadcrumbView.addCrumb(remote, "//" + remote);
 
+        setBottomBarClickListeners(view);
+
         return view;
     }
 
@@ -181,6 +187,36 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+    }
+
+    private void setBottomBarClickListeners(View view) {
+        view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("PKAY", "Download file clicked");
+            }
+        });
+
+        view.findViewById(R.id.file_move).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("PKAY", "Move file clicked");
+            }
+        });
+
+        view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("PKAY", "Rename file clicked");
+            }
+        });
+
+        view.findViewById(R.id.file_delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onDeleteClicked();
+            }
+        });
     }
 
     private void showSortMenu() {
@@ -287,7 +323,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     public boolean onBackButtonPressed() {
-        if (pathStack.isEmpty() || directoryCache.isEmpty()) {
+        if (recyclerViewAdapter.isInSelectMode()) {
+            recyclerViewAdapter.cancelSelection();
+        } else if (pathStack.isEmpty() || directoryCache.isEmpty()) {
             return false;
         } else {
             fetchDirectoryTask.cancel(true);
@@ -328,10 +366,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     @Override
-    public void onLongClick(boolean longClick) {
+    public void onFilesSelected(boolean longClick) {
         int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
-        String title = (numOfSelected > 0) ? numOfSelected + " selected" : remoteType;
-        getActivity().setTitle(title);
+
+        if (numOfSelected > 0) { // something is selected
+            getActivity().setTitle(numOfSelected + " selected");
+            getActivity().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+        } else {
+            getActivity().setTitle(remoteType);
+            getActivity().findViewById(R.id.bottom_bar).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -344,12 +388,34 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         this.path = path;
+        //noinspection StatementWithEmptyBody
         while (!pathStack.pop().equals(path)) {
             // pop stack until we find path
         }
         directoryContent = directoryCache.get(path);
         breadcrumbView.removeCrumbsUpTo(path);
         recyclerViewAdapter.newData(directoryContent);
+    }
+
+    private void onDeleteClicked() {
+        if (!recyclerViewAdapter.isInSelectMode()) {
+            return;
+        }
+
+        final List<FileItem> deleteList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete " + deleteList.size() + " items?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        recyclerViewAdapter.cancelSelection();
+                        new DeleteFilesTask().execute(deleteList);
+                    }
+                })
+                .show();
     }
 
     /***********************************************************************************************
@@ -396,6 +462,36 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (null != swipeRefreshLayout) {
                 swipeRefreshLayout.setRefreshing(false);
             }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class DeleteFilesTask extends AsyncTask<List, Void, Void> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+
+        }
+
+        @Override
+        protected Void doInBackground(List[] lists) {
+            List<FileItem> list = lists[0];
+            rclone.deleteItems(remote, list);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (null != fetchDirectoryTask) {
+                fetchDirectoryTask.cancel(true);
+            }
+            swipeRefreshLayout.setRefreshing(false);
+
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
     }
 }
