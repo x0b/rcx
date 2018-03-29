@@ -11,13 +11,19 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/file_explorer_srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_bar" >
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/file_explorer_list"
+            android:clipToPadding="false"
+            android:paddingBottom="54dp"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/fragment_file_explorer_item" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <include
+        layout="@layout/bottom_bar"/>
 </RelativeLayout>
