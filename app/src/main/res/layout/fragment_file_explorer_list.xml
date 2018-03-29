@@ -20,4 +20,7 @@
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/fragment_file_explorer_item" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <include
+        layout="@layout/bottom_bar" />
 </RelativeLayout>
