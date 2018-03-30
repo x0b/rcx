@@ -114,6 +114,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         notifyDataSetChanged();
     }
 
+    public void updateData(List<FileItem> data) {
+        files = data;
+        notifyDataSetChanged();
+    }
+
     public Boolean isInSelectMode() {
         return isInSelectMode;
     }

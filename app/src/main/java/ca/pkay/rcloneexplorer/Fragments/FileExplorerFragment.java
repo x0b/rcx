@@ -268,7 +268,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
                 break;
         }
-        recyclerViewAdapter.newData(directoryContent);
+        recyclerViewAdapter.updateData(directoryContent);
         if (null != sortOrder) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder.getValue()).apply();
