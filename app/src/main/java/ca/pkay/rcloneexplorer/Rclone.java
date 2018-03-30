@@ -172,6 +172,17 @@ public class Rclone {
         return remoteItemList;
     }
 
+    public void downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
+        String[] command;
+        String remoteFilePath;
+
+        for (FileItem item : downloadList) {
+            remoteFilePath = remote + ":" + item.getPath();
+            command = createCommand("copy", remoteFilePath, downloadPath);
+            runCommand(command);
+        }
+    }
+
     public void deleteItems(String remote, List<FileItem> deleteList) {
         String[] command;
         String filePath;
