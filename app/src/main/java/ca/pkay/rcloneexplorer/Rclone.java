@@ -60,6 +60,16 @@ public class Rclone {
             while ((line = reader.readLine()) != null) {
                 output.add(line);
             }
+
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            StringBuilder error = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                error.append(line);
+            }
+            if (error.length() != 0) {
+                Log.e(TAG, error.toString());
+            }
+
             return output;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -168,7 +178,11 @@ public class Rclone {
 
         for (FileItem item : deleteList) {
             filePath = remote + ":" + item.getPath();
-            command = createCommand("delete", filePath);
+            if (item.isDir()) {
+                command = createCommand("purge", filePath);
+            } else {
+                command = createCommand("delete", filePath);
+            }
             runCommand(command);
         }
     }
