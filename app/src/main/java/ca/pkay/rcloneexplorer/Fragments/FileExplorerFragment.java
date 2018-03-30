@@ -435,7 +435,17 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        Log.i("PKAY", renameItem.getName());
+                        if (renameItem.getName().equals(input.toString())) {
+                            return;
+                        }
+                        recyclerViewAdapter.cancelSelection();
+                        String newFilePath;
+                        if (path.equals("//" + remote)) {
+                            newFilePath = input.toString();
+                        } else {
+                            newFilePath = path + "/" + input;
+                        }
+                        new RenameFileTask().execute(renameItem.getPath(), newFilePath);
                     }
                 })
                 .show();
@@ -485,6 +495,36 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (null != swipeRefreshLayout) {
                 swipeRefreshLayout.setRefreshing(false);
             }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class RenameFileTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String oldFileName = strings[0];
+            String newFileName = strings[1];
+
+            rclone.moveTo(remote, oldFileName, newFileName);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (null != fetchDirectoryTask) {
+                fetchDirectoryTask.cancel(true);
+            }
+            swipeRefreshLayout.setRefreshing(false);
+
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
     }
     

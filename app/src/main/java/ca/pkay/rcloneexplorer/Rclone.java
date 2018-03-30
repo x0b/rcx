@@ -187,6 +187,13 @@ public class Rclone {
         }
     }
 
+    public void moveTo(String remote, String oldFile, String newFile) {
+        String oldFilePath = remote + ":" + oldFile;
+        String newFilePath = remote + ":" + newFile;
+        String[] command = createCommand("moveto", oldFilePath, newFilePath);
+        runCommand(command);
+    }
+
     public boolean isConfigFileCreated() {
         String appsFileDir = activity.getFilesDir().getPath();
         String configFile = appsFileDir + "/rclone.conf";
