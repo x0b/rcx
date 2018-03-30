@@ -139,6 +139,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
+    public void selectAll() {
+        isInSelectMode = true;
+        selectedItems.clear();
+        selectedItems.addAll(files);
+        listener.onFilesSelected(true);
+        notifyDataSetChanged();
+    }
+
     public void cancelSelection() {
         isInSelectMode = false;
         selectedItems.clear();

@@ -21,13 +21,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
-import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -165,7 +163,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.sort, menu);
+        inflater.inflate(R.menu.file_explorer, menu);
     }
 
     @Override
@@ -175,6 +173,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (id == R.id.action_sort) {
             showSortMenu();
             return true;
+        }
+        if (id == R.id.action_select_all) {
+            recyclerViewAdapter.selectAll();
         }
 
         return super.onOptionsItemSelected(item);
