@@ -114,6 +114,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         notifyDataSetChanged();
     }
 
+    public void updateData(List<FileItem> data) {
+        files = data;
+        notifyDataSetChanged();
+    }
+
     public Boolean isInSelectMode() {
         return isInSelectMode;
     }
@@ -132,6 +137,20 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else if (!item.isDir() && null != listener) {
             listener.onFileClicked(item);
         }
+    }
+
+    public void toggleSelectAll() {
+        if (selectedItems.size() == files.size()) {
+            isInSelectMode = false;
+            selectedItems.clear();
+            listener.onFilesSelected(false);
+        } else {
+            isInSelectMode = true;
+            selectedItems.clear();
+            selectedItems.addAll(files);
+            listener.onFilesSelected(true);
+        }
+        notifyDataSetChanged();
     }
 
     public void cancelSelection() {

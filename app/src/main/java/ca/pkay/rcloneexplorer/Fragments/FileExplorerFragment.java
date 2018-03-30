@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,12 +22,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
-import java.nio.channels.FileLock;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +42,8 @@ import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
+import yogesh.firzen.filelister.FileListerDialog;
+import yogesh.firzen.filelister.OnFileSelectedListener;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
@@ -163,7 +167,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.sort, menu);
+        inflater.inflate(R.menu.file_explorer, menu);
     }
 
     @Override
@@ -173,6 +177,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (id == R.id.action_sort) {
             showSortMenu();
             return true;
+        }
+        if (id == R.id.action_select_all) {
+            recyclerViewAdapter.toggleSelectAll();
         }
 
         return super.onOptionsItemSelected(item);
@@ -193,7 +200,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("PKAY", "Download file clicked");
+                onDownloadClicked();
             }
         });
 
@@ -207,7 +214,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("PKAY", "Rename file clicked");
+                onRenameClicked();
             }
         });
 
@@ -266,7 +273,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
                 break;
         }
-        recyclerViewAdapter.newData(directoryContent);
+        recyclerViewAdapter.updateData(directoryContent);
         if (null != sortOrder) {
             SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder.getValue()).apply();
@@ -418,6 +425,56 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .show();
     }
 
+    private void onRenameClicked() {
+        if (!recyclerViewAdapter.isInSelectMode() || recyclerViewAdapter.getNumberOfSelectedItems() > 1) {
+            return;
+        }
+
+        List<FileItem> list = recyclerViewAdapter.getSelectedItems();
+        final FileItem renameItem = list.get(0);
+
+        new MaterialDialog.Builder(getContext())
+                .title("Rename a file")
+                .content("Please type new file name")
+                .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        if (renameItem.getName().equals(input.toString())) {
+                            return;
+                        }
+                        recyclerViewAdapter.cancelSelection();
+                        String newFilePath;
+                        if (path.equals("//" + remote)) {
+                            newFilePath = input.toString();
+                        } else {
+                            newFilePath = path + "/" + input;
+                        }
+                        new RenameFileTask().execute(renameItem.getPath(), newFilePath);
+                    }
+                })
+                .negativeText("Cancel")
+                .show();
+    }
+
+    private void onDownloadClicked() {
+        if (!recyclerViewAdapter.isInSelectMode()) {
+            return;
+        }
+        final List<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        FileListerDialog fileListerDialog = FileListerDialog.createFileListerDialog(getContext());
+        fileListerDialog.setFileFilter(FileListerDialog.FILE_FILTER.DIRECTORY_ONLY);
+        fileListerDialog.setDefaultDir(downloads);
+        fileListerDialog.setOnFileSelectedListener(new OnFileSelectedListener() {
+            @Override
+            public void onFileSelected(File file, String path) {
+                recyclerViewAdapter.cancelSelection();
+                new DownloadFileTask(downloadList, path).execute();
+            }
+        });
+        fileListerDialog.show();
+    }
+
     /***********************************************************************************************
      * AsyncTask classes
      ***********************************************************************************************/
@@ -465,6 +522,54 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private class DownloadFileTask extends AsyncTask<Void, Void, Void> {
+
+        private List<FileItem> downloadList;
+        private String downloadPath;
+
+        public DownloadFileTask(List<FileItem> downloadList, String downloadPath) {
+            this.downloadList = downloadList;
+            this.downloadPath = downloadPath;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            rclone.downloadItems(remote, downloadList, downloadPath);
+            return null;
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class RenameFileTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String oldFileName = strings[0];
+            String newFileName = strings[1];
+
+            rclone.moveTo(remote, oldFileName, newFileName);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (null != fetchDirectoryTask) {
+                fetchDirectoryTask.cancel(true);
+            }
+            swipeRefreshLayout.setRefreshing(false);
+
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+        }
+    }
+    
     @SuppressLint("StaticFieldLeak")
     private class DeleteFilesTask extends AsyncTask<List, Void, Void> {
 

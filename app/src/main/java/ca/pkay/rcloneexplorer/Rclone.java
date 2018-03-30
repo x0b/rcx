@@ -60,6 +60,16 @@ public class Rclone {
             while ((line = reader.readLine()) != null) {
                 output.add(line);
             }
+
+            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            StringBuilder error = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                error.append(line);
+            }
+            if (error.length() != 0) {
+                Log.e(TAG, error.toString());
+            }
+
             return output;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -162,15 +172,37 @@ public class Rclone {
         return remoteItemList;
     }
 
+    public void downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
+        String[] command;
+        String remoteFilePath;
+
+        for (FileItem item : downloadList) {
+            remoteFilePath = remote + ":" + item.getPath();
+            command = createCommand("copy", remoteFilePath, downloadPath);
+            runCommand(command);
+        }
+    }
+
     public void deleteItems(String remote, List<FileItem> deleteList) {
         String[] command;
         String filePath;
 
         for (FileItem item : deleteList) {
             filePath = remote + ":" + item.getPath();
-            command = createCommand("delete", filePath);
+            if (item.isDir()) {
+                command = createCommand("purge", filePath);
+            } else {
+                command = createCommand("delete", filePath);
+            }
             runCommand(command);
         }
+    }
+
+    public void moveTo(String remote, String oldFile, String newFile) {
+        String oldFilePath = remote + ":" + oldFile;
+        String newFilePath = remote + ":" + newFile;
+        String[] command = createCommand("moveto", oldFilePath, newFilePath);
+        runCommand(command);
     }
 
     public boolean isConfigFileCreated() {
