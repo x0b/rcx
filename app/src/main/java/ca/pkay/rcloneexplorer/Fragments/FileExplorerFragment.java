@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
@@ -207,7 +209,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("PKAY", "Rename file clicked");
+                onRenameClicked();
             }
         });
 
@@ -418,6 +420,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .show();
     }
 
+    private void onRenameClicked() {
+        if (!recyclerViewAdapter.isInSelectMode() || recyclerViewAdapter.getNumberOfSelectedItems() > 1) {
+            return;
+        }
+
+        List<FileItem> list = recyclerViewAdapter.getSelectedItems();
+        final FileItem renameItem = list.get(0);
+
+        new MaterialDialog.Builder(getContext())
+                .title("Rename a file")
+                .content("Please type new file name")
+                .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        Log.i("PKAY", renameItem.getName());
+                    }
+                })
+                .show();
+    }
+
     /***********************************************************************************************
      * AsyncTask classes
      ***********************************************************************************************/
@@ -464,7 +486,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
     }
-
+    
     @SuppressLint("StaticFieldLeak")
     private class DeleteFilesTask extends AsyncTask<List, Void, Void> {
 
