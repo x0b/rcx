@@ -139,11 +139,17 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
-    public void selectAll() {
-        isInSelectMode = true;
-        selectedItems.clear();
-        selectedItems.addAll(files);
-        listener.onFilesSelected(true);
+    public void toggleSelectAll() {
+        if (selectedItems.size() == files.size()) {
+            isInSelectMode = false;
+            selectedItems.clear();
+            listener.onFilesSelected(false);
+        } else {
+            isInSelectMode = true;
+            selectedItems.clear();
+            selectedItems.addAll(files);
+            listener.onFilesSelected(true);
+        }
         notifyDataSetChanged();
     }
 

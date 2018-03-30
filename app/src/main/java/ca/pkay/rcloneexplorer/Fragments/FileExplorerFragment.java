@@ -179,7 +179,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             return true;
         }
         if (id == R.id.action_select_all) {
-            recyclerViewAdapter.selectAll();
+            recyclerViewAdapter.toggleSelectAll();
         }
 
         return super.onOptionsItemSelected(item);
