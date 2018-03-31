@@ -1,14 +1,17 @@
 package ca.pkay.rcloneexplorer.Items;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class FileItem {
+public class FileItem implements Parcelable {
 
     private String remote;
     private String path;
@@ -29,6 +32,29 @@ public class FileItem {
         this.humanReadableModTime = modTimeToHumanReadable(modTime);
         this.isDir = isDir;
     }
+
+    protected FileItem(Parcel in) {
+        remote = in.readString();
+        path = in.readString();
+        name = in.readString();
+        size = in.readLong();
+        humanReadableSize = in.readString();
+        modTime = in.readLong();
+        humanReadableModTime = in.readString();
+        isDir = in.readByte() != 0;
+    }
+
+    public static final Creator<FileItem> CREATOR = new Creator<FileItem>() {
+        @Override
+        public FileItem createFromParcel(Parcel in) {
+            return new FileItem(in);
+        }
+
+        @Override
+        public FileItem[] newArray(int size) {
+            return new FileItem[size];
+        }
+    };
 
     public String getRemote() {
         return remote;
@@ -107,5 +133,22 @@ public class FileItem {
             humanReadable = "Now";
         }
         return humanReadable.toString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(remote);
+        dest.writeString(path);
+        dest.writeString(name);
+        dest.writeLong(size);
+        dest.writeString(humanReadableSize);
+        dest.writeLong(modTime);
+        dest.writeString(humanReadableModTime);
+        dest.writeByte((byte) (isDir ? 1 : 0));
     }
 }
