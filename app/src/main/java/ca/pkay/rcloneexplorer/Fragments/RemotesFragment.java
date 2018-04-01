@@ -42,7 +42,7 @@ public class RemotesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         getActivity().setTitle("Remotes");
-        rclone = new Rclone((AppCompatActivity) getActivity());
+        rclone = new Rclone(getContext());
         remotes = rclone.getRemotes();
     }
 

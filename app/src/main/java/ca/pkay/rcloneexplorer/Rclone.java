@@ -29,11 +29,11 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 public class Rclone {
 
     private final String TAG = "Rclone";
-    private AppCompatActivity activity;
+    private Context activity;
     private String rclone;
     private String rcloneConf;
 
-    public Rclone(AppCompatActivity activity) {
+    public Rclone(Context activity) {
         this.activity = activity;
 
         if (!isRcloneBinaryCreated()) {

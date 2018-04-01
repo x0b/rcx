@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer.Fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.Services.DownloadService;
 import yogesh.firzen.filelister.FileListerDialog;
 import yogesh.firzen.filelister.OnFileSelectedListener;
 
@@ -128,7 +130,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
-        rclone = new Rclone((AppCompatActivity) getActivity());
+        rclone = new Rclone(getContext());
         pathStack = new Stack<>();
         directoryCache = new HashMap<>();
 
@@ -460,7 +462,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!recyclerViewAdapter.isInSelectMode()) {
             return;
         }
-        final List<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+        final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
         File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         FileListerDialog fileListerDialog = FileListerDialog.createFileListerDialog(getContext());
         fileListerDialog.setFileFilter(FileListerDialog.FILE_FILTER.DIRECTORY_ONLY);
@@ -469,7 +471,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             @Override
             public void onFileSelected(File file, String path) {
                 recyclerViewAdapter.cancelSelection();
-                new DownloadFileTask(downloadList, path).execute();
+                Intent intent = new Intent(getContext(), DownloadService.class);
+                intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
+                intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, path);
+                intent.putExtra(DownloadService.REMOTE_ARG, remote);
+                getContext().startService(intent);
             }
         });
         fileListerDialog.show();
@@ -521,25 +527,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
     }
-
-    @SuppressLint("StaticFieldLeak")
-    private class DownloadFileTask extends AsyncTask<Void, Void, Void> {
-
-        private List<FileItem> downloadList;
-        private String downloadPath;
-
-        public DownloadFileTask(List<FileItem> downloadList, String downloadPath) {
-            this.downloadList = downloadList;
-            this.downloadPath = downloadPath;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            rclone.downloadItems(remote, downloadList, downloadPath);
-            return null;
-        }
-    }
-
+    
     @SuppressLint("StaticFieldLeak")
     private class RenameFileTask extends AsyncTask<String, Void, Void> {
 
