@@ -42,11 +42,6 @@ public class DownloadService extends IntentService {
     }
 
     @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Intent foregroundIntent = new Intent(this, DownloadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
@@ -77,7 +72,7 @@ public class DownloadService extends IntentService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, builder1.build());
+        notificationManager.notify(2, builder1.build());
     }
 
     private void setNotificationChannel() {

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/move_bar"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:layout_alignParentBottom="true"
+    android:background="@color/colorPrimary"
+    android:elevation="8dp"
+    android:visibility="gone"
+    tools:showIn="@layout/fragment_file_explorer_list"
+    tools:visibility="visible">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/cancel_move"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="Cancel"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@android:color/white"
+        android:background="?selectableItemBackgroundBorderless"
+        android:layout_gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/select_move"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="Select"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@android:color/white"
+        android:background="?selectableItemBackgroundBorderless"
+        android:layout_gravity="center_vertical"/>
+</LinearLayout>
