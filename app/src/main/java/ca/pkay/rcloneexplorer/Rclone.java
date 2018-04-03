@@ -198,6 +198,12 @@ public class Rclone {
         }
     }
 
+    public void makeDirectory(String remote, String path) {
+        String newDir = remote + ":" + path;
+        String[] command = createCommand("mkdir", newDir);
+        runCommand(command);
+    }
+
     public void moveTo(String remote, List<FileItem> moveList, String newLocation) {
         String[] command;
         String oldFilePath;

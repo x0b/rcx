@@ -12,6 +12,19 @@
     tools:showIn="@layout/fragment_file_explorer_list"
     tools:visibility="visible">
 
+    <ImageView
+        android:id="@+id/new_folder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_gravity="center_vertical"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_create_new_folder"/>
+
+
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -27,6 +40,7 @@
         android:clickable="true"
         android:focusable="true"
         android:textColor="@android:color/white"
+        android:textStyle="bold"
         android:background="?selectableItemBackgroundBorderless"
         android:layout_gravity="center_vertical"/>
 
@@ -39,6 +53,7 @@
         android:text="Select"
         android:clickable="true"
         android:focusable="true"
+        android:textStyle="bold"
         android:textColor="@android:color/white"
         android:background="?selectableItemBackgroundBorderless"
         android:layout_gravity="center_vertical"/>

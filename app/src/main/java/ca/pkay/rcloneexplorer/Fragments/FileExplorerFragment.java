@@ -256,6 +256,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 new MoveTask().execute();
             }
         });
+
+        view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCreateNewDirectory();
+            }
+        });
     }
 
     private void showSortMenu() {
@@ -541,6 +548,24 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         getActivity().findViewById(R.id.action_select_all).setVisibility(View.GONE);
     }
 
+    private void onCreateNewDirectory() {
+        new MaterialDialog.Builder(getContext())
+                .title("Create new folder")
+                .content("Please type new folder name")
+                .negativeText("Cancel")
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        if (input.toString().trim().length() == 0) {
+                            return;
+                        }
+                        String newDir = path + "/" + input.toString();
+                        new MakeDirectoryTask().execute(newDir);
+                    }
+                })
+                .show();
+    }
+
     /***********************************************************************************************
      * AsyncTask classes
      ***********************************************************************************************/
@@ -681,6 +706,33 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
             swipeRefreshLayout.setRefreshing(false);
 
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class MakeDirectoryTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String newDir = strings[0];
+            rclone.makeDirectory(remote, newDir);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            swipeRefreshLayout.setRefreshing(false);
+            if (null != fetchDirectoryTask) {
+                fetchDirectoryTask.cancel(true);
+            }
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
     }
