@@ -26,4 +26,7 @@
 
     <include
         layout="@layout/bottom_bar"/>
+
+    <include
+        layout="@layout/move_bar"/>
 </RelativeLayout>

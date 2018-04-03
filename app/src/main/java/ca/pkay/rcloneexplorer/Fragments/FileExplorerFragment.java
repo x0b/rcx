@@ -13,10 +13,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -59,6 +57,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private List<FileItem> directoryContent;
     private Stack<String> pathStack;
     private Map<String, List<FileItem>> directoryCache;
+    private List<FileItem> moveList;
     private BreadcrumbView breadcrumbView;
     private Rclone rclone;
     private String remote;
@@ -67,7 +66,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private AsyncTask fetchDirectoryTask;
+    private Boolean isRunning;
     private SortOrder sortOrder;
+    private Boolean isInMoveMode;
 
     private enum SortOrder {
         AlphaDescending(1),
@@ -133,8 +134,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
         directoryCache = new HashMap<>();
-
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        isInMoveMode = false;
     }
 
     @Nullable
@@ -163,6 +165,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         setBottomBarClickListeners(view);
 
+        isRunning = true;
         return view;
     }
 
@@ -198,7 +201,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
 
-    private void setBottomBarClickListeners(View view) {
+    private void setBottomBarClickListeners(final View view) {
         view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,7 +212,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("PKAY", "Move file clicked");
+                onMoveClicked();
             }
         });
 
@@ -224,6 +227,33 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             @Override
             public void onClick(View view) {
                 onDeleteClicked();
+            }
+        });
+
+        view.findViewById(R.id.cancel_move).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().setTitle(remoteType);
+                recyclerViewAdapter.setMoveMode(false);
+                isInMoveMode = false;
+                view.findViewById(R.id.move_bar).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+                recyclerViewAdapter.refreshData();
+            }
+        });
+
+        view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().setTitle(remoteType);
+                view.findViewById(R.id.move_bar).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+                recyclerViewAdapter.setMoveMode(false);
+                isInMoveMode = false;
+                String oldPath = moveList.get(0).getPath();
+                int index = oldPath.lastIndexOf(moveList.get(0).getName());
+                directoryCache.remove(moveList.get(0).getPath().substring(0, index - 1));
+                new MoveTask().execute();
             }
         });
     }
@@ -329,19 +359,24 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setVisibility(View.GONE);
         getActivity().setTitle(originalToolbarTitle);
         listener = null;
+        isRunning = false;
     }
 
     public boolean onBackButtonPressed() {
+        // TODO cancel isInMoveMode
         if (recyclerViewAdapter.isInSelectMode()) {
             recyclerViewAdapter.cancelSelection();
         } else if (pathStack.isEmpty() || directoryCache.isEmpty()) {
             return false;
-        } else {
-            fetchDirectoryTask.cancel(true);
-            path = pathStack.pop();
+        }
+        fetchDirectoryTask.cancel(true);
+        breadcrumbView.removeLastCrumb();
+        path = pathStack.pop();
+        if (directoryCache.containsKey(path)) {
             directoryContent = directoryCache.get(path);
-            breadcrumbView.removeLastCrumb();
             recyclerViewAdapter.newData(directoryContent);
+        } else {
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
         return true;
     }
@@ -364,6 +399,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (directoryCache.containsKey(fileItem.getPath())) {
             path = fileItem.getPath();
             directoryContent = directoryCache.get(path);
+            sortDirectory();
             recyclerViewAdapter.newData(directoryContent);
             swipeRefreshLayout.setRefreshing(false);
             return;
@@ -381,7 +417,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (numOfSelected > 0) { // something is selected
             getActivity().setTitle(numOfSelected + " selected");
             getActivity().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
-        } else {
+            if (numOfSelected > 1) {
+                getActivity().findViewById(R.id.file_rename).setAlpha(.5f);
+                getActivity().findViewById(R.id.file_rename).setClickable(false);
+            } else {
+                getActivity().findViewById(R.id.file_rename).setAlpha(1f);
+                getActivity().findViewById(R.id.file_rename).setClickable(true);
+            }
+        } else if (!isInMoveMode) {
             getActivity().setTitle(remoteType);
             getActivity().findViewById(R.id.bottom_bar).setVisibility(View.GONE);
         }
@@ -401,9 +444,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         while (!pathStack.pop().equals(path)) {
             // pop stack until we find path
         }
-        directoryContent = directoryCache.get(path);
         breadcrumbView.removeCrumbsUpTo(path);
-        recyclerViewAdapter.newData(directoryContent);
+        if (directoryCache.containsKey(path)) {
+            directoryContent = directoryCache.get(path);
+            recyclerViewAdapter.newData(directoryContent);
+        } else {
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+        }
     }
 
     private void onDeleteClicked() {
@@ -481,6 +528,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fileListerDialog.show();
     }
 
+    private void onMoveClicked() {
+        if (recyclerViewAdapter.getNumberOfSelectedItems() < 1) {
+            return;
+        }
+        moveList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+        recyclerViewAdapter.cancelSelection();
+        recyclerViewAdapter.setMoveMode(true);
+        isInMoveMode = true;
+        getActivity().setTitle("Select destination");
+        getActivity().findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.action_select_all).setVisibility(View.GONE);
+    }
+
     /***********************************************************************************************
      * AsyncTask classes
      ***********************************************************************************************/
@@ -549,12 +609,46 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if (!isRunning) {
+                return;
+            }
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
             }
             swipeRefreshLayout.setRefreshing(false);
 
             fetchDirectoryTask = new FetchDirectoryContent().execute();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class MoveTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            rclone.moveTo(remote, moveList, path);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (!isRunning) {
+                return;
+            }
+            if (null != fetchDirectoryTask) {
+                fetchDirectoryTask.cancel(true);
+            }
+            swipeRefreshLayout.setRefreshing(false);
+
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            moveList.clear();
         }
     }
     
@@ -579,6 +673,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if (!isRunning) {
+                return;
+            }
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
             }

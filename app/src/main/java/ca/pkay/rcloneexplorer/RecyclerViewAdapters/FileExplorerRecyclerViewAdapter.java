@@ -19,6 +19,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private OnClickListener listener;
     private Boolean isInSelectMode;
     private List<FileItem> selectedItems;
+    private Boolean isInMoveMode;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -31,6 +32,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         this.listener = listener;
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
+        isInMoveMode = false;
     }
 
     @Override
@@ -68,6 +70,15 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else {
             holder.view.setBackgroundColor(0x00000000);
         }
+        if (isInMoveMode) {
+            if (item.isDir()) {
+                holder.view.setAlpha(1f);
+            } else {
+                holder.view.setAlpha(.5f);
+            }
+        } else if (holder.view.getAlpha() == .5f) {
+            holder.view.setAlpha(1f);
+        }
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +94,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                onLongClickAction(item, holder);
+                if (!isInMoveMode) {
+                    onLongClickAction(item, holder);
+                }
                 return true;
             }
         });
@@ -119,6 +132,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         notifyDataSetChanged();
     }
 
+    public void refreshData() {
+        notifyDataSetChanged();
+    }
+
+    public void setMoveMode(Boolean mode) {
+        isInMoveMode = mode;
+    }
+
     public Boolean isInSelectMode() {
         return isInSelectMode;
     }
@@ -134,12 +155,15 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private void onClickAction(FileItem item) {
         if (item.isDir() && null != listener) {
             listener.onDirectoryClicked(item);
-        } else if (!item.isDir() && null != listener) {
+        } else if (!item.isDir() && !isInMoveMode && null != listener) {
             listener.onFileClicked(item);
         }
     }
 
     public void toggleSelectAll() {
+        if (null == files) {
+            return;
+        }
         if (selectedItems.size() == files.size()) {
             isInSelectMode = false;
             selectedItems.clear();

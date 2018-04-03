@@ -9,7 +9,8 @@
     android:background="@color/colorPrimary"
     android:elevation="8dp"
     android:visibility="gone"
-    tools:showIn="@layout/fragment_file_explorer_list">
+    tools:showIn="@layout/fragment_file_explorer_list"
+    tools:visibility="visible">
 
     <Space
         android:layout_width="0dp"

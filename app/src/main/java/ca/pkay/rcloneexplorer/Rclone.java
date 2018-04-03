@@ -198,6 +198,19 @@ public class Rclone {
         }
     }
 
+    public void moveTo(String remote, List<FileItem> moveList, String newLocation) {
+        String[] command;
+        String oldFilePath;
+        String newFilePath;
+
+        for (FileItem fileItem : moveList) {
+            oldFilePath = remote + ":" + fileItem.getPath();
+            newFilePath = remote + ":" + newLocation + "/" + fileItem.getName();
+            command = createCommand("moveto", oldFilePath, newFilePath);
+            runCommand(command);
+        }
+    }
+
     public void moveTo(String remote, String oldFile, String newFile) {
         String oldFilePath = remote + ":" + oldFile;
         String newFilePath = remote + ":" + newFile;
