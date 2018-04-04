@@ -296,7 +296,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 isInMoveMode = false;
                 String oldPath = moveList.get(0).getPath();
                 int index = oldPath.lastIndexOf(moveList.get(0).getName());
-                directoryCache.remove(moveList.get(0).getPath().substring(0, index - 1));
+                if (index > 0) {
+                    directoryCache.remove(moveList.get(0).getPath().substring(0, index - 1));
+                } else {
+                    directoryCache.remove("//" + remote);
+                }
                 new MoveTask().execute();
             }
         });
@@ -526,6 +530,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void hideBottomBar() {
         View bottomBar = getView().findViewById(R.id.bottom_bar);
+        if (bottomBar.getVisibility() != View.VISIBLE) {
+            return;
+        }
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out_animation);
         bottomBar.setAnimation(animation);
         bottomBar.setVisibility(View.GONE);

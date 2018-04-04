@@ -139,7 +139,6 @@ public class Rclone {
             try {
                 JSONObject jsonObject = results.getJSONObject(i);
                 String filePath = (path.compareTo("//" + remote) == 0) ? "" : path + "/";
-                //String filePath = (path != null) ? path + "/" : "";
                 filePath += jsonObject.getString("Path");
                 String fileName = jsonObject.getString("Name");
                 long fileSize = jsonObject.getLong("Size");
@@ -211,7 +210,7 @@ public class Rclone {
 
         for (FileItem fileItem : moveList) {
             oldFilePath = remote + ":" + fileItem.getPath();
-            newFilePath = remote + ":" + newLocation + "/" + fileItem.getName();
+            newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + fileItem.getName() : remote + ":" + newLocation + "/" + fileItem.getName();
             command = createCommand("moveto", oldFilePath, newFilePath);
             runCommand(command);
         }
