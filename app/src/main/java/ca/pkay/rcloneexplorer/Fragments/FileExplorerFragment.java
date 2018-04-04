@@ -21,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -274,7 +276,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 getActivity().setTitle(remoteType);
                 recyclerViewAdapter.setMoveMode(false);
                 isInMoveMode = false;
-                view.findViewById(R.id.move_bar).setVisibility(View.GONE);
+                hideMoveBar();
+                fab.show();
+                fab.setVisibility(View.VISIBLE);
                 getActivity().findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
                 recyclerViewAdapter.refreshData();
             }
@@ -284,7 +288,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             @Override
             public void onClick(View v) {
                 getActivity().setTitle(remoteType);
-                view.findViewById(R.id.move_bar).setVisibility(View.GONE);
+                hideMoveBar();
+                fab.show();
+                fab.setVisibility(View.VISIBLE);
                 getActivity().findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
                 recyclerViewAdapter.setMoveMode(false);
                 isInMoveMode = false;
@@ -465,7 +471,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         if (numOfSelected > 0) { // something is selected
             getActivity().setTitle(numOfSelected + " selected");
-            getActivity().findViewById(R.id.bottom_bar).setVisibility(View.VISIBLE);
+            showBottomBar();
+            fab.hide();
+            fab.setVisibility(View.INVISIBLE);
             if (numOfSelected > 1) {
                 getActivity().findViewById(R.id.file_rename).setAlpha(.5f);
                 getActivity().findViewById(R.id.file_rename).setClickable(false);
@@ -475,16 +483,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         } else if (!isInMoveMode) {
             getActivity().setTitle(remoteType);
-            getActivity().findViewById(R.id.bottom_bar).setVisibility(View.GONE);
+            hideBottomBar();
+            fab.show();
+            fab.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onBreadCrumbClicked(String path) {
+        if (fab.isFabMenuOpen()) {
+            fab.closeOptionsMenu();
+        }
         if (this.path.equals(path)) {
             return;
         }
-
         if (null != fetchDirectoryTask) {
             fetchDirectoryTask.cancel(true);
         }
@@ -500,6 +512,30 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
+    }
+
+    private void showBottomBar() {
+        View bottomBar = getView().findViewById(R.id.bottom_bar);
+        if (bottomBar.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        bottomBar.setVisibility(View.VISIBLE);
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in_animation);
+        bottomBar.startAnimation(animation);
+    }
+
+    private void hideBottomBar() {
+        View bottomBar = getView().findViewById(R.id.bottom_bar);
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out_animation);
+        bottomBar.setAnimation(animation);
+        bottomBar.setVisibility(View.GONE);
+    }
+
+    private void hideMoveBar() {
+        View moveBar = getView().findViewById(R.id.move_bar);
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out_animation);
+        moveBar.setAnimation(animation);
+        moveBar.setVisibility(View.GONE);
     }
 
     private void onDeleteClicked() {
@@ -588,6 +624,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         getActivity().setTitle("Select destination");
         getActivity().findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.action_select_all).setVisibility(View.GONE);
+        fab.hide();
+        fab.setVisibility(View.INVISIBLE);
     }
 
     private void onCreateNewDirectory() {
