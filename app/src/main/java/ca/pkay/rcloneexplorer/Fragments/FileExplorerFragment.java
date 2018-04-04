@@ -23,6 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
+import com.leinardi.android.speeddial.SpeedDialView;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
@@ -69,6 +72,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Boolean isRunning;
     private SortOrder sortOrder;
     private Boolean isInMoveMode;
+    private SpeedDialView fab;
 
     private enum SortOrder {
         AlphaDescending(1),
@@ -158,6 +162,24 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        fab = view.findViewById(R.id.fab);
+        fab.setSpeedDialOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
+        fab.setMainFabOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fab.isFabMenuOpen()) {
+                    fab.closeOptionsMenu();
+                }
+            }
+        });
+        fab.addFabOptionItem(new SpeedDialActionItem.Builder(R.id.fab_upload, R.drawable.ic_file_upload)
+                .setLabel("Upload Files")
+                .create());
+        fab.addFabOptionItem(new SpeedDialActionItem.Builder(R.id.fab_add_folder, R.drawable.ic_create_new_folder)
+                .setLabel("New Folder")
+                .create());
+        setFabClickListeners();
+
         breadcrumbView = getActivity().findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
@@ -199,6 +221,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+    }
+
+    private void setFabClickListeners() {
+        fab.setOptionFabSelectedListener(new SpeedDialView.OnOptionFabSelectedListener() {
+            @Override
+            public void onOptionFabSelected(SpeedDialActionItem speedDialActionItem) {
+                fab.closeOptionsMenu();
+                switch (speedDialActionItem.getId()) {
+                    case R.id.fab_add_folder:
+                        onCreateNewDirectory();
+                        break;
+                    case R.id.fab_upload:
+                        break;
+                }
+            }
+        });
     }
 
     private void setBottomBarClickListeners(final View view) {
@@ -373,6 +411,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         // TODO cancel isInMoveMode
         if (recyclerViewAdapter.isInSelectMode()) {
             recyclerViewAdapter.cancelSelection();
+            return true;
+        } else if (fab.isFabMenuOpen()) {
+            fab.closeOptionsMenu();
+            return true;
         } else if (pathStack.isEmpty() || directoryCache.isEmpty()) {
             return false;
         }

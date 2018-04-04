@@ -27,9 +27,9 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // https://github.com/afollestad/material-dialogs
     implementation 'yogesh.firzen:FilesLister:1.0.1.g' // https://github.com/FirzenYogesh/FileListerDialog
     implementation 'yogesh.firzen:MukkiyaSevaigal:1.0.6'
+    implementation "com.leinardi.android:speed-dial:1.0-alpha03" // https://github.com/leinardi/FloatingActionButtonSpeedDial
+    implementation 'com.shehabic.droppy:Droppy:0.6.0@aar' // https://github.com/shehabic/Droppy
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-
-    compile 'com.shehabic.droppy:Droppy:0.6.0@aar' // https://github.com/shehabic/Droppy
 }

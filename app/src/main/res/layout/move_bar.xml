@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:orientation="horizontal"
-    android:layout_alignParentBottom="true"
+    android:layout_gravity="bottom"
     android:background="@color/colorPrimary"
     android:elevation="8dp"
     android:visibility="gone"
