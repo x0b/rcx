@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
@@ -587,13 +588,18 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         final List<FileItem> deleteList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Delete " + deleteList.size() + " items?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+        String title = "Delete " + deleteList.size();
+        String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
+        title += (deleteList.size() > 1) ? " items?" : " item?";
+        new MaterialDialog.Builder(getContext())
+                .title(title)
+                .content(content)
+                .icon(getActivity().getDrawable(R.drawable.ic_warning))
+                .negativeText("Cancel")
+                .positiveText("Delete")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         recyclerViewAdapter.cancelSelection();
                         new DeleteFilesTask().execute(deleteList);
                     }

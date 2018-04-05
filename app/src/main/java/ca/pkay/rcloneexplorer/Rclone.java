@@ -194,10 +194,19 @@ public class Rclone {
     public List<Process> uploadFiles(String remote, String uploadPath, ArrayList<String> uploadList) {
         List<Process> runningProcesses = new ArrayList<>();
         Process process;
-        String path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
+        String path;
         String[] command;
 
         for (String localPath : uploadList) {
+            File file = new File(localPath);
+            if (file.isDirectory()) {
+                int index = localPath.lastIndexOf('/');
+                String dirName = localPath.substring(index + 1);
+                path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" + dirName: remote + ":" + uploadPath + "/" + dirName;
+            } else {
+                path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
+            }
+
             command = createCommand("copy", localPath, path);
 
             try {
