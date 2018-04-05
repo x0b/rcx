@@ -24,6 +24,7 @@ public class UploadService extends IntentService {
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
     private Rclone rclone;
+    private Process process;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -60,7 +61,13 @@ public class UploadService extends IntentService {
         final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        rclone.uploadFiles(remote, uploadPath, localPath);
+        process = rclone.uploadFiles(remote, uploadPath, localPath);
+
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         stopForeground(true);
 
@@ -71,6 +78,14 @@ public class UploadService extends IntentService {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(20, builder1.build());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (process != null) {
+            process.destroy();
+        }
     }
 
     private void setNotificationChannel() {

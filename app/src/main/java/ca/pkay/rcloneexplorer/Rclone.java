@@ -184,8 +184,6 @@ public class Rclone {
             try {
                 process = Runtime.getRuntime().exec(command);
                 runningProcesses.add(process);
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -193,10 +191,18 @@ public class Rclone {
         return  runningProcesses;
     }
 
-    public void uploadFiles(String remote, String uploadPath, String localPath) {
+    public Process uploadFiles(String remote, String uploadPath, String localPath) {
+        Process process;
         String path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
         String[] command = createCommand("copy", localPath, path);
-        runCommand(command);
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            return process;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void deleteItems(String remote, List<FileItem> deleteList) {
