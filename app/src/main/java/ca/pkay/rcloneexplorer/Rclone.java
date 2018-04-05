@@ -171,15 +171,26 @@ public class Rclone {
         return remoteItemList;
     }
 
-    public void downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
+    public List<Process> downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
+        List<Process> runningProcesses = new ArrayList<>();
+        Process process;
         String[] command;
         String remoteFilePath;
 
         for (FileItem item : downloadList) {
             remoteFilePath = remote + ":" + item.getPath();
             command = createCommand("copy", remoteFilePath, downloadPath);
-            runCommand(command);
+
+            try {
+                process = Runtime.getRuntime().exec(command);
+                runningProcesses.add(process);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return  runningProcesses;
     }
 
     public void uploadFiles(String remote, String uploadPath, String localPath) {

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class DownloadService extends IntentService {
     public static final String DOWNLOAD_PATH_ARG = "ca.pkay.rcexplorer.download_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.download_service.arg3";
     private Rclone rclone;
+    private List<Process> runningProcesses;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -62,7 +64,15 @@ public class DownloadService extends IntentService {
         final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        rclone.downloadItems(remote, downloadList, downloadPath);
+        runningProcesses = rclone.downloadItems(remote, downloadList, downloadPath);
+
+        for (Process process : runningProcesses) {
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         stopForeground(true);
 
@@ -73,6 +83,14 @@ public class DownloadService extends IntentService {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(2, builder1.build());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (Process process : runningProcesses) {
+            process.destroy();
+        }
     }
 
     private void setNotificationChannel() {
