@@ -77,7 +77,7 @@ public class DownloadService extends IntentService {
         stopForeground(true);
 
         NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_file_download_notification)
+                .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setContentTitle("Download complete")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
