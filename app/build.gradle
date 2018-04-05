@@ -18,6 +18,10 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.0'
@@ -29,6 +33,7 @@ dependencies {
     implementation 'yogesh.firzen:MukkiyaSevaigal:1.0.6'
     implementation "com.leinardi.android:speed-dial:1.0-alpha03" // https://github.com/leinardi/FloatingActionButtonSpeedDial
     implementation 'com.shehabic.droppy:Droppy:0.6.0@aar' // https://github.com/shehabic/Droppy
+    implementation 'ru.bartwell:exfilepicker:2.4' // https://github.com/bartwell/ExFilePicker
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

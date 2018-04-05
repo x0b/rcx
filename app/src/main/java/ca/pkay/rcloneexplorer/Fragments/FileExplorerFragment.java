@@ -1,12 +1,10 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,6 +49,8 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import ru.bartwell.exfilepicker.ExFilePicker;
+import ru.bartwell.exfilepicker.data.ExFilePickerResult;
 import yogesh.firzen.filelister.FileListerDialog;
 import yogesh.firzen.filelister.OnFileSelectedListener;
 
@@ -61,7 +61,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
-    private static final int READ_REQUEST_CODE = 62;
+    private static final int EX_FILE_PICKER_UPLOAD_RESULT = 186;
     private String originalToolbarTitle;
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
@@ -201,14 +201,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // result from file picker (for importing config file)
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Uri uri;
-            if (data != null && data.getData() != null) {
-                uri = data.getData();
-                int index = uri.getPath().indexOf(':');
-                String localPath = uri.getPath().substring(index + 1);
+        if (requestCode == EX_FILE_PICKER_UPLOAD_RESULT) {
+            ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
+            if (result != null && result.getCount() > 0) {
+                String localPath = result.getPath() + result.getNames().get(0);
                 Intent intent = new Intent(getContext(), UploadService.class);
                 intent.putExtra(UploadService.LOCAL_PATH_ARG, localPath);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
@@ -685,11 +681,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void onUploadFiles() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-
-        startActivityForResult(intent, READ_REQUEST_CODE);
+        ExFilePicker exFilePicker = new ExFilePicker();
+        exFilePicker.setUseFirstItemAsUpEnabled(true);
+        exFilePicker.setChoiceType(ExFilePicker.ChoiceType.ALL);
+        exFilePicker.start(this, EX_FILE_PICKER_UPLOAD_RESULT);
     }
 
     /***********************************************************************************************
