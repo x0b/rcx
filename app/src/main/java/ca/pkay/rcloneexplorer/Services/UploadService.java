@@ -10,6 +10,9 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
 import ca.pkay.rcloneexplorer.R;
@@ -24,7 +27,7 @@ public class UploadService extends IntentService {
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
     private Rclone rclone;
-    private Process process;
+    private List<Process> runningProcesses;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -58,16 +61,19 @@ public class UploadService extends IntentService {
         startForeground(10, builder.build());
 
         final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
-        final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
+        final ArrayList<String> uploadList = intent.getStringArrayListExtra(LOCAL_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        process = rclone.uploadFiles(remote, uploadPath, localPath);
+        runningProcesses = rclone.uploadFiles(remote, uploadPath, uploadList);
 
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (Process process : runningProcesses) {
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
 
         stopForeground(true);
 
@@ -83,7 +89,7 @@ public class UploadService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (process != null) {
+        for (Process process : runningProcesses) {
             process.destroy();
         }
     }

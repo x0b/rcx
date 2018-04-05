@@ -202,9 +202,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (requestCode == EX_FILE_PICKER_UPLOAD_RESULT) {
             ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
             if (result != null && result.getCount() > 0) {
-                String localPath = result.getPath() + result.getNames().get(0);
+                ArrayList<String> uploadList = new ArrayList<>();
+                for (String fileName : result.getNames()) {
+                    uploadList.add(result.getPath() + fileName);
+                }
                 Intent intent = new Intent(getContext(), UploadService.class);
-                intent.putExtra(UploadService.LOCAL_PATH_ARG, localPath);
+                intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
                 intent.putExtra(UploadService.REMOTE_ARG, remote);
                 getContext().startService(intent);

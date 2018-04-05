@@ -191,18 +191,24 @@ public class Rclone {
         return  runningProcesses;
     }
 
-    public Process uploadFiles(String remote, String uploadPath, String localPath) {
+    public List<Process> uploadFiles(String remote, String uploadPath, ArrayList<String> uploadList) {
+        List<Process> runningProcesses = new ArrayList<>();
         Process process;
         String path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
-        String[] command = createCommand("copy", localPath, path);
+        String[] command;
 
-        try {
-            process = Runtime.getRuntime().exec(command);
-            return process;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        for (String localPath : uploadList) {
+            command = createCommand("copy", localPath, path);
+
+            try {
+                process = Runtime.getRuntime().exec(command);
+                runningProcesses.add(process);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+        return runningProcesses;
     }
 
     public void deleteItems(String remote, List<FileItem> deleteList) {
