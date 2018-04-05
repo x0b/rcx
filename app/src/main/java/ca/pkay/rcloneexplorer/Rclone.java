@@ -182,6 +182,12 @@ public class Rclone {
         }
     }
 
+    public void uploadFiles(String remote, String uploadPath, String localPath) {
+        String path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
+        String[] command = createCommand("copy", localPath, path);
+        runCommand(command);
+    }
+
     public void deleteItems(String remote, List<FileItem> deleteList) {
         String[] command;
         String filePath;

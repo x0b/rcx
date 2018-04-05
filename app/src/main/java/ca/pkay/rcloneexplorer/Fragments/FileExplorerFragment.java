@@ -1,10 +1,12 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +50,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
+import ca.pkay.rcloneexplorer.Services.UploadService;
 import yogesh.firzen.filelister.FileListerDialog;
 import yogesh.firzen.filelister.OnFileSelectedListener;
 
@@ -57,6 +61,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
+    private static final int READ_REQUEST_CODE = 62;
     private String originalToolbarTitle;
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
@@ -194,6 +199,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // result from file picker (for importing config file)
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri uri;
+            if (data != null && data.getData() != null) {
+                uri = data.getData();
+                int index = uri.getPath().indexOf(':');
+                String localPath = uri.getPath().substring(index + 1);
+                Intent intent = new Intent(getContext(), UploadService.class);
+                intent.putExtra(UploadService.LOCAL_PATH_ARG, localPath);
+                intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
+                intent.putExtra(UploadService.REMOTE_ARG, remote);
+                getContext().startService(intent);
+            }
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_explorer, menu);
@@ -235,6 +260,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         onCreateNewDirectory();
                         break;
                     case R.id.fab_upload:
+                        onUploadFiles();
                         break;
                 }
             }
@@ -646,11 +672,24 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         if (input.toString().trim().length() == 0) {
                             return;
                         }
-                        String newDir = path + "/" + input.toString();
+                        String newDir;
+                        if (path.equals("//" + remote)) {
+                            newDir = input.toString();
+                        } else {
+                            newDir = path + "/" + input.toString();
+                        }
                         new MakeDirectoryTask().execute(newDir);
                     }
                 })
                 .show();
+    }
+
+    private void onUploadFiles() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+
+        startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
     /***********************************************************************************************
