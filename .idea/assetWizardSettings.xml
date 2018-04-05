@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_warning" />
-                            <entry key="sourceFile" value="$USER_HOME$" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_move" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/noun_609951_cc.svg" />
                           </map>
                         </option>
                       </PersistentState>
