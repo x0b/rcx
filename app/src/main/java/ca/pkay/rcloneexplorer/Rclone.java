@@ -139,7 +139,6 @@ public class Rclone {
             try {
                 JSONObject jsonObject = results.getJSONObject(i);
                 String filePath = (path.compareTo("//" + remote) == 0) ? "" : path + "/";
-                //String filePath = (path != null) ? path + "/" : "";
                 filePath += jsonObject.getString("Path");
                 String fileName = jsonObject.getString("Name");
                 long fileSize = jsonObject.getLong("Size");
@@ -172,15 +171,53 @@ public class Rclone {
         return remoteItemList;
     }
 
-    public void downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
+    public List<Process> downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
+        List<Process> runningProcesses = new ArrayList<>();
+        Process process;
         String[] command;
         String remoteFilePath;
 
         for (FileItem item : downloadList) {
             remoteFilePath = remote + ":" + item.getPath();
             command = createCommand("copy", remoteFilePath, downloadPath);
-            runCommand(command);
+
+            try {
+                process = Runtime.getRuntime().exec(command);
+                runningProcesses.add(process);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return  runningProcesses;
+    }
+
+    public List<Process> uploadFiles(String remote, String uploadPath, ArrayList<String> uploadList) {
+        List<Process> runningProcesses = new ArrayList<>();
+        Process process;
+        String path;
+        String[] command;
+
+        for (String localPath : uploadList) {
+            File file = new File(localPath);
+            if (file.isDirectory()) {
+                int index = localPath.lastIndexOf('/');
+                String dirName = localPath.substring(index + 1);
+                path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" + dirName: remote + ":" + uploadPath + "/" + dirName;
+            } else {
+                path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
+            }
+
+            command = createCommand("copy", localPath, path);
+
+            try {
+                process = Runtime.getRuntime().exec(command);
+                runningProcesses.add(process);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return runningProcesses;
     }
 
     public void deleteItems(String remote, List<FileItem> deleteList) {
@@ -211,7 +248,7 @@ public class Rclone {
 
         for (FileItem fileItem : moveList) {
             oldFilePath = remote + ":" + fileItem.getPath();
-            newFilePath = remote + ":" + newLocation + "/" + fileItem.getName();
+            newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + fileItem.getName() : remote + ":" + newLocation + "/" + fileItem.getName();
             command = createCommand("moveto", oldFilePath, newFilePath);
             runCommand(command);
         }

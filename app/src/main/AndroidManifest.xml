@@ -23,6 +23,9 @@
             </intent-filter>
         </activity>
         <service android:name=".Services.DownloadService" />
+        <service android:name=".Services.UploadService" />
+
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
+        <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
     </application>
 </manifest>
