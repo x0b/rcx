@@ -171,6 +171,20 @@ public class Rclone {
         return remoteItemList;
     }
 
+    public Process serveHttp(String remote, String servePath) {
+        Process process;
+        String path = (servePath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + servePath;
+        String[] command = createCommand("serve http", path);
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            return process;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public List<Process> downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
         List<Process> runningProcesses = new ArrayList<>();
         Process process;
