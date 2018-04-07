@@ -165,7 +165,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, this);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, view.findViewById(R.id.empty_folder_view), this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);

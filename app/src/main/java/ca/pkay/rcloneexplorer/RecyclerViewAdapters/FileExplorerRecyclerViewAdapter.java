@@ -16,6 +16,7 @@ import ca.pkay.rcloneexplorer.R;
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private List<FileItem> files;
+    private View emptyView;
     private OnClickListener listener;
     private Boolean isInSelectMode;
     private List<FileItem> selectedItems;
@@ -27,8 +28,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFilesSelected(boolean selection);
     }
 
-    public FileExplorerRecyclerViewAdapter(List<FileItem> files, OnClickListener listener) {
+    public FileExplorerRecyclerViewAdapter(List<FileItem> files, View emptyView, OnClickListener listener) {
         this.files = files;
+        this.emptyView = emptyView;
         this.listener = listener;
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
@@ -124,11 +126,21 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         isInSelectMode = false;
         selectedItems.clear();
         listener.onFilesSelected(false);
+        if (files.isEmpty()) {
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            emptyView.setVisibility(View.INVISIBLE);
+        }
         notifyDataSetChanged();
     }
 
     public void updateData(List<FileItem> data) {
         files = data;
+        if (files.isEmpty()) {
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            emptyView.setVisibility(View.INVISIBLE);
+        }
         notifyDataSetChanged();
     }
 
