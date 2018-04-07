@@ -8,6 +8,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
+    <include
+        layout="@layout/empty_directory" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/file_explorer_srl"
         android:layout_width="match_parent"
