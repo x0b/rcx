@@ -24,6 +24,7 @@
         </activity>
         <service android:name=".Services.DownloadService" />
         <service android:name=".Services.UploadService" />
+        <service android:name=".Services.StreamingService" />
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />

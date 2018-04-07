@@ -10,30 +10,28 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
-import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
+import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
 
-public class UploadService extends IntentService {
+public class StreamingService extends IntentService {
 
-    private final String CHANNEL_ID = "ca.pkay.rcexplorer.upload_channel";
-    private final String CHANNEL_NAME = "Uploads";
-    public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
-    public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
-    public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
+    private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
+    private final String CHANNEL_NAME = "Streaming server";
+    public static final String SERVE_PATH_ARG = "ca.pkay.rcexplorer.streaming_service.arg1";
+    public static final String REMOTE_ARG = "ca.pkay.rcexplorer.streaming_service.arg2";
     private Rclone rclone;
-    private List<Process> runningProcesses;
+    private Process runningProcess;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
      */
-    public UploadService() {
-        super("ca.pkay.rcexplorer.uploadservice");
+    public StreamingService() {
+        super("ca.pkay.rcexplorer.streamingservice");
     }
 
     @Override
@@ -45,53 +43,38 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Intent foregroundIntent = new Intent(this, UploadService.class);
+        Intent foregroundIntent = new Intent(this, StreamingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
-        Intent cancelIntent = new Intent(this, UploadCancelAction.class);
+        Intent cancelIntent = new Intent(this, DownloadCancelAction.class); // TODO
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setContentTitle("Upload")
+                .setSmallIcon(android.R.drawable.stat_sys_download) // TODO
+                .setContentTitle("Streaming Service")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, "Cancel", cancelPendingIntent);
 
-        startForeground(10, builder.build());
+        startForeground(1, builder.build());
 
-        final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
-        final ArrayList<String> uploadList = intent.getStringArrayListExtra(LOCAL_PATH_ARG);
+        final String servePath = intent.getStringExtra(SERVE_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        runningProcesses = rclone.uploadFiles(remote, uploadPath, uploadList);
-
-        for (Process process : runningProcesses) {
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
+        runningProcess = rclone.serveHttp(remote, servePath);
+         try {
+             runningProcess.waitFor();
+         } catch (InterruptedException e) {
+             e.printStackTrace();
+         }
 
         stopForeground(true);
-
-        NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_upload_done)
-                .setContentTitle("Upload complete")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(20, builder1.build());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (Process process : runningProcesses) {
-            process.destroy();
-        }
+        runningProcess.destroy();
     }
 
     private void setNotificationChannel() {
@@ -99,7 +82,7 @@ public class UploadService extends IntentService {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("File uploads");
+            channel.setDescription("File downloads");
             // Register the channel with the system
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);
