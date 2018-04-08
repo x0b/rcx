@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <include
-        layout="@layout/empty_directory" />
+        layout="@layout/empty_directory_state" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/file_explorer_srl"
