@@ -14,4 +14,10 @@
         android:icon="@drawable/ic_select_all"
         android:orderInCategory="2"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_http_serve"
+        android:title="HTTP serve"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
 </menu>

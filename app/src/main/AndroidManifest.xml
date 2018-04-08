@@ -28,5 +28,6 @@
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
+        <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
     </application>
 </manifest>

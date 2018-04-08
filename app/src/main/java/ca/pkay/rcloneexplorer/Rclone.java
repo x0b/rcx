@@ -174,7 +174,7 @@ public class Rclone {
     public Process serveHttp(String remote, String servePath) {
         Process process;
         String path = (servePath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + servePath;
-        String[] command = createCommand("serve http", path);
+        String[] command = createCommand("serve", "http", path);
 
         try {
             process = Runtime.getRuntime().exec(command);

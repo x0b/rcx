@@ -48,6 +48,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
+import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ru.bartwell.exfilepicker.ExFilePicker;
 import ru.bartwell.exfilepicker.data.ExFilePickerResult;
@@ -238,15 +239,23 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_sort) {
-            showSortMenu();
-            return true;
+        switch (id) {
+            case R.id.action_sort:
+                showSortMenu();
+                return true;
+            case R.id.action_select_all:
+                recyclerViewAdapter.toggleSelectAll();
+                return true;
+            case R.id.action_http_serve:
+                Intent intent = new Intent(getContext(), StreamingService.class);
+                intent.putExtra(StreamingService.SERVE_PATH_ARG, path);
+                intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                getContext().startService(intent);
+                return true;
+                default:
+                    return super.onOptionsItemSelected(item);
         }
-        if (id == R.id.action_select_all) {
-            recyclerViewAdapter.toggleSelectAll();
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /*

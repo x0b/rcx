@@ -6,14 +6,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
-import java.util.List;
-
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
-import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.BroadcastReceivers.ServeCancelAction;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -21,9 +20,10 @@ import ca.pkay.rcloneexplorer.Rclone;
 public class StreamingService extends IntentService {
 
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
-    private final String CHANNEL_NAME = "Streaming server";
+    private final String CHANNEL_NAME = "Streaming service";
     public static final String SERVE_PATH_ARG = "ca.pkay.rcexplorer.streaming_service.arg1";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.streaming_service.arg2";
+    public static final String SHOW_NOTIFICATION_TEXT = "ca.pkay.rcexplorer.streaming_service.arg3";
     private Rclone rclone;
     private Process runningProcess;
 
@@ -43,23 +43,33 @@ public class StreamingService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        final String servePath = intent.getStringExtra(SERVE_PATH_ARG);
+        final String remote = intent.getStringExtra(REMOTE_ARG);
+        final Boolean showNotificationText = intent.getBooleanExtra(SHOW_NOTIFICATION_TEXT, false);
+
         Intent foregroundIntent = new Intent(this, StreamingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
-        Intent cancelIntent = new Intent(this, DownloadCancelAction.class); // TODO
+        Intent cancelIntent = new Intent(this, ServeCancelAction.class);
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_download) // TODO
+                .setSmallIcon(R.drawable.ic_http)
                 .setContentTitle("Streaming Service")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, "Cancel", cancelPendingIntent);
 
-        startForeground(1, builder.build());
+        if (showNotificationText) {
+            Uri uri = Uri.parse("http://127.0.0.1:8080");
+            Intent webPageIntent = new Intent(Intent.ACTION_VIEW, uri);
+            webPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent webPagePendingIntent = PendingIntent.getActivity(this, 0, webPageIntent, 0);
+            builder.setContentIntent(webPagePendingIntent);
+            builder.setContentText("Serving on http://127.0.0.1:8080");
+        }
 
-        final String servePath = intent.getStringExtra(SERVE_PATH_ARG);
-        final String remote = intent.getStringExtra(REMOTE_ARG);
+        startForeground(1, builder.build());
 
         runningProcess = rclone.serveHttp(remote, servePath);
          try {
@@ -82,7 +92,7 @@ public class StreamingService extends IntentService {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("File downloads");
+            channel.setDescription("Streaming service");
             // Register the channel with the system
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);
