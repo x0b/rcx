@@ -205,6 +205,23 @@ public class Rclone {
         return  runningProcesses;
     }
 
+    public Process downloadItems(String remote, FileItem downloadItem, String downloadPath) {
+        Process process;
+        String[] command;
+        String remoteFilePath;
+
+        remoteFilePath = remote + ":" + downloadItem.getPath();
+        command = createCommand("copy", remoteFilePath, downloadPath);
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            return process;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public List<Process> uploadFiles(String remote, String uploadPath, ArrayList<String> uploadList) {
         List<Process> runningProcesses = new ArrayList<>();
         Process process;

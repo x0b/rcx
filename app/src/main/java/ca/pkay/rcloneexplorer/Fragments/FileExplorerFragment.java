@@ -4,14 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.MimeTypeMap;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -29,6 +33,7 @@ import com.leinardi.android.speeddial.SpeedDialView;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +64,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private static final int EX_FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
+    private static final int STREAMING_INTENT_RESULT = 468;
     private String originalToolbarTitle;
     private OnFileClickListener listener;
     private List<FileItem> directoryContent;
@@ -225,6 +231,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(DownloadService.REMOTE_ARG, remote);
                 getContext().startService(intent);
             }
+        } else if (requestCode == STREAMING_INTENT_RESULT) {
+            Intent serveIntent = new Intent(getContext(), StreamingService.class);
+            getContext().stopService(serveIntent);
         }
     }
 
@@ -462,7 +471,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     public boolean onBackButtonPressed() {
-        // TODO cancel isInMoveMode
         if (recyclerViewAdapter.isInSelectMode()) {
             recyclerViewAdapter.cancelSelection();
             return true;
@@ -486,7 +494,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public void onFileClicked(FileItem fileItem) {
-        listener.onFileClicked(fileItem);
+        String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
+        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        if (type != null && (type.startsWith("video/") || type.startsWith("audio/"))) {
+            // stream video or audio
+            new StreamTask().execute(fileItem);
+        } else if (fileItem.getSize() < 500000000){
+            // download and open
+            new DownloadAndOpen().execute(fileItem);
+        } else {
+            new MaterialDialog.Builder(getContext())
+                    .title("Max file size for streaming exceeded")
+                    .neutralText("Okay")
+                    .show();
+        }
     }
 
     @Override
@@ -870,6 +891,103 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 fetchDirectoryTask.cancel(true);
             }
             fetchDirectoryTask = new FetchDirectoryContent().execute();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class DownloadAndOpen extends AsyncTask<FileItem, Void, Boolean> {
+
+        private MaterialDialog materialDialog;
+        private String fileLocation;
+        private Process process;
+
+        private void cancelProcess() {
+            process.destroy();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            materialDialog = new MaterialDialog.Builder(getContext())
+                    .title("Loading file")
+                    .content("Please wait")
+                    .cancelable(false)
+                    .progress(true, 0)
+                    .negativeText("Cancel")
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            cancelProcess();
+                            cancel(true);
+                        }
+                    })
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(FileItem... fileItems) {
+            FileItem fileItem = fileItems[0];
+            File file = getContext().getExternalCacheDir();
+            String saveLocation = file.getAbsolutePath();
+            fileLocation = saveLocation + "/" + fileItem.getName();
+
+            process = rclone.downloadItems(remote, fileItem, saveLocation);
+
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return process.exitValue() == 0;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean status) {
+            super.onPostExecute(status);
+            materialDialog.cancel();
+            if (!status) {
+                return;
+            }
+            Uri sharedFileUri = FileProvider.getUriForFile(getContext(), "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
+            Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
+            String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
+            String type = getContext().getContentResolver().getType(sharedFileUri);
+            if (extension == null || extension.trim().isEmpty()) {
+                intent.setDataAndType(sharedFileUri, "*/*");
+            } else if (type == null || type.equals("application/octet-stream")) {
+                intent.setDataAndType(sharedFileUri, "*/*");
+            }
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+        }
+    }
+
+    private class StreamTask extends AsyncTask<FileItem, Void, Void> {
+
+        @Override
+        protected Void doInBackground(FileItem... fileItems) {
+            FileItem fileItem = fileItems[0];
+
+            Intent serveIntent = new Intent(getContext(), StreamingService.class);
+            serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
+            serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
+            serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
+            getContext().startService(serveIntent);
+
+            String url = "http://127.0.0.1:8080/" + fileItem.getName();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
+            String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            if (type.startsWith("audio/")) {
+                intent.setDataAndType(Uri.parse(url), "audio/*");
+            } else if (type.startsWith("video/")) {
+                intent.setDataAndType(Uri.parse(url), "video/*");
+            } else {
+                intent.setData(Uri.parse(url));
+            }
+            startActivityForResult(intent, STREAMING_INTENT_RESULT);
+            return null;
         }
     }
 }
