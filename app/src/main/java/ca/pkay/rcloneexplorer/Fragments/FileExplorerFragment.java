@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -11,10 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,7 +29,6 @@ import com.leinardi.android.speeddial.SpeedDialView;
 import com.shehabic.droppy.DroppyClickCallbackInterface;
 import com.shehabic.droppy.DroppyMenuPopup;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +37,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -80,6 +77,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private SortOrder sortOrder;
     private Boolean isInMoveMode;
     private SpeedDialView fab;
+    private NetworkStateReceiver networkStateReceiver;
 
     private enum SortOrder {
         AlphaDescending(1),
@@ -142,6 +140,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
+        networkStateReceiver = ((MainActivity)getActivity()).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
         directoryCache = new HashMap<>();

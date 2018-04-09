@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,6 +31,7 @@ import android.view.MenuItem;
 
 import java.io.IOException;
 
+import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Rclone rclone;
     private Fragment fragment;
+    private NetworkStateReceiver networkStateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,12 @@ public class MainActivity extends AppCompatActivity
         requestPermissions();
 
         rclone = new Rclone(this);
+
+        networkStateReceiver = new NetworkStateReceiver();
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStateReceiver, intentFilter);
+
         startRemotesFragment();
     }
 
@@ -95,6 +105,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkStateReceiver);
     }
 
     @Override
@@ -127,6 +143,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public NetworkStateReceiver getNetworkStateReceiver() {
+        return networkStateReceiver;
     }
 
     private void startRemotesFragment() {
