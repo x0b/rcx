@@ -36,6 +36,8 @@
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:fontFamily="sans-serif"
                 android:textSize="16sp"
+                android:ellipsize="middle"
+                android:singleLine="true"
                 tools:text="Test File"/>
 
             <LinearLayout

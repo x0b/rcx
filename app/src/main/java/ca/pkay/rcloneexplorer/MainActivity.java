@@ -29,6 +29,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
 import java.io.IOException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
@@ -110,6 +111,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        File dir = getExternalCacheDir();
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String aChildren : children) {
+                new File(dir, aChildren).delete();
+            }
+        }
         unregisterReceiver(networkStateReceiver);
     }
 
