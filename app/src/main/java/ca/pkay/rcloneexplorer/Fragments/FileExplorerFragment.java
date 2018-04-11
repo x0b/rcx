@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -84,6 +85,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Boolean isInMoveMode;
     private SpeedDialView fab;
     private NetworkStateReceiver networkStateReceiver;
+    private Context context;
 
     private enum SortOrder {
         AlphaDescending(1),
@@ -143,7 +145,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         getActivity().setTitle(remoteType);
         setHasOptionsMenu(true);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
         networkStateReceiver = ((MainActivity)getActivity()).getNetworkStateReceiver();
@@ -217,7 +219,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
                 intent.putExtra(UploadService.REMOTE_ARG, remote);
-                getContext().startService(intent);
+                context.startService(intent);
             }
         } else if (requestCode == EX_FILE_PICKER_DOWNLOAD_RESULT) {
             ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
@@ -229,11 +231,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
                 intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
                 intent.putExtra(DownloadService.REMOTE_ARG, remote);
-                getContext().startService(intent);
+                context.startService(intent);
             }
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
-            getContext().stopService(serveIntent);
+            context.stopService(serveIntent);
         }
     }
 
@@ -259,7 +261,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(StreamingService.SERVE_PATH_ARG, path);
                 intent.putExtra(StreamingService.REMOTE_ARG, remote);
                 intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                getContext().startService(intent);
+                context.startService(intent);
                 return true;
                 default:
                     return super.onOptionsItemSelected(item);
@@ -415,7 +417,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         recyclerViewAdapter.updateData(directoryContent);
         if (null != sortOrder) {
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder.getValue()).apply();
         }
     }
@@ -452,6 +454,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof OnFileClickListener) {
             listener = (OnFileClickListener) context;
         } else {
@@ -503,7 +506,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             // download and open
             new DownloadAndOpen().execute(fileItem);
         } else {
-            new MaterialDialog.Builder(getContext())
+            new MaterialDialog.Builder(context)
                     .title("Max file size for streaming exceeded")
                     .neutralText("Okay")
                     .show();
@@ -539,7 +542,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
 
         if (numOfSelected > 0) { // something is selected
-            getActivity().setTitle(numOfSelected + " selected");
+            ((FragmentActivity) context).setTitle(numOfSelected + " selected");
             showBottomBar();
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
@@ -620,7 +623,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         String title = "Delete " + deleteList.size();
         String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
         title += (deleteList.size() > 1) ? " items?" : " item?";
-        new MaterialDialog.Builder(getContext())
+        new MaterialDialog.Builder(context)
                 .title(title)
                 .content(content)
                 .icon(getActivity().getDrawable(R.drawable.ic_warning))
@@ -644,7 +647,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         List<FileItem> list = recyclerViewAdapter.getSelectedItems();
         final FileItem renameItem = list.get(0);
 
-        new MaterialDialog.Builder(getContext())
+        new MaterialDialog.Builder(context)
                 .title("Rename a file")
                 .content("Please type new file name")
                 .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
@@ -694,7 +697,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void onCreateNewDirectory() {
-        new MaterialDialog.Builder(getContext())
+        new MaterialDialog.Builder(context)
                 .title("Create new folder")
                 .content("Please type new folder name")
                 .negativeText("Cancel")
@@ -908,7 +911,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            materialDialog = new MaterialDialog.Builder(getContext())
+            materialDialog = new MaterialDialog.Builder(context)
                     .title("Loading file")
                     .content("Please wait")
                     .cancelable(false)
@@ -927,7 +930,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(FileItem... fileItems) {
             FileItem fileItem = fileItems[0];
-            File file = getContext().getExternalCacheDir();
+            File file = context.getExternalCacheDir();
             String saveLocation = file.getAbsolutePath();
             fileLocation = saveLocation + "/" + fileItem.getName();
 
@@ -949,10 +952,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!status) {
                 return;
             }
-            Uri sharedFileUri = FileProvider.getUriForFile(getContext(), "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
+            Uri sharedFileUri = FileProvider.getUriForFile(context, "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
             Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
             String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
-            String type = getContext().getContentResolver().getType(sharedFileUri);
+            String type = context.getContentResolver().getType(sharedFileUri);
             if (extension == null || extension.trim().isEmpty()) {
                 intent.setDataAndType(sharedFileUri, "*/*");
             } else if (type == null || type.equals("application/octet-stream")) {
@@ -963,6 +966,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class StreamTask extends AsyncTask<FileItem, Void, Void> {
 
         @Override
@@ -973,15 +977,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
-            getContext().startService(serveIntent);
+            context.startService(serveIntent);
 
             String url = "http://127.0.0.1:8080/" + fileItem.getName();
             Intent intent = new Intent(Intent.ACTION_VIEW);
             String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
             String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            if (type.startsWith("audio/")) {
+            if (type != null && type.startsWith("audio/")) {
                 intent.setDataAndType(Uri.parse(url), "audio/*");
-            } else if (type.startsWith("video/")) {
+            } else if (type != null && type.startsWith("video/")) {
                 intent.setDataAndType(Uri.parse(url), "video/*");
             } else {
                 intent.setData(Uri.parse(url));
