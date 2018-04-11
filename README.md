@@ -1,5 +1,20 @@
-# rcloneExplorer
+# RcloneExplorer
 rclone explorer for Android
+
+Features
+--------
+- Allows to browse rclone remotes, including encrypted ones
+- Support for ARM and x86 devices
+- Import configuration file from rclone, no extra setup required
+- Download, upload, move, rename, delete, and create new folders
+- Streaming media files
+- Serving directories over HTTP
+
+Limitations
+------------
+- Does not support password protected rclone config files
+- Does not support adding or editting remotes from the app
+- Local filesystem remote is not supported
 
 Screenshots
 -----------
