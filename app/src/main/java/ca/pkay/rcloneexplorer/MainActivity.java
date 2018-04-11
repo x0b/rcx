@@ -40,8 +40,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    RemotesFragment.OnRemoteClickListener,
-                    FileExplorerFragment.OnFileClickListener {
+                    RemotesFragment.OnRemoteClickListener {
 
     public static final String SHARED_PREFS_TAG = "ca.pkay.rcexplorer";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
@@ -213,10 +212,5 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
-    }
-
-    @Override
-    public void onFileClicked(FileItem file) {
-        Log.i("PKAY", "File clicked");
     }
 }
