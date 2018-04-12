@@ -12,8 +12,8 @@ Features
 
 Limitations
 ------------
-- Does not support password protected rclone config files
-- Does not support adding or editting remotes from the app
+- Does not support password protected rclone config files (future release)
+- Does not support adding or editting remotes from the app (planned feature)
 - Local filesystem remote is not supported
 
 Screenshots
@@ -31,5 +31,6 @@ Credits/Libraries
 - [ExFile Picker](https://github.com/bartwell/ExFilePicker)
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial)
 - [Material Dialogs](https://github.com/afollestad/material-dialogs)
+- [rclone](https://github.com/ncw/rclone)
 - Icon by icon 54 from [the Noun Project](https://thenounproject.com)
 - Graphics from [Game Building Tools](http://www.gamebuildingtools.com)
