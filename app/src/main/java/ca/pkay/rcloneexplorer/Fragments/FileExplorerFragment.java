@@ -10,11 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,7 +66,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
     private String originalToolbarTitle;
-    private OnFileClickListener listener;
     private List<FileItem> directoryContent;
     private Stack<String> pathStack;
     private Map<String, List<FileItem>> directoryCache;
@@ -83,7 +82,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private SortOrder sortOrder;
     private Boolean isInMoveMode;
     private SpeedDialView fab;
-    private NetworkStateReceiver networkStateReceiver;
+    //private NetworkStateReceiver networkStateReceiver;
+    private Context context;
 
     private enum SortOrder {
         AlphaDescending(1),
@@ -108,10 +108,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 default: return AlphaDescending;
             }
         }
-    }
-
-    public interface OnFileClickListener {
-        void onFileClicked(FileItem file);
     }
 
     /**
@@ -139,14 +135,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             remoteType = getArguments().getString(ARG_REMOTE_TYPE);
             path = "//" + getArguments().getString(ARG_REMOTE);
         }
-        originalToolbarTitle = getActivity().getTitle().toString();
-        getActivity().setTitle(remoteType);
+        originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
+        ((FragmentActivity) context).setTitle(remoteType);
         setHasOptionsMenu(true);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
         sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
 
-        networkStateReceiver = ((MainActivity)getActivity()).getNetworkStateReceiver();
+        //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
         directoryCache = new HashMap<>();
@@ -157,7 +153,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
@@ -192,7 +188,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .create());
         setFabClickListeners();
 
-        breadcrumbView = getActivity().findViewById(R.id.breadcrumb_view);
+        breadcrumbView = ((FragmentActivity) context).findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
         breadcrumbView.addCrumb(remote, "//" + remote);
@@ -217,7 +213,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
                 intent.putExtra(UploadService.REMOTE_ARG, remote);
-                getContext().startService(intent);
+                context.startService(intent);
             }
         } else if (requestCode == EX_FILE_PICKER_DOWNLOAD_RESULT) {
             ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
@@ -229,11 +225,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
                 intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
                 intent.putExtra(DownloadService.REMOTE_ARG, remote);
-                getContext().startService(intent);
+                context.startService(intent);
             }
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
-            getContext().stopService(serveIntent);
+            context.stopService(serveIntent);
         }
     }
 
@@ -259,7 +255,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(StreamingService.SERVE_PATH_ARG, path);
                 intent.putExtra(StreamingService.REMOTE_ARG, remote);
                 intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                getContext().startService(intent);
+                context.startService(intent);
                 return true;
                 default:
                     return super.onOptionsItemSelected(item);
@@ -326,13 +322,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.cancel_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().setTitle(remoteType);
+                ((FragmentActivity) context).setTitle(remoteType);
                 recyclerViewAdapter.setMoveMode(false);
                 isInMoveMode = false;
                 hideMoveBar();
                 fab.show();
                 fab.setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+                ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
                 recyclerViewAdapter.refreshData();
             }
         });
@@ -340,11 +336,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().setTitle(remoteType);
+                ((FragmentActivity) context).setTitle(remoteType);
                 hideMoveBar();
                 fab.show();
                 fab.setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+                ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
                 recyclerViewAdapter.setMoveMode(false);
                 isInMoveMode = false;
                 String oldPath = moveList.get(0).getPath();
@@ -368,7 +364,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void showSortMenu() {
         DroppyMenuPopup droppyMenu;
-        DroppyMenuPopup.Builder droppyBuilder = new DroppyMenuPopup.Builder(getContext(), getActivity().findViewById(R.id.action_sort));
+        DroppyMenuPopup.Builder droppyBuilder = new DroppyMenuPopup.Builder(getContext(), ((FragmentActivity) context).findViewById(R.id.action_sort));
         droppyMenu = droppyBuilder.fromMenu(R.menu.sort_menu)
                 .triggerOnAnchorClick(false)
                 .setXOffset(5)
@@ -415,7 +411,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         recyclerViewAdapter.updateData(directoryContent);
         if (null != sortOrder) {
-            SharedPreferences sharedPreferences = getContext().getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder.getValue()).apply();
         }
     }
@@ -452,11 +448,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFileClickListener) {
-            listener = (OnFileClickListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnFileClickListener");
-        }
+        this.context = context;
     }
 
     @Override
@@ -465,9 +457,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fetchDirectoryTask.cancel(true);
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
-        getActivity().setTitle(originalToolbarTitle);
-        listener = null;
+        ((FragmentActivity) context).setTitle(originalToolbarTitle);
         isRunning = false;
+        context = null;
     }
 
     public boolean onBackButtonPressed() {
@@ -503,7 +495,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             // download and open
             new DownloadAndOpen().execute(fileItem);
         } else {
-            new MaterialDialog.Builder(getContext())
+            new MaterialDialog.Builder(context)
                     .title("Max file size for streaming exceeded")
                     .neutralText("Okay")
                     .show();
@@ -539,19 +531,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
 
         if (numOfSelected > 0) { // something is selected
-            getActivity().setTitle(numOfSelected + " selected");
+            ((FragmentActivity) context).setTitle(numOfSelected + " selected");
             showBottomBar();
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
             if (numOfSelected > 1) {
-                getActivity().findViewById(R.id.file_rename).setAlpha(.5f);
-                getActivity().findViewById(R.id.file_rename).setClickable(false);
+                ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
+                ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
             } else {
-                getActivity().findViewById(R.id.file_rename).setAlpha(1f);
-                getActivity().findViewById(R.id.file_rename).setClickable(true);
+                ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(1f);
+                ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(true);
             }
         } else if (!isInMoveMode) {
-            getActivity().setTitle(remoteType);
+            ((FragmentActivity) context).setTitle(remoteType);
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
@@ -584,7 +576,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void showBottomBar() {
-        View bottomBar = getView().findViewById(R.id.bottom_bar);
+        View bottomBar = ((FragmentActivity) context).findViewById(R.id.bottom_bar);
         if (bottomBar.getVisibility() == View.VISIBLE) {
             return;
         }
@@ -594,7 +586,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void hideBottomBar() {
-        View bottomBar = getView().findViewById(R.id.bottom_bar);
+        View bottomBar = ((FragmentActivity) context).findViewById(R.id.bottom_bar);
         if (bottomBar.getVisibility() != View.VISIBLE) {
             return;
         }
@@ -604,7 +596,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void hideMoveBar() {
-        View moveBar = getView().findViewById(R.id.move_bar);
+        View moveBar = ((FragmentActivity) context).findViewById(R.id.move_bar);
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out_animation);
         moveBar.setAnimation(animation);
         moveBar.setVisibility(View.GONE);
@@ -616,14 +608,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         final List<FileItem> deleteList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
-
         String title = "Delete " + deleteList.size();
         String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
         title += (deleteList.size() > 1) ? " items?" : " item?";
-        new MaterialDialog.Builder(getContext())
+        new MaterialDialog.Builder(context)
                 .title(title)
                 .content(content)
-                .icon(getActivity().getDrawable(R.drawable.ic_warning))
+                .icon(context.getDrawable(R.drawable.ic_warning))
                 .negativeText("Cancel")
                 .positiveText("Delete")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -644,7 +635,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         List<FileItem> list = recyclerViewAdapter.getSelectedItems();
         final FileItem renameItem = list.get(0);
 
-        new MaterialDialog.Builder(getContext())
+        new MaterialDialog.Builder(context)
                 .title("Rename a file")
                 .content("Please type new file name")
                 .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
@@ -686,15 +677,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.cancelSelection();
         recyclerViewAdapter.setMoveMode(true);
         isInMoveMode = true;
-        getActivity().setTitle("Select destination");
-        getActivity().findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.action_select_all).setVisibility(View.GONE);
+        ((FragmentActivity) context).setTitle("Select destination");
+        ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
+        ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.GONE);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
     }
 
     private void onCreateNewDirectory() {
-        new MaterialDialog.Builder(getContext())
+        new MaterialDialog.Builder(context)
                 .title("Create new folder")
                 .content("Please type new folder name")
                 .negativeText("Cancel")
@@ -908,7 +899,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            materialDialog = new MaterialDialog.Builder(getContext())
+            materialDialog = new MaterialDialog.Builder(context)
                     .title("Loading file")
                     .content("Please wait")
                     .cancelable(false)
@@ -927,8 +918,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(FileItem... fileItems) {
             FileItem fileItem = fileItems[0];
-            File file = getContext().getExternalCacheDir();
-            String saveLocation = file.getAbsolutePath();
+            File file = context.getExternalCacheDir();
+            String saveLocation;
+            if (file != null) {
+                saveLocation = file.getAbsolutePath();
+            } else {
+                return false;
+            }
+
             fileLocation = saveLocation + "/" + fileItem.getName();
 
             process = rclone.downloadItems(remote, fileItem, saveLocation);
@@ -949,10 +946,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!status) {
                 return;
             }
-            Uri sharedFileUri = FileProvider.getUriForFile(getContext(), "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
+            Uri sharedFileUri = FileProvider.getUriForFile(context, "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
             Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
             String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
-            String type = getContext().getContentResolver().getType(sharedFileUri);
+            String type = context.getContentResolver().getType(sharedFileUri);
             if (extension == null || extension.trim().isEmpty()) {
                 intent.setDataAndType(sharedFileUri, "*/*");
             } else if (type == null || type.equals("application/octet-stream")) {
@@ -963,6 +960,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class StreamTask extends AsyncTask<FileItem, Void, Void> {
 
         @Override
@@ -973,15 +971,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
-            getContext().startService(serveIntent);
+            context.startService(serveIntent);
 
             String url = "http://127.0.0.1:8080/" + fileItem.getName();
             Intent intent = new Intent(Intent.ACTION_VIEW);
             String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
             String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            if (type.startsWith("audio/")) {
+            if (type != null && type.startsWith("audio/")) {
                 intent.setDataAndType(Uri.parse(url), "audio/*");
-            } else if (type.startsWith("video/")) {
+            } else if (type != null && type.startsWith("video/")) {
                 intent.setDataAndType(Uri.parse(url), "video/*");
             } else {
                 intent.setData(Uri.parse(url));
