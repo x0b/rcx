@@ -27,6 +27,7 @@ Screenshots|Screenshots
 
 Credits/Libraries
 -----------------
+- [Android Iconics](https://github.com/mikepenz/Android-Iconics)
 - [Droppy](https://github.com/shehabic/Droppy)
 - [ExFile Picker](https://github.com/bartwell/ExFilePicker)
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial)
