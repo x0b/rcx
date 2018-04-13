@@ -28,13 +28,12 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class Rclone {
 
-    private final String TAG = "Rclone";
     private Context activity;
     private String rclone;
     private String rcloneConf;
 
-    public Rclone(Context activity) {
-        this.activity = activity;
+    public Rclone(Context context) {
+        this.activity = context;
 
         if (!isRcloneBinaryCreated()) {
             try {
@@ -44,67 +43,8 @@ public class Rclone {
             }
         }
 
-        this.rclone = activity.getFilesDir().getPath() + "/rclone";
-        this.rcloneConf = activity.getFilesDir().getPath() + "/rclone.conf";
-    }
-
-    private ArrayList<String> runCommand(String[] command) {
-        Process process;
-        try {
-            process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            ArrayList<String> output = new ArrayList<>();
-            while ((line = reader.readLine()) != null) {
-                output.add(line);
-            }
-
-            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            StringBuilder error = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                error.append(line);
-            }
-            if (error.length() != 0) {
-                Log.e(TAG, error.toString());
-            }
-
-            return output;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private JSONArray runCommandForJSON(String[] command) {
-        Process process;
-        try {
-            process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            StringBuilder output = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                output.append(line);
-            }
-
-            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            StringBuilder error = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                error.append(line);
-            }
-            if (error.length() != 0) {
-                Log.e(TAG, error.toString());
-            }
-
-            return new JSONArray(output.toString());
-
-        } catch (IOException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
+        this.rclone = context.getFilesDir().getPath() + "/rclone";
+        this.rcloneConf = context.getFilesDir().getPath() + "/rclone.conf";
     }
 
     private String[] createCommand(String ...args) {
@@ -130,9 +70,29 @@ public class Rclone {
 
         String[] command = createCommand("lsjson", remoteAndPath);
 
-        JSONArray results = runCommandForJSON(command);
+        JSONArray results;
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                // TODO report error
+                return new ArrayList<>();
+            }
 
-        assert results != null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            results = new JSONArray(output.toString());
+
+        } catch (IOException | InterruptedException | JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
 
         List<FileItem> fileItemList = new ArrayList<>();
         for (int i = 0; i < results.length(); i++) {
@@ -149,7 +109,8 @@ public class Rclone {
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
-                return null;
+                // TODO report error
+                return new ArrayList<>();
             }
         }
         return fileItemList;
@@ -157,9 +118,26 @@ public class Rclone {
 
     public List<RemoteItem> getRemotes() {
         String[] command = createCommand("listremotes", "-l");
-        ArrayList<String> result = runCommand(command);
+        ArrayList<String> result = new ArrayList<>();
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                // TODO report error
+                return new ArrayList<>();
+            }
 
-        assert result != null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.add(line);
+            }
+        } catch (IOException | InterruptedException e) {
+            // TODO report error
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
 
         List<RemoteItem> remoteItemList = new ArrayList<>();
         for (String line : result) {
@@ -172,14 +150,13 @@ public class Rclone {
     }
 
     public Process serveHttp(String remote, String servePath) {
-        Process process;
         String path = (servePath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + servePath;
         String[] command = createCommand("serve", "http", path);
 
         try {
-            process = Runtime.getRuntime().exec(command);
-            return process;
+            return Runtime.getRuntime().exec(command);
         } catch (IOException e) {
+            // TODO report error
             e.printStackTrace();
             return null;
         }
@@ -190,10 +167,16 @@ public class Rclone {
         Process process;
         String[] command;
         String remoteFilePath;
+        String localFilePath;
 
         for (FileItem item : downloadList) {
             remoteFilePath = remote + ":" + item.getPath();
-            command = createCommand("copy", remoteFilePath, downloadPath);
+            if (item.isDir()) {
+                localFilePath = downloadPath + "/" + item.getName();
+            } else {
+                localFilePath = downloadPath;
+            }
+            command = createCommand("copy", remoteFilePath, localFilePath);
 
             try {
                 process = Runtime.getRuntime().exec(command);
@@ -206,16 +189,20 @@ public class Rclone {
     }
 
     public Process downloadItems(String remote, FileItem downloadItem, String downloadPath) {
-        Process process;
         String[] command;
         String remoteFilePath;
+        String localFilePath;
 
         remoteFilePath = remote + ":" + downloadItem.getPath();
-        command = createCommand("copy", remoteFilePath, downloadPath);
+        if (downloadItem.isDir()) {
+            localFilePath = downloadPath + "/" + downloadItem.getName();
+        } else {
+            localFilePath = downloadPath;
+        }
+        command = createCommand("copy", remoteFilePath, localFilePath);
 
         try {
-            process = Runtime.getRuntime().exec(command);
-            return process;
+            return Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -262,14 +249,27 @@ public class Rclone {
             } else {
                 command = createCommand("delete", filePath);
             }
-            runCommand(command);
+
+            try {
+                Process process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+                // TODO report error is exitStatus != 0
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void makeDirectory(String remote, String path) {
         String newDir = remote + ":" + path;
         String[] command = createCommand("mkdir", newDir);
-        runCommand(command);
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            // TODO report error is exitStatus != 0
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void moveTo(String remote, List<FileItem> moveList, String newLocation) {
@@ -281,7 +281,13 @@ public class Rclone {
             oldFilePath = remote + ":" + fileItem.getPath();
             newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + fileItem.getName() : remote + ":" + newLocation + "/" + fileItem.getName();
             command = createCommand("moveto", oldFilePath, newFilePath);
-            runCommand(command);
+            try {
+                Process process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+                // TODO report error if exitStatus != 0
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -289,7 +295,13 @@ public class Rclone {
         String oldFilePath = remote + ":" + oldFile;
         String newFilePath = remote + ":" + newFile;
         String[] command = createCommand("moveto", oldFilePath, newFilePath);
-        runCommand(command);
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            // TODO report error is exitStatus != 0
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isConfigFileCreated() {
@@ -328,24 +340,24 @@ public class Rclone {
     private void createRcloneBinary() throws IOException {
         String appsFileDir = activity.getFilesDir().getPath();
         String rcloneArchitecture = null;
-        String[] supportedAbis = Build.SUPPORTED_ABIS;
-        if (supportedAbis[0].toUpperCase().contains("ARM")) {
-            if (supportedAbis[0].contains("64")) {
+        String[] supportedABIS = Build.SUPPORTED_ABIS;
+        if (supportedABIS[0].toUpperCase().contains("ARM")) {
+            if (supportedABIS[0].contains("64")) {
                 rcloneArchitecture = "rclone-arm64";
             } else {
                 rcloneArchitecture = "rclone-arm32";
             }
-        } else if (supportedAbis[0].toUpperCase().contains("X86")) {
-            if (supportedAbis[0].contains("64")) {
+        } else if (supportedABIS[0].toUpperCase().contains("X86")) {
+            if (supportedABIS[0].contains("64")) {
                 rcloneArchitecture = "rclone-x86_32";
             } else {
                 rcloneArchitecture = "rclone-x86_32";
             }
         } else {
-            Log.e("Rclone", "Unsupported architecture '" + supportedAbis[0] + "'");
+            Log.e("Rclone", "Unsupported architecture '" + supportedABIS[0] + "'");
             System.exit(1);
         }
-        Log.i("Rclone", "Architecture: " + supportedAbis[0]);
+        Log.i("Rclone", "Architecture: " + supportedABIS[0]);
 
         String exeFilePath = appsFileDir + "/rclone";
         InputStream inputStream = activity.getAssets().open(rcloneArchitecture);
