@@ -9,6 +9,7 @@
     android:background="@color/colorPrimary"
     android:elevation="8dp"
     android:visibility="gone"
+    android:clickable="true"
     tools:showIn="@layout/fragment_file_explorer_list"
     tools:visibility="visible">
 
