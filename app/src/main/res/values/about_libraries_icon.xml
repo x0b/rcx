@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="define_Icon54"></string>
-    <string name="library_Icon54_author">Icon 54</string>
-    <string name="library_Icon54_authorWebsite">https://thenounproject.com/icon54app/</string>
-    <string name="library_Icon54_libraryName">Sync Cloud Icon</string>
-    <string name="library_Icon54_libraryDescription">App icon created by Icon 54 from the Noun Project</string>
-    <string name="library_Icon54_libraryVersion"></string>
-    <string name="library_Icon54_libraryWebsite">https://thenounproject.com/term/sync-cloud/209817/</string>
-    <string name="library_Icon54_licenseId">Creative Commons CCBY</string>
-    <string name="library_Icon54_isOpenSource">true</string>
-    <string name="library_Icon54_repositoryLink">https://thenounproject.com/term/sync-cloud/209817/</string>
+    <string name="define_Smashicons"></string>
+    <string name="library_Smashicons_author">Smashicons</string>
+    <string name="library_Smashicons_authorWebsite">https://www.flaticon.com/authors/smashicons/</string>
+    <string name="library_Smashicons_libraryName">Smashicons</string>
+    <string name="library_Smashicons_libraryDescription">Icons made by Smashicons from Flaticon, licensed by Creative Commons BY 3.0</string>
+    <string name="library_Smashicons_libraryVersion"></string>
+    <string name="library_Smashicons_libraryWebsite">https://www.flaticon.com/</string>
+    <string name="library_Smashicons_licenseId">Creative Commons BY 3.0</string>
+    <string name="library_Smashicons_isOpenSource">true</string>
+    <string name="library_Smashicons_repositoryLink">https://www.flaticon.com/authors/smashicons/</string>
 </resources>
