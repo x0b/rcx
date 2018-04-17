@@ -379,11 +379,8 @@ public class Rclone {
                 rcloneArchitecture = "rclone-x86_32";
             }
         } else {
-            Log.e("Rclone", "Unsupported architecture '" + supportedABIS[0] + "'");
             System.exit(1);
         }
-        Log.i("Rclone", "Architecture: " + supportedABIS[0]);
-
         String exeFilePath = appsFileDir + "/rclone";
         InputStream inputStream = activity.getAssets().open(rcloneArchitecture);
         File outFile = new File(appsFileDir, "rclone");
