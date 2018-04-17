@@ -33,5 +33,5 @@ Credits/Libraries
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial)
 - [Material Dialogs](https://github.com/afollestad/material-dialogs)
 - [rclone](https://github.com/ncw/rclone)
-- Icon by icon 54 from [the Noun Project](https://thenounproject.com)
+- Icon by icon 54 from [the Noun Project](https://thenounproject.com/term/sync-cloud/209817)
 - Graphics from [Game Building Tools](http://www.gamebuildingtools.com)
