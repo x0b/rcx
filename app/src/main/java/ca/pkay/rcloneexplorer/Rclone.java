@@ -304,6 +304,31 @@ public class Rclone {
         }
     }
 
+    public String getRcloneVersion() {
+        String[] command = createCommand("--version");
+        ArrayList<String> result = new ArrayList<>();
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                // TODO report error
+                return "-1";
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                result.add(line);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "-1";
+        }
+
+        String[] version = result.get(0).split("\\s+");
+        return version[1];
+    }
+
     public boolean isConfigFileCreated() {
         String appsFileDir = activity.getFilesDir().getPath();
         String configFile = appsFileDir + "/rclone.conf";
