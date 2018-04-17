@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_GameBuildingTools"></string>
+    <string name="library_GameBuildingTools_author">Game Building Tools</string>
+    <string name="library_GameBuildingTools_authorWebsite">http://www.gamebuildingtools.com/</string>
+    <string name="library_GameBuildingTools_libraryName">Game Building Tools</string>
+    <string name="library_GameBuildingTools_libraryDescription">GameBuildingTools.com was built by a game developer for the community. Grab graphics, audio, and more for your next project.</string>
+    <string name="library_GameBuildingTools_libraryVersion"></string>
+    <string name="library_GameBuildingTools_libraryWebsite">http://www.gamebuildingtools.com/product/desert-parallax-background/</string>
+    <string name="library_GameBuildingTools_licenseId">Attribution 4.0 International (CC BY 4.0)</string>
+    <string name="library_GameBuildingTools_isOpenSource">true</string>
+    <string name="library_GameBuildingTools_repositoryLink">http://www.gamebuildingtools.com/product/desert-parallax-background/</string>
+</resources>

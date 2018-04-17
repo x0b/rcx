@@ -21,5 +21,11 @@
             android:id="@+id/nav_import"
             android:icon="@drawable/ic_import"
             android:title="Import rclone config" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_about"
+            android:title="About"
+            android:checkable="false"/>
     </group>
 </menu>
