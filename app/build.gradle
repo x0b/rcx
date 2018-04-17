@@ -7,14 +7,17 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName '0.1.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionNameSuffix 'alpha'
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
@@ -23,17 +26,21 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation "com.android.support:support-compat:27.1.0"
+    implementation 'com.android.support:support-compat:27.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:design:27.1.0'
-    implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // https://github.com/afollestad/material-dialogs
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    // https://github.com/afollestad/material-dialogs
     implementation 'yogesh.firzen:MukkiyaSevaigal:1.0.6'
-    implementation "com.leinardi.android:speed-dial:1.0-alpha03" // https://github.com/leinardi/FloatingActionButtonSpeedDial
-    implementation 'com.shehabic.droppy:Droppy:0.6.0@aar' // https://github.com/shehabic/Droppy
-    implementation 'ru.bartwell:exfilepicker:2.4' // https://github.com/bartwell/ExFilePicker
-    implementation "com.mikepenz:iconics-core:3.0.3@aar"
+    implementation 'com.leinardi.android:speed-dial:1.0-alpha03'
+    // https://github.com/leinardi/FloatingActionButtonSpeedDial
+    implementation 'com.shehabic.droppy:Droppy:0.6.0@aar'
+    // https://github.com/shehabic/Droppy
+    implementation 'ru.bartwell:exfilepicker:2.4'
+    // https://github.com/bartwell/ExFilePicker
+    implementation 'com.mikepenz:iconics-core:3.0.3@aar'
     implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
     implementation 'com.mikepenz:fontawesome-typeface:5.0.6.0@aar'
     testImplementation 'junit:junit:4.12'
