@@ -27,6 +27,7 @@ public class DownloadService extends IntentService {
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.download_service.arg3";
     private Rclone rclone;
     private List<Process> runningProcesses;
+    private Boolean aProcessFailed;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -72,6 +73,10 @@ public class DownloadService extends IntentService {
         for (Process process : runningProcesses) {
             try {
                 process.waitFor();
+                if (process.exitValue() != 0) {
+                    aProcessFailed = true;
+                }
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -79,14 +84,27 @@ public class DownloadService extends IntentService {
 
         stopForeground(true);
 
-        NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                .setContentTitle(getString(R.string.download_complete))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationCompat.Builder builder1;
+        if (aProcessFailed) {
+            builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning)
+                    .setContentTitle(getString(R.string.download_cancelled))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(2, builder1.build());
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.notify(2, builder1.build());
+            }
+        } else {
+            builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                    .setContentTitle(getString(R.string.download_complete))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.notify(3, builder1.build());
+            }
         }
     }
 
