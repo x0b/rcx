@@ -5,8 +5,10 @@ Features
 --------
 - Allows to browse rclone remotes, including encrypted ones
 - Support for ARM and x86 devices
-- Import configuration file from rclone, no extra setup required
-- Download, upload, move, rename, delete, and create new folders
+- Import configuration file from rclone
+- Download and upload files
+- Move, rename, and delete files and folders
+- Create new folders
 - Streaming media files
 - Serving directories over HTTP
 
@@ -14,7 +16,6 @@ Limitations
 ------------
 - Does not support password protected rclone config files (future release)
 - Does not support adding or editting remotes from the app (planned feature)
-- Local filesystem remote is not supported
 
 Screenshots
 -----------
@@ -33,5 +34,5 @@ Credits/Libraries
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial)
 - [Material Dialogs](https://github.com/afollestad/material-dialogs)
 - [rclone](https://github.com/ncw/rclone)
-- Icon by icon 54 from [the Noun Project](https://thenounproject.com/term/sync-cloud/209817)
+- Icon made by [Smashicons](https://www.flaticon.com/authors/smashicons) from [Flaticon](https://www.flaticon.com)
 - Graphics from [Game Building Tools](http://www.gamebuildingtools.com)
