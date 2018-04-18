@@ -106,7 +106,9 @@ public class DownloadService extends IntentService {
             channel.setDescription(getString(R.string.download_service_notification_description));
             // Register the channel with the system
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
 }

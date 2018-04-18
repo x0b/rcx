@@ -16,7 +16,7 @@ public class FileComparators {
                     return 1;
                 }
 
-                return fileItem.getName().compareTo(t1.getName());
+                return fileItem.getName().toLowerCase().compareTo(t1.getName().toLowerCase());
             }
         }
 
@@ -30,7 +30,7 @@ public class FileComparators {
                     return 1;
                 }
 
-                return t1.getName().compareTo(fileItem.getName());
+                return t1.getName().toLowerCase().compareTo(fileItem.getName().toLowerCase());
             }
         }
 
