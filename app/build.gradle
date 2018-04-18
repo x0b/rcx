@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.mikepenz:community-material-typeface:2.0.46.1@aar'
     implementation 'com.mikepenz:fontawesome-typeface:5.0.6.0@aar'
     implementation "com.mikepenz:aboutlibraries:6.0.8"
+    implementation 'us.feras.mdv:markdownview:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
