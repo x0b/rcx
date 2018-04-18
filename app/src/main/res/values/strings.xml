@@ -74,4 +74,5 @@
     <string name="loading_file">Loading file</string>
     <string name="please_wait">Please wait</string>
     <string name="download_cancelled">Download cancelled</string>
+    <string name="upload_cancelled">Upload cancelled</string>
 </resources>
