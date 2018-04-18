@@ -45,6 +45,14 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ChangelogActivity"
+            android:label="@string/title_activity_changelog"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".AboutActivity"/>
+
+
     </application>
 
 </manifest>

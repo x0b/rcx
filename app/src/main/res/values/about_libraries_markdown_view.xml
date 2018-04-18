@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_MarkdownView"></string>
+    <string name="library_MarkdownView_author">Feras Alnatsheh</string>
+    <string name="library_MarkdownView_authorWebsite">https://github.com/falnatsheh/</string>
+    <string name="library_MarkdownView_libraryName">Markdown View</string>
+    <string name="library_MarkdownView_libraryDescription">MarkdownView is an Android webview with the capablity of loading Markdown text or file and display it as HTML, it uses MarkdownJ and extends Android webview.</string>
+    <string name="library_MarkdownView_libraryVersion"></string>
+    <string name="library_MarkdownView_libraryWebsite">https://github.com/falnatsheh/MarkdownView/</string>
+    <string name="library_MarkdownView_licenseId">apache_2.0</string>
+    <string name="library_MarkdownView_isOpenSource">true</string>
+    <string name="library_MarkdownView_repositoryLink">https://github.com/falnatsheh/MarkdownView/</string>
+</resources>

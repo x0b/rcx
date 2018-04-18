@@ -73,7 +73,8 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void showChangelog() {
-        Toast.makeText(this, "Coming soon", Toast.LENGTH_SHORT).show();
+        Intent changelogIntent = new Intent(this, ChangelogActivity.class);
+        startActivity(changelogIntent);
     }
 
     private void showOpenSourceLibraries() {
