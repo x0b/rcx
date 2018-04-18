@@ -482,6 +482,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fetchDirectoryTask.cancel(true);
         breadcrumbView.removeLastCrumb();
         path = pathStack.pop();
+        recyclerViewAdapter.clear();
         if (directoryCache.containsKey(path)) {
             directoryContent = directoryCache.get(path);
             recyclerViewAdapter.newData(directoryContent);
@@ -574,6 +575,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             // pop stack until we find path
         }
         breadcrumbView.removeCrumbsUpTo(path);
+        recyclerViewAdapter.clear();
         if (directoryCache.containsKey(path)) {
             directoryContent = directoryCache.get(path);
             recyclerViewAdapter.newData(directoryContent);
