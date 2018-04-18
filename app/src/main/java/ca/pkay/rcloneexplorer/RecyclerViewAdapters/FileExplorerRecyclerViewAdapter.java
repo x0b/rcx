@@ -102,6 +102,13 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 return true;
             }
         });
+
+        holder.fileIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLongClickAction(item, holder);
+            }
+        });
     }
 
     @Override
