@@ -28,11 +28,12 @@ Remotes|File Explorer|File Upload
 
 Credits/Libraries
 -----------------
-- [Android Iconics](https://github.com/mikepenz/Android-Iconics)
-- [Droppy](https://github.com/shehabic/Droppy)
-- [ExFile Picker](https://github.com/bartwell/ExFilePicker)
-- [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial)
-- [Material Dialogs](https://github.com/afollestad/material-dialogs)
-- [rclone](https://github.com/ncw/rclone)
+- [About Libraries](https://github.com/mikepenz/AboutLibraries) - AboutLibraries is a library to offer some information of libraries.
+- [Android Iconics](https://github.com/mikepenz/Android-Iconics) - Use any icon font, or vector (.svg) as drawable in your application.
+- [Droppy](https://github.com/shehabic/Droppy) - A simple yet-powerful and fully customizable Android drop-down menu. It supports Text with/without Icons, Separators, and even fully customized views.
+- [ExFile Picker](https://github.com/bartwell/ExFilePicker) - Open source Android library. Implement choosing files and directories in your application.
+- [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification 
+- [Material Dialogs](https://github.com/afollestad/material-dialogs) - A beautiful, fluid, and customizable dialogs API
+- [rclone](https://github.com/ncw/rclone) - "rsync for cloud storage"
 - Icon made by [Smashicons](https://www.flaticon.com/authors/smashicons) from [Flaticon](https://www.flaticon.com)
 - Graphics from [Game Building Tools](http://www.gamebuildingtools.com)
