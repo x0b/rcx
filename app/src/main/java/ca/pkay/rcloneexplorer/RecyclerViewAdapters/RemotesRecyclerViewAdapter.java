@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +13,9 @@ import android.widget.TextView;
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.octicons_typeface_library.Octicons;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
@@ -34,14 +34,15 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         this.clickListener = clickListener;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_remotes_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         String remoteName = remotes.get(position).getName();
         String remoteType = remotes.get(position).getType();
         holder.remoteName = remoteName;
@@ -79,7 +80,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                 holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_box).color(Color.BLACK).sizeDp(24));
                 break;
             case "sftp":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(FontAwesome.Icon.faw_terminal).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(Octicons.Icon.oct_terminal).color(Color.BLACK).sizeDp(24));
                 break;
             default:
                 holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_cloud).color(Color.BLACK).sizeDp(24));
@@ -108,7 +109,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         public final TextView tvName;
         public String remoteName;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             this.view = itemView;
             this.ivIcon = view.findViewById(R.id.remoteIcon);

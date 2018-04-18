@@ -53,13 +53,16 @@ public class UploadService extends IntentService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setContentTitle("Upload")
+                .setContentTitle(getString(R.string.upload_service_notification_title))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_cancel_download, "Cancel", cancelPendingIntent);
+                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         startForeground(10, builder.build());
 
+        if (intent == null) {
+            return;
+        }
         final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
         final ArrayList<String> uploadList = intent.getStringArrayListExtra(LOCAL_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
@@ -79,11 +82,13 @@ public class UploadService extends IntentService {
 
         NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_upload_done)
-                .setContentTitle("Upload complete")
+                .setContentTitle(getString(R.string.upload_complete))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(20, builder1.build());
+        if (notificationManager != null) {
+            notificationManager.notify(20, builder1.build());
+        }
     }
 
     @Override
@@ -99,10 +104,12 @@ public class UploadService extends IntentService {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("File uploads");
+            channel.setDescription(getString(R.string.upload_service_notification_channel_description));
             // Register the channel with the system
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
 }

@@ -2,8 +2,10 @@ package ca.pkay.rcloneexplorer.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,7 @@ public class RemotesFragment extends Fragment {
     private Rclone rclone;
     private List<RemoteItem> remotes;
     private OnRemoteClickListener clickListener;
+    private Context context;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,22 +44,23 @@ public class RemotesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActivity().setTitle("Remotes");
+        ((FragmentActivity) context).setTitle(getString(R.string.remotes_toolbar_title));
         rclone = new Rclone(getContext());
         remotes = rclone.getRemotes();
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view;
         if (!rclone.isConfigFileCreated()) {
-            view = inflater.inflate(R.layout.empty_state_config_file2, container, false);
+            view = inflater.inflate(R.layout.empty_state_config_file, container, false);
             view.findViewById(R.id.empty_state_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity)getActivity()).importConfigFile();
+                    if (getActivity() != null) {
+                        ((MainActivity) getActivity()).importConfigFile();
+                    }
                 }
             });
             return view;
@@ -76,6 +80,7 @@ public class RemotesFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof OnRemoteClickListener) {
             clickListener = (OnRemoteClickListener) context;
         } else {
@@ -86,6 +91,7 @@ public class RemotesFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        context = null;
         clickListener = null;
     }
 

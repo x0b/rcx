@@ -16,7 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:contentDescription="remote icon"
+            android:paddingEnd="0dp"
+            android:contentDescription="@string/remote_icon"
             tools:src="@drawable/ic_cloud"/>
 
         <TextView

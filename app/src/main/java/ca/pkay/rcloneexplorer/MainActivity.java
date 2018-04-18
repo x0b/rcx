@@ -10,23 +10,18 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import java.io.File;
@@ -35,7 +30,6 @@ import java.io.IOException;
 import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
-import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 public class MainActivity extends AppCompatActivity
@@ -68,6 +62,7 @@ public class MainActivity extends AppCompatActivity
         requestPermissions();
 
         rclone = new Rclone(this);
+
 
         networkStateReceiver = new NetworkStateReceiver();
         final IntentFilter intentFilter = new IntentFilter();
@@ -114,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (null != fragment && fragment instanceof FileExplorerFragment) {
+        } else if (fragment != null && fragment instanceof FileExplorerFragment) {
             if (((FileExplorerFragment) fragment).onBackButtonPressed())
                 return;
         }
@@ -167,16 +162,16 @@ public class MainActivity extends AppCompatActivity
 
     private void warnUserAboutOverwritingConfiguration() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Replace current configuration file?");
-        builder.setMessage("Your current configuration will be lost");
-        builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.replace_config_file_question);
+        builder.setMessage(R.string.config_file_lost_statement);
+        builder.setPositiveButton(R.string.continue_statement, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
                 importConfigFile();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();

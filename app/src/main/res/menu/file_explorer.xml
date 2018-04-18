@@ -4,20 +4,20 @@
     <item
         android:id="@+id/action_sort"
         android:orderInCategory="1"
-        android:title="Sort"
+        android:title="@string/sort"
         android:icon="@drawable/ic_sort"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_select_all"
-        android:title="Select all"
+        android:title="@string/select_all"
         android:icon="@drawable/ic_select_all"
         android:orderInCategory="2"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_http_serve"
-        android:title="HTTP serve"
+        android:title="@string/http_serve"
         android:orderInCategory="3"
         app:showAsAction="never" />
 </menu>

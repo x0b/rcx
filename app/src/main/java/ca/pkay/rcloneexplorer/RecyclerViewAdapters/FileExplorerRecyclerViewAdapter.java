@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,32 +38,31 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         isInMoveMode = false;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_file_explorer_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final FileItem item = files.get(position);
 
         holder.fileItem = item;
         if (item.isDir()) {
             holder.fileIcon.setImageResource(R.drawable.ic_folder);
+            holder.fileSize.setVisibility(View.GONE);
+            holder.interpunct.setVisibility(View.GONE);
         } else {
             holder.fileIcon.setImageResource(R.drawable.ic_file);
-        }
-        holder.fileName.setText(item.getName());
-        holder.fileModTime.setText(item.getHumanReadableModTime());
-        if (!item.isDir()) {
             holder.fileSize.setText(item.getHumanReadableSize());
             holder.fileSize.setVisibility(View.VISIBLE);
             holder.interpunct.setVisibility(View.VISIBLE);
-        } else {
-            holder.fileSize.setVisibility(View.GONE);
-            holder.interpunct.setVisibility(View.GONE);
         }
+        holder.fileName.setText(item.getName());
+        holder.fileModTime.setText(item.getHumanReadableModTime());
+
         if (isInSelectMode) {
             if (selectedItems.contains(item)) {
                 holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
@@ -230,7 +230,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         public final TextView interpunct;
         public FileItem fileItem;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             this.view = itemView;
             this.fileIcon = view.findViewById(R.id.file_icon);
