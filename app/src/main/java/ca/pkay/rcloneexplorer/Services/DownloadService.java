@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import java.util.List;
 
@@ -53,12 +52,16 @@ public class DownloadService extends IntentService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentTitle("Download")
+                .setContentTitle(getString(R.string.download_service_notification_title))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_cancel_download, "Cancel", cancelPendingIntent);
+                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         startForeground(1, builder.build());
+
+        if (intent == null) {
+            return;
+        }
 
         final List<FileItem> downloadList = intent.getParcelableArrayListExtra(DOWNLOAD_LIST_ARG);
         final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
@@ -78,11 +81,13 @@ public class DownloadService extends IntentService {
 
         NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                .setContentTitle("Download complete")
+                .setContentTitle(getString(R.string.download_complete))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(2, builder1.build());
+        if (notificationManager != null) {
+            notificationManager.notify(2, builder1.build());
+        }
     }
 
     @Override
@@ -98,7 +103,7 @@ public class DownloadService extends IntentService {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("File downloads");
+            channel.setDescription(getString(R.string.download_service_notification_description));
             // Register the channel with the system
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);

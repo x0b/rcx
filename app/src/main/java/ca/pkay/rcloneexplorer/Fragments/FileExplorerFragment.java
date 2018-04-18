@@ -157,7 +157,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
-        if (null != directoryContent && null != fetchDirectoryTask) {
+        if (directoryContent != null && fetchDirectoryTask != null) {
             swipeRefreshLayout.setRefreshing(false);
         } else {
             swipeRefreshLayout.setRefreshing(true);
@@ -180,10 +180,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         });
         fab.addFabOptionItem(new SpeedDialActionItem.Builder(R.id.fab_upload, R.drawable.ic_file_upload)
-                .setLabel("Upload Files")
+                .setLabel(getString(R.string.fab_upload_files))
                 .create());
         fab.addFabOptionItem(new SpeedDialActionItem.Builder(R.id.fab_add_folder, R.drawable.ic_create_new_folder)
-                .setLabel("New Folder")
+                .setLabel(getString(R.string.fab_new_folder))
                 .create());
         setFabClickListeners();
 
@@ -266,7 +266,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
      */
     @Override
     public void onRefresh() {
-        if (null != fetchDirectoryTask) {
+        if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent().execute();
@@ -293,63 +293,42 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onDownloadClicked();
+                downloadClicked();
             }
         });
 
         view.findViewById(R.id.file_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onMoveClicked();
+                moveClicked();
             }
         });
 
         view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onRenameClicked();
+                renameClicked();
             }
         });
 
         view.findViewById(R.id.file_delete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onDeleteClicked();
+                deleteClicked();
             }
         });
 
         view.findViewById(R.id.cancel_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((FragmentActivity) context).setTitle(remoteType);
-                recyclerViewAdapter.setMoveMode(false);
-                isInMoveMode = false;
-                hideMoveBar();
-                fab.show();
-                fab.setVisibility(View.VISIBLE);
-                ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
-                recyclerViewAdapter.refreshData();
+                cancelMoveClicked();
             }
         });
 
         view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((FragmentActivity) context).setTitle(remoteType);
-                hideMoveBar();
-                fab.show();
-                fab.setVisibility(View.VISIBLE);
-                ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
-                recyclerViewAdapter.setMoveMode(false);
-                isInMoveMode = false;
-                String oldPath = moveList.get(0).getPath();
-                int index = oldPath.lastIndexOf(moveList.get(0).getName());
-                if (index > 0) {
-                    directoryCache.remove(moveList.get(0).getPath().substring(0, index - 1));
-                } else {
-                    directoryCache.remove("//" + remote);
-                }
-                new MoveTask().execute();
+                moveLocationSelected();
             }
         });
 
@@ -359,6 +338,35 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 onCreateNewDirectory();
             }
         });
+    }
+
+    private void cancelMoveClicked() {
+        ((FragmentActivity) context).setTitle(remoteType);
+        recyclerViewAdapter.setMoveMode(false);
+        isInMoveMode = false;
+        hideMoveBar();
+        fab.show();
+        fab.setVisibility(View.VISIBLE);
+        ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+        recyclerViewAdapter.refreshData();
+    }
+
+    private void moveLocationSelected() {
+        ((FragmentActivity) context).setTitle(remoteType);
+        hideMoveBar();
+        fab.show();
+        fab.setVisibility(View.VISIBLE);
+        ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+        recyclerViewAdapter.setMoveMode(false);
+        isInMoveMode = false;
+        String oldPath = moveList.get(0).getPath();
+        int index = oldPath.lastIndexOf(moveList.get(0).getName());
+        if (index > 0) {
+            directoryCache.remove(moveList.get(0).getPath().substring(0, index - 1));
+        } else {
+            directoryCache.remove("//" + remote);
+        }
+        new MoveTask().execute();
     }
 
     private void showSortMenu() {
@@ -495,8 +503,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             new DownloadAndOpen().execute(fileItem);
         } else {
             new MaterialDialog.Builder(context)
-                    .title("Max file size for streaming exceeded")
-                    .neutralText("Okay")
+                    .title(R.string.max_streaming_size_exceeded)
+                    .neutralText(R.string.okay_confirmation)
                     .show();
         }
     }
@@ -508,7 +516,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         pathStack.push(path);
         directoryCache.put(path, new ArrayList<>(directoryContent));
 
-        if (null != fetchDirectoryTask) {
+        if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
         if (directoryCache.containsKey(fileItem.getPath())) {
@@ -530,7 +538,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
 
         if (numOfSelected > 0) { // something is selected
-            ((FragmentActivity) context).setTitle(numOfSelected + " selected");
+            ((FragmentActivity) context).setTitle(numOfSelected + " " + getString(R.string.selected));
             showBottomBar();
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
@@ -601,7 +609,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         moveBar.setVisibility(View.GONE);
     }
 
-    private void onDeleteClicked() {
+    private void deleteClicked() {
         if (!recyclerViewAdapter.isInSelectMode()) {
             return;
         }
@@ -613,9 +621,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         new MaterialDialog.Builder(context)
                 .title(title)
                 .content(content)
-                .icon(context.getDrawable(R.drawable.ic_warning))
-                .negativeText("Cancel")
-                .positiveText("Delete")
+                .icon(getResources().getDrawable(R.drawable.ic_warning))
+                .negativeText(getResources().getString(R.string.cancel))
+                .positiveText(getResources().getString(R.string.delete))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -626,7 +634,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .show();
     }
 
-    private void onRenameClicked() {
+    private void renameClicked() {
         if (!recyclerViewAdapter.isInSelectMode() || recyclerViewAdapter.getNumberOfSelectedItems() > 1) {
             return;
         }
@@ -635,8 +643,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         final FileItem renameItem = list.get(0);
 
         new MaterialDialog.Builder(context)
-                .title("Rename a file")
-                .content("Please type new file name")
+                .title(R.string.rename_file)
+                .content(R.string.type_new_file_name)
                 .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -653,11 +661,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         new RenameFileTask().execute(renameItem.getPath(), newFilePath);
                     }
                 })
-                .negativeText("Cancel")
+                .negativeText(getResources().getString(R.string.cancel))
                 .show();
     }
 
-    private void onDownloadClicked() {
+    private void downloadClicked() {
         if (!recyclerViewAdapter.isInSelectMode()) {
             return;
         }
@@ -668,7 +676,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         exFilePicker.start(this, EX_FILE_PICKER_DOWNLOAD_RESULT);
     }
 
-    private void onMoveClicked() {
+    private void moveClicked() {
         if (recyclerViewAdapter.getNumberOfSelectedItems() < 1) {
             return;
         }
@@ -676,7 +684,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.cancelSelection();
         recyclerViewAdapter.setMoveMode(true);
         isInMoveMode = true;
-        ((FragmentActivity) context).setTitle("Select destination");
+        ((FragmentActivity) context).setTitle(getString(R.string.select_destination));
         ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
         ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.GONE);
         fab.hide();
@@ -685,9 +693,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void onCreateNewDirectory() {
         new MaterialDialog.Builder(context)
-                .title("Create new folder")
-                .content("Please type new folder name")
-                .negativeText("Cancel")
+                .title(R.string.create_new_folder)
+                .content(R.string.type_new_folder_name)
+                .negativeText(getResources().getString(R.string.cancel))
                 .input(null, null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -899,11 +907,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
             materialDialog = new MaterialDialog.Builder(context)
-                    .title("Loading file")
-                    .content("Please wait")
+                    .title(R.string.loading_file)
+                    .content(R.string.please_wait)
                     .cancelable(false)
                     .progress(true, 0)
-                    .negativeText("Cancel")
+                    .negativeText(getResources().getString(R.string.cancel))
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

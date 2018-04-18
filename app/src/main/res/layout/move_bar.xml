@@ -11,7 +11,8 @@
     android:visibility="gone"
     android:clickable="true"
     tools:showIn="@layout/fragment_file_explorer_list"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/new_folder"
@@ -23,7 +24,8 @@
         android:focusable="true"
         android:layout_gravity="center_vertical"
         android:background="?selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_create_new_folder"/>
+        android:src="@drawable/ic_create_new_folder"
+        android:contentDescription="@string/new_folder" />
 
 
     <View
@@ -37,7 +39,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:clickable="true"
         android:focusable="true"
         android:textColor="@android:color/white"
@@ -51,7 +53,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:text="Select"
+        android:text="@string/select"
         android:clickable="true"
         android:focusable="true"
         android:textStyle="bold"

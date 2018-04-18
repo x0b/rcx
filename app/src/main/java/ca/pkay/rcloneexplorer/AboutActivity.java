@@ -80,7 +80,7 @@ public class AboutActivity extends AppCompatActivity {
     private void showOpenSourceLibraries() {
         new LibsBuilder()
                 .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
-                .withActivityTitle("Credits/Libraries")
+                .withActivityTitle(getString(R.string.credits_libraries))
                 .withAutoDetect(false)
                 .withLibraries()
                 .withExcludedLibraries()
@@ -88,17 +88,17 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void openAppGitHubLink() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/kaczmarkiewiczp/rcloneExplorer"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_app_url)));
         startActivity(browserIntent);
     }
 
     private void reportBug() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/new"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_issue_url)));
         startActivity(browserIntent);
     }
 
     private void openAuthorGitHubLink() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/kaczmarkiewiczp"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_author_url)));
         startActivity(browserIntent);
     }
 }

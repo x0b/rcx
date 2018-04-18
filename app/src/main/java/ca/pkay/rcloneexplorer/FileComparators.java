@@ -48,13 +48,7 @@ public class FileComparators {
                     return fileItem.getName().compareTo(t1.getName());
                 }
 
-                if (fileItem.getSize() == t1.getSize()) {
-                    return 0;
-                } else if (fileItem.getSize() > t1.getSize()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                return Long.compare(t1.getSize(), fileItem.getSize());
             }
         }
 
@@ -72,13 +66,7 @@ public class FileComparators {
                     return fileItem.getName().compareTo(t1.getName());
                 }
 
-                if (fileItem.getSize() == t1.getSize()) {
-                    return 0;
-                } else if (fileItem.getSize() > t1.getSize()) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+                return Long.compare(fileItem.getSize(), t1.getSize());
             }
         }
 
@@ -92,13 +80,7 @@ public class FileComparators {
                     return 1;
                 }
 
-                if (fileItem.getModTime() == t1.getModTime()) {
-                    return 0;
-                } else if (fileItem.getModTime() > t1.getModTime()) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                return Long.compare(t1.getModTime(), fileItem.getModTime());
             }
         }
 
@@ -112,13 +94,7 @@ public class FileComparators {
                     return 1;
                 }
 
-                if (fileItem.getModTime() == t1.getModTime()) {
-                    return 0;
-                } else if (fileItem.getModTime() > t1.getModTime()) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+                return Long.compare(fileItem.getModTime(), t1.getModTime());
             }
         }
 }

@@ -1,4 +1,13 @@
-### Version 0.3.0-alpha
+### 1.0.0-beta
+***
+First beta release!
+
+* Code refactoring
+
+***
+
+
+### 0.3.0-alpha
 ***
 
 * **New:** Changelog added under About screen

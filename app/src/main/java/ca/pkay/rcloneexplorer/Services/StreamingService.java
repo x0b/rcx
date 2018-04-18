@@ -43,6 +43,9 @@ public class StreamingService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        if (intent == null) {
+            return;
+        }
         final String servePath = intent.getStringExtra(SERVE_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
         final Boolean showNotificationText = intent.getBooleanExtra(SHOW_NOTIFICATION_TEXT, false);
@@ -55,10 +58,10 @@ public class StreamingService extends IntentService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_http)
-                .setContentTitle("Streaming Service")
+                .setContentTitle(getString(R.string.streaming_service_notification_title))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_cancel_download, "Cancel", cancelPendingIntent);
+                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         if (showNotificationText) {
             Uri uri = Uri.parse("http://127.0.0.1:8080");
@@ -66,7 +69,7 @@ public class StreamingService extends IntentService {
             webPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent webPagePendingIntent = PendingIntent.getActivity(this, 0, webPageIntent, 0);
             builder.setContentIntent(webPagePendingIntent);
-            builder.setContentText("Serving on http://127.0.0.1:8080");
+            builder.setContentText(getString(R.string.streaming_service_notification_content));
         }
 
         startForeground(1, builder.build());
@@ -92,10 +95,12 @@ public class StreamingService extends IntentService {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("Streaming service");
+            channel.setDescription(getString(R.string.streaming_service_notification_channel_description));
             // Register the channel with the system
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
 }

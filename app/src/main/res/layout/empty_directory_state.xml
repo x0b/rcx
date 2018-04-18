@@ -24,13 +24,14 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_folder_open"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:contentDescription="@string/empty_folder" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="The folder is empty"
+            android:text="@string/empty_folder"
             android:textStyle="bold"
             android:paddingTop="16dp"/>
     </LinearLayout>

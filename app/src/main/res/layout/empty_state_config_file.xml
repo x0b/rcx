@@ -15,7 +15,7 @@
             android:src="@drawable/ic_empty_box"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:contentDescription="Empty state icon" />
+            android:contentDescription="@string/empty_state_icon" />
 
         <TextView
             android:id="@+id/empty_state_title"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/empty_state_ic"
             android:layout_centerHorizontal="true"
-            android:text="Ooops!"
+            android:text="@string/ooops"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
             android:textSize="30sp" />
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/empty_state_title"
             android:layout_centerHorizontal="true"
-            android:text="No configuration file found"
+            android:text="@string/no_config_file"
             android:layout_marginTop="8dp" />
 
         <Button
@@ -44,6 +44,6 @@
             android:layout_below="@+id/empty_state_message"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:text="Import configuration"/>
+            android:text="@string/import_configuration"/>
     </RelativeLayout>
 </RelativeLayout>
