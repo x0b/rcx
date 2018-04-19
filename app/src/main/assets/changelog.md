@@ -1,3 +1,11 @@
+### 1.0.1-beta
+* **New:** Short app name in the launcher
+* **Fix:** Scrolling in About page
+* **Fix:** File Explorer not getting cleared when loading
+* **Fix:** Sorting
+* **Fix:** Canceled notification posted on download/upload cancel
+* **Fix:** Make temporary files read-only
+
 ### 1.0.0-beta
 ***
 First beta release!

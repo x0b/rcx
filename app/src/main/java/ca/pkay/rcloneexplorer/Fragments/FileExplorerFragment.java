@@ -945,6 +945,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 e.printStackTrace();
                 return false;
             }
+
+            if (process.exitValue() == 0) {
+                File savedFile = new File(fileLocation);
+                savedFile.setReadOnly();
+            }
+
             return process.exitValue() == 0;
         }
 
