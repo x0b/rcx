@@ -6,8 +6,8 @@ android {
         applicationId "ca.pkay.rcloneexplorer"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 4
-        versionName "1.0.0-beta"
+        versionCode 5
+        versionName "1.0.1-beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.mikepenz:octicons-typeface:3.2.0.4@aar'
     implementation "com.mikepenz:aboutlibraries:6.0.8"
     implementation 'us.feras.mdv:markdownview:1.1.0'
+    implementation 'jp.wasabeef:recyclerview-animators:2.3.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

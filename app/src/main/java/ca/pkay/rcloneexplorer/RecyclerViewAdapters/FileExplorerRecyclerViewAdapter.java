@@ -121,15 +121,20 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     public void clear() {
+        if (files == null) {
+            return;
+        }
+        int count = files.size();
         files.clear();
         isInSelectMode = false;
         selectedItems.clear();
         listener.onFilesSelected(false);
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(0, count);
     }
 
     public void newData(List<FileItem> data) {
-        files = data;
+        this.clear();
+        files = new ArrayList<>(data);
         isInSelectMode = false;
         selectedItems.clear();
         listener.onFilesSelected(false);
@@ -138,18 +143,26 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else {
             emptyView.setVisibility(View.INVISIBLE);
         }
-        notifyDataSetChanged();
+        if (isInMoveMode) {
+            notifyDataSetChanged();
+        } else {
+            notifyItemRangeInserted(0, files.size());
+        }
     }
 
     public void updateData(List<FileItem> data) {
-        files = data;
+        this.clear();
+        files = new ArrayList<>(data);
         if (files.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         } else {
             emptyView.setVisibility(View.INVISIBLE);
         }
-        notifyDataSetChanged();
-    }
+        if (isInMoveMode) {
+            notifyDataSetChanged();
+        } else {
+            notifyItemRangeInserted(0, files.size());
+        }    }
 
     public void refreshData() {
         notifyDataSetChanged();
