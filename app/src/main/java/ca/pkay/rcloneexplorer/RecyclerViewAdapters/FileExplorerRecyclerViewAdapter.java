@@ -67,10 +67,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             if (selectedItems.contains(item)) {
                 holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
             } else {
-                holder.view.setBackgroundColor(0x00000000);
+                holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
             }
         } else {
-            holder.view.setBackgroundColor(0x00000000);
+            holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
         }
         if (isInMoveMode) {
             if (item.isDir()) {
@@ -206,7 +206,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private void onLongClickAction(FileItem item, ViewHolder holder) {
         if (selectedItems.contains(item)) {
             selectedItems.remove(item);
-            holder.view.setBackgroundColor(0x00000000);
+            holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
             if (selectedItems.size() == 0) {
                 isInSelectMode = false;
                 listener.onFilesSelected(false);
