@@ -26,6 +26,15 @@ Remotes|File Explorer|File Upload
 **File Editing**|**Empty Folder**|
 ![screenshot4](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_4.png?raw=true)|![screenshot5](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_5.png?raw=true)
 
+Installation
+------------
+Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest) of the signed APK and install it on your phone.
+
+- For ARM 32-bit devices download RcloneExplorer-ARM_32.apk
+- For ARM 64-bit devices download RcloneExplorer-ARM_64.apk
+- For x86 devices download RcloneExplorer-x86.apk
+- Ultimately, RcloneExplorer.apk will work with both ARM and x86 devices.
+
 Credits/Libraries
 -----------------
 - [About Libraries](https://github.com/mikepenz/AboutLibraries) - AboutLibraries is a library to offer some information of libraries.
