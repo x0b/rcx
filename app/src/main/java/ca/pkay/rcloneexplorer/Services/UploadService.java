@@ -28,6 +28,7 @@ public class UploadService extends IntentService {
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
     private Rclone rclone;
     private List<Process> runningProcesses;
+    private Boolean aProcessFailed;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -72,6 +73,9 @@ public class UploadService extends IntentService {
         for (Process process : runningProcesses) {
             try {
                 process.waitFor();
+                if (process.exitValue() != 0) {
+                    aProcessFailed = true;
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -80,14 +84,27 @@ public class UploadService extends IntentService {
 
         stopForeground(true);
 
-        NotificationCompat.Builder builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_upload_done)
-                .setContentTitle(getString(R.string.upload_complete))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationCompat.Builder builder1;
+        if (aProcessFailed) {
+            builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning)
+                    .setContentTitle(getString(R.string.upload_cancelled))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(20, builder1.build());
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.notify(21, builder1.build());
+            }
+        } else {
+            builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+                    .setContentTitle(getString(R.string.upload_complete))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.notify(20, builder1.build());
+            }
         }
     }
 

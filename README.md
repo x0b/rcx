@@ -37,4 +37,3 @@ Credits/Libraries
 - [Material Dialogs](https://github.com/afollestad/material-dialogs) - A beautiful, fluid, and customizable dialogs API
 - [rclone](https://github.com/ncw/rclone) - "rsync for cloud storage"
 - Icon made by [Smashicons](https://www.flaticon.com/authors/smashicons) from [Flaticon](https://www.flaticon.com)
-- Graphics from [Game Building Tools](http://www.gamebuildingtools.com)

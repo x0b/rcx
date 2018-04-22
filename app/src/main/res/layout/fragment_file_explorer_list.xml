@@ -6,10 +6,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
-
-    <include
-        layout="@layout/empty_directory_state" />
+    android:orientation="vertical"
+    android:background="@color/grey" >
 
     <include
         layout="@layout/empty_directory_state" />

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Rclone Explorer</string>
+    <string name="app_short_name">Rclone Ex</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -72,4 +73,6 @@
     <string name="type_new_folder_name">Please type new folder name</string>
     <string name="loading_file">Loading file</string>
     <string name="please_wait">Please wait</string>
+    <string name="download_cancelled">Download cancelled</string>
+    <string name="upload_cancelled">Upload cancelled</string>
 </resources>

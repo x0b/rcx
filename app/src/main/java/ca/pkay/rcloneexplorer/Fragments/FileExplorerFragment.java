@@ -51,6 +51,8 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapt
 import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import ru.bartwell.exfilepicker.ExFilePicker;
 import ru.bartwell.exfilepicker.data.ExFilePickerResult;
 
@@ -165,6 +167,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         Context context = view.getContext();
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
+        recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, view.findViewById(R.id.empty_folder_view), this);
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -482,6 +485,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fetchDirectoryTask.cancel(true);
         breadcrumbView.removeLastCrumb();
         path = pathStack.pop();
+        recyclerViewAdapter.clear();
         if (directoryCache.containsKey(path)) {
             directoryContent = directoryCache.get(path);
             recyclerViewAdapter.newData(directoryContent);
@@ -574,6 +578,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             // pop stack until we find path
         }
         breadcrumbView.removeCrumbsUpTo(path);
+        recyclerViewAdapter.clear();
         if (directoryCache.containsKey(path)) {
             directoryContent = directoryCache.get(path);
             recyclerViewAdapter.newData(directoryContent);
@@ -943,6 +948,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 e.printStackTrace();
                 return false;
             }
+
+            if (process.exitValue() == 0) {
+                File savedFile = new File(fileLocation);
+                savedFile.setReadOnly();
+            }
+
             return process.exitValue() == 0;
         }
 
