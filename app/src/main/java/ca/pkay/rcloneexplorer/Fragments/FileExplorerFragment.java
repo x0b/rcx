@@ -47,6 +47,7 @@ import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.FileComparators;
+import ca.pkay.rcloneexplorer.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
@@ -289,28 +290,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             return;
         }
         FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater;
-        if (getActivity() != null) {
-            inflater = getActivity().getLayoutInflater();
-        } else {
-            return;
+        FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog();
+        filePropertiesDialog.setFile(fileItem);
+        if (getFragmentManager() != null) {
+            filePropertiesDialog.show(getFragmentManager(), "file properties");
         }
-        final View view = inflater.inflate(R.layout.file_properties_popup, null);
-        builder.setView(view)
-                .setPositiveButton(R.string.ok, null);
-        AlertDialog dialog = builder.create();
-        ((TextView)view.findViewById(R.id.filename)).setText(fileItem.getName());
-        ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getHumanReadableModTime());
-        if (fileItem.isDir()) {
-            view.findViewById(R.id.file_size).setVisibility(View.GONE);
-            view.findViewById(R.id.file_size_label).setVisibility(View.GONE);
-        } else {
-            view.findViewById(R.id.file_size).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.file_size_label).setVisibility(View.VISIBLE);
-            ((TextView)view.findViewById(R.id.file_size)).setText(fileItem.getHumanReadableSize());
-        }
-        dialog.show();
     }
 
     private void setFabClickListeners() {
