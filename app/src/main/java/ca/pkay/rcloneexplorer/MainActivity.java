@@ -1,13 +1,16 @@
 package ca.pkay.rcloneexplorer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +26,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,11 +47,13 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Rclone rclone;
     private Fragment fragment;
+    private Context context;
     private NetworkStateReceiver networkStateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,12 +88,7 @@ public class MainActivity extends AppCompatActivity
             Uri uri;
             if (data != null) {
                 uri = data.getData();
-                try {
-                    rclone.copyConfigFile(uri);
-                    startRemotesFragment();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new CopyConfigFile().execute(uri);
             }
         }
     }
@@ -203,5 +205,50 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
+    }
+
+    private class CreateRcloneBinary extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class CopyConfigFile extends AsyncTask<Uri, Void, Boolean> {
+
+        private MaterialDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new MaterialDialog.Builder(context)
+                    .title(R.string.copying_rclone_config)
+                    .content(R.string.please_wait)
+                    .progress(true, 0)
+                    .cancelable(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Uri... uris) {
+            try {
+                rclone.copyConfigFile(uris[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            dialog.dismiss();
+            if (success) {
+                startRemotesFragment();
+            }
+        }
     }
 }
