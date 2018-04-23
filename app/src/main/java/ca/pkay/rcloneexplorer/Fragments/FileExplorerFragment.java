@@ -527,6 +527,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else if (pathStack.isEmpty() || directoryCache.isEmpty()) {
             return false;
         }
+        swipeRefreshLayout.setRefreshing(false);
         fetchDirectoryTask.cancel(true);
         breadcrumbView.removeLastCrumb();
         path = pathStack.pop();
@@ -617,6 +618,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (this.path.equals(path)) {
             return;
         }
+        swipeRefreshLayout.setRefreshing(false);
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
