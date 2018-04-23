@@ -26,6 +26,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -36,6 +37,7 @@ import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
@@ -70,13 +72,16 @@ public class MainActivity extends AppCompatActivity
 
         rclone = new Rclone(this);
 
-
         networkStateReceiver = new NetworkStateReceiver();
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
 
-        startRemotesFragment();
+        if (rclone.isRcloneBinaryCreated()) {
+            startRemotesFragment();
+        } else {
+            new CreateRcloneBinary().execute();
+        }
     }
 
     @Override
@@ -207,11 +212,43 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(false);
     }
 
-    private class CreateRcloneBinary extends AsyncTask<Void, Void, Void> {
+    @SuppressLint("StaticFieldLeak")
+    private class CreateRcloneBinary extends AsyncTask<Void, Void, Boolean> {
+
+        private MaterialDialog dialog;
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            return null;
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new MaterialDialog.Builder(context)
+                    .title(R.string.creating_rclone_binary)
+                    .content(R.string.please_wait)
+                    .progress(true, 0)
+                    .cancelable(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                rclone.createRcloneBinary();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            if (!success) {
+                Toasty.error(context, getString(R.string.error_creating_rclone_binary), Toast.LENGTH_LONG, true).show();
+                finish();
+                System.exit(0);
+            }
+            dialog.dismiss();
+            startRemotesFragment();
         }
     }
 

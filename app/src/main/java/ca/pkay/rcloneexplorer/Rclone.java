@@ -30,15 +30,6 @@ public class Rclone {
 
     public Rclone(Context context) {
         this.context = context;
-
-        if (!isRcloneBinaryCreated()) {
-            try {
-                createRcloneBinary();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         this.rclone = context.getFilesDir().getPath() + "/rclone";
         this.rcloneConf = context.getFilesDir().getPath() + "/rclone.conf";
     }
@@ -403,20 +394,16 @@ public class Rclone {
         }
         inputStream.close();
         fileOutputStream.close();
+        }
 
-        Context context = this.context.getApplicationContext();
-        Toast toast = Toast.makeText(context, "Config file imported", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    private boolean isRcloneBinaryCreated() {
+    public boolean isRcloneBinaryCreated() {
         String appsFileDir = context.getFilesDir().getPath();
         String exeFilePath = appsFileDir + "/rclone";
         File file = new File(exeFilePath);
         return file.exists() && file.canExecute();
     }
 
-    private void createRcloneBinary() throws IOException {
+    public void createRcloneBinary() throws IOException {
         String appsFileDir = context.getFilesDir().getPath();
         String rcloneArchitecture = null;
         String[] supportedABIS = Build.SUPPORTED_ABIS;
