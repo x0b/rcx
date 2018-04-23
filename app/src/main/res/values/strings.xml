@@ -76,4 +76,18 @@
     <string name="download_cancelled">Download cancelled</string>
     <string name="upload_cancelled">Upload cancelled</string>
     <string name="ok">OK</string>
+    <string name="file_renamed_success">File Renamed</string>
+    <string name="files_moved_success">File(s) moved</string>
+    <string name="files_deleted_success">File(s) deleted</string>
+    <string name="make_directory_success">New folder created</string>
+    <string name="error_getting_dir_content">Error retrieving directory content</string>
+    <string name="error_getting_remotes">Error retrieving remotes</string>
+    <string name="error_deleting_file">Error deleting a file</string>
+    <string name="error_mkdir">Error creating a directory</string>
+    <string name="error_moving_file">Error moving a file</string>
+    <string name="sort_by_name">By name</string>
+    <string name="sort_by_date_modified">By date modified</string>
+    <string name="sort_by_size">By size</string>
+    <string name="sort_ascending">Ascending</string>
+    <string name="sort_descending">Descending</string>
 </resources>

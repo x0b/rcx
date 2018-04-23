@@ -3,9 +3,6 @@ package ca.pkay.rcloneexplorer;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -19,21 +16,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import es.dmoral.toasty.Toasty;
 
 public class Rclone {
 
-    private Context activity;
+    private Context context;
     private String rclone;
     private String rcloneConf;
 
     public Rclone(Context context) {
-        this.activity = context;
+        this.context = context;
 
         if (!isRcloneBinaryCreated()) {
             try {
@@ -76,7 +72,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
-                // TODO report error
+                Toasty.error(context, context.getString(R.string.error_getting_dir_content), Toast.LENGTH_SHORT, true).show();
                 return new ArrayList<>();
             }
 
@@ -109,7 +105,7 @@ public class Rclone {
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
-                // TODO report error
+                Toasty.error(context, context.getString(R.string.error_getting_dir_content), Toast.LENGTH_SHORT, true).show();
                 return new ArrayList<>();
             }
         }
@@ -124,7 +120,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
-                // TODO report error
+                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
                 return new ArrayList<>();
             }
 
@@ -134,7 +130,7 @@ public class Rclone {
                 result.add(line);
             }
         } catch (IOException | InterruptedException e) {
-            // TODO report error
+            Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -156,7 +152,6 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(command);
         } catch (IOException e) {
-            // TODO report error
             e.printStackTrace();
             return null;
         }
@@ -253,9 +248,12 @@ public class Rclone {
             try {
                 Process process = Runtime.getRuntime().exec(command);
                 process.waitFor();
-                // TODO report error is exitStatus != 0
+                if (process.exitValue() != 0) {
+                    Toasty.error(context, context.getString(R.string.error_deleting_file), Toast.LENGTH_SHORT, true).show();
+                }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
+                Toasty.error(context, context.getString(R.string.error_deleting_file), Toast.LENGTH_SHORT, true).show();
             }
         }
     }
@@ -266,9 +264,12 @@ public class Rclone {
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
-            // TODO report error is exitStatus != 0
+            if (process.exitValue() != 0) {
+                Toasty.error(context, context.getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            Toasty.error(context, context.getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
         }
     }
 
@@ -284,9 +285,12 @@ public class Rclone {
             try {
                 Process process = Runtime.getRuntime().exec(command);
                 process.waitFor();
-                // TODO report error if exitStatus != 0
+                if (process.exitValue() != 0) {
+                    Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+                }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
+                Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
             }
         }
     }
@@ -298,9 +302,10 @@ public class Rclone {
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
-            // TODO report error is exitStatus != 0
+            Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
         }
     }
 
@@ -311,7 +316,6 @@ public class Rclone {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
-                // TODO report error
                 return "-1";
             }
 
@@ -330,15 +334,15 @@ public class Rclone {
     }
 
     public boolean isConfigFileCreated() {
-        String appsFileDir = activity.getFilesDir().getPath();
+        String appsFileDir = context.getFilesDir().getPath();
         String configFile = appsFileDir + "/rclone.conf";
         File file = new File(configFile);
         return file.exists();
     }
 
     public void copyConfigFile(Uri uri) throws IOException {
-        String appsFileDir = activity.getFilesDir().getPath();
-        InputStream inputStream = activity.getContentResolver().openInputStream(uri);
+        String appsFileDir = context.getFilesDir().getPath();
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
         File outFile = new File(appsFileDir, "rclone.conf");
         FileOutputStream fileOutputStream = new FileOutputStream(outFile);
 
@@ -350,20 +354,20 @@ public class Rclone {
         inputStream.close();
         fileOutputStream.close();
 
-        Context context = activity.getApplicationContext();
+        Context context = this.context.getApplicationContext();
         Toast toast = Toast.makeText(context, "Config file imported", Toast.LENGTH_LONG);
         toast.show();
     }
 
     private boolean isRcloneBinaryCreated() {
-        String appsFileDir = activity.getFilesDir().getPath();
+        String appsFileDir = context.getFilesDir().getPath();
         String exeFilePath = appsFileDir + "/rclone";
         File file = new File(exeFilePath);
         return file.exists() && file.canExecute();
     }
 
     private void createRcloneBinary() throws IOException {
-        String appsFileDir = activity.getFilesDir().getPath();
+        String appsFileDir = context.getFilesDir().getPath();
         String rcloneArchitecture = null;
         String[] supportedABIS = Build.SUPPORTED_ABIS;
         if (supportedABIS[0].toUpperCase().contains("ARM")) {
@@ -382,7 +386,7 @@ public class Rclone {
             System.exit(1);
         }
         String exeFilePath = appsFileDir + "/rclone";
-        InputStream inputStream = activity.getAssets().open(rcloneArchitecture);
+        InputStream inputStream = context.getAssets().open(rcloneArchitecture);
         File outFile = new File(appsFileDir, "rclone");
         FileOutputStream fileOutputStream = new FileOutputStream(outFile);
 

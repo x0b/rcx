@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_Toasty"></string>
+    <string name="library_Toasty_author">Daniel Morales</string>
+    <string name="library_Toasty_authorWebsite">https://github.com/GrenderG/</string>
+    <string name="library_Toasty_libraryName">Toasty</string>
+    <string name="library_Toasty_libraryDescription">The usual Toast, but with steroids</string>
+    <string name="library_Toasty_libraryVersion"></string>
+    <string name="library_Toasty_libraryWebsite">https://github.com/GrenderG/Toasty/</string>
+    <string name="library_Toasty_licenseId">lgpl_3</string>
+    <string name="library_Toasty_isOpenSource">true</string>
+    <string name="library_Toasty_repositoryLink">https://github.com/GrenderG/Toasty/</string>
+</resources>
