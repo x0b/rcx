@@ -100,11 +100,9 @@ public class FilePropertiesDialog extends DialogFragment {
         if (md5String != null && !md5String.isEmpty()) {
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("Copied hash", md5String);
+            ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(true);
             if (clipboardManager == null) {
-                ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(true);
                 return;
-            } else {
-                ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(false);
             }
             clipboardManager.setPrimaryClip(clipData);
             Toasty.info(context, getString(R.string.hash_copied_confirmation), Toast.LENGTH_SHORT, true).show();
@@ -121,11 +119,9 @@ public class FilePropertiesDialog extends DialogFragment {
         if (sha1String != null && !sha1String.isEmpty()) {
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("Copied hash", sha1String);
+            ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(true);
             if (clipboardManager == null) {
-                ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(true);
                 return;
-            } else {
-                ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(false);
             }
             clipboardManager.setPrimaryClip(clipData);
             Toasty.info(context, getString(R.string.hash_copied_confirmation), Toast.LENGTH_SHORT, true).show();
