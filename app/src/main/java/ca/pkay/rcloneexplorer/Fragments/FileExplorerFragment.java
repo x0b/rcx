@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,14 +26,14 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.shehabic.droppy.DroppyClickCallbackInterface;
-import com.shehabic.droppy.DroppyMenuPopup;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +54,6 @@ import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import ru.bartwell.exfilepicker.ExFilePicker;
 import ru.bartwell.exfilepicker.data.ExFilePickerResult;
 
@@ -373,26 +374,60 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void showSortMenu() {
-        DroppyMenuPopup droppyMenu;
-        DroppyMenuPopup.Builder droppyBuilder = new DroppyMenuPopup.Builder(getContext(), ((FragmentActivity) context).findViewById(R.id.action_sort));
-        droppyMenu = droppyBuilder.fromMenu(R.menu.sort_menu)
-                .triggerOnAnchorClick(false)
-                .setXOffset(5)
-                .setYOffset(5)
-                .setOnClick(new DroppyClickCallbackInterface() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater;
+        if (getActivity() != null) {
+            inflater = getActivity().getLayoutInflater();
+        } else {
+            return;
+        }
+        final View view = inflater.inflate(R.layout.sort_popup, null);
+        builder.setView(view)
+                .setTitle(R.string.sort)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
-                    public void call(View v, int id) {
-                        sortDirectory(id);
+                    public void onClick(DialogInterface dialog, int which) {
+                        int sortById = ((RadioGroup)view.findViewById(R.id.radio_group_sort_by)).getCheckedRadioButtonId();
+                        int sortOrderId = ((RadioGroup)view.findViewById(R.id.radio_group_sort_order)).getCheckedRadioButtonId();
+                        sortSelected(sortById, sortOrderId);
                     }
                 })
-                .build();
-        droppyMenu.show();
+                .setNegativeButton(getResources().getString(R.string.cancel), null);
+        AlertDialog dialog = builder.create();
+
+        switch (sortOrder) {
+            case ModTimeDescending:
+                ((RadioButton)view.findViewById(R.id.radio_sort_date)).setChecked(true);
+                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+                break;
+            case ModTimeAscending:
+                ((RadioButton)view.findViewById(R.id.radio_sort_date)).setChecked(true);
+                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
+                break;
+            case SizeDescending:
+                ((RadioButton)view.findViewById(R.id.radio_sort_size)).setChecked(true);
+                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+                break;
+            case SizeAscending:
+                ((RadioButton)view.findViewById(R.id.radio_sort_size)).setChecked(true);
+                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
+                break;
+            case AlphaAscending:
+                ((RadioButton)view.findViewById(R.id.radio_sort_name)).setChecked(true);
+                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
+                break;
+            case AlphaDescending:
+            default:
+                ((RadioButton)view.findViewById(R.id.radio_sort_name)).setChecked(true);
+                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+        }
+        dialog.show();
     }
 
-    private void sortDirectory(int id) {
-        switch (id) {
-            case R.id.sort_alpha:
-                if (sortOrder == SortOrder.AlphaDescending) {
+    private void sortSelected(int sortById, int sortOrderId) {
+        switch (sortById) {
+            case R.id.radio_sort_name:
+                if (sortOrderId == R.id.radio_sort_ascending) {
                     Collections.sort(directoryContent, new FileComparators.SortAlphaAscending());
                     sortOrder = SortOrder.AlphaAscending;
                 } else {
@@ -400,8 +435,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     sortOrder = SortOrder.AlphaDescending;
                 }
                 break;
-            case R.id.sort_date:
-                if (sortOrder == SortOrder.ModTimeDescending) {
+            case R.id.radio_sort_date:
+                if (sortOrderId == R.id.radio_sort_ascending) {
                     Collections.sort(directoryContent, new FileComparators.SortModTimeAscending());
                     sortOrder = SortOrder.ModTimeAscending;
                 } else {
@@ -409,8 +444,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     sortOrder = SortOrder.ModTimeDescending;
                 }
                 break;
-            case R.id.sort_size:
-                if (sortOrder == SortOrder.SizeDescending) {
+            case R.id.radio_sort_size:
+                if (sortOrderId == R.id.radio_sort_ascending) {
                     Collections.sort(directoryContent, new FileComparators.SortSizeAscending());
                     sortOrder = SortOrder.SizeAscending;
                 } else {
@@ -420,7 +455,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 break;
         }
         recyclerViewAdapter.updateData(directoryContent);
-        if (null != sortOrder) {
+        if (sortOrder != null) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder.getValue()).apply();
         }
