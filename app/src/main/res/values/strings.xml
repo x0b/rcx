@@ -93,4 +93,10 @@
     <string name="filename">Filename</string>
     <string name="modified_time">Modified time</string>
     <string name="size">Size</string>
+    <string name="md5">MD5</string>
+    <string name="sha1">SHA1</string>
+    <string name="tap_to_calculate">Tap to calculate</string>
+    <string name="calculating">Calculating</string>
+    <string name="hash_error">ERROR</string>
+    <string name="hash_unsupported">UNSUPPORTED</string>
 </resources>

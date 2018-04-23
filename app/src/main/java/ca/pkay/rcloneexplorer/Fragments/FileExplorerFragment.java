@@ -292,6 +292,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
         FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog();
         filePropertiesDialog.setFile(fileItem);
+        filePropertiesDialog.setRclone(rclone);
+        filePropertiesDialog.setRemote(remote);
         if (getFragmentManager() != null) {
             filePropertiesDialog.show(getFragmentManager(), "file properties");
         }

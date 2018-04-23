@@ -309,6 +309,56 @@ public class Rclone {
         }
     }
 
+    public String calculateMD5(String remote, FileItem fileItem) {
+        String remoteAndPath = remote + ":" + fileItem.getName();
+        String[] command = createCommand("md5sum", remoteAndPath);
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                return context.getString(R.string.hash_error);
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = reader.readLine();
+            String[] split = line.split("\\s+");
+            if (split[0].trim().isEmpty()) {
+                return context.getString(R.string.hash_unsupported);
+            } else {
+                return split[0];
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return context.getString(R.string.hash_error);
+        }
+    }
+
+    public String calculateSHA1(String remote, FileItem fileItem) {
+        String remoteAndPath = remote + ":" + fileItem.getName();
+        String[] command = createCommand("sha1sum", remoteAndPath);
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                return context.getString(R.string.hash_error);
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = reader.readLine();
+            String[] split = line.split("\\s+");
+            if (split[0].trim().isEmpty()) {
+                return context.getString(R.string.hash_unsupported);
+            } else {
+                return split[0];
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return context.getString(R.string.hash_error);
+        }
+    }
+
     public String getRcloneVersion() {
         String[] command = createCommand("--version");
         ArrayList<String> result = new ArrayList<>();
