@@ -44,4 +44,5 @@ Credits/Libraries
 - [Markdown View](https://github.com/falnatsheh/MarkdownView) - MarkdownView is an Android webview with the capablity of loading Markdown text or file and display it as HTML, it uses MarkdownJ and extends Android webview.
 - [Material Dialogs](https://github.com/afollestad/material-dialogs) - A beautiful, fluid, and customizable dialogs API
 - [rclone](https://github.com/ncw/rclone) - "rsync for cloud storage"
+- [Toasty](https://github.com/GrenderG/Toasty) - The usual Toast, but with steroids
 - Icon made by [Smashicons](https://www.flaticon.com/authors/smashicons) from [Flaticon](https://www.flaticon.com)

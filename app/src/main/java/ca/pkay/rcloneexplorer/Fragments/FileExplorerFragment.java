@@ -28,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -53,6 +54,7 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapt
 import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import ru.bartwell.exfilepicker.ExFilePicker;
 import ru.bartwell.exfilepicker.data.ExFilePickerResult;
@@ -604,7 +606,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (this.path.equals(path)) {
             return;
         }
-        if (null != fetchDirectoryTask) {
+        if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
         this.path = path;
@@ -811,9 +813,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @SuppressLint("StaticFieldLeak")
     private class RenameFileTask extends AsyncTask<String, Void, Void> {
 
+        private String pathWhenTaskStarted;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            pathWhenTaskStarted = path;
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -832,6 +837,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!isRunning) {
                 return;
             }
+            Toasty.success(context, getString(R.string.file_renamed_success), Toast.LENGTH_SHORT, true).show();
+            if (!pathWhenTaskStarted.equals(path)) {
+                directoryCache.remove(pathWhenTaskStarted);
+                return;
+            }
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
             }
@@ -844,9 +854,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @SuppressLint("StaticFieldLeak")
     private class MoveTask extends AsyncTask<Void, Void, Void> {
 
+        private String pathWhenTaskStarted;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            pathWhenTaskStarted = path;
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -862,6 +875,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!isRunning) {
                 return;
             }
+            Toasty.success(context, getString(R.string.files_moved_success), Toast.LENGTH_SHORT, true).show();
+            if (!pathWhenTaskStarted.equals(path)) {
+                directoryCache.remove(pathWhenTaskStarted);
+                return;
+            }
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
             }
@@ -875,10 +893,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @SuppressLint("StaticFieldLeak")
     private class DeleteFilesTask extends AsyncTask<List, Void, Void> {
 
+        private String pathWhenTaskStarted;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            pathWhenTaskStarted = path;
             swipeRefreshLayout.setRefreshing(true);
 
         }
@@ -896,6 +916,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!isRunning) {
                 return;
             }
+            Toasty.success(context, getString(R.string.files_deleted_success), Toast.LENGTH_SHORT, true).show();
+            if (!pathWhenTaskStarted.equals(path)) {
+                directoryCache.remove(pathWhenTaskStarted);
+                return;
+            }
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
             }
@@ -908,9 +933,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @SuppressLint("StaticFieldLeak")
     private class MakeDirectoryTask extends AsyncTask<String, Void, Void> {
 
+        private String pathWhenTaskStarted;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            pathWhenTaskStarted = path;
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -924,6 +952,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if (!isRunning) {
+                return;
+            }
+            Toasty.success(context, getString(R.string.make_directory_success), Toast.LENGTH_SHORT, true).show();
+            if (!pathWhenTaskStarted.equals(path)) {
+                directoryCache.remove(pathWhenTaskStarted);
+                return;
+            }
             swipeRefreshLayout.setRefreshing(false);
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
