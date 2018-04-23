@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,12 +22,13 @@ public class FilePropertiesDialog extends DialogFragment {
     private View view;
     private Rclone rclone;
     private AsyncTask[] asyncTasks;
+    Context context;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         asyncTasks = new AsyncTask[2];
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.file_properties_popup, null);
 
@@ -67,16 +69,24 @@ public class FilePropertiesDialog extends DialogFragment {
         return builder.create();
     }
 
-    public void setFile(FileItem fileItem) {
+    public FilePropertiesDialog setContext(Context context) {
+        this.context = context;
+        return this;
+    }
+
+    public FilePropertiesDialog setFile(FileItem fileItem) {
         this.fileItem = fileItem;
+        return this;
     }
 
-    public void setRemote(String remote) {
+    public FilePropertiesDialog setRemote(String remote) {
         this.remote = remote;
+        return this;
     }
 
-    public void setRclone(Rclone rclone) {
+    public FilePropertiesDialog setRclone(Rclone rclone) {
         this.rclone = rclone;
+        return this;
     }
 
     private void calculateMD5() {
