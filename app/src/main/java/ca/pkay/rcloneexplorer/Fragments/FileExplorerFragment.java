@@ -28,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -265,10 +266,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 context.startService(intent);
                 return true;
             case R.id.action_file_properties:
-                new MaterialDialog.Builder(context)
-                        .content(recyclerViewAdapter.getSelectedItems().get(0).getName())
-                        .positiveText(R.string.ok)
-                        .show();
+                showFileProperties();
                 return true;
             default:
                     return super.onOptionsItemSelected(item);
@@ -284,6 +282,35 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+    }
+
+    private void showFileProperties() {
+        if (!recyclerViewAdapter.isInSelectMode() || recyclerViewAdapter.getNumberOfSelectedItems() > 2) {
+            return;
+        }
+        FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater;
+        if (getActivity() != null) {
+            inflater = getActivity().getLayoutInflater();
+        } else {
+            return;
+        }
+        final View view = inflater.inflate(R.layout.file_properties_popup, null);
+        builder.setView(view)
+                .setPositiveButton(R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        ((TextView)view.findViewById(R.id.filename)).setText(fileItem.getName());
+        ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getHumanReadableModTime());
+        if (fileItem.isDir()) {
+            view.findViewById(R.id.file_size).setVisibility(View.GONE);
+            view.findViewById(R.id.file_size_label).setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.file_size).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.file_size_label).setVisibility(View.VISIBLE);
+            ((TextView)view.findViewById(R.id.file_size)).setText(fileItem.getHumanReadableSize());
+        }
+        dialog.show();
     }
 
     private void setFabClickListeners() {

@@ -90,4 +90,7 @@
     <string name="sort_by_size">By size</string>
     <string name="sort_ascending">Ascending</string>
     <string name="sort_descending">Descending</string>
+    <string name="filename">Filename</string>
+    <string name="modified_time">Modified time</string>
+    <string name="size">Size</string>
 </resources>
