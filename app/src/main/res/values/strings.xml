@@ -99,4 +99,5 @@
     <string name="calculating">Calculating</string>
     <string name="hash_error">ERROR</string>
     <string name="hash_unsupported">UNSUPPORTED</string>
+    <string name="hash_copied_confirmation">Hash copied to clipboard</string>
 </resources>

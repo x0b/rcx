@@ -1,3 +1,8 @@
+### 1.0.3-beta
+* **New:** Calculate file MD5 & SHA1
+
+***
+
 ### 1.0.2-beta
 * **New:** Sort dialog
 * **New:** Toast confirmation messages

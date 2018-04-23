@@ -2,6 +2,8 @@ package ca.pkay.rcloneexplorer;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -12,8 +14,10 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import es.dmoral.toasty.Toasty;
 
 public class FilePropertiesDialog extends DialogFragment {
 
@@ -22,7 +26,9 @@ public class FilePropertiesDialog extends DialogFragment {
     private View view;
     private Rclone rclone;
     private AsyncTask[] asyncTasks;
-    Context context;
+    private String md5String;
+    private String sha1String;
+    private Context context;
 
     @NonNull
     @Override
@@ -90,17 +96,45 @@ public class FilePropertiesDialog extends DialogFragment {
     }
 
     private void calculateMD5() {
-        if (asyncTasks[0] != null) {
-            asyncTasks[0].cancel(true);
+        // md5 already calculated
+        if (md5String != null && !md5String.isEmpty()) {
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("Copied hash", md5String);
+            if (clipboardManager == null) {
+                ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(true);
+                return;
+            } else {
+                ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(false);
+            }
+            clipboardManager.setPrimaryClip(clipData);
+            Toasty.info(context, getString(R.string.hash_copied_confirmation), Toast.LENGTH_SHORT, true).show();
+        } else { // calculate md5
+            if (asyncTasks[0] != null) {
+                asyncTasks[0].cancel(true);
+            }
+            asyncTasks[0] = new CalculateMD5().execute();
         }
-        asyncTasks[0] = new CalculateMD5().execute();
     }
 
     private void calculateSHA1() {
-        if (asyncTasks[1] != null) {
-            asyncTasks[1].cancel(true);
+        // sha1 already calculated
+        if (sha1String != null && !sha1String.isEmpty()) {
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("Copied hash", sha1String);
+            if (clipboardManager == null) {
+                ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(true);
+                return;
+            } else {
+                ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(false);
+            }
+            clipboardManager.setPrimaryClip(clipData);
+            Toasty.info(context, getString(R.string.hash_copied_confirmation), Toast.LENGTH_SHORT, true).show();
+        } else { // calculate sha1
+            if (asyncTasks[1] != null) {
+                asyncTasks[1].cancel(true);
+            }
+            asyncTasks[1] = new CalculateSHA1().execute();
         }
-        asyncTasks[1] = new CalculateSHA1().execute();
     }
 
     @Override
@@ -132,10 +166,10 @@ public class FilePropertiesDialog extends DialogFragment {
             super.onPostExecute(md5);
             ((TextView)view.findViewById(R.id.file_md5)).setText(md5);
 
-            if (md5.equals(getString(R.string.hash_error)) || md5.equals(getString(R.string.hash_unsupported))) {
-                ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(false);
+            if (!md5.equals(getString(R.string.hash_error)) && !md5.equals(getString(R.string.hash_unsupported))) {
+                md5String = md5;
             } else {
-                ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(true);
+                md5String = null;
             }
         }
     }
@@ -159,10 +193,10 @@ public class FilePropertiesDialog extends DialogFragment {
             super.onPostExecute(sha1);
             ((TextView)view.findViewById(R.id.file_sha1)).setText(sha1);
 
-            if (sha1.equals(getString(R.string.hash_error)) || sha1.equals(getString(R.string.hash_unsupported))) {
-                ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(false);
+            if (!sha1.equals(getString(R.string.hash_error)) && !sha1.equals(getString(R.string.hash_unsupported))) {
+                sha1String = sha1;
             } else {
-                ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(true);
+                sha1String = null;
             }
         }
     }
