@@ -86,6 +86,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private SortOrder sortOrder;
     private Boolean isInMoveMode;
     private SpeedDialView fab;
+    private MenuItem menuPropertiesAction;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
 
@@ -242,6 +243,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_explorer, menu);
+        menuPropertiesAction = menu.findItem(R.id.action_file_properties);
     }
 
     @Override
@@ -262,7 +264,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
                 context.startService(intent);
                 return true;
-                default:
+            case R.id.action_file_properties:
+                new MaterialDialog.Builder(context)
+                        .content(recyclerViewAdapter.getSelectedItems().get(0).getName())
+                        .positiveText(R.string.ok)
+                        .show();
+                return true;
+            default:
                     return super.onOptionsItemSelected(item);
         }
     }
@@ -586,12 +594,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (numOfSelected > 1) {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
+                menuPropertiesAction.setVisible(false);
             } else {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(1f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(true);
+                menuPropertiesAction.setVisible(true);
             }
         } else if (!isInMoveMode) {
             ((FragmentActivity) context).setTitle(remoteType);
+            menuPropertiesAction.setVisible(false);
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);

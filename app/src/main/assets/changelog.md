@@ -1,6 +1,7 @@
 ### 1.0.2-beta
 * **New:** Sort dialog
 * **New:** Toast confirmation messages
+* **New:** File properties in the menu
 
 ***
 
