@@ -14,7 +14,6 @@ Features
 
 Limitations
 ------------
-- Does not support password protected rclone config files (future release)
 - Does not support adding or editting remotes from the app (planned feature)
 
 Screenshots
