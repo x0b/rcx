@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.Services;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,12 +12,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -27,7 +28,9 @@ public class UploadService extends IntentService {
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
-    private final String CHANNEL_ID = "ca.pkay.rcexplorer.upload_channel";
+    private final String CHANNEL_ID = "ca.pkay.rcexplorer.UPLOAD_CHANNEL";
+    private final String UPLOAD_FINISHED_GROUP = "ca.pkay.rcexplorer.UPLOAD_FINISHED_GROUP";
+    private final String UPLOAD_FAILED_GROUP = "ca.pkay.rcexplorer.UPLOAD_FAILED_GROUP";
     private final String CHANNEL_NAME = "Uploads";
     private final int PERSISTENT_NOTIFICATION_ID = 90;
     private final int UPLOAD_FINISHED_NOTIFICATION_ID = 41;
@@ -81,9 +84,8 @@ public class UploadService extends IntentService {
         numOfFinishedUploads = 0;
         numOfFailedUploads = 0;
         AsyncTask[] asyncTasks = new AsyncTask[numOfProcessesRunning];
-        int i = 0;
-        for (Process process : runningProcesses) {
-            asyncTasks[i++] = new MonitorUpload().execute(process);
+        for (int i = 0; i < numOfProcessesRunning; i++) {
+            asyncTasks[i] = new MonitorUpload(uploadList.get(0), runningProcesses.get(0)).execute();
         }
         
         for (AsyncTask asyncTask : asyncTasks) {
@@ -97,33 +99,66 @@ public class UploadService extends IntentService {
         stopForeground(true);
     }
 
-    private void showUploadFinishedNotification(int numOfFinished, int numOfTotal) {
-        String notificationText = numOfFinished + " " + getString(R.string.out_of) + " " + numOfTotal + " " + getString(R.string.files_uploaded);
+    private void showUploadFinishedNotification(int notificationID, String contentText) {
+        createSummaryNotificationForFinished();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_upload_done)
                 .setContentTitle(getString(R.string.upload_complete))
-                .setContentText(notificationText)
+                .setContentText(contentText)
+                .setGroup(UPLOAD_FINISHED_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(UPLOAD_FINISHED_NOTIFICATION_ID, builder.build());
-        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(notificationID, builder.build());
     }
 
-    private void showUploadFailedNotification(int numOfFailed, int numOfTotal) {
-        String notificationText = numOfFailed + " " + getString(R.string.out_of) + " " + numOfTotal + " " + getString(R.string.failed_to_upload);
+    private void createSummaryNotificationForFinished() {
+        Notification summaryNotification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle(getString(R.string.upload_complete))
+                        //set content text to support devices running API level < 24
+                        .setContentText(getString(R.string.upload_complete))
+                        .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+                        .setGroup(UPLOAD_FINISHED_GROUP)
+                        .setGroupSummary(true)
+                        .setAutoCancel(true)
+                        .build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(UPLOAD_FINISHED_NOTIFICATION_ID, summaryNotification);
+    }
+
+    private void showUploadFailedNotification(int notificationID, String contentText) {
+        createSummaryNotificationForFailed();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_warning)
                 .setContentTitle(getString(R.string.upload_failed))
-                .setContentText(notificationText)
+                .setContentText(contentText)
+                .setGroup(UPLOAD_FAILED_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(UPLOAD_FAILED_NOTIFICATION_ID, builder.build());
-        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(notificationID, builder.build());
     }
+
+    private void createSummaryNotificationForFailed() {
+        Notification summaryNotification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle(getString(R.string.upload_failed))
+                        //set content text to support devices running API level < 24
+                        .setContentText(getString(R.string.upload_failed))
+                        .setSmallIcon(android.R.drawable.stat_sys_warning)
+                        .setGroup(UPLOAD_FAILED_GROUP)
+                        .setGroupSummary(true)
+                        .setAutoCancel(true)
+                        .build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(UPLOAD_FAILED_NOTIFICATION_ID, summaryNotification);
+    }
+
 
     @Override
     public void onDestroy() {
@@ -148,11 +183,18 @@ public class UploadService extends IntentService {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class MonitorUpload extends AsyncTask<Process, Void, Boolean> {
+    private class MonitorUpload extends AsyncTask<Void, Void, Boolean> {
+
+        private String file;
+        private Process process;
+
+        MonitorUpload(String file, Process process) {
+            this.file = file;
+            this.process = process;
+        }
 
         @Override
-        protected Boolean doInBackground(Process... processes) {
-            Process process = processes[0];
+        protected Boolean doInBackground(Void... voids) {
             try {
                 process.waitFor();
             } catch (InterruptedException e) {
@@ -164,10 +206,19 @@ public class UploadService extends IntentService {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            if (result) {
-                showUploadFinishedNotification(++numOfFinishedUploads, numOfProcessesRunning);
+            int notificationId = (int)System.currentTimeMillis();
+            int startIndex = file.lastIndexOf("/");
+            String fileName;
+            if (startIndex >= 0 && startIndex < file.length()) {
+                fileName = file.substring(startIndex + 1);
             } else {
-                showUploadFailedNotification(++numOfFailedUploads, numOfProcessesRunning);
+                fileName = file;
+            }
+
+            if (result) {
+                showUploadFinishedNotification(notificationId, fileName);
+            } else {
+                showUploadFailedNotification(notificationId, fileName);
             }
         }
     }

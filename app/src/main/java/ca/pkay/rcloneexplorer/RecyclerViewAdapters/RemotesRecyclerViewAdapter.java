@@ -1,7 +1,6 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,11 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.mikepenz.community_material_typeface_library.CommunityMaterial;
-import com.mikepenz.fontawesome_typeface_library.FontAwesome;
-import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.octicons_typeface_library.Octicons;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,40 +44,40 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
         switch (remoteType) {
             case "crypt":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_lock).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_lock_black));
                 break;
             case "amazon cloud drive":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_amazon).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_amazon));
                 break;
             case "b2":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(FontAwesome.Icon.faw_gripfire).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_b2));
                 break;
             case "drive":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_google_drive).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_google_drive));
                 break;
             case "dropbox":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_dropbox).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_dropbox));
                 break;
             case "google cloud storage":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_google_drive).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_google));
                 break;
             case "onedrive":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_onedrive).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_onedrive));
                 break;
             case "s3":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_amazon).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_amazon));
                 break;
             case "yandex":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(FontAwesome.Icon.faw_yandex).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_yandex));
                 break;
             case "box":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_box).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_box));
                 break;
             case "sftp":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(Octicons.Icon.oct_terminal).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_terminal));
                 break;
             default:
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_cloud).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_cloud));
                     break;
         }
 
