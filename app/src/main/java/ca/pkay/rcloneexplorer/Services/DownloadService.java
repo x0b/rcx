@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.Services;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,7 +28,9 @@ public class DownloadService extends IntentService {
     public static final String DOWNLOAD_LIST_ARG = "ca.pkay.rcexplorer.download_service.arg1";
     public static final String DOWNLOAD_PATH_ARG = "ca.pkay.rcexplorer.download_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.download_service.arg3";
-    private final String CHANNEL_ID = "ca.pkay.rcexplorer.download_channel";
+    private final String CHANNEL_ID = "ca.pkay.rcexplorer.DOWNLOAD_CHANNEL";
+    private final String DOWNLOAD_FINISHED_GROUP = "ca.pkay.rcexplorer.DOWNLOAD_FINISHED_GROUP";
+    private final String DOWNLOAD_FAILED_GROUP = "ca.pkay.rcexplorer.DOWNLOAD_FAILED_GROUP";
     private final String CHANNEL_NAME = "Downloads";
     private final int PERSISTENT_NOTIFICATION_ID = 167;
     private final int FAILED_DOWNLOAD_NOTIFICATION_ID = 138;
@@ -82,9 +85,8 @@ public class DownloadService extends IntentService {
         numOfFinishedDownloads = 0;
         numOfFailedDownloads = 0;
         AsyncTask[] asyncTasks = new AsyncTask[numOfRunningProcesses];
-        int i = 0;
-        for (Process process : runningProcesses) {
-            asyncTasks[i++] = new MonitorDownload().execute(process);
+        for (int i = 0; i < numOfRunningProcesses; i++) {
+            asyncTasks[i] = new MonitorDownload(downloadList.get(i), runningProcesses.get(i)).execute();
         }
 
         for (AsyncTask asyncTask : asyncTasks) {
@@ -98,30 +100,65 @@ public class DownloadService extends IntentService {
         stopForeground(true);
     }
 
-    private void showDownloadFinishedNotification(int numOfFinishedDownloads, int numOfTotalDownloads) {
-        String notificationText = numOfFinishedDownloads + " " + getString(R.string.out_of) + " " + numOfTotalDownloads + " " + getString(R.string.downloads_finished);
+    private void showDownloadFinishedNotification(int notificationID, String contentText) {
+        createSummaryNotificationForFinished();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setContentTitle(getString(R.string.download_complete))
-                .setContentText(notificationText)
+                .setContentText(contentText)
+                .setGroup(DOWNLOAD_FINISHED_GROUP)
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(DOWNLOAD_FINISHED_NOTIFICATION_ID, builder.build());
+        notificationManager.notify(notificationID, builder.build());
     }
 
-    private void showDownloadFailedNotification(int numOfFailedDownloads, int numOfTotalDownloads) {
-        String notificationText = numOfFailedDownloads + " " + getString(R.string.out_of) + " " + numOfTotalDownloads + " " + getString(R.string.downloads_failed);
+    private void createSummaryNotificationForFinished() {
+        Notification summaryNotification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle(getString(R.string.download_complete))
+                        //set content text to support devices running API level < 24
+                        .setContentText(getString(R.string.download_complete))
+                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                        .setGroup(DOWNLOAD_FINISHED_GROUP)
+                        .setGroupSummary(true)
+                        .setAutoCancel(true)
+                        .build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(DOWNLOAD_FINISHED_NOTIFICATION_ID, summaryNotification);
+    }
+
+    private void showDownloadFailedNotification(int notificationId, String contentText) {
+        createSummaryNotificationForFailed();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_warning)
                 .setContentTitle(getString(R.string.download_failed))
-                .setContentText(notificationText)
+                .setContentText(contentText)
+                .setGroup(DOWNLOAD_FAILED_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(FAILED_DOWNLOAD_NOTIFICATION_ID, builder.build());
+        notificationManager.notify(notificationId, builder.build());
+    }
+
+    private void createSummaryNotificationForFailed() {
+        Notification summaryNotification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle(getString(R.string.download_failed))
+                        //set content text to support devices running API level < 24
+                        .setContentText(getString(R.string.download_failed))
+                        .setSmallIcon(android.R.drawable.stat_sys_warning)
+                        .setGroup(DOWNLOAD_FAILED_GROUP)
+                        .setGroupSummary(true)
+                        .setAutoCancel(true)
+                        .build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(FAILED_DOWNLOAD_NOTIFICATION_ID, summaryNotification);
     }
 
     @Override
@@ -147,11 +184,18 @@ public class DownloadService extends IntentService {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class MonitorDownload extends AsyncTask<Process, Void, Boolean> {
+    private class MonitorDownload extends AsyncTask<Void, Void, Boolean> {
+
+        private FileItem file;
+        private Process process;
+
+        MonitorDownload(FileItem file, Process process) {
+            this.file = file;
+            this.process = process;
+        }
 
         @Override
-        protected Boolean doInBackground(Process... processes) {
-            Process process = processes[0];
+        protected Boolean doInBackground(Void... voids) {
             try {
                 process.waitFor();
             } catch (InterruptedException e) {
@@ -163,10 +207,12 @@ public class DownloadService extends IntentService {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
+            int notificationId = (int)System.currentTimeMillis();
+
             if (result) {
-                showDownloadFinishedNotification(++numOfFinishedDownloads, numOfRunningProcesses);
+                showDownloadFinishedNotification(notificationId, file.getName());
             } else {
-                showDownloadFailedNotification(++numOfFailedDownloads, numOfRunningProcesses);
+                showDownloadFailedNotification(notificationId, file.getName());
             }
         }
     }
