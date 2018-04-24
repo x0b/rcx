@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -105,10 +106,9 @@ public class DownloadService extends IntentService {
                 .setContentText(notificationText)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(DOWNLOAD_FINISHED_NOTIFICATION_ID, builder.build());
-        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(DOWNLOAD_FINISHED_NOTIFICATION_ID, builder.build());
     }
 
     private void showDownloadFailedNotification(int numOfFailedDownloads, int numOfTotalDownloads) {
@@ -119,10 +119,9 @@ public class DownloadService extends IntentService {
                 .setContentText(notificationText)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.notify(FAILED_DOWNLOAD_NOTIFICATION_ID, builder.build());
-        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(FAILED_DOWNLOAD_NOTIFICATION_ID, builder.build());
     }
 
     @Override
