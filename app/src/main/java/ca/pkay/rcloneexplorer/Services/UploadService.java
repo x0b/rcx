@@ -78,7 +78,7 @@ public class UploadService extends IntentService {
             try {
                 process.waitFor();
                 if (process.exitValue() != 0) {
-                    showUploadFailedNotification(numOfFailedUploads, numOfProcessesRunning);
+                    showUploadFailedNotification(++numOfFailedUploads, numOfProcessesRunning);
                 } else {
                     showUploadFinishedNotification(++numOfFinishedUploads, numOfProcessesRunning);
                 }
