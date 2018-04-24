@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -15,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -374,6 +376,72 @@ public class Rclone {
         return version[1];
     }
 
+    public Boolean isConfigEncrypted() {
+        if (!isConfigFileCreated()) {
+            return false;
+        }
+        String[] command = createCommand( "--ask-password=false", "listremotes");
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return process.exitValue() != 0;
+    }
+
+    public Boolean decryptConfig(String password) {
+        String[] command = createCommand("--ask-password=false", "config", "show");
+        String[] environmentalVars = {"RCLONE_CONFIG_PASS=" + password};
+        Process process;
+
+        try {
+            process = Runtime.getRuntime().exec(command, environmentalVars);
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (process.exitValue() != 0) {
+            return false;
+        }
+
+        ArrayList<String> result = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                result.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        String appsFileDir = context.getFilesDir().getPath();
+        File file = new File(appsFileDir, "rclone.conf");
+
+        try {
+            file.delete();
+            file.createNewFile();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            for (String line2 : result) {
+                outputStreamWriter.append(line2);
+                outputStreamWriter.append("\n");
+            }
+            outputStreamWriter.close();
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public boolean isConfigFileCreated() {
         String appsFileDir = context.getFilesDir().getPath();
         String configFile = appsFileDir + "/rclone.conf";
@@ -393,8 +461,9 @@ public class Rclone {
             fileOutputStream.write(buffer, 0, offset);
         }
         inputStream.close();
+        fileOutputStream.flush();
         fileOutputStream.close();
-        }
+    }
 
     public boolean isRcloneBinaryCreated() {
         String appsFileDir = context.getFilesDir().getPath();

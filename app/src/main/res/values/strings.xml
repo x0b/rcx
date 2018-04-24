@@ -103,4 +103,8 @@
     <string name="copying_rclone_config">Copying rclone configuration</string>
     <string name="creating_rclone_binary">Creating rclone binary</string>
     <string name="error_creating_rclone_binary">Error creating rclone binary</string>
+    <string name="config_password_protected">Configuration file is password protected</string>
+    <string name="please_enter_password">Please enter your password</string>
+    <string name="working">Working</string>
+    <string name="error_unlocking_config">Error unlocking configuration</string>
 </resources>

@@ -1,4 +1,5 @@
 ### 1.0.3-beta
+* **New:** Support password protected configurations
 * **New:** Calculate file MD5 & SHA1
 * **Fix:** Copy rclone and config file in the background
 

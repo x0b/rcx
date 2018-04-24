@@ -25,6 +25,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -77,11 +78,14 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
 
-        if (rclone.isRcloneBinaryCreated()) {
+        if (!rclone.isRcloneBinaryCreated()) {
+            new CreateRcloneBinary().execute();
+        } else if (!rclone.isConfigEncrypted()) {
             startRemotesFragment();
         } else {
-            new CreateRcloneBinary().execute();
+            askForConfigPassword();
         }
+
     }
 
     @Override
@@ -187,6 +191,20 @@ public class MainActivity extends AppCompatActivity
         builder.show();
     }
 
+    private void askForConfigPassword() {
+        new MaterialDialog.Builder(this)
+                .title(R.string.config_password_protected)
+                .content(R.string.please_enter_password)
+                .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        new DecryptConfig().execute(input.toString());
+                    }
+                })
+                .show();
+    }
+
     public void importConfigFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -283,7 +301,45 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
             dialog.dismiss();
-            if (success) {
+            if (!success) {
+                return;
+            }
+            if (rclone.isConfigEncrypted()) {
+                askForConfigPassword();
+            } else {
+                startRemotesFragment();
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class DecryptConfig extends AsyncTask<String, Void, Boolean> {
+
+        private MaterialDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new MaterialDialog.Builder(context)
+                    .title(R.string.working)
+                    .content(R.string.please_wait)
+                    .cancelable(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            return rclone.decryptConfig(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            dialog.dismiss();
+            if (!success) {
+                Toasty.error(context, getString(R.string.error_unlocking_config), Toast.LENGTH_LONG, true).show();
+                askForConfigPassword();
+            } else {
                 startRemotesFragment();
             }
         }
