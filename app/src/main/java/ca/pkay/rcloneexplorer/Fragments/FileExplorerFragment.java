@@ -742,6 +742,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         exFilePicker.setUseFirstItemAsUpEnabled(true);
         exFilePicker.setChoiceType(ExFilePicker.ChoiceType.DIRECTORIES);
         exFilePicker.setCanChooseOnlyOneItem(true);
+        exFilePicker.setQuitButtonEnabled(true);
         exFilePicker.start(this, EX_FILE_PICKER_DOWNLOAD_RESULT);
     }
 
@@ -787,6 +788,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         ExFilePicker exFilePicker = new ExFilePicker();
         exFilePicker.setUseFirstItemAsUpEnabled(true);
         exFilePicker.setChoiceType(ExFilePicker.ChoiceType.ALL);
+        exFilePicker.setQuitButtonEnabled(true);
         exFilePicker.start(this, EX_FILE_PICKER_UPLOAD_RESULT);
     }
 
