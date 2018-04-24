@@ -21,14 +21,16 @@ import ca.pkay.rcloneexplorer.Rclone;
 
 public class UploadService extends IntentService {
 
-    private final String CHANNEL_ID = "ca.pkay.rcexplorer.upload_channel";
-    private final String CHANNEL_NAME = "Uploads";
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
+    private final String CHANNEL_ID = "ca.pkay.rcexplorer.upload_channel";
+    private final String CHANNEL_NAME = "Uploads";
+    private final int PERSISTENT_NOTIFICATION_ID = 90;
+    private final int UPLOAD_FINISHED_NOTIFICATION_ID = 41;
+    private final int UPLOAD_FAILED_NOTIFICATION_ID = 14;
     private Rclone rclone;
     private List<Process> runningProcesses;
-    private Boolean aProcessFailed;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -59,7 +61,7 @@ public class UploadService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
-        startForeground(10, builder.build());
+        startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
 
         if (intent == null) {
             return;
@@ -69,42 +71,50 @@ public class UploadService extends IntentService {
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
         runningProcesses = rclone.uploadFiles(remote, uploadPath, uploadList);
-
+        int numOfProcessesRunning = runningProcesses.size();
+        int numOfFinishedUploads = 0;
+        int numOfFailedUploads = 0;
         for (Process process : runningProcesses) {
             try {
                 process.waitFor();
                 if (process.exitValue() != 0) {
-                    aProcessFailed = true;
+                    showUploadFailedNotification(numOfFailedUploads, numOfProcessesRunning);
+                } else {
+                    showUploadFinishedNotification(++numOfFinishedUploads, numOfProcessesRunning);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-
         stopForeground(true);
+    }
 
-        NotificationCompat.Builder builder1;
-        if (aProcessFailed) {
-            builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(android.R.drawable.stat_sys_warning)
-                    .setContentTitle(getString(R.string.upload_cancelled))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+    private void showUploadFinishedNotification(int numOfFinished, int numOfTotal) {
+        String notificationText = numOfFinished + " " + getString(R.string.out_of) + " " + numOfTotal + " " + getString(R.string.files_uploaded);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+                .setContentTitle(getString(R.string.upload_complete))
+                .setContentText(notificationText)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.notify(21, builder1.build());
-            }
-        } else {
-            builder1 = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(android.R.drawable.stat_sys_upload_done)
-                    .setContentTitle(getString(R.string.upload_complete))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(UPLOAD_FINISHED_NOTIFICATION_ID, builder.build());
+        }
+    }
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.notify(20, builder1.build());
-            }
+    private void showUploadFailedNotification(int numOfFailed, int numOfTotal) {
+        String notificationText = numOfFailed + " " + getString(R.string.out_of) + " " + numOfTotal + " " + getString(R.string.failed_to_upload);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setContentTitle(getString(R.string.upload_failed))
+                .setContentText(notificationText)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(UPLOAD_FAILED_NOTIFICATION_ID, builder.build());
         }
     }
 

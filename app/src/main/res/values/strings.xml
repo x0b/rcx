@@ -110,4 +110,11 @@
     <string name="locked_configuration_password">Locked configuration password</string>
     <string name="configuration_is_password_protected">Configuration is password protected</string>
     <string name="press_to_unlock">Press to unlock</string>
+    <string name="out_of">out of</string>
+    <string name="downloads_finished">downloads finished</string>
+    <string name="downloads_failed">downloads failed</string>
+    <string name="download_failed">Download failed</string>
+    <string name="files_uploaded">files uploaded</string>
+    <string name="failed_to_upload">files failed to upload</string>
+    <string name="upload_failed">Upload failed</string>
 </resources>
