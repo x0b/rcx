@@ -295,6 +295,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setFile(fileItem)
                 .setRclone(rclone)
                 .setRemote(remote);
+        if (remoteType.equals("crypt")) {
+            filePropertiesDialog.withHashCalculations(false);
+        }
         if (getFragmentManager() != null) {
             filePropertiesDialog.show(getFragmentManager(), "file properties");
         }

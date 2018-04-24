@@ -1,3 +1,8 @@
+### 1.1.1
+* **Fix:** Hide hash calculations for crypt remotes
+
+***
+
 ### 1.1.0
 * **New:** Support password protected configurations
 * **New:** Calculate file MD5 & SHA1
