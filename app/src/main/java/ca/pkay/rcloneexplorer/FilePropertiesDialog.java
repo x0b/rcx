@@ -28,7 +28,12 @@ public class FilePropertiesDialog extends DialogFragment {
     private AsyncTask[] asyncTasks;
     private String md5String;
     private String sha1String;
+    private Boolean showHash;
     private Context context;
+
+    public FilePropertiesDialog() {
+        showHash = true;
+    }
 
     @NonNull
     @Override
@@ -43,15 +48,13 @@ public class FilePropertiesDialog extends DialogFragment {
         if (fileItem.isDir()) {
             view.findViewById(R.id.file_size).setVisibility(View.GONE);
             view.findViewById(R.id.file_size_label).setVisibility(View.GONE);
-
-            view.findViewById(R.id.file_md5_container).setVisibility(View.GONE);
-            view.findViewById(R.id.file_sha1_container).setVisibility(View.GONE);
-            view.findViewById(R.id.hash_separator).setVisibility(View.GONE);
         } else {
             view.findViewById(R.id.file_size).setVisibility(View.VISIBLE);
             view.findViewById(R.id.file_size_label).setVisibility(View.VISIBLE);
             ((TextView)view.findViewById(R.id.file_size)).setText(fileItem.getHumanReadableSize());
+        }
 
+        if (showHash && !fileItem.isDir()) {
             view.findViewById(R.id.file_md5_container).setVisibility(View.VISIBLE);
             view.findViewById(R.id.file_sha1_container).setVisibility(View.VISIBLE);
             view.findViewById(R.id.hash_separator).setVisibility(View.VISIBLE);
@@ -68,6 +71,10 @@ public class FilePropertiesDialog extends DialogFragment {
                     calculateSHA1();
                 }
             });
+        } else {
+            view.findViewById(R.id.file_md5_container).setVisibility(View.GONE);
+            view.findViewById(R.id.file_sha1_container).setVisibility(View.GONE);
+            view.findViewById(R.id.hash_separator).setVisibility(View.GONE);
         }
 
         builder.setView(view)
@@ -92,6 +99,11 @@ public class FilePropertiesDialog extends DialogFragment {
 
     public FilePropertiesDialog setRclone(Rclone rclone) {
         this.rclone = rclone;
+        return this;
+    }
+
+    public FilePropertiesDialog withHashCalculations(Boolean showHash) {
+        this.showHash = showHash;
         return this;
     }
 

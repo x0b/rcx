@@ -65,8 +65,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
-                Toasty.error(context, context.getString(R.string.error_getting_dir_content), Toast.LENGTH_SHORT, true).show();
-                return new ArrayList<>();
+                return null;
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -80,7 +79,7 @@ public class Rclone {
 
         } catch (IOException | InterruptedException | JSONException e) {
             e.printStackTrace();
-            return new ArrayList<>();
+            return null;
         }
 
         List<FileItem> fileItemList = new ArrayList<>();
@@ -98,8 +97,7 @@ public class Rclone {
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
-                Toasty.error(context, context.getString(R.string.error_getting_dir_content), Toast.LENGTH_SHORT, true).show();
-                return new ArrayList<>();
+                return null;
             }
         }
         return fileItemList;
@@ -226,9 +224,10 @@ public class Rclone {
         return runningProcesses;
     }
 
-    public void deleteItems(String remote, List<FileItem> deleteList) {
+    public Boolean deleteItems(String remote, List<FileItem> deleteList) {
         String[] command;
         String filePath;
+        Boolean result = true;
 
         for (FileItem item : deleteList) {
             filePath = remote + ":" + item.getPath();
@@ -242,34 +241,37 @@ public class Rclone {
                 Process process = Runtime.getRuntime().exec(command);
                 process.waitFor();
                 if (process.exitValue() != 0) {
-                    Toasty.error(context, context.getString(R.string.error_deleting_file), Toast.LENGTH_SHORT, true).show();
+                    result = false;
                 }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
-                Toasty.error(context, context.getString(R.string.error_deleting_file), Toast.LENGTH_SHORT, true).show();
+                result = false;
             }
         }
+        return result;
     }
 
-    public void makeDirectory(String remote, String path) {
+    public Boolean makeDirectory(String remote, String path) {
         String newDir = remote + ":" + path;
         String[] command = createCommand("mkdir", newDir);
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
-                Toasty.error(context, context.getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
+                return false;
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            Toasty.error(context, context.getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
+            return false;
         }
+        return true;
     }
 
-    public void moveTo(String remote, List<FileItem> moveList, String newLocation) {
+    public Boolean moveTo(String remote, List<FileItem> moveList, String newLocation) {
         String[] command;
         String oldFilePath;
         String newFilePath;
+        Boolean result = true;
 
         for (FileItem fileItem : moveList) {
             oldFilePath = remote + ":" + fileItem.getPath();
@@ -279,27 +281,31 @@ public class Rclone {
                 Process process = Runtime.getRuntime().exec(command);
                 process.waitFor();
                 if (process.exitValue() != 0) {
-                    Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+                    result = false;
                 }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
-                Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+                result = false;
             }
         }
+        return result;
     }
 
-    public void moveTo(String remote, String oldFile, String newFile) {
+    public Boolean moveTo(String remote, String oldFile, String newFile) {
         String oldFilePath = remote + ":" + oldFile;
         String newFilePath = remote + ":" + newFile;
         String[] command = createCommand("moveto", oldFilePath, newFilePath);
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
-            Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+            if (process.exitValue() != 0) {
+                return false;
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            Toasty.error(context, context.getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+            return false;
         }
+        return true;
     }
 
     public String calculateMD5(String remote, FileItem fileItem) {
