@@ -1,5 +1,6 @@
 ### 1.1.1
 * **Fix:** Hide hash calculations for crypt remotes
+* **Fix:** Crash when rclone fails
 
 ***
 
