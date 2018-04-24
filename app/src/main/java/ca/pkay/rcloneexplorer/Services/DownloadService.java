@@ -1,16 +1,19 @@
 package ca.pkay.rcloneexplorer.Services;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -28,6 +31,9 @@ public class DownloadService extends IntentService {
     private final int PERSISTENT_NOTIFICATION_ID = 167;
     private final int FAILED_DOWNLOAD_NOTIFICATION_ID = 138;
     private final int DOWNLOAD_FINISHED_NOTIFICATION_ID = 80;
+    private int numOfRunningProcesses;
+    private int numOfFinishedDownloads;
+    private int numOfFailedDownloads;
     private Rclone rclone;
     private List<Process> runningProcesses;
 
@@ -71,19 +77,19 @@ public class DownloadService extends IntentService {
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
         runningProcesses = rclone.downloadItems(remote, downloadList, downloadPath);
-        int numOfRunningProcesses = runningProcesses.size();
-        int numOfFinishedDownloads = 0;
-        int numOfFailedDownloads = 0;
+        numOfRunningProcesses = runningProcesses.size();
+        numOfFinishedDownloads = 0;
+        numOfFailedDownloads = 0;
+        AsyncTask[] asyncTasks = new AsyncTask[numOfRunningProcesses];
+        int i = 0;
         for (Process process : runningProcesses) {
-            try {
-                process.waitFor();
-                if (process.exitValue() != 0) {
-                    showDownloadFailedNotification(++numOfFailedDownloads, numOfRunningProcesses);
-                } else {
-                    showDownloadFinishedNotification(++numOfFinishedDownloads, numOfRunningProcesses);
-                }
+            asyncTasks[i++] = new MonitorDownload().execute(process);
+        }
 
-            } catch (InterruptedException e) {
+        for (AsyncTask asyncTask : asyncTasks) {
+            try {
+                asyncTask.get();
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
@@ -137,6 +143,31 @@ public class DownloadService extends IntentService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class MonitorDownload extends AsyncTask<Process, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Process... processes) {
+            Process process = processes[0];
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return process.exitValue() == 0;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result) {
+                showDownloadFinishedNotification(++numOfFinishedDownloads, numOfRunningProcesses);
+            } else {
+                showDownloadFailedNotification(++numOfFailedDownloads, numOfRunningProcesses);
             }
         }
     }

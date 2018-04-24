@@ -1,17 +1,20 @@
 package ca.pkay.rcloneexplorer.Services;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
@@ -30,6 +33,9 @@ public class UploadService extends IntentService {
     private final int UPLOAD_FINISHED_NOTIFICATION_ID = 41;
     private final int UPLOAD_FAILED_NOTIFICATION_ID = 14;
     private Rclone rclone;
+    private int numOfProcessesRunning;
+    private int numOfFinishedUploads;
+    private int numOfFailedUploads;
     private List<Process> runningProcesses;
 
     /**
@@ -71,18 +77,19 @@ public class UploadService extends IntentService {
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
         runningProcesses = rclone.uploadFiles(remote, uploadPath, uploadList);
-        int numOfProcessesRunning = runningProcesses.size();
-        int numOfFinishedUploads = 0;
-        int numOfFailedUploads = 0;
+        numOfProcessesRunning = runningProcesses.size();
+        numOfFinishedUploads = 0;
+        numOfFailedUploads = 0;
+        AsyncTask[] asyncTasks = new AsyncTask[numOfProcessesRunning];
+        int i = 0;
         for (Process process : runningProcesses) {
+            asyncTasks[i++] = new MonitorUpload().execute(process);
+        }
+        
+        for (AsyncTask asyncTask : asyncTasks) {
             try {
-                process.waitFor();
-                if (process.exitValue() != 0) {
-                    showUploadFailedNotification(++numOfFailedUploads, numOfProcessesRunning);
-                } else {
-                    showUploadFinishedNotification(++numOfFinishedUploads, numOfProcessesRunning);
-                }
-            } catch (InterruptedException e) {
+                asyncTask.get();
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
@@ -136,6 +143,31 @@ public class UploadService extends IntentService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class MonitorUpload extends AsyncTask<Process, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Process... processes) {
+            Process process = processes[0];
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return process.exitValue() == 0;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result) {
+                showUploadFinishedNotification(++numOfFinishedUploads, numOfProcessesRunning);
+            } else {
+                showUploadFailedNotification(++numOfFailedUploads, numOfProcessesRunning);
             }
         }
     }
