@@ -65,7 +65,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                 holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_dropbox).color(Color.BLACK).sizeDp(24));
                 break;
             case "google cloud storage":
-                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_google_drive).color(Color.BLACK).sizeDp(24));
+                holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_google).color(Color.BLACK).sizeDp(24));
                 break;
             case "onedrive":
                 holder.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(CommunityMaterial.Icon.cmd_onedrive).color(Color.BLACK).sizeDp(24));

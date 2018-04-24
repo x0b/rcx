@@ -16,18 +16,21 @@
             android:id="@+id/radio_sort_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/sort_by_name"/>
 
         <RadioButton
             android:id="@+id/radio_sort_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/sort_by_date_modified" />
 
         <RadioButton
             android:id="@+id/radio_sort_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/sort_by_size"/>
     </RadioGroup>
 
@@ -36,18 +39,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="12dp">
+        android:paddingTop="16dp">
 
         <RadioButton
             android:id="@+id/radio_sort_ascending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/sort_ascending"/>
 
         <RadioButton
             android:id="@+id/radio_sort_descending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/sort_descending" />
     </RadioGroup>
 
