@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -78,12 +79,19 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
 
+        findViewById(R.id.locked_config_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                askForConfigPassword();
+            }
+        });
+
         if (!rclone.isRcloneBinaryCreated()) {
             new CreateRcloneBinary().execute();
-        } else if (!rclone.isConfigEncrypted()) {
-            startRemotesFragment();
-        } else {
+        } else if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
+        } else {
+            startRemotesFragment();
         }
 
     }
@@ -192,6 +200,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void askForConfigPassword() {
+        findViewById(R.id.locked_config).setVisibility(View.VISIBLE);
         new MaterialDialog.Builder(this)
                 .title(R.string.config_password_protected)
                 .content(R.string.please_enter_password)
@@ -278,6 +287,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            findViewById(R.id.locked_config).setVisibility(View.GONE);
             dialog = new MaterialDialog.Builder(context)
                     .title(R.string.copying_rclone_config)
                     .content(R.string.please_wait)
@@ -340,6 +350,7 @@ public class MainActivity extends AppCompatActivity
                 Toasty.error(context, getString(R.string.error_unlocking_config), Toast.LENGTH_LONG, true).show();
                 askForConfigPassword();
             } else {
+                findViewById(R.id.locked_config).setVisibility(View.GONE);
                 startRemotesFragment();
             }
         }

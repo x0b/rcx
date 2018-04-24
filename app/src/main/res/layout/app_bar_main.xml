@@ -32,4 +32,6 @@
 
     <include layout="@layout/content_main" />
 
+    <include layout="@layout/locked_config" />
+
 </android.support.design.widget.CoordinatorLayout>
