@@ -1,3 +1,10 @@
+### 1.1.0
+* **New:** Support password protected configurations
+* **New:** Calculate file MD5 & SHA1
+* **Fix:** Copy rclone and config file in the background
+
+***
+
 ### 1.0.2-beta
 * **New:** Sort dialog
 * **New:** Toast confirmation messages

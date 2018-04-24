@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:paddingTop="12dp"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp" >
+    android:paddingTop="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp" >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,4 +43,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="12 MB"/>
+
+
+    <View
+        android:id="@+id/hash_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/darker_gray"/>
+
+
+    <LinearLayout
+        android:id="@+id/file_md5_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/md5"/>
+        <TextView
+            android:id="@+id/file_md5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_to_calculate"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/file_sha1_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:textStyle="bold"
+            android:text="@string/sha1"/>
+        <TextView
+            android:id="@+id/file_sha1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_to_calculate"/>
+    </LinearLayout>
 </LinearLayout>

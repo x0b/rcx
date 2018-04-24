@@ -19,11 +19,12 @@ import ca.pkay.rcloneexplorer.Rclone;
 
 public class StreamingService extends IntentService {
 
-    private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
-    private final String CHANNEL_NAME = "Streaming service";
     public static final String SERVE_PATH_ARG = "ca.pkay.rcexplorer.streaming_service.arg1";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.streaming_service.arg2";
     public static final String SHOW_NOTIFICATION_TEXT = "ca.pkay.rcexplorer.streaming_service.arg3";
+    private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
+    private final String CHANNEL_NAME = "Streaming service";
+    private final int PERSISTENT_NOTIFICATION_ID = 179;
     private Rclone rclone;
     private Process runningProcess;
 
@@ -72,7 +73,7 @@ public class StreamingService extends IntentService {
             builder.setContentText(getString(R.string.streaming_service_notification_content));
         }
 
-        startForeground(1, builder.build());
+        startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
 
         runningProcess = rclone.serveHttp(remote, servePath);
          try {

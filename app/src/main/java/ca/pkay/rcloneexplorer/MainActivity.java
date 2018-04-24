@@ -1,13 +1,16 @@
 package ca.pkay.rcloneexplorer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -22,7 +25,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +39,7 @@ import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
@@ -42,11 +51,13 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Rclone rclone;
     private Fragment fragment;
+    private Context context;
     private NetworkStateReceiver networkStateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,13 +74,26 @@ public class MainActivity extends AppCompatActivity
 
         rclone = new Rclone(this);
 
-
         networkStateReceiver = new NetworkStateReceiver();
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, intentFilter);
 
-        startRemotesFragment();
+        findViewById(R.id.locked_config_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                askForConfigPassword();
+            }
+        });
+
+        if (!rclone.isRcloneBinaryCreated()) {
+            new CreateRcloneBinary().execute();
+        } else if (rclone.isConfigEncrypted()) {
+            askForConfigPassword();
+        } else {
+            startRemotesFragment();
+        }
+
     }
 
     @Override
@@ -81,12 +105,7 @@ public class MainActivity extends AppCompatActivity
             Uri uri;
             if (data != null) {
                 uri = data.getData();
-                try {
-                    rclone.copyConfigFile(uri);
-                    startRemotesFragment();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new CopyConfigFile().execute(uri);
             }
         }
     }
@@ -180,6 +199,21 @@ public class MainActivity extends AppCompatActivity
         builder.show();
     }
 
+    private void askForConfigPassword() {
+        findViewById(R.id.locked_config).setVisibility(View.VISIBLE);
+        new MaterialDialog.Builder(this)
+                .title(R.string.config_password_protected)
+                .content(R.string.please_enter_password)
+                .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        new DecryptConfig().execute(input.toString());
+                    }
+                })
+                .show();
+    }
+
     public void importConfigFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -203,5 +237,122 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class CreateRcloneBinary extends AsyncTask<Void, Void, Boolean> {
+
+        private MaterialDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new MaterialDialog.Builder(context)
+                    .title(R.string.creating_rclone_binary)
+                    .content(R.string.please_wait)
+                    .progress(true, 0)
+                    .cancelable(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                rclone.createRcloneBinary();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            if (!success) {
+                Toasty.error(context, getString(R.string.error_creating_rclone_binary), Toast.LENGTH_LONG, true).show();
+                finish();
+                System.exit(0);
+            }
+            dialog.dismiss();
+            startRemotesFragment();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class CopyConfigFile extends AsyncTask<Uri, Void, Boolean> {
+
+        private MaterialDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            findViewById(R.id.locked_config).setVisibility(View.GONE);
+            dialog = new MaterialDialog.Builder(context)
+                    .title(R.string.copying_rclone_config)
+                    .content(R.string.please_wait)
+                    .progress(true, 0)
+                    .cancelable(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Uri... uris) {
+            try {
+                rclone.copyConfigFile(uris[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            dialog.dismiss();
+            if (!success) {
+                return;
+            }
+            if (rclone.isConfigEncrypted()) {
+                askForConfigPassword();
+            } else {
+                startRemotesFragment();
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class DecryptConfig extends AsyncTask<String, Void, Boolean> {
+
+        private MaterialDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new MaterialDialog.Builder(context)
+                    .title(R.string.working)
+                    .content(R.string.please_wait)
+                    .cancelable(false)
+                    .show();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            return rclone.decryptConfig(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            dialog.dismiss();
+            if (!success) {
+                Toasty.error(context, getString(R.string.error_unlocking_config), Toast.LENGTH_LONG, true).show();
+                askForConfigPassword();
+            } else {
+                findViewById(R.id.locked_config).setVisibility(View.GONE);
+                startRemotesFragment();
+            }
+        }
     }
 }
