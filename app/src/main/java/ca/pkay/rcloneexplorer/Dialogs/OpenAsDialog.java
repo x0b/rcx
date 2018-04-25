@@ -1,13 +1,16 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import ca.pkay.rcloneexplorer.R;
 
 public class OpenAsDialog extends DialogFragment {
 
@@ -26,8 +29,8 @@ public class OpenAsDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.open_as_dialog, null);
+        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
+        view = inflater.inflate(R.layout.dialog_open_as, null);
         setListeners();
         builder.setView(view);
         return builder.create();

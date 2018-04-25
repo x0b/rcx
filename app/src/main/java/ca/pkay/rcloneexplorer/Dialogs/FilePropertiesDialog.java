@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
 
 public class FilePropertiesDialog extends DialogFragment {
@@ -40,8 +43,8 @@ public class FilePropertiesDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         asyncTasks = new AsyncTask[2];
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.file_properties_popup, null);
+        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
+        view = inflater.inflate(R.layout.dialog_file_properties, null);
 
         ((TextView)view.findViewById(R.id.filename)).setText(fileItem.getName());
         ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getHumanReadableModTime());

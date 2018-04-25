@@ -80,7 +80,7 @@
     <string name="files_moved_success">File(s) moved</string>
     <string name="files_deleted_success">File(s) deleted</string>
     <string name="make_directory_success">New folder created</string>
-    <string name="error_getting_dir_content">Error retrieving directory content</string>
+    <string name="error_getting_dir_content">Error retrieving directory message</string>
     <string name="error_getting_remotes">Error retrieving remotes</string>
     <string name="error_deleting_file">Error deleting a file</string>
     <string name="error_mkdir">Error creating a directory</string>
