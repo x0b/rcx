@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="primary_color_choices">
+        <item>@color/colorPrimary_Red</item>
+        <item>@color/colorPrimary_Pink</item>
+        <item>@color/colorPrimary_Purple</item>
+        <item>@color/colorPrimary_DeepPurple</item>
+        <item>@color/colorPrimary_Indigo</item>
+        <item>@color/colorPrimary_Blue</item>
+        <item>@color/colorPrimary_LightBlue</item>
+        <item>@color/colorPrimary_Cyan</item>
+        <item>@color/colorPrimary_Teal</item>
+        <item>@color/colorPrimary_Green</item>
+        <item>@color/colorPrimary_LightGreen</item>
+        <item>@color/colorPrimary_Lime</item>
+        <item>@color/colorPrimary_Yellow</item>
+        <item>@color/colorPrimary_Amber</item>
+        <item>@color/colorPrimary_Orange</item>
+        <item>@color/colorPrimary_DeepOrange</item>
+        <item>@color/colorPrimary_Brown</item>
+        <item>@color/colorPrimary_Grey</item>
+        <item>@color/colorPrimary_BlueGrey</item>
+    </array>
+
+    <array name="accent_color_choices">
+        <item>@color/colorAccent_Red</item>
+        <item>@color/colorAccent_Pink</item>
+        <item>@color/colorAccent_Purple</item>
+        <item>@color/colorAccent_DeepPurple</item>
+        <item>@color/colorAccent_Indigo</item>
+        <item>@color/colorAccent_Blue</item>
+        <item>@color/colorAccent_LightBlue</item>
+        <item>@color/colorAccent_Cyan</item>
+        <item>@color/colorAccent_Teal</item>
+        <item>@color/colorAccent_Green</item>
+        <item>@color/colorAccent_LightGreen</item>
+        <item>@color/colorAccent_Lime</item>
+        <item>@color/colorAccent_Yellow</item>
+        <item>@color/colorAccent_Amber</item>
+        <item>@color/colorAccent_Orange</item>
+        <item>@color/colorAccent_DeepOrange</item>
+        <item>@color/colorAccent_Brown</item>
+        <item>@color/colorAccent_Grey</item>
+        <item>@color/colorAccent_BlueGrey</item>
+    </array>
+</resources>

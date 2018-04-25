@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.kizitonwose.colorpreference.ColorPreference
+        android:title="@string/pref_primary_color_title"
+        android:key="pref_key_color_primary"
+        app:colorChoices="@array/primary_color_choices" />
+
+    <com.kizitonwose.colorpreference.ColorPreference
+        android:title="@string/pref_accent_color_title"
+        android:key="pref_key_color_accent"
+        app:colorChoices="@array/accent_color_choices" />
+
+</PreferenceScreen>

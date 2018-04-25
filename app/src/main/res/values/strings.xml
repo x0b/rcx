@@ -123,4 +123,12 @@
     <string name="open_as_audio">Audio</string>
     <string name="open_as_video">Video</string>
     <string name="open_as_image">Image</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">General</string>
+    <string name="pref_primary_color_title">Primary Color</string>
+    <string name="pref_accent_color_title">Accent Color</string>
+    <string name="pref_header_look_and_feel">Look and Feel</string>
+    <string name="restart_required">App restart required</string>
 </resources>

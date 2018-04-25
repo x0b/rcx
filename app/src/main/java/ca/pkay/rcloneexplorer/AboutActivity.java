@@ -1,8 +1,10 @@
 package ca.pkay.rcloneexplorer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -20,6 +22,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        applyTheme();
         setContentView(R.layout.activity_about);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,6 +67,14 @@ public class AboutActivity extends AppCompatActivity {
                 openAuthorGitHubLink();
             }
         });
+    }
+
+    private void applyTheme() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int customPrimaryColor = sharedPreferences.getInt("pref_key_color_primary", -1);
+        int customAccentColor = sharedPreferences.getInt("pref_key_color_accent", -1);
+        getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
+        getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
     }
 
     @Override

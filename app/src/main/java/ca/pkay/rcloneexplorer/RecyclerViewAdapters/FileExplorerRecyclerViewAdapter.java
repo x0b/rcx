@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import ca.pkay.rcloneexplorer.R;
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private List<FileItem> files;
+    private int selectionColor;
     private View emptyView;
     private OnClickListener listener;
     private Boolean isInSelectMode;
@@ -29,10 +31,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFilesSelected(boolean selection);
     }
 
-    public FileExplorerRecyclerViewAdapter(List<FileItem> files, View emptyView, OnClickListener listener) {
+    public FileExplorerRecyclerViewAdapter(List<FileItem> files, View emptyView, OnClickListener listener, int selectionColor) {
         this.files = files;
         this.emptyView = emptyView;
         this.listener = listener;
+        this.selectionColor = selectionColor;
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
         isInMoveMode = false;
@@ -65,7 +68,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
         if (isInSelectMode) {
             if (selectedItems.contains(item)) {
-                holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
+                holder.view.setBackgroundColor(selectionColor);
             } else {
                 holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
             }
@@ -228,7 +231,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else {
             selectedItems.add(item);
             isInSelectMode = true;
-            holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.colorPrimaryLight));
+            holder.view.setBackgroundColor(selectionColor);
             listener.onFilesSelected(true);
         }
     }
