@@ -28,11 +28,8 @@ import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
@@ -46,10 +43,13 @@ import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
+import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
-import ca.pkay.rcloneexplorer.FilePropertiesDialog;
+import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
+import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
@@ -71,6 +71,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final int EX_FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
+    private final int MAX_STREAMING_SIZE = 500000000;
     private String originalToolbarTitle;
     private List<FileItem> directoryContent;
     private Stack<String> pathStack;
@@ -89,6 +90,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Boolean isInMoveMode;
     private SpeedDialView fab;
     private MenuItem menuPropertiesAction;
+    private MenuItem menuOpenAsAction;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
 
@@ -141,6 +143,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             remote = getArguments().getString(ARG_REMOTE);
             remoteType = getArguments().getString(ARG_REMOTE_TYPE);
             path = "//" + getArguments().getString(ARG_REMOTE);
+        }
+        if (getContext() == null) {
+            return;
         }
         originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
         ((FragmentActivity) context).setTitle(remoteType);
@@ -246,6 +251,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_explorer, menu);
         menuPropertiesAction = menu.findItem(R.id.action_file_properties);
+        menuOpenAsAction = menu.findItem(R.id.action_open_as);
     }
 
     @Override
@@ -269,6 +275,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_file_properties:
                 showFileProperties();
                 return true;
+            case R.id.action_open_as:
+                showOpenAsDialog();
+                return true;
             default:
                     return super.onOptionsItemSelected(item);
         }
@@ -283,6 +292,57 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+    }
+
+    private void showOpenAsDialog() {
+        OpenAsDialog openAsDialog = new OpenAsDialog();
+        openAsDialog.setContext(context)
+                .setOnClickListener(new OpenAsDialog.OnClickListener() {
+                    @Override
+                    public void onClickText() {
+                        if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
+                            FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
+                            if (fileItem.getSize() < MAX_STREAMING_SIZE) {
+                                new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
+                            } else {
+                                new AlertDialog.Builder(context)
+                                        .setMessage(R.string.max_streaming_size_exceeded)
+                                        .setNeutralButton(R.string.okay_confirmation, null)
+                                        .create()
+                                        .show();
+                            }
+                        }
+                    }
+                    @Override
+                    public void onClickAudio() {
+                        if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
+                            new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(recyclerViewAdapter.getSelectedItems().get(0));
+                        }
+                    }
+                    @Override
+                    public void onClickVideo() {
+                        if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
+                            new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(recyclerViewAdapter.getSelectedItems().get(0));
+                        }
+                    }
+                    @Override
+                    public void onClickImage() {
+                        FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
+                        if (fileItem.getSize() < MAX_STREAMING_SIZE) {
+                            new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
+                        } else {
+                            new AlertDialog.Builder(context)
+                                    .setMessage(R.string.max_streaming_size_exceeded)
+                                    .setNeutralButton(R.string.okay_confirmation, null)
+                                    .create()
+                                    .show();
+                        }
+
+                    }
+                });
+        if (getFragmentManager() != null) {
+            openAsDialog.show(getFragmentManager(), "open as");
+        }
     }
 
     private void showFileProperties() {
@@ -408,7 +468,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             return;
         }
-        final View view = inflater.inflate(R.layout.sort_popup, null);
+        final View view = inflater.inflate(R.layout.dialog_sort, null);
         builder.setView(view)
                 .setTitle(R.string.sort)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -565,13 +625,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (type != null && (type.startsWith("video/") || type.startsWith("audio/"))) {
             // stream video or audio
             new StreamTask().execute(fileItem);
-        } else if (fileItem.getSize() < 500000000){
+        } else if (fileItem.getSize() < MAX_STREAMING_SIZE){
             // download and open
             new DownloadAndOpen().execute(fileItem);
         } else {
-            new MaterialDialog.Builder(context)
-                    .title(R.string.max_streaming_size_exceeded)
-                    .neutralText(R.string.okay_confirmation)
+            new AlertDialog.Builder(context)
+                    .setMessage(R.string.max_streaming_size_exceeded)
+                    .setNeutralButton(R.string.okay_confirmation, null)
+                    .create()
                     .show();
         }
     }
@@ -613,10 +674,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
                 menuPropertiesAction.setVisible(false);
+                menuOpenAsAction.setVisible(false);
             } else {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(1f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(true);
                 menuPropertiesAction.setVisible(true);
+                if (recyclerViewAdapter.getSelectedItems().get(0).isDir()) {
+                    menuOpenAsAction.setVisible(false);
+                } else {
+                    menuOpenAsAction.setVisible(true);
+                }
             }
         } else if (!isInMoveMode) {
             ((FragmentActivity) context).setTitle(remoteType);
@@ -690,20 +757,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         String title = "Delete " + deleteList.size();
         String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
         title += (deleteList.size() > 1) ? " items?" : " item?";
-        new MaterialDialog.Builder(context)
-                .title(title)
-                .content(content)
-                .icon(getResources().getDrawable(R.drawable.ic_warning))
-                .negativeText(getResources().getString(R.string.cancel))
-                .positiveText(getResources().getString(R.string.delete))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setNegativeButton(getResources().getString(R.string.cancel), null)
+                .setPositiveButton(getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialog, int which) {
                         recyclerViewAdapter.cancelSelection();
                         new DeleteFilesTask().execute(deleteList);
                     }
-                })
-                .show();
+                });
+        if (!content.trim().isEmpty()) {
+            builder.setMessage(content);
+        }
+        builder.create().show();
     }
 
     private void renameClicked() {
@@ -713,28 +780,32 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         List<FileItem> list = recyclerViewAdapter.getSelectedItems();
         final FileItem renameItem = list.get(0);
-
-        new MaterialDialog.Builder(context)
-                .title(R.string.rename_file)
-                .content(R.string.type_new_file_name)
-                .input(null, renameItem.getName(), new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        if (renameItem.getName().equals(input.toString())) {
-                            return;
+        if (getFragmentManager() != null) {
+            new InputDialog()
+                    .setContext(context)
+                    .setTitle(R.string.rename_file)
+                    .setMessage(R.string.type_new_file_name)
+                    .setNegativeButton(R.string.cancel)
+                    .setPositiveButton(R.string.okay_confirmation)
+                    .setFilledText(renameItem.getName())
+                    .setOnPositiveListener(new InputDialog.OnPositive() {
+                        @Override
+                        public void onPositive(String input) {
+                            if (renameItem.getName().equals(input)) {
+                                return;
+                            }
+                            recyclerViewAdapter.cancelSelection();
+                            String newFilePath;
+                            if (path.equals("//" + remote)) {
+                                newFilePath = input;
+                            } else {
+                                newFilePath = path + "/" + input;
+                            }
+                            new RenameFileTask().execute(renameItem.getPath(), newFilePath);
                         }
-                        recyclerViewAdapter.cancelSelection();
-                        String newFilePath;
-                        if (path.equals("//" + remote)) {
-                            newFilePath = input.toString();
-                        } else {
-                            newFilePath = path + "/" + input;
-                        }
-                        new RenameFileTask().execute(renameItem.getPath(), newFilePath);
-                    }
-                })
-                .negativeText(getResources().getString(R.string.cancel))
-                .show();
+                    })
+                    .show(getFragmentManager(), "input dialog");
+        }
     }
 
     private void downloadClicked() {
@@ -765,26 +836,30 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void onCreateNewDirectory() {
-        new MaterialDialog.Builder(context)
-                .title(R.string.create_new_folder)
-                .content(R.string.type_new_folder_name)
-                .negativeText(getResources().getString(R.string.cancel))
-                .input(null, null, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        if (input.toString().trim().length() == 0) {
-                            return;
+        if (getFragmentManager() != null) {
+            new InputDialog()
+                    .setContext(context)
+                    .setTitle(R.string.create_new_folder)
+                    .setMessage(R.string.type_new_folder_name)
+                    .setNegativeButton(R.string.cancel)
+                    .setPositiveButton(R.string.okay_confirmation)
+                    .setOnPositiveListener(new InputDialog.OnPositive() {
+                        @Override
+                        public void onPositive(String input) {
+                            if (input.trim().length() == 0) {
+                                return;
+                            }
+                            String newDir;
+                            if (path.equals("//" + remote)) {
+                                newDir = input;
+                            } else {
+                                newDir = path + "/" + input;
+                            }
+                            new MakeDirectoryTask().execute(newDir);
                         }
-                        String newDir;
-                        if (path.equals("//" + remote)) {
-                            newDir = input.toString();
-                        } else {
-                            newDir = path + "/" + input.toString();
-                        }
-                        new MakeDirectoryTask().execute(newDir);
-                    }
-                })
-                .show();
+                    })
+                    .show(getFragmentManager(), "input dialog");
+        }
     }
 
     private void onUploadFiles() {
@@ -1020,9 +1095,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @SuppressLint("StaticFieldLeak")
     private class DownloadAndOpen extends AsyncTask<FileItem, Void, Boolean> {
 
-        private MaterialDialog materialDialog;
+        public static final int OPEN_AS_TEXT = 1;
+        public static final int OPEN_AS_IMAGE = 2;
+        private int openAs;
+        private LoadingDialog loadingDialog;
         private String fileLocation;
         private Process process;
+
+        DownloadAndOpen() {
+            this(-1);
+        }
+
+        DownloadAndOpen(int openAs) {
+            this.openAs = openAs;
+        }
 
         private void cancelProcess() {
             process.destroy();
@@ -1031,20 +1117,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            materialDialog = new MaterialDialog.Builder(context)
-                    .title(R.string.loading_file)
-                    .content(R.string.please_wait)
-                    .cancelable(false)
-                    .progress(true, 0)
-                    .negativeText(getResources().getString(R.string.cancel))
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            cancelProcess();
-                            cancel(true);
-                        }
-                    })
-                    .show();
+
+            loadingDialog = new LoadingDialog()
+                    .setContext(context)
+                    .setCanCancel(false)
+                    .setTitle(getString(R.string.loading_file))
+                    .setNegativeButton(getResources().getString(R.string.cancel))
+                    .setOnNegativeListener(new LoadingDialog.OnNegative() {
+                @Override
+                public void onNegative() {
+                    cancelProcess();
+                    cancel(true);
+                }
+            });
+            if (getFragmentManager() != null) {
+                loadingDialog.show(getFragmentManager(), "loading dialog");
+            }
         }
 
         @Override
@@ -1080,18 +1168,25 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            materialDialog.cancel();
+            loadingDialog.dismiss();
             if (!status) {
                 return;
             }
             Uri sharedFileUri = FileProvider.getUriForFile(context, "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
             Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
-            String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
-            String type = context.getContentResolver().getType(sharedFileUri);
-            if (extension == null || extension.trim().isEmpty()) {
-                intent.setDataAndType(sharedFileUri, "*/*");
-            } else if (type == null || type.equals("application/octet-stream")) {
-                intent.setDataAndType(sharedFileUri, "*/*");
+
+            if (openAs == OPEN_AS_TEXT) {
+                intent.setDataAndType(sharedFileUri,"text/*");
+            } else if (openAs == OPEN_AS_IMAGE) {
+                intent.setDataAndType(sharedFileUri, "image/*");
+            } else {
+                String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
+                String type = context.getContentResolver().getType(sharedFileUri);
+                if (extension == null || extension.trim().isEmpty()) {
+                    intent.setDataAndType(sharedFileUri, "*/*");
+                } else if (type == null || type.equals("application/octet-stream")) {
+                    intent.setDataAndType(sharedFileUri, "*/*");
+                }
             }
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(intent);
@@ -1100,6 +1195,18 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @SuppressLint("StaticFieldLeak")
     private class StreamTask extends AsyncTask<FileItem, Void, Void> {
+
+        public static final int OPEN_AS_VIDEO = 0;
+        public static final int OPEN_AS_AUDIO = 1;
+        private int openAs;
+
+        StreamTask() {
+            this(-1);
+        }
+
+        StreamTask(int openAs) {
+            this.openAs = openAs;
+        }
 
         @Override
         protected Void doInBackground(FileItem... fileItems) {
@@ -1113,14 +1220,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             String url = "http://127.0.0.1:8080/" + fileItem.getName();
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
-            String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            if (type != null && type.startsWith("audio/")) {
-                intent.setDataAndType(Uri.parse(url), "audio/*");
-            } else if (type != null && type.startsWith("video/")) {
+
+            // open as takes precedence
+            if (openAs == OPEN_AS_VIDEO) {
                 intent.setDataAndType(Uri.parse(url), "video/*");
+            } else if (openAs == OPEN_AS_AUDIO) {
+                intent.setDataAndType(Uri.parse(url), "audio/*");
             } else {
-                intent.setData(Uri.parse(url));
+                String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
+                String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                if (type != null && type.startsWith("audio/")) {
+                    intent.setDataAndType(Uri.parse(url), "audio/*");
+                } else if (type != null && type.startsWith("video/")) {
+                    intent.setDataAndType(Uri.parse(url), "video/*");
+                } else {
+                    intent.setData(Uri.parse(url));
+                }
             }
             startActivityForResult(intent, STREAMING_INTENT_RESULT);
             return null;

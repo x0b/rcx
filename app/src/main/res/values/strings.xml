@@ -80,7 +80,7 @@
     <string name="files_moved_success">File(s) moved</string>
     <string name="files_deleted_success">File(s) deleted</string>
     <string name="make_directory_success">New folder created</string>
-    <string name="error_getting_dir_content">Error retrieving directory content</string>
+    <string name="error_getting_dir_content">Error retrieving directory message</string>
     <string name="error_getting_remotes">Error retrieving remotes</string>
     <string name="error_deleting_file">Error deleting a file</string>
     <string name="error_mkdir">Error creating a directory</string>
@@ -117,4 +117,10 @@
     <string name="files_uploaded">files uploaded</string>
     <string name="failed_to_upload">files failed to upload</string>
     <string name="upload_failed">Upload failed</string>
+    <string name="properties">Properties</string>
+    <string name="open_as">Open as</string>
+    <string name="open_as_text">Text</string>
+    <string name="open_as_audio">Audio</string>
+    <string name="open_as_video">Video</string>
+    <string name="open_as_image">Image</string>
 </resources>

@@ -30,12 +30,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import java.io.File;
 import java.io.IOException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
+import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
+import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -201,17 +201,20 @@ public class MainActivity extends AppCompatActivity
 
     private void askForConfigPassword() {
         findViewById(R.id.locked_config).setVisibility(View.VISIBLE);
-        new MaterialDialog.Builder(this)
-                .title(R.string.config_password_protected)
-                .content(R.string.please_enter_password)
-                .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                .input(null, null, new MaterialDialog.InputCallback() {
+        new InputDialog()
+                .setContext(context)
+                .setTitle(R.string.config_password_protected)
+                .setMessage(R.string.please_enter_password)
+                .setNegativeButton(R.string.cancel)
+                .setPositiveButton(R.string.okay_confirmation)
+                .setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                .setOnPositiveListener(new InputDialog.OnPositive() {
                     @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        new DecryptConfig().execute(input.toString());
+                    public void onPositive(String input) {
+                        new DecryptConfig().execute(input);
                     }
                 })
-                .show();
+                .show(getSupportFragmentManager(), "input dialog");
     }
 
     public void importConfigFile() {
@@ -242,17 +245,16 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("StaticFieldLeak")
     private class CreateRcloneBinary extends AsyncTask<Void, Void, Boolean> {
 
-        private MaterialDialog dialog;
+        private LoadingDialog loadingDialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = new MaterialDialog.Builder(context)
-                    .title(R.string.creating_rclone_binary)
-                    .content(R.string.please_wait)
-                    .progress(true, 0)
-                    .cancelable(false)
-                    .show();
+            loadingDialog = new LoadingDialog()
+                    .setContext(context)
+                    .setTitle(R.string.creating_rclone_binary)
+                    .setCanCancel(false);
+            loadingDialog.show(getSupportFragmentManager(), "loading dialog");
         }
 
         @Override
@@ -274,7 +276,7 @@ public class MainActivity extends AppCompatActivity
                 finish();
                 System.exit(0);
             }
-            dialog.dismiss();
+            loadingDialog.dismiss();
             startRemotesFragment();
         }
     }
@@ -282,18 +284,17 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("StaticFieldLeak")
     private class CopyConfigFile extends AsyncTask<Uri, Void, Boolean> {
 
-        private MaterialDialog dialog;
+        private LoadingDialog loadingDialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             findViewById(R.id.locked_config).setVisibility(View.GONE);
-            dialog = new MaterialDialog.Builder(context)
-                    .title(R.string.copying_rclone_config)
-                    .content(R.string.please_wait)
-                    .progress(true, 0)
-                    .cancelable(false)
-                    .show();
+            loadingDialog = new LoadingDialog()
+                    .setContext(context)
+                    .setTitle(R.string.copying_rclone_config)
+                    .setCanCancel(false);
+            loadingDialog.show(getSupportFragmentManager(), "loading dialog");
         }
 
         @Override
@@ -310,7 +311,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            dialog.dismiss();
+            loadingDialog.dismiss();
             if (!success) {
                 return;
             }
@@ -325,16 +326,16 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("StaticFieldLeak")
     private class DecryptConfig extends AsyncTask<String, Void, Boolean> {
 
-        private MaterialDialog dialog;
+        private LoadingDialog loadingDialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = new MaterialDialog.Builder(context)
-                    .title(R.string.working)
-                    .content(R.string.please_wait)
-                    .cancelable(false)
-                    .show();
+            loadingDialog = new LoadingDialog()
+                    .setContext(context)
+                    .setTitle(R.string.working)
+                    .setCanCancel(false);
+            loadingDialog.show(getSupportFragmentManager(), "loading dialog");
         }
 
         @Override
@@ -345,7 +346,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            dialog.dismiss();
+            loadingDialog.dismiss();
             if (!success) {
                 Toasty.error(context, getString(R.string.error_unlocking_config), Toast.LENGTH_LONG, true).show();
                 askForConfigPassword();
