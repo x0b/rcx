@@ -37,11 +37,12 @@ Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/rele
 Credits/Libraries
 -----------------
 - [About Libraries](https://github.com/mikepenz/AboutLibraries) - AboutLibraries is a library to offer some information of libraries.
+- [Color Picker](https://github.com/jaredrummler/ColorPicker) - A highly customizable color picker for Android.
 - [ExFile Picker](https://github.com/bartwell/ExFilePicker) - Open source Android library. Implement choosing files and directories in your application.
-- [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification 
-- [Font Awesome Icons](https://fontawesome.com/) - The iconic SVG, font, and CSS toolkit 
+- [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification.
+- [Font Awesome Icons](https://fontawesome.com/) - The iconic SVG, font, and CSS toolkit/
 - [Markdown View](https://github.com/falnatsheh/MarkdownView) - MarkdownView is an Android webview with the capablity of loading Markdown text or file and display it as HTML, it uses MarkdownJ and extends Android webview.
-- [Material Design Icons](https://github.com/Templarian/MaterialDesign) - 2200+ Material Design Icons from the Community
+- [Material Design Icons](https://github.com/Templarian/MaterialDesign) - 2200+ Material Design Icons from the Community.
 - [rclone](https://github.com/ncw/rclone) - "rsync for cloud storage"
-- [Toasty](https://github.com/GrenderG/Toasty) - The usual Toast, but with steroids
+- [Toasty](https://github.com/GrenderG/Toasty) - The usual Toast, but with steroids.
 - Icon made by [Smashicons](https://www.flaticon.com/authors/smashicons) from [Flaticon](https://www.flaticon.com)
