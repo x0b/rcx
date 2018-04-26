@@ -131,4 +131,9 @@
     <string name="restart_required">App restart required</string>
     <string name="select_primary_color">Select a primary color</string>
     <string name="select_accent_color">Select an accent color</string>
+    <string name="title_activity_about_libs">AboutLibsActivity</string>
+    <string name="app_icon_made_by">App icon made by</string>
+    <string name="smashicons">Smashicons</string>
+    <string name="from">from</string>
+    <string name="flaticon">Flaticon</string>
 </resources>

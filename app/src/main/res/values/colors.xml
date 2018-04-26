@@ -9,6 +9,10 @@
     <color name="grey">#DDDDDD</color>
     <color name="grey300">#E0E0E0</color>
     
+    <color name="colorPrimaryText">#212121</color>
+    <color name="colorSecondaryText">#757575</color>
+    <color name="colorDivider">#BDBDBD</color>
+    
     <color name="colorPrimary_Red">#F44336</color>
     <color name="colorPrimaryDark_Red">#D32F2F</color>
     <color name="colorPrimaryLight_Red">#FFCDD2</color>
