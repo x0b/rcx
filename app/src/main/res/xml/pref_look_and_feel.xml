@@ -2,14 +2,23 @@
 <PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.kizitonwose.colorpreference.ColorPreference
+
+    <com.jaredrummler.android.colorpicker.ColorPreference
         android:title="@string/pref_primary_color_title"
         android:key="pref_key_color_primary"
-        app:colorChoices="@array/primary_color_choices" />
+        android:defaultValue="0x4CAF50"
+        app:cpv_dialogTitle="@string/select_primary_color"
+        app:cpv_colorPresets="@array/primary_color_choices"
+        app:cpv_showColorShades="false"
+        app:cpv_allowCustom="false" />
 
-    <com.kizitonwose.colorpreference.ColorPreference
+    <com.jaredrummler.android.colorpicker.ColorPreference
         android:title="@string/pref_accent_color_title"
         android:key="pref_key_color_accent"
-        app:colorChoices="@array/accent_color_choices" />
+        android:defaultValue="0xFF9800"
+        app:cpv_dialogTitle="@string/select_accent_color"
+        app:cpv_colorPresets="@array/accent_color_choices"
+        app:cpv_showColorShades="false"
+        app:cpv_allowCustom="false" />
 
 </PreferenceScreen>
