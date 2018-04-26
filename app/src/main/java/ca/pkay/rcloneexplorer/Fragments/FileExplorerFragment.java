@@ -17,6 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -177,10 +178,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         Context context = view.getContext();
+
+        final TypedValue primaryLightColorValue = new TypedValue ();
+        context.getTheme ().resolveAttribute (R.attr.colorPrimaryLight, primaryLightColorValue, true);
+
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, view.findViewById(R.id.empty_folder_view), this);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, view.findViewById(R.id.empty_folder_view), this, primaryLightColorValue.data);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);
@@ -205,6 +210,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
         breadcrumbView.addCrumb(remote, "//" + remote);
+
+        final TypedValue accentColorValue = new TypedValue ();
+        context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
+        view.findViewById(R.id.bottom_bar).setBackgroundColor(accentColorValue.data);
+        view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
 
         setBottomBarClickListeners(view);
 

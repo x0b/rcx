@@ -1,3 +1,11 @@
+### 1.2.0
+* **New:** Settings!
+    * **New:** Custom primary and accent colors
+* **New:** Group notifications together
+* **New:** "Open as" option in the menu
+
+***
+
 ### 1.1.1
 * **Fix:** Hide hash calculations for crypt remotes
 * **Fix:** Crash when rclone fails

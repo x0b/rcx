@@ -1,0 +1,15 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="ca.pkay.rcloneexplorer.SettingsActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_about"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="ca.pkay.rcloneexplorer.SettingsActivity$LookAndFeelFragment"
+        android:icon="@drawable/ic_look_and_feel"
+        android:title="@string/pref_header_look_and_feel" />
+
+</preference-headers>

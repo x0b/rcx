@@ -19,6 +19,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -45,14 +46,19 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ChangelogActivity"
             android:label="@string/title_activity_changelog"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".AboutActivity"/>
-
-
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".AboutLibsActivity"
+            android:label="@string/credits_libraries"
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

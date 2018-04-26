@@ -123,4 +123,17 @@
     <string name="open_as_audio">Audio</string>
     <string name="open_as_video">Video</string>
     <string name="open_as_image">Image</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_header_general">General</string>
+    <string name="pref_primary_color_title">Primary Color</string>
+    <string name="pref_accent_color_title">Accent Color</string>
+    <string name="pref_header_look_and_feel">Look and Feel</string>
+    <string name="restart_required">App restart required</string>
+    <string name="select_primary_color">Select a primary color</string>
+    <string name="select_accent_color">Select an accent color</string>
+    <string name="title_activity_about_libs">AboutLibsActivity</string>
+    <string name="app_icon_made_by">App icon made by</string>
+    <string name="smashicons">Smashicons</string>
+    <string name="from">from</string>
+    <string name="flaticon">Flaticon</string>
 </resources>
