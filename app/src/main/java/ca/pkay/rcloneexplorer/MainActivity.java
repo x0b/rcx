@@ -3,12 +3,15 @@ package ca.pkay.rcloneexplorer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -105,6 +108,11 @@ public class MainActivity extends AppCompatActivity
         int customAccentColor = sharedPreferences.getInt("pref_key_color_accent", -1);
         getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
         getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
+
+        // set recents app color to the primary color
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
+        setTaskDescription(taskDesc);
     }
 
     @Override

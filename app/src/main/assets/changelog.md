@@ -1,6 +1,6 @@
 ### 1.2.0
 * **New:** Settings!
-* **New:** Custom primary and accent colors
+    * **New:** Custom primary and accent colors
 * **New:** Group notifications together
 * **New:** "Open as" option in the menu
 
