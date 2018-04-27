@@ -136,4 +136,8 @@
     <string name="smashicons">Smashicons</string>
     <string name="from">from</string>
     <string name="flaticon">Flaticon</string>
+    <string name="pref_key_stream_max">pref_key_stream_max</string>
+    <string name="pref_key_logs">pref_key_logs</string>
+    <string name="pref_key_color_primary">pref_key_color_primary</string>
+    <string name="pref_key_color_accent">pref_key_color_accent</string>
 </resources>

@@ -58,8 +58,8 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
 
     private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int customPrimaryColor = sharedPreferences.getInt("pref_key_color_primary", -1);
-        int customAccentColor = sharedPreferences.getInt("pref_key_color_accent", -1);
+        int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
+        int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
         getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
         getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
 
