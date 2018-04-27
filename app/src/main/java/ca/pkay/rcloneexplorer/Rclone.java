@@ -1,8 +1,10 @@
 package ca.pkay.rcloneexplorer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -29,11 +31,13 @@ public class Rclone {
     private Context context;
     private String rclone;
     private String rcloneConf;
+    private Log2File log2File;
 
     public Rclone(Context context) {
         this.context = context;
         this.rclone = context.getFilesDir().getPath() + "/rclone";
         this.rcloneConf = context.getFilesDir().getPath() + "/rclone.conf";
+        log2File = new Log2File(context);
     }
 
     private String[] createCommand(String ...args) {
@@ -51,6 +55,29 @@ public class Rclone {
         return command;
     }
 
+    private void logErrorOutput(Process process) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Boolean isLoggingEnable = sharedPreferences.getBoolean(context.getString(R.string.pref_key_logs), false);
+        if (!isLoggingEnable) {
+            return;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder(100);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        String line;
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        log2File.log(stringBuilder.toString());
+    }
+
     public List<FileItem> getDirectoryContent(String remote, String path) {
         String remoteAndPath = remote + ":";
         if (path.compareTo("//" + remote) != 0) {
@@ -65,6 +92,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
+                logErrorOutput(process);
                 return null;
             }
 
@@ -112,6 +140,7 @@ public class Rclone {
             process.waitFor();
             if (process.exitValue() != 0) {
                 Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
+                logErrorOutput(process);
                 return new ArrayList<>();
             }
 
@@ -258,6 +287,7 @@ public class Rclone {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
+                logErrorOutput(process);
                 return false;
             }
         } catch (IOException | InterruptedException e) {
@@ -281,6 +311,7 @@ public class Rclone {
                 Process process = Runtime.getRuntime().exec(command);
                 process.waitFor();
                 if (process.exitValue() != 0) {
+                    logErrorOutput(process);
                     result = false;
                 }
             } catch (IOException | InterruptedException e) {
@@ -299,6 +330,7 @@ public class Rclone {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
+                logErrorOutput(process);
                 return false;
             }
         } catch (IOException | InterruptedException e) {
@@ -365,6 +397,7 @@ public class Rclone {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
             if (process.exitValue() != 0) {
+                logErrorOutput(process);
                 return "-1";
             }
 

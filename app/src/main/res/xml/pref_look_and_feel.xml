@@ -5,7 +5,7 @@
 
     <com.jaredrummler.android.colorpicker.ColorPreference
         android:title="@string/pref_primary_color_title"
-        android:key="pref_key_color_primary"
+        android:key="@string/pref_key_color_primary"
         android:defaultValue="0x4CAF50"
         app:cpv_dialogTitle="@string/select_primary_color"
         app:cpv_colorPresets="@array/primary_color_choices"
@@ -14,7 +14,7 @@
 
     <com.jaredrummler.android.colorpicker.ColorPreference
         android:title="@string/pref_accent_color_title"
-        android:key="pref_key_color_accent"
+        android:key="@string/pref_key_color_accent"
         android:defaultValue="0xFF9800"
         app:cpv_dialogTitle="@string/select_accent_color"
         app:cpv_colorPresets="@array/accent_color_choices"
