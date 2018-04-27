@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="?attr/backgroundColor"
     android:visibility="gone"
     tools:visibility="visible"
     tools:context="ca.pkay.rcloneexplorer.MainActivity" >
@@ -19,6 +19,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/ic_lock"
+            android:tint="?attr/iconTint"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/locked_configuration_password" />
@@ -30,6 +31,7 @@
             android:layout_below="@+id/locked_config_ic"
             android:layout_centerHorizontal="true"
             android:text="@string/configuration_is_password_protected"
+            android:textColor="?attr/textColorPrimary"
             android:layout_marginTop="8dp" />
 
         <Button

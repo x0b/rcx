@@ -23,12 +23,19 @@ public class OpenAsDialog extends DialogFragment {
 
     private Context context;
     private View view;
+    private Boolean isDarkTheme;
     private OnClickListener listener;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder;
+
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_open_as, null);
         setListeners();
@@ -41,6 +48,7 @@ public class OpenAsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onClickText();
+                dismiss();
             }
         });
 
@@ -48,6 +56,7 @@ public class OpenAsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onClickAudio();
+                dismiss();
             }
         });
 
@@ -55,6 +64,7 @@ public class OpenAsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onClickVideo();
+                dismiss();
             }
         });
 
@@ -62,8 +72,14 @@ public class OpenAsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onClickImage();
+                dismiss();
             }
         });
+    }
+
+    public OpenAsDialog setDarkTheme(Boolean darkTheme) {
+        isDarkTheme = darkTheme;
+        return this;
     }
 
     public OpenAsDialog setOnClickListener(OnClickListener l) {

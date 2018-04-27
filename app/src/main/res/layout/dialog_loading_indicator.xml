@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:text="@string/please_wait"
         android:textStyle="bold"
+        android:textColor="?attr/textColorPrimary"
         android:paddingStart="12dp"
         android:paddingEnd="0dp"
         android:layout_gravity="center_vertical"/>

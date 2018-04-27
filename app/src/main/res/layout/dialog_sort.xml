@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical"
     android:padding="12dp">
 
@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/sort_by_name"/>
 
         <RadioButton
@@ -24,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/sort_by_date_modified" />
 
         <RadioButton
@@ -31,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/sort_by_size"/>
     </RadioGroup>
 
@@ -46,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/sort_ascending"/>
 
         <RadioButton
@@ -53,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/sort_descending" />
     </RadioGroup>
 

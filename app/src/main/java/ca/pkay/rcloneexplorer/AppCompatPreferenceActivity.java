@@ -29,16 +29,28 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
+        applyTheme();
+        super.onCreate(savedInstanceState);
+    }
+
+    private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
         int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
+        Boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
         getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
+        if (isDarkTheme) {
+            getTheme().applyStyle(R.style.DarkTheme, true);
+            getTheme().applyStyle(R.style.DarkPreferences, true);
+        } else {
+            getTheme().applyStyle(R.style.LightTheme, true);
+        }
+
         // set recents app color to the primary color
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
         ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
         setTaskDescription(taskDesc);
-        super.onCreate(savedInstanceState);
     }
 
     @Override

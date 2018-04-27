@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/grey" >
+    android:background="?attr/backgroundColor" >
 
     <include
         layout="@layout/empty_directory_state" />

@@ -4,8 +4,31 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="iconTint">#FFFFFF</item>
+    </style>
+
+    <style name="LightTheme">
+        <item name="backgroundColor">#FAFAFA</item>
+        <item name="cardColor">#FFFFFF</item>
+        <item name="textColorPrimary">#212121</item>
+        <item name="textColorSecondary">#757575</item>
+        <item name="dividerColor">#BDBDBD</item>
+        <item name="iconTint">#000000</item>
+        <item name="android:navigationBarColor">#FAFAFA</item>
         <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <style name="DarkTheme">
+        <item name="backgroundColor">#303030</item>
+        <item name="cardColor">#424242</item>
+        <item name="textColorPrimary">#FFFFFFFF</item>
+        <item name="textColorSecondary">#B3FFFFFF</item>
+        <item name="dividerColor">#1FFFFFFF</item>
+        <item name="iconTint">#FFFFFF</item>
+        <item name="android:navigationBarColor">#303030</item>
     </style>
 
     <style name="CustomPrimaryRed">
@@ -13,8 +36,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Red</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Red</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Red</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryPink">
@@ -22,8 +43,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Pink</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Pink</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Pink</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryPurple">
@@ -31,8 +50,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Purple</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Purple</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Purple</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryDeepPurple">
@@ -40,8 +57,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_DeepPurple</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_DeepPurple</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_DeepPurple</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryIndigo">
@@ -49,8 +64,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Indigo</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Indigo</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Indigo</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryBlue">
@@ -58,8 +71,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Blue</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Blue</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Blue</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryLightBlue">
@@ -67,8 +78,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_LightBlue</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_LightBlue</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_LightBlue</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryCyan">
@@ -76,8 +85,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Cyan</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Cyan</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Cyan</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryTeal">
@@ -85,8 +92,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Teal</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Teal</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Teal</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryGreen">
@@ -94,8 +99,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Green</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Green</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Green</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryLightGreen">
@@ -103,8 +106,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_LightGreen</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_LightGreen</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_LightGreen</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryLime">
@@ -112,8 +113,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Lime</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Lime</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Lime</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryYellow">
@@ -121,8 +120,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Yellow</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Yellow</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Yellow</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryAmber">
@@ -130,8 +127,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Amber</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Amber</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Amber</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryOrange">
@@ -139,8 +134,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Orange</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Orange</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Orange</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryDeepOrange">
@@ -148,8 +141,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_DeepOrange</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_DeepOrange</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_DeepOrange</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryBrown">
@@ -157,8 +148,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Brown</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Brown</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Brown</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryGrey">
@@ -166,8 +155,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Grey</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_Grey</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Grey</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="CustomPrimaryBlueGrey">
@@ -175,8 +162,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark_BlueGrey</item>
         <item name="colorPrimaryLight">@color/colorPrimaryLight_BlueGrey</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_BlueGrey</item>
-        <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="android:windowLightNavigationBar">true</item>
     </style>
     
     <style name="CustomAccentRed">

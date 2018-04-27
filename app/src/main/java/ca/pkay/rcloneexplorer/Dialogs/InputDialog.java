@@ -33,12 +33,23 @@ public class InputDialog extends DialogFragment {
     private int negativeTextId;
     private String filledText;
     private int inputType;
+    private Boolean isDarkTheme;
     private OnPositive onPositiveListener;
+
+    public InputDialog() {
+        isDarkTheme = false;
+    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder;
+
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_input, null);
         editText = view.findViewById(R.id.dialog_input);
@@ -148,6 +159,11 @@ public class InputDialog extends DialogFragment {
 
     public InputDialog setNegativeButton(int id) {
         negativeTextId = id;
+        return this;
+    }
+
+    public InputDialog setDarkTheme(Boolean darkTheme) {
+        isDarkTheme = darkTheme;
         return this;
     }
 

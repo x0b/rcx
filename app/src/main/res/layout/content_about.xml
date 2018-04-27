@@ -23,6 +23,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            card_view:cardBackgroundColor="?attr/cardColor"
             card_view:cardCornerRadius="4dp"
             card_view:contentPadding="16dp" >
 
@@ -40,6 +41,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_info_outline"
+                        android:tint="?attr/iconTint"
                         android:layout_gravity="center_vertical"
                         android:contentDescription="@string/app_version" />
 
@@ -53,13 +55,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/app_version"
-                            android:textColor="@color/colorPrimaryText"
+                            android:textColor="?attr/textColorPrimary"
                             android:textStyle="bold"/>
                         <TextView
                             android:id="@+id/version_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorSecondaryText" />
+                            android:textColor="?attr/textColorSecondary" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -73,6 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_info_outline"
+                        android:tint="?attr/iconTint"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:contentDescription="@string/rclone_version" />
@@ -87,13 +90,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/rclone_version"
-                            android:textColor="@color/colorPrimaryText"
+                            android:textColor="?attr/textColorPrimary"
                             android:textStyle="bold"/>
                         <TextView
                             android:id="@+id/rclone_version"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorSecondaryText" />
+                            android:textColor="?attr/textColorSecondary" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -106,6 +109,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            card_view:cardBackgroundColor="?attr/cardColor"
             card_view:cardCornerRadius="4dp"
             card_view:contentPadding="16dp" >
 
@@ -128,6 +132,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_changelog"
+                        android:tint="?attr/iconTint"
                         android:contentDescription="@string/changelog" />
 
                     <TextView
@@ -136,7 +141,7 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/changelog"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="?attr/textColorPrimary"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -155,6 +160,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_libraries"
+                        android:tint="?attr/iconTint"
                         android:contentDescription="@string/credits_libraries" />
 
                     <TextView
@@ -163,7 +169,7 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/credits_libraries"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="?attr/textColorPrimary"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -182,6 +188,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_mark_github"
+                        android:tint="?attr/iconTint"
                         android:contentDescription="@string/star_on_github" />
 
                     <TextView
@@ -189,7 +196,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/star_on_github"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="?attr/textColorPrimary"
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"/>
                 </LinearLayout>
@@ -209,6 +216,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_bug_report"
+                        android:tint="?attr/iconTint"
                         android:contentDescription="@string/report_a_bug" />
 
                     <TextView
@@ -217,7 +225,7 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/report_a_bug"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="?attr/textColorPrimary"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
@@ -231,6 +239,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            card_view:cardBackgroundColor="?attr/cardColor"
             card_view:cardCornerRadius="4dp"
             card_view:contentPadding="16dp" >
 
@@ -242,6 +251,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/author"
+                    android:textColor="?attr/textColorSecondary"
                     android:paddingBottom="16dp" />
 
                 <LinearLayout
@@ -255,13 +265,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_person_outline"
+                        android:tint="?attr/iconTint"
                         android:contentDescription="@string/author_name" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/author_name"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="?attr/textColorPrimary"
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"/>
                 </LinearLayout>
@@ -281,18 +292,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_mark_github"
+                        android:tint="?attr/iconTint"
                         android:contentDescription="@string/follow_on_github" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/follow_on_github"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimaryText"
+                        android:textColor="?attr/textColorPrimary"
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"/>
                 </LinearLayout>
             </LinearLayout>
-
         </android.support.v7.widget.CardView>
     </LinearLayout>
 </ScrollView>

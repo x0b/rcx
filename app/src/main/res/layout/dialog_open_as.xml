@@ -14,10 +14,11 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp" >
-            <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/open_as_text"/>
     </LinearLayout>
 
@@ -29,10 +30,11 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp" >
-            <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/open_as_audio"/>
     </LinearLayout>
 
@@ -48,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/open_as_video"/>
     </LinearLayout>
 
@@ -63,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
             android:text="@string/open_as_image"/>
     </LinearLayout>
 

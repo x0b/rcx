@@ -18,6 +18,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="0dp"
             android:contentDescription="@string/remote_icon"
+            android:tint="?attr/iconTint"
             tools:src="@drawable/ic_cloud"/>
 
         <TextView
@@ -27,6 +28,7 @@
             android:paddingStart="32dp"
             android:paddingEnd="16dp"
             android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="?attr/textColorPrimary"
             android:fontFamily="sans-serif"
             android:textSize="16sp"
             tools:text="Google Drive"/>

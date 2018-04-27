@@ -32,17 +32,24 @@ public class FilePropertiesDialog extends DialogFragment {
     private String md5String;
     private String sha1String;
     private Boolean showHash;
+    private Boolean isDarkTheme;
     private Context context;
 
     public FilePropertiesDialog() {
         showHash = true;
+        isDarkTheme = false;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         asyncTasks = new AsyncTask[2];
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 
@@ -85,7 +92,7 @@ public class FilePropertiesDialog extends DialogFragment {
         return builder.create();
     }
 
-    public FilePropertiesDialog setContext(Context context) {
+    public FilePropertiesDialog withContext(Context context) {
         this.context = context;
         return this;
     }
@@ -107,6 +114,11 @@ public class FilePropertiesDialog extends DialogFragment {
 
     public FilePropertiesDialog withHashCalculations(Boolean showHash) {
         this.showHash = showHash;
+        return this;
+    }
+
+    public FilePropertiesDialog setDarkTheme(Boolean darkTheme) {
+        isDarkTheme = darkTheme;
         return this;
     }
 

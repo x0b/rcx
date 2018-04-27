@@ -10,7 +10,7 @@
             android:id="@+id/nav_remotes"
             android:icon="@drawable/ic_cloud"
             android:title="@string/remotes"
-            android:checked="true"/>
+            android:checked="true" />
     </group>
 
     <group

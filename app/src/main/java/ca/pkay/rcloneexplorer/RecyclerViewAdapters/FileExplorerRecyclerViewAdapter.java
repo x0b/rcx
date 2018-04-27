@@ -1,5 +1,7 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -24,6 +26,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private Boolean isInSelectMode;
     private List<FileItem> selectedItems;
     private Boolean isInMoveMode;
+    private int cardColor;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -31,14 +34,21 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFilesSelected(boolean selection);
     }
 
-    public FileExplorerRecyclerViewAdapter(List<FileItem> files, View emptyView, OnClickListener listener, int selectionColor) {
+    public FileExplorerRecyclerViewAdapter(Context context, List<FileItem> files, View emptyView, OnClickListener listener) {
         this.files = files;
         this.emptyView = emptyView;
         this.listener = listener;
-        this.selectionColor = selectionColor;
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
         isInMoveMode = false;
+
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.cardColor, typedValue, true);
+        cardColor = typedValue.data;
+
+        theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
+        selectionColor = typedValue.data;
     }
 
     @NonNull
@@ -54,11 +64,13 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
         holder.fileItem = item;
         if (item.isDir()) {
-            holder.fileIcon.setImageResource(R.drawable.ic_folder);
+            holder.dirIcon.setVisibility(View.VISIBLE);
+            holder.fileIcon.setVisibility(View.GONE);
             holder.fileSize.setVisibility(View.GONE);
             holder.interpunct.setVisibility(View.GONE);
         } else {
-            holder.fileIcon.setImageResource(R.drawable.ic_file);
+            holder.fileIcon.setVisibility(View.VISIBLE);
+            holder.dirIcon.setVisibility(View.GONE);
             holder.fileSize.setText(item.getHumanReadableSize());
             holder.fileSize.setVisibility(View.VISIBLE);
             holder.interpunct.setVisibility(View.VISIBLE);
@@ -70,11 +82,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             if (selectedItems.contains(item)) {
                 holder.view.setBackgroundColor(selectionColor);
             } else {
-                holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
+                holder.view.setBackgroundColor(cardColor);
             }
         } else {
-            holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
+            holder.view.setBackgroundColor(cardColor);
         }
+
         if (isInMoveMode) {
             if (item.isDir()) {
                 holder.view.setAlpha(1f);
@@ -106,7 +119,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             }
         });
 
-        holder.fileIcon.setOnClickListener(new View.OnClickListener() {
+        holder.icons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onLongClickAction(item, holder);
@@ -222,7 +235,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private void onLongClickAction(FileItem item, ViewHolder holder) {
         if (selectedItems.contains(item)) {
             selectedItems.remove(item);
-            holder.view.setBackgroundColor(holder.view.getResources().getColor(R.color.white));
+            holder.view.setBackgroundColor(cardColor);
             if (selectedItems.size() == 0) {
                 isInSelectMode = false;
                 listener.onFilesSelected(false);
@@ -239,7 +252,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final View view;
+        public final View icons;
         public final ImageView fileIcon;
+        public final ImageView dirIcon;
         public final TextView fileName;
         public final TextView fileModTime;
         public final TextView fileSize;
@@ -249,7 +264,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         ViewHolder(View itemView) {
             super(itemView);
             this.view = itemView;
+            this.icons = view.findViewById(R.id.icons);
             this.fileIcon = view.findViewById(R.id.file_icon);
+            this.dirIcon = view.findViewById(R.id.dir_icon);
             this.fileName = view.findViewById(R.id.file_name);
             this.fileModTime = view.findViewById(R.id.file_modtime);
             this.fileSize = view.findViewById(R.id.file_size);

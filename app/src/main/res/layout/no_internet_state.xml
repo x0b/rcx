@@ -4,7 +4,7 @@
     android:id="@+id/no_internet_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey300"
+    android:background="?attr/backgroundColor"
     android:visibility="invisible" >
     <LinearLayout
         android:layout_width="wrap_content"
@@ -23,6 +23,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_signal_wifi_off"
+                android:tint="?attr/iconTint"
                 android:layout_gravity="center"
                 android:contentDescription="@string/no_internet_connection" />
         </LinearLayout>
@@ -31,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_internet_connection"
+            android:textColor="?attr/textColorPrimary"
             android:textStyle="bold"
             android:paddingTop="16dp"/>
     </LinearLayout>
