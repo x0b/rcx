@@ -80,7 +80,7 @@
     <string name="files_moved_success">File(s) moved</string>
     <string name="files_deleted_success">File(s) deleted</string>
     <string name="make_directory_success">New folder created</string>
-    <string name="error_getting_dir_content">Error retrieving directory message</string>
+    <string name="error_getting_dir_content">Error retrieving directory content</string>
     <string name="error_getting_remotes">Error retrieving remotes</string>
     <string name="error_deleting_file">Error deleting a file</string>
     <string name="error_mkdir">Error creating a directory</string>
@@ -141,4 +141,18 @@
     <string name="pref_key_color_primary">pref_key_color_primary</string>
     <string name="pref_key_color_accent">pref_key_color_accent</string>
     <string name="pref_key_dark_theme">pref_key_dark_theme</string>
+    <string name="look_and_feel">Look and Feel</string>
+    <string name="primary_color_content_desc">Primary color</string>
+    <string name="primary_color">Primary Color</string>
+    <string name="accent_color_content_desc">Accent color</string>
+    <string name="accent_color">Accent Color</string>
+    <string name="dark_theme_content_desc">Dark theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="use_logs_content_desc">Use logs</string>
+    <string name="use_logs">Use logs</string>
+    <string name="use_logs_summary">Errors will be logged to a local file</string>
+    <string name="color_picker_checkmark">Color picker checkmark</string>
+    <string name="primary_color_picker_title">Select primary color</string>
+    <string name="accent_color_picker_title">Select accent color</string>
 </resources>

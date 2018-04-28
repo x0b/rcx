@@ -86,13 +86,7 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryUrls.put(androidSupportLibraries, "https://developer.android.com/topic/libraries/support-library/");
         libraryLicences.put(androidSupportLibraries, "Licensed under Apache-2.0");
         libraryLicenceUrls.put(androidSupportLibraries, "http://www.apache.org/licenses/LICENSE-2.0");
-
-        String colorPicker = "Color Picker";
-        libraryNames.add(colorPicker);
-        libraryUrls.put(colorPicker, "https://github.com/jaredrummler/ColorPicker");
-        libraryLicences.put(colorPicker, "Licensed under Apache-2.0");
-        libraryLicenceUrls.put(colorPicker, "https://github.com/jaredrummler/ColorPicker/blob/master/LICENSE");
-
+        
         String exFilePicker = "ExFile Picker";
         libraryNames.add(exFilePicker);
         libraryUrls.put(exFilePicker, "https://github.com/bartwell/ExFilePicker");

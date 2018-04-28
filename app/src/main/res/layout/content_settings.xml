@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".SettingsActivity"
+    tools:showIn="@layout/activity_settings"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        android:text="@string/look_and_feel"/>
+
+    <RelativeLayout
+        android:id="@+id/primary_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground" >
+
+        <ImageView
+            android:id="@+id/primary_color_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_look_and_feel"
+            android:tint="?attr/iconTint"
+            android:contentDescription="@string/primary_color_content_desc" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/primary_color_icon"
+            android:layout_centerVertical="true"
+            android:paddingStart="32dp"
+            android:paddingEnd="0dp"
+            android:textColor="?attr/textColorPrimary"
+            android:textStyle="bold"
+            android:text="@string/primary_color"/>
+
+        <View
+            android:id="@+id/primary_color_preview"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:backgroundTint="?attr/colorPrimary"
+            android:background="@drawable/grey_circle"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/dividerColor"/>
+
+    <RelativeLayout
+        android:id="@+id/accent_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground" >
+
+        <ImageView
+            android:id="@+id/accent_color_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_look_and_feel"
+            android:tint="?attr/iconTint"
+            android:contentDescription="@string/accent_color_content_desc" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/accent_color_icon"
+            android:layout_centerVertical="true"
+            android:paddingStart="32dp"
+            android:paddingEnd="0dp"
+            android:textColor="?attr/textColorPrimary"
+            android:textStyle="bold"
+            android:text="@string/accent_color"/>
+
+        <View
+            android:id="@+id/accent_color_preview"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:backgroundTint="?attr/colorAccent"
+            android:background="@drawable/grey_circle"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/dividerColor"/>
+
+    <RelativeLayout
+        android:id="@+id/dark_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground" >
+
+        <ImageView
+            android:id="@+id/dark_theme_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_look_and_feel"
+            android:tint="?attr/iconTint"
+            android:contentDescription="@string/dark_theme_content_desc" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/dark_theme_icon"
+            android:paddingStart="32dp"
+            android:paddingEnd="0dp"
+            android:textColor="?attr/textColorPrimary"
+            android:textStyle="bold"
+            android:text="@string/dark_theme"/>
+
+        <Switch
+            android:id="@+id/dark_theme_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/dividerColor"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        android:text="@string/miscellaneous"/>
+
+    <RelativeLayout
+        android:id="@+id/use_logs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground" >
+
+        <ImageView
+            android:id="@+id/use_logs_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:tint="?attr/iconTint"
+            android:src="@drawable/ic_edit"
+            android:contentDescription="@string/use_logs_content_desc" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/use_logs_icon"
+            android:layout_centerVertical="true"
+            android:paddingStart="32dp"
+            android:paddingEnd="0dp"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/textColorPrimary"
+                android:textStyle="bold"
+                android:text="@string/use_logs"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/textColorSecondary"
+                android:text="@string/use_logs_summary"/>
+
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/use_logs_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/dividerColor"/>
+</LinearLayout>

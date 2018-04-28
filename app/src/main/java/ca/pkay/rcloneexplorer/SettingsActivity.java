@@ -1,197 +1,217 @@
 package ca.pkay.rcloneexplorer;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Build;
+import android.app.ActivityManager;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
-import java.util.List;
-
+import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import es.dmoral.toasty.Toasty;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-            preference.setSummary(stringValue);
-            return true;
-        }
-    };
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
-    }
+    private View primaryColorElement;
+    private View primaryColorPreview;
+    private View accentColorElement;
+    private View accentColorPreview;
+    private Switch darkThemeSwitch;
+    private View darkThemeElement;
+    private Switch useLogsSwitch;
+    private View useLogsElement;
+    private boolean isDarkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
+        applyTheme();
+        setContentView(R.layout.activity_settings);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
         }
+
+        getViews();
+        setDefaultStates();
+        setClickListeners();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    private void applyTheme() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
+        int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
+        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
+        getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
+        if (isDarkTheme) {
+            getTheme().applyStyle(R.style.DarkTheme, true);
+        } else {
+            getTheme().applyStyle(R.style.LightTheme, true);
+        }
+
+        // set recents app color to the primary color
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
+        setTaskDescription(taskDesc);
+    }
+
     @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
+    private void getViews() {
+        primaryColorElement = findViewById(R.id.primary_color);
+        primaryColorPreview = findViewById(R.id.primary_color_preview);
+        accentColorElement = findViewById(R.id.accent_color);
+        accentColorPreview = findViewById(R.id.accent_color_preview);
+        darkThemeSwitch = findViewById(R.id.dark_theme_switch);
+        darkThemeElement = findViewById(R.id.dark_theme);
+        useLogsSwitch = findViewById(R.id.use_logs_switch);
+        useLogsElement = findViewById(R.id.use_logs);
     }
 
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                || LookAndFeelFragment.class.getName().equals(fragmentName);
+    private void setDefaultStates() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        boolean useLogs = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
+
+        darkThemeSwitch.setChecked(isDarkTheme);
+        useLogsSwitch.setChecked(useLogs);
     }
 
-    public static class LookAndFeelFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_look_and_feel);
-            setHasOptionsMenu(true);
-            setListener();
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
+    private void setClickListeners() {
+        primaryColorElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPrimaryColorPicker();
             }
-            return super.onOptionsItemSelected(item);
-        }
-
-        private void setListener() {
-            final Context context = getActivity();
-
-            findPreference(getString(R.string.pref_key_color_primary)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toasty.info(context, context.getString(R.string.restart_required), Toast.LENGTH_LONG, true).show();
-                    return true;
+        });
+        accentColorElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAccentColorPicker();
+            }
+        });
+        darkThemeElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (darkThemeSwitch.isChecked()) {
+                    darkThemeSwitch.setChecked(false);
+                } else {
+                    darkThemeSwitch.setChecked(true);
                 }
-            });
-            findPreference(getString(R.string.pref_key_color_accent)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toasty.info(context, context.getString(R.string.restart_required), Toast.LENGTH_LONG, true).show();
-                    return true;
+            }
+        });
+        darkThemeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onDarkThemeClicked(isChecked);
+            }
+        });
+        useLogsElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (useLogsSwitch.isChecked()) {
+                    useLogsSwitch.setChecked(false);
+                } else {
+                    useLogsSwitch.setChecked(true);
                 }
-            });
-            findPreference(getString(R.string.pref_key_dark_theme)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toasty.info(context, context.getString(R.string.restart_required), Toast.LENGTH_LONG, true).show();
-                    return true;
-                }
-            });
-        }
+            }
+        });
+        useLogsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onUseLogsClicked(isChecked);
+            }
+        });
     }
 
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
-            setHasOptionsMenu(true);
+    private void showPrimaryColorPicker() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int defaultColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), R.color.colorPrimary);
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("pref_key_stream_max"));
-        }
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog()
+                .withContext(this)
+                .setTitle(R.string.primary_color_picker_title)
+                .setColorChoices(R.array.primary_color_choices)
+                .setDefaultColor(defaultColor)
+                .setDarkTheme(isDarkTheme)
+                .setListener(new ColorPickerDialog.OnClickListener() {
+                    @Override
+                    public void onColorSelected(int color) {
+                        onPrimaryColorSelected(color);
+                    }
+                });
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
+        colorPickerDialog.show(getSupportFragmentManager(), "Primary color picker");
+    }
+
+    private void showAccentColorPicker() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int defaultColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), R.color.colorAccent);
+
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog()
+                .withContext(this)
+                .setTitle(R.string.accent_color_picker_title)
+                .setColorChoices(R.array.accent_color_choices)
+                .setDefaultColor(defaultColor)
+                .setDarkTheme(isDarkTheme)
+                .setListener(new ColorPickerDialog.OnClickListener() {
+                    @Override
+                    public void onColorSelected(int color) {
+                        onAccentColorSelected(color);
+                    }
+                });
+
+        colorPickerDialog.show(getSupportFragmentManager(), "Accent color picker");
+    }
+
+    private void onPrimaryColorSelected(int color) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.pref_key_color_primary), color);
+        editor.apply();
+
+        primaryColorPreview.getBackground().setTint(color);
+        Toasty.info(this, getString(R.string.restart_required), Toast.LENGTH_SHORT, true).show();
+    }
+
+    private void onAccentColorSelected(int color) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(getString(R.string.pref_key_color_accent), color);
+        editor.apply();
+
+        accentColorPreview.getBackground().setTint(color);
+        Toasty.info(this, getString(R.string.restart_required), Toast.LENGTH_SHORT, true).show();
+    }
+
+    private void onDarkThemeClicked(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_dark_theme), isChecked);
+        editor.apply();
+
+        Toasty.info(this, getString(R.string.restart_required), Toast.LENGTH_SHORT, true).show();
+    }
+
+    private void onUseLogsClicked(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_logs), isChecked);
+        editor.apply();
     }
 }
