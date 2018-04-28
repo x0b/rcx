@@ -38,7 +38,7 @@
         <item name="textColorPrimary">#212121</item>
         <item name="textColorSecondary">#757575</item>
         <item name="dividerColor">#BDBDBD</item>
-        <item name="iconTint">#000000</item>
+        <item name="iconTint">#4A4A4A</item>
     </style>
 
     <style name="DarkTheme">
