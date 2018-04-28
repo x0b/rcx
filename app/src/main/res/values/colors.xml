@@ -9,6 +9,7 @@
     <color name="grey">#DDDDDD</color>
     <color name="grey300">#E0E0E0</color>
     <color name="darkBackground">#303030</color>
+    <color name="fabOverlayColor">#99bdbdbd</color>
     
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#757575</color>

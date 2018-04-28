@@ -32,6 +32,7 @@
         android:id="@+id/fab_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/fabOverlayColor"
         app:clickable_overlay="true"/>
 
     <com.leinardi.android.speeddial.SpeedDialView

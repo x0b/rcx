@@ -663,6 +663,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else if (!isInMoveMode) {
             ((FragmentActivity) context).setTitle(remoteType);
             menuPropertiesAction.setVisible(false);
+            menuOpenAsAction.setVisible(false);
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
