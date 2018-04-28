@@ -36,7 +36,6 @@ Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/rele
 
 Credits/Libraries
 -----------------
-- [Color Picker](https://github.com/jaredrummler/ColorPicker) - A highly customizable color picker for Android.
 - [ExFile Picker](https://github.com/bartwell/ExFilePicker) - Open source Android library. Implement choosing files and directories in your application.
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification.
 - [Font Awesome Icons](https://fontawesome.com/) - The iconic SVG, font, and CSS toolkit/

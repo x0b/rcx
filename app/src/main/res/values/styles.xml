@@ -19,14 +19,6 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-
-    <style name="DarkPreferences" parent="@style/PreferenceThemeOverlay.v14.Material">
-        <item name="android:alertDialogTheme">@style/DarkDialogTheme</item>
-        <item name="android:windowBackground">@color/darkBackground</item>
-        <item name="android:textColorPrimary">#FFFFFFFF</item>
-        <item name="android:textColorSecondary">#757575</item>
-    </style>
-
     <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">#424242</item>
         <item name="android:textColorPrimary">#FFFFFFFF</item>
