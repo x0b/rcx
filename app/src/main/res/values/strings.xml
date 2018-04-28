@@ -128,7 +128,7 @@
     <string name="pref_primary_color_title">Primary Color</string>
     <string name="pref_accent_color_title">Accent Color</string>
     <string name="pref_header_look_and_feel">Look and Feel</string>
-    <string name="restart_required">App restart required</string>
+    <string name="restart_required">App restart may be required</string>
     <string name="select_primary_color">Select a primary color</string>
     <string name="select_accent_color">Select an accent color</string>
     <string name="title_activity_about_libs">AboutLibsActivity</string>
@@ -140,4 +140,5 @@
     <string name="pref_key_logs">pref_key_logs</string>
     <string name="pref_key_color_primary">pref_key_color_primary</string>
     <string name="pref_key_color_accent">pref_key_color_accent</string>
+    <string name="pref_key_dark_theme">pref_key_dark_theme</string>
 </resources>

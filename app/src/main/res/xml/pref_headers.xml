@@ -4,7 +4,7 @@
 
     <header
         android:fragment="ca.pkay.rcloneexplorer.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_about"
+        android:icon="@drawable/ic_pref_header_general"
         android:title="@string/pref_header_general" />
 
     <header

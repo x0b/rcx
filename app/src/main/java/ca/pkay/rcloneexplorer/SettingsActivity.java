@@ -141,14 +141,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         private void setListener() {
             final Context context = getActivity();
 
-            findPreference("pref_key_color_primary").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(getString(R.string.pref_key_color_primary)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Toasty.info(context, context.getString(R.string.restart_required), Toast.LENGTH_LONG, true).show();
                     return true;
                 }
             });
-            findPreference("pref_key_color_accent").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(getString(R.string.pref_key_color_accent)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toasty.info(context, context.getString(R.string.restart_required), Toast.LENGTH_LONG, true).show();
+                    return true;
+                }
+            });
+            findPreference(getString(R.string.pref_key_dark_theme)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Toasty.info(context, context.getString(R.string.restart_required), Toast.LENGTH_LONG, true).show();

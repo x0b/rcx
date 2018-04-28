@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,8 +28,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -46,6 +45,7 @@ import java.util.Stack;
 import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
+import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -87,38 +87,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private SwipeRefreshLayout swipeRefreshLayout;
     private AsyncTask fetchDirectoryTask;
     private Boolean isRunning;
-    private SortOrder sortOrder;
+    private int sortOrder;
     private Boolean isInMoveMode;
     private SpeedDialView fab;
     private MenuItem menuPropertiesAction;
     private MenuItem menuOpenAsAction;
+    private Boolean isDarkTheme;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
-
-    private enum SortOrder {
-        AlphaDescending(1),
-        AlphaAscending(2),
-        ModTimeDescending(3),
-        ModTimeAscending(4),
-        SizeDescending(5),
-        SizeAscending(6);
-
-        private final int value;
-
-        SortOrder(int value) { this.value = value; }
-        public int getValue() { return this.value; }
-        public static SortOrder fromInt(int n) {
-            switch (n) {
-                case 1: return AlphaDescending;
-                case 2: return AlphaAscending;
-                case 3: return ModTimeDescending;
-                case 4: return ModTimeAscending;
-                case 5: return SizeDescending;
-                case 6: return SizeAscending;
-                default: return AlphaDescending;
-            }
-        }
-    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -153,7 +129,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
-        sortOrder = SortOrder.fromInt(sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1));
+        sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1);
 
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
@@ -179,13 +155,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         Context context = view.getContext();
 
-        final TypedValue primaryLightColorValue = new TypedValue ();
-        context.getTheme ().resolveAttribute (R.attr.colorPrimaryLight, primaryLightColorValue, true);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(directoryContent, view.findViewById(R.id.empty_folder_view), this, primaryLightColorValue.data);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, directoryContent, view.findViewById(R.id.empty_folder_view), this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);
@@ -306,7 +282,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void showOpenAsDialog() {
         OpenAsDialog openAsDialog = new OpenAsDialog();
-        openAsDialog.setContext(context)
+        openAsDialog
+                .setContext(context)
+                .setDarkTheme(isDarkTheme)
                 .setOnClickListener(new OpenAsDialog.OnClickListener() {
                     @Override
                     public void onClickText() {
@@ -315,7 +293,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                             if (fileItem.getSize() < MAX_STREAMING_SIZE) {
                                 new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
                             } else {
-                                new AlertDialog.Builder(context)
+                                AlertDialog.Builder builder;
+                                if (isDarkTheme) {
+                                    builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+                                } else {
+                                    builder = new AlertDialog.Builder(context);
+                                }
+                                builder
                                         .setMessage(R.string.max_streaming_size_exceeded)
                                         .setNeutralButton(R.string.okay_confirmation, null)
                                         .create()
@@ -341,7 +325,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         if (fileItem.getSize() < MAX_STREAMING_SIZE) {
                             new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
                         } else {
-                            new AlertDialog.Builder(context)
+                            AlertDialog.Builder builder;
+                            if (isDarkTheme) {
+                                builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+                            } else {
+                                builder = new AlertDialog.Builder(context);
+                            }
+                            builder
                                     .setMessage(R.string.max_streaming_size_exceeded)
                                     .setNeutralButton(R.string.okay_confirmation, null)
                                     .create()
@@ -361,10 +351,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
         FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog()
-                .setContext(context)
+                .withContext(context)
                 .setFile(fileItem)
                 .setRclone(rclone)
-                .setRemote(remote);
+                .setRemote(remote)
+                .setDarkTheme(isDarkTheme);
         if (remoteType.equals("crypt")) {
             filePropertiesDialog.withHashCalculations(false);
         }
@@ -471,54 +462,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void showSortMenu() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater;
-        if (getActivity() != null) {
-            inflater = getActivity().getLayoutInflater();
-        } else {
-            return;
-        }
-        final View view = inflater.inflate(R.layout.dialog_sort, null);
-        builder.setView(view)
+        SortDialog sortDialog = new SortDialog();
+        sortDialog.withContext(context)
                 .setTitle(R.string.sort)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel)
+                .setPositiveButton(R.string.ok)
+                .setListener(new SortDialog.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int sortById = ((RadioGroup)view.findViewById(R.id.radio_group_sort_by)).getCheckedRadioButtonId();
-                        int sortOrderId = ((RadioGroup)view.findViewById(R.id.radio_group_sort_order)).getCheckedRadioButtonId();
+                    public void onPositiveButtonClick(int sortById, int sortOrderId) {
                         sortSelected(sortById, sortOrderId);
                     }
                 })
-                .setNegativeButton(getResources().getString(R.string.cancel), null);
-        AlertDialog dialog = builder.create();
-
-        switch (sortOrder) {
-            case ModTimeDescending:
-                ((RadioButton)view.findViewById(R.id.radio_sort_date)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
-                break;
-            case ModTimeAscending:
-                ((RadioButton)view.findViewById(R.id.radio_sort_date)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
-                break;
-            case SizeDescending:
-                ((RadioButton)view.findViewById(R.id.radio_sort_size)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
-                break;
-            case SizeAscending:
-                ((RadioButton)view.findViewById(R.id.radio_sort_size)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
-                break;
-            case AlphaAscending:
-                ((RadioButton)view.findViewById(R.id.radio_sort_name)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
-                break;
-            case AlphaDescending:
-            default:
-                ((RadioButton)view.findViewById(R.id.radio_sort_name)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+                .setSortOrder(sortOrder)
+                .setDarkTheme(isDarkTheme);
+        if (getFragmentManager() != null) {
+                sortDialog.show(getFragmentManager(), "sort dialog");
         }
-        dialog.show();
     }
 
     private void sortSelected(int sortById, int sortOrderId) {
@@ -526,64 +485,64 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.radio_sort_name:
                 if (sortOrderId == R.id.radio_sort_ascending) {
                     Collections.sort(directoryContent, new FileComparators.SortAlphaAscending());
-                    sortOrder = SortOrder.AlphaAscending;
+                    sortOrder = SortDialog.ALPHA_ASCENDING;
                 } else {
                     Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
-                    sortOrder = SortOrder.AlphaDescending;
+                    sortOrder = SortDialog.ALPHA_DESCENDING;
                 }
                 break;
             case R.id.radio_sort_date:
                 if (sortOrderId == R.id.radio_sort_ascending) {
                     Collections.sort(directoryContent, new FileComparators.SortModTimeAscending());
-                    sortOrder = SortOrder.ModTimeAscending;
+                    sortOrder = SortDialog.MOD_TIME_ASCENDING;
                 } else {
                     Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
-                    sortOrder = SortOrder.ModTimeDescending;
+                    sortOrder = SortDialog.MOD_TIME_DESCENDING;
                 }
                 break;
             case R.id.radio_sort_size:
                 if (sortOrderId == R.id.radio_sort_ascending) {
                     Collections.sort(directoryContent, new FileComparators.SortSizeAscending());
-                    sortOrder = SortOrder.SizeAscending;
+                    sortOrder = SortDialog.SIZE_ASCENDING;
                 } else {
                     Collections.sort(directoryContent, new FileComparators.SortSizeDescending());
-                    sortOrder = SortOrder.SizeDescending;
+                    sortOrder = SortDialog.SIZE_DESCENDING;
                 }
                 break;
         }
         recyclerViewAdapter.updateData(directoryContent);
-        if (sortOrder != null) {
+        if (sortOrder > 0) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
-            sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder.getValue()).apply();
+            sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();
         }
     }
 
     private void sortDirectory() {
         switch (sortOrder) {
-            case ModTimeDescending:
+            case SortDialog.MOD_TIME_DESCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
-                sortOrder = SortOrder.ModTimeAscending;
+                sortOrder = SortDialog.MOD_TIME_ASCENDING;
                 break;
-            case ModTimeAscending:
+            case SortDialog.MOD_TIME_ASCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortModTimeAscending());
-                sortOrder = SortOrder.ModTimeDescending;
+                sortOrder = SortDialog.MOD_TIME_DESCENDING;
                 break;
-            case SizeDescending:
+            case SortDialog.SIZE_DESCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortSizeDescending());
-                sortOrder = SortOrder.SizeAscending;
+                sortOrder = SortDialog.SIZE_ASCENDING;
                 break;
-            case SizeAscending:
+            case SortDialog.SIZE_ASCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortSizeAscending());
-                sortOrder = SortOrder.SizeDescending;
+                sortOrder = SortDialog.SIZE_DESCENDING;
                 break;
-            case AlphaAscending:
+            case SortDialog.ALPHA_ASCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortAlphaAscending());
-                sortOrder = SortOrder.AlphaAscending;
+                sortOrder = SortDialog.ALPHA_ASCENDING;
                 break;
-            case AlphaDescending:
+            case SortDialog.ALPHA_DESCENDING:
             default:
                 Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
-                sortOrder = SortOrder.AlphaDescending;
+                sortOrder = SortDialog.ALPHA_DESCENDING;
         }
     }
 
@@ -639,7 +598,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             // download and open
             new DownloadAndOpen().execute(fileItem);
         } else {
-            new AlertDialog.Builder(context)
+            AlertDialog.Builder builder;
+            if (isDarkTheme) {
+                builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+            } else {
+                builder = new AlertDialog.Builder(context);
+            }
+            builder
                     .setMessage(R.string.max_streaming_size_exceeded)
                     .setNeutralButton(R.string.okay_confirmation, null)
                     .create()
@@ -767,7 +732,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         String title = "Delete " + deleteList.size();
         String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
         title += (deleteList.size() > 1) ? " items?" : " item?";
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder
                 .setTitle(title)
                 .setNegativeButton(getResources().getString(R.string.cancel), null)
                 .setPositiveButton(getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
@@ -798,6 +769,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setFilledText(renameItem.getName())
+                    .setDarkTheme(isDarkTheme)
                     .setOnPositiveListener(new InputDialog.OnPositive() {
                         @Override
                         public void onPositive(String input) {
@@ -1131,6 +1103,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             loadingDialog = new LoadingDialog()
                     .setContext(context)
                     .setCanCancel(false)
+                    .setDarkTheme(isDarkTheme)
                     .setTitle(getString(R.string.loading_file))
                     .setNegativeButton(getResources().getString(R.string.cancel))
                     .setOnNegativeListener(new LoadingDialog.OnNegative() {

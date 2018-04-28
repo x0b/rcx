@@ -11,14 +11,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryText"
+        android:textColor="?attr/textColorPrimary"
         android:textStyle="bold"
         android:text="@string/filename"/>
     <TextView
         android:id="@+id/filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorSecondaryText"
+        android:textColor="?attr/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="Test file"/>
 
@@ -26,14 +26,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:textColor="@color/colorPrimaryText"
+        android:textColor="?attr/textColorPrimary"
         android:textStyle="bold"
         android:text="@string/modified_time"/>
     <TextView
         android:id="@+id/file_modtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorSecondaryText"
+        android:textColor="?attr/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="May 30, 2018"/>
 
@@ -41,7 +41,7 @@
         android:id="@+id/file_size_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryText"
+        android:textColor="?attr/textColorPrimary"
         android:paddingTop="16dp"
         android:textStyle="bold"
         android:text="@string/size"/>
@@ -49,7 +49,7 @@
         android:id="@+id/file_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorSecondaryText"
+        android:textColor="?attr/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="12 MB"/>
 
@@ -71,14 +71,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="?attr/textColorPrimary"
             android:textStyle="bold"
             android:text="@string/md5"/>
         <TextView
             android:id="@+id/file_md5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="?attr/textColorSecondary"
             android:text="@string/tap_to_calculate"/>
     </LinearLayout>
 
@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="?attr/textColorPrimary"
             android:paddingTop="16dp"
             android:textStyle="bold"
             android:text="@string/sha1"/>
@@ -98,7 +98,7 @@
             android:id="@+id/file_sha1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorSecondaryText"
+            android:textColor="?attr/textColorSecondary"
             android:text="@string/tap_to_calculate"/>
     </LinearLayout>
 </LinearLayout>

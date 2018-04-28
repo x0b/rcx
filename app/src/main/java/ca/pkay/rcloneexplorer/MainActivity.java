@@ -53,10 +53,12 @@ public class MainActivity extends AppCompatActivity
     public static final String SHARED_PREFS_TAG = "ca.pkay.rcexplorer";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
+    private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private NavigationView navigationView;
     private Rclone rclone;
     private Fragment fragment;
     private Context context;
+    private Boolean isDarkTheme;
     private NetworkStateReceiver networkStateReceiver;
 
     @Override
@@ -106,8 +108,14 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
         int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
+        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
         getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
+        if (isDarkTheme) {
+            getTheme().applyStyle(R.style.DarkTheme, true);
+        } else {
+            getTheme().applyStyle(R.style.LightTheme, true);
+        }
 
         // set recents app color to the primary color
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
@@ -126,6 +134,8 @@ public class MainActivity extends AppCompatActivity
                 uri = data.getData();
                 new CopyConfigFile().execute(uri);
             }
+        } else if (requestCode == SETTINGS_CODE) {
+            applyTheme();
         }
     }
 
@@ -172,7 +182,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settingsIntent);
+                startActivityForResult(settingsIntent, SETTINGS_CODE);
                 break;
             case R.id.nav_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
@@ -203,7 +213,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void warnUserAboutOverwritingConfiguration() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
         builder.setTitle(R.string.replace_config_file_question);
         builder.setMessage(R.string.config_file_lost_statement);
         builder.setPositiveButton(R.string.continue_statement, new DialogInterface.OnClickListener() {

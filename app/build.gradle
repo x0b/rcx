@@ -30,6 +30,7 @@ dependencies {
     implementation "com.android.support:support-compat:27.1.1"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:preference-v14:27.1.1'
     implementation "com.leinardi.android:speed-dial:1.0-alpha03"
     implementation 'ru.bartwell:exfilepicker:2.4'
     implementation 'us.feras.mdv:markdownview:1.1.0'

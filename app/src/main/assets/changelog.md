@@ -1,3 +1,9 @@
+### 1.2.1
+* **New:** Dark theme!
+* **Fix:** Crash when starting app for the first time
+
+***
+
 ### 1.2.0
 * **New:** Settings!
     * **New:** Custom primary and accent colors

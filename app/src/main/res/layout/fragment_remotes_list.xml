@@ -7,6 +7,7 @@
     android:name="ca.pkay.rcloneexplorer.RemotesFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
     app:layoutManager="LinearLayoutManager"
     tools:listitem="@layout/fragment_remotes_item">
 

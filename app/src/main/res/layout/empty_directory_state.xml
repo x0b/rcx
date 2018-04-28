@@ -4,7 +4,7 @@
     android:id="@+id/empty_folder_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey300"
+    android:background="?attr/backgroundColor"
     android:visibility="invisible"
     tools:visibility="visible">
 
@@ -25,6 +25,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_folder_open"
+                android:tint="?attr/iconTint"
                 android:layout_gravity="center"
                 android:contentDescription="@string/empty_folder" />
         </LinearLayout>
@@ -34,6 +35,7 @@
             android:layout_height="wrap_content"
             android:text="@string/empty_folder"
             android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
             android:paddingTop="16dp"/>
     </LinearLayout>
 </RelativeLayout>

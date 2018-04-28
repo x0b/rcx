@@ -23,18 +23,26 @@ public class LoadingDialog extends DialogFragment {
     private Context context;
     private OnNegative onNegativeListener;
     private Boolean cancelable;
+    private Boolean isDarkTheme;
     private String title;
     private int titleId;
     private String negativeText;
 
     public LoadingDialog() {
         cancelable = false;
+        isDarkTheme = false;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder;
+
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_loading_indicator, null);
         builder.setCancelable(cancelable);
@@ -79,6 +87,11 @@ public class LoadingDialog extends DialogFragment {
 
     public LoadingDialog setCanCancel(Boolean cancelable) {
         this.cancelable = cancelable;
+        return this;
+    }
+
+    public LoadingDialog setDarkTheme(Boolean darkTheme) {
+        isDarkTheme = darkTheme;
         return this;
     }
 
