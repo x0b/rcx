@@ -1,3 +1,8 @@
+### 1.2.2
+* **Update:** rclone binary
+
+***
+
 ### 1.2.1
 * **New:** Dark theme!
 * **Fix:** Crash when starting app for the first time
