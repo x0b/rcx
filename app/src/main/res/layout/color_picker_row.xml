@@ -4,5 +4,6 @@
     android:id="@+id/color_picker_row"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
     android:orientation="horizontal">
 </LinearLayout>

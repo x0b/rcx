@@ -72,7 +72,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final int EX_FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
-    private final int MAX_STREAMING_SIZE = 500000000;
     private String originalToolbarTitle;
     private List<FileItem> directoryContent;
     private Stack<String> pathStack;
@@ -290,21 +289,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     public void onClickText() {
                         if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
                             FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
-                            if (fileItem.getSize() < MAX_STREAMING_SIZE) {
-                                new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
-                            } else {
-                                AlertDialog.Builder builder;
-                                if (isDarkTheme) {
-                                    builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-                                } else {
-                                    builder = new AlertDialog.Builder(context);
-                                }
-                                builder
-                                        .setMessage(R.string.max_streaming_size_exceeded)
-                                        .setNeutralButton(R.string.okay_confirmation, null)
-                                        .create()
-                                        .show();
-                            }
+                            new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
                         }
                     }
                     @Override
@@ -322,22 +307,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     @Override
                     public void onClickImage() {
                         FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
-                        if (fileItem.getSize() < MAX_STREAMING_SIZE) {
-                            new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
-                        } else {
-                            AlertDialog.Builder builder;
-                            if (isDarkTheme) {
-                                builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-                            } else {
-                                builder = new AlertDialog.Builder(context);
-                            }
-                            builder
-                                    .setMessage(R.string.max_streaming_size_exceeded)
-                                    .setNeutralButton(R.string.okay_confirmation, null)
-                                    .create()
-                                    .show();
-                        }
-
+                        new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
                     }
                 });
         if (getFragmentManager() != null) {
@@ -594,21 +564,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (type != null && (type.startsWith("video/") || type.startsWith("audio/"))) {
             // stream video or audio
             new StreamTask().execute(fileItem);
-        } else if (fileItem.getSize() < MAX_STREAMING_SIZE){
+        } else {
             // download and open
             new DownloadAndOpen().execute(fileItem);
-        } else {
-            AlertDialog.Builder builder;
-            if (isDarkTheme) {
-                builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-            } else {
-                builder = new AlertDialog.Builder(context);
-            }
-            builder
-                    .setMessage(R.string.max_streaming_size_exceeded)
-                    .setNeutralButton(R.string.okay_confirmation, null)
-                    .create()
-                    .show();
         }
     }
 

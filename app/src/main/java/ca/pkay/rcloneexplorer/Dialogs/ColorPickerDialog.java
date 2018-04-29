@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -75,6 +76,7 @@ public class ColorPickerDialog extends DialogFragment {
             if (color == defaultColor) {
                 (item.findViewById(R.id.checkmark)).setVisibility(View.VISIBLE);
                 visibleCheckmark = item.findViewById(R.id.checkmark);
+                selectedColor = defaultColor;
             }
 
             item.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +100,16 @@ public class ColorPickerDialog extends DialogFragment {
                 rowLayout = row.findViewById(R.id.color_picker_row);
                 i = 0;
             }
+        }
+
+        while (i < 5) { // add dummy items so that layout is even
+            View item = layoutInflater.inflate(R.layout.color_picker_item, null);
+            View colorOption = item.findViewById(R.id.color_option);
+            TypedValue typedValue = new TypedValue();
+            context.getTheme().resolveAttribute(R.attr.cardColor, typedValue, true);
+            colorOption.getBackground().setTint(typedValue.data);
+            rowLayout.addView(item);
+            i++;
         }
         dialogLayout.addView(row);
     }

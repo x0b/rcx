@@ -11,7 +11,6 @@
     android:visibility="gone"
     android:clickable="true"
     tools:showIn="@layout/fragment_file_explorer_list"
-    tools:visibility="visible"
     android:focusable="true">
 
     <ImageView
@@ -20,6 +19,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:clickable="true"
         android:focusable="true"
         android:layout_gravity="center_vertical"
@@ -39,6 +40,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:text="@string/cancel"
         android:clickable="true"
         android:focusable="true"
@@ -53,6 +56,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:text="@string/select"
         android:clickable="true"
         android:focusable="true"

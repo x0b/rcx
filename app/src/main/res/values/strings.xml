@@ -63,7 +63,6 @@
     <string name="remotes_toolbar_title">Remotes</string>
     <string name="fab_upload_files">Upload Files</string>
     <string name="fab_new_folder">New Folder</string>
-    <string name="max_streaming_size_exceeded">Max file size for streaming exceeded</string>
     <string name="okay_confirmation">Okay</string>
     <string name="selected">selected</string>
     <string name="rename_file">Rename a file</string>
@@ -155,4 +154,6 @@
     <string name="color_picker_checkmark">Color picker checkmark</string>
     <string name="primary_color_picker_title">Select primary color</string>
     <string name="accent_color_picker_title">Select accent color</string>
+    <string name="notifications_pref_title">Notifications</string>
+    <string name="open_system_settings">Open system settings</string>
 </resources>
