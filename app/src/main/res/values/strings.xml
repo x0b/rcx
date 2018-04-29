@@ -63,7 +63,6 @@
     <string name="remotes_toolbar_title">Remotes</string>
     <string name="fab_upload_files">Upload Files</string>
     <string name="fab_new_folder">New Folder</string>
-    <string name="max_streaming_size_exceeded">Max file size for streaming exceeded</string>
     <string name="okay_confirmation">Okay</string>
     <string name="selected">selected</string>
     <string name="rename_file">Rename a file</string>
