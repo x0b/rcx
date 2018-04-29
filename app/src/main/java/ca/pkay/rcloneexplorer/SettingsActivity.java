@@ -1,9 +1,6 @@
 package ca.pkay.rcloneexplorer;
 
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -18,10 +15,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
-import es.dmoral.toasty.Toasty;
 
 public class SettingsActivity extends AppCompatActivity {
 

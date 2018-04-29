@@ -133,7 +133,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_look_and_feel"
+            android:src="@drawable/ic_dark_theme"
             android:tint="?attr/iconTint"
             android:contentDescription="@string/dark_theme_content_desc" />
 
