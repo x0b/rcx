@@ -169,6 +169,53 @@
         android:paddingTop="24dp"
         android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
+        android:text="@string/notifications_pref_title"/>
+
+    <RelativeLayout
+        android:id="@+id/notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?selectableItemBackground" >
+
+        <ImageView
+            android:id="@+id/notifications_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:tint="?attr/iconTint"
+            android:src="@drawable/ic_notifications"
+            android:contentDescription="@string/use_logs_content_desc" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/notifications_icon"
+            android:paddingStart="32dp"
+            android:paddingEnd="0dp"
+            android:textColor="?attr/textColorPrimary"
+            android:textStyle="bold"
+            android:text="@string/open_system_settings"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/dividerColor"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
         android:text="@string/miscellaneous"/>
 
     <RelativeLayout
