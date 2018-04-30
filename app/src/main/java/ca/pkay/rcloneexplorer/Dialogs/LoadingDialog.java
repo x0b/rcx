@@ -27,6 +27,7 @@ public class LoadingDialog extends DialogFragment {
     private String title;
     private int titleId;
     private String negativeText;
+    private int negativeTextId;
 
     public LoadingDialog() {
         cancelable = false;
@@ -58,6 +59,13 @@ public class LoadingDialog extends DialogFragment {
                     onNegativeListener.onNegative();
                 }
             });
+        } else if (negativeTextId > 0) {
+            builder.setNeutralButton(negativeTextId, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onNegativeListener.onNegative();
+                }
+            });
         }
         builder.setView(view);
         return builder.create();
@@ -81,6 +89,11 @@ public class LoadingDialog extends DialogFragment {
 
     public LoadingDialog setNegativeButton(String text) {
         negativeText = text;
+        return this;
+    }
+
+    public LoadingDialog setNegativeButton(int text) {
+        negativeTextId = text;
         return this;
     }
 
