@@ -6,12 +6,12 @@
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:paddingTop="12dp">
-    <View
+    <ImageView
         android:id="@+id/color_option"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:background="@drawable/grey_circle" />
+        android:src="@drawable/ic_circle"
+        android:contentDescription="@string/content_description_circle" />
     <ImageView
         android:id="@+id/checkmark"
         android:layout_width="48dp"

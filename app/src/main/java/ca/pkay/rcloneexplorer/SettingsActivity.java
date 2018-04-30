@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -21,9 +22,9 @@ import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 public class SettingsActivity extends AppCompatActivity {
 
     private View primaryColorElement;
-    private View primaryColorPreview;
+    private ImageView primaryColorPreview;
     private View accentColorElement;
-    private View accentColorPreview;
+    private ImageView accentColorPreview;
     private Switch darkThemeSwitch;
     private View darkThemeElement;
     private View notificationsElement;
@@ -194,7 +195,7 @@ public class SettingsActivity extends AppCompatActivity {
         editor.putInt(getString(R.string.pref_key_color_primary), color);
         editor.apply();
 
-        primaryColorPreview.getBackground().setTint(color);
+        primaryColorPreview.setColorFilter(color);
         showSnackBar();
     }
 
@@ -204,7 +205,7 @@ public class SettingsActivity extends AppCompatActivity {
         editor.putInt(getString(R.string.pref_key_color_accent), color);
         editor.apply();
 
-        accentColorPreview.getBackground().setTint(color);
+        accentColorPreview.setColorFilter(color);
         showSnackBar();
     }
 

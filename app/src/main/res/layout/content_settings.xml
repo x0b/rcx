@@ -58,14 +58,15 @@
                 android:textStyle="bold"
                 android:text="@string/primary_color"/>
 
-            <View
+            <ImageView
                 android:id="@+id/primary_color_preview"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:backgroundTint="?attr/colorPrimary"
-                android:background="@drawable/grey_circle"/>
+                android:src="@drawable/ic_circle"
+                android:contentDescription="@string/content_description_circle"
+                android:tint="?attr/colorPrimary" />
 
         </RelativeLayout>
 
@@ -106,14 +107,15 @@
                 android:textStyle="bold"
                 android:text="@string/accent_color"/>
 
-            <View
+            <ImageView
                 android:id="@+id/accent_color_preview"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:backgroundTint="?attr/colorAccent"
-                android:background="@drawable/grey_circle"/>
+                android:tint="?attr/colorAccent"
+                android:src="@drawable/ic_circle"
+                android:contentDescription="@string/content_description_circle"/>
 
         </RelativeLayout>
 

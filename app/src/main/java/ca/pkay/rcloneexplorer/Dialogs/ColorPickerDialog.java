@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -11,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import ca.pkay.rcloneexplorer.R;
@@ -70,8 +72,8 @@ public class ColorPickerDialog extends DialogFragment {
         int i = 0;
         for (final int color : colorChoices) {
             View item = layoutInflater.inflate(R.layout.color_picker_item, null);
-            View colorOption = item.findViewById(R.id.color_option);
-            colorOption.getBackground().setTint(color);
+            ImageView colorOption = item.findViewById(R.id.color_option);
+            colorOption.setColorFilter(color);
 
             if (color == defaultColor) {
                 (item.findViewById(R.id.checkmark)).setVisibility(View.VISIBLE);
@@ -104,10 +106,10 @@ public class ColorPickerDialog extends DialogFragment {
 
         while (i < 5) { // add dummy items so that layout is even
             View item = layoutInflater.inflate(R.layout.color_picker_item, null);
-            View colorOption = item.findViewById(R.id.color_option);
+            ImageView colorOption = item.findViewById(R.id.color_option);
             TypedValue typedValue = new TypedValue();
             context.getTheme().resolveAttribute(R.attr.cardColor, typedValue, true);
-            colorOption.getBackground().setTint(typedValue.data);
+            colorOption.setColorFilter(typedValue.data);
             rowLayout.addView(item);
             i++;
         }

@@ -1,3 +1,11 @@
+### 1.2.2
+* **Update:** Rclone to version 1.41
+* **New:** App shortcuts
+* **Fix:** Color picker not working on sdk 21
+* **Fix:** Rclone not getting updated
+
+***
+
 ### 1.2.1
 * **New:** Dark theme!
 * **Fix:** Crash when starting app for the first time

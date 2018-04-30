@@ -128,7 +128,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
-        sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1);
+        sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
@@ -440,7 +440,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setListener(new SortDialog.OnClickListener() {
                     @Override
                     public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                        sortSelected(sortById, sortOrderId);
+                        if (directoryContent != null && !directoryContent.isEmpty()) {
+                            sortSelected(sortById, sortOrderId);
+                        }
                     }
                 })
                 .setSortOrder(sortOrder)
@@ -590,6 +592,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         path = fileItem.getPath();
         recyclerViewAdapter.clear();
+        directoryContent.clear();
         fetchDirectoryTask = new FetchDirectoryContent().execute();
 
     }
