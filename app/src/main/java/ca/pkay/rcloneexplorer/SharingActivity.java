@@ -21,20 +21,20 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import es.dmoral.toasty.Toasty;
 
 public class SharingActivity extends AppCompatActivity implements   RemotesFragment.OnRemoteClickListener,
                                                                     ShareFragment.OnShareDestincationSelected {
@@ -42,7 +42,7 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
     private boolean isDarkTheme;
     private Rclone rclone;
     private Fragment fragment;
-    private String uploadFile;
+    private ArrayList<String> uploadList;
     private boolean isDataReady;
 
     @Override
@@ -54,11 +54,20 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
         setSupportActionBar(toolbar);
 
         rclone = new Rclone(this);
+        uploadList = new ArrayList<>();
 
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        copyFile(intent);
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            copyFile(intent);
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+            copyFiles(intent);
+        } else {
+            finish();
+            return;
+        }
 
         if (!rclone.isRcloneBinaryCreated() || rclone.isConfigEncrypted() || !rclone.isConfigFileCreated()) {
             AlertDialog.Builder builder;
@@ -146,7 +155,16 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
             finish();
         }
         isDataReady = false;
-        new CopyFile(uri).execute();
+        new CopyFile(this, uri).execute();
+    }
+
+    private void copyFiles(Intent intent) {
+        ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (uris == null) {
+            finish();
+        }
+        isDataReady = false;
+        new CopyFile(this, uris).execute();
     }
 
 
@@ -197,8 +215,6 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             loadingDialog.dismiss();
-            ArrayList<String> uploadList = new ArrayList<>();
-            uploadList.add(uploadFile);
             Intent intent = new Intent(context, UploadService.class);
             intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
             intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
@@ -209,52 +225,67 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class CopyFile extends AsyncTask<Void, Void, Void> {
+    private class CopyFile extends AsyncTask<Void, Void, Boolean> {
 
-        private Uri uri;
+        private Context context;
+        private ArrayList<Uri> uris;
 
-        CopyFile(Uri uri) {
-            this.uri = uri;
+        CopyFile(Context context, Uri uri) {
+            this.context = context;
+            uris = new ArrayList<>();
+            uris.add(uri);
+        }
+
+        CopyFile(Context context, ArrayList<Uri> uris) {
+            this.context = context;
+            this.uris = uris;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            Cursor returnCursor = getContentResolver().query(uri, null, null, null, null);
-            if (returnCursor == null) {
-                return null;
-            }
-            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            returnCursor.moveToFirst();
-            String fileName = returnCursor.getString(nameIndex);
-            returnCursor.close();
+        protected Boolean doInBackground(Void... voids) {
+            for (Uri uri : uris) {
+                Cursor returnCursor = getContentResolver().query(uri, null, null, null, null);
+                if (returnCursor == null) {
+                    return false;
+                }
+                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                returnCursor.moveToFirst();
+                String fileName = returnCursor.getString(nameIndex);
+                returnCursor.close();
 
-            File cacheDir = getExternalCacheDir();
-            InputStream inputStream;
-            try {
-                inputStream = getContentResolver().openInputStream(uri);
-                if (inputStream == null) {
-                    return null;
+                File cacheDir = getExternalCacheDir();
+                InputStream inputStream;
+                try {
+                    inputStream = getContentResolver().openInputStream(uri);
+                    if (inputStream == null) {
+                        return false;
+                    }
+                    File outFile = new File(cacheDir, fileName);
+                    uploadList.add(outFile.getAbsolutePath());
+                    FileOutputStream fileOutputStream = new FileOutputStream(outFile);
+                    byte[] buffer = new byte[4096];
+                    int offset;
+                    while ((offset = inputStream.read(buffer)) > 0) {
+                        fileOutputStream.write(buffer, 0, offset);
+                    }
+                    inputStream.close();
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
                 }
-                File outFile = new File(cacheDir, fileName);
-                uploadFile = outFile.getAbsolutePath();
-                FileOutputStream fileOutputStream = new FileOutputStream(outFile);
-                byte[] buffer = new byte[4096];
-                int offset;
-                while ((offset = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, offset);
-                }
-                inputStream.close();
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            if (!success) {
+                Toasty.error(context, getString(R.string.error_retrieving_files), Toast.LENGTH_LONG, true).show();
+                finish();
+            }
             isDataReady = true;
         }
     }
