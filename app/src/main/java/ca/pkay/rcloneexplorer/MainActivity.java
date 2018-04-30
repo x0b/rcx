@@ -10,8 +10,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -37,6 +40,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
@@ -54,6 +61,8 @@ public class MainActivity extends AppCompatActivity
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
+    private final String APP_SHORTCUT_REMOTE_NAME = "arg_remote_name";
+    private final String APP_SHORTCUT_REMOTE_TYPE = "arg_remote_type";
     private NavigationView navigationView;
     private Rclone rclone;
     private Fragment fragment;
@@ -94,10 +103,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
         if (!rclone.isRcloneBinaryCreated()) {
             new CreateRcloneBinary().execute();
         } else if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
+        } else if (bundle != null && bundle.containsKey(APP_SHORTCUT_REMOTE_NAME) && bundle.containsKey(APP_SHORTCUT_REMOTE_TYPE)) {
+            String remoteName = bundle.getString(APP_SHORTCUT_REMOTE_NAME);
+            String remoteType = bundle.getString(APP_SHORTCUT_REMOTE_TYPE);
+            startRemote(remoteName, remoteType);
         } else {
             startRemotesFragment();
         }
@@ -269,12 +285,127 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void addRemotesToShortcutList() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
+            return;
+        }
+        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+        if (shortcutManager == null) {
+            return;
+        }
+        shortcutManager.removeAllDynamicShortcuts();
+
+        List<RemoteItem> remoteItemList = rclone.getRemotes();
+        List<ShortcutInfo> shortcutInfoList = new ArrayList<>();
+
+        for (RemoteItem remoteItem : remoteItemList) {
+            String id = remoteItem.getName().replaceAll(" ", "_");
+
+            Intent intent = new Intent(Intent.ACTION_MAIN, Uri.EMPTY, this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
+            intent.putExtra(APP_SHORTCUT_REMOTE_TYPE, remoteItem.getType());
+
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, id)
+                    .setShortLabel(remoteItem.getName())
+                    .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType())))
+                    .setIntent(intent)
+                    .build();
+            shortcutInfoList.add(shortcut);
+            if (shortcutInfoList.size() == 4) {
+                break;
+            }
+        }
+        shortcutManager.setDynamicShortcuts(shortcutInfoList);
+    }
+
+    private void addRemoteToShortcutList(RemoteItem remoteItem) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
+            return;
+        }
+        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+        if (shortcutManager == null) {
+            return;
+        }
+
+        String id = remoteItem.getName().replaceAll(" ", "_");
+
+        List<ShortcutInfo> shortcutInfoList = shortcutManager.getDynamicShortcuts();
+        for (ShortcutInfo shortcutInfo : shortcutInfoList) {
+            if (shortcutInfo.getId().equals(id)) {
+                shortcutManager.reportShortcutUsed(id);
+                return;
+            }
+        }
+
+        Intent intent = new Intent(Intent.ACTION_MAIN, Uri.EMPTY, this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
+        intent.putExtra(APP_SHORTCUT_REMOTE_TYPE, remoteItem.getType());
+
+        ShortcutInfo shortcut = new ShortcutInfo.Builder(this, id)
+                .setShortLabel(remoteItem.getName())
+                .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType())))
+                .setIntent(intent)
+                .build();
+
+        if (shortcutInfoList.size() >= 4) {
+            ShortcutInfo removeId = shortcutInfoList.get(0);
+            shortcutManager.removeDynamicShortcuts(Collections.singletonList(removeId.getId()));
+        }
+        shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
+        shortcutManager.reportShortcutUsed(id);
+    }
+
+    private int getRemoteIcon(String remoteType) {
+        switch (remoteType) {
+            case "crypt":
+                return R.drawable.ic_lock_black;
+            case "amazon cloud drive":
+                return R.drawable.ic_amazon;
+            case "b2":
+                return R.drawable.ic_b2;
+            case "drive":
+                return R.drawable.ic_google_drive;
+            case "dropbox":
+                return R.drawable.ic_dropbox;
+            case "google cloud storage":
+                return R.drawable.ic_google;
+            case "onedrive":
+                return R.drawable.ic_onedrive;
+            case "s3":
+                return R.drawable.ic_amazon;
+            case "yandex":
+                return R.drawable.ic_yandex;
+            case "box":
+                return R.drawable.ic_box;
+            case "sftp":
+                return R.drawable.ic_terminal;
+            default:
+                return R.drawable.ic_cloud;
+        }
+    }
+
     @Override
     public void onRemoteClick(RemoteItem remote) {
+        startRemote(remote);
+    }
+
+    private void startRemote(RemoteItem remote) {
         fragment = FileExplorerFragment.newInstance(remote.getName(), remote.getType());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);
+        transaction.commit();
+
+        addRemoteToShortcutList(remote);
+        navigationView.getMenu().getItem(0).setChecked(false);
+    }
+
+    private void startRemote(String remoteName, String remoteType) {
+        fragment = FileExplorerFragment.newInstance(remoteName, remoteType);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.flFragment, fragment);
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
@@ -356,6 +487,7 @@ public class MainActivity extends AppCompatActivity
             if (rclone.isConfigEncrypted()) {
                 askForConfigPassword();
             } else {
+                addRemotesToShortcutList();
                 startRemotesFragment();
             }
         }
@@ -390,6 +522,7 @@ public class MainActivity extends AppCompatActivity
                 askForConfigPassword();
             } else {
                 findViewById(R.id.locked_config).setVisibility(View.GONE);
+                addRemotesToShortcutList();
                 startRemotesFragment();
             }
         }
