@@ -41,7 +41,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -106,7 +105,11 @@ public class MainActivity extends AppCompatActivity
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
 
-        if (!rclone.isRcloneBinaryCreated()) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int lastVersionCode = sharedPreferences.getInt(getString(R.string.pref_key_version_code), -1);
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+
+        if (!rclone.isRcloneBinaryCreated() || lastVersionCode != currentVersionCode) {
             new CreateRcloneBinary().execute();
         } else if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
