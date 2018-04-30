@@ -11,14 +11,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true">
-        
-        <LinearLayout
-            android:layout_width="112dp"
-            android:layout_height="112dp"
-            android:background="@drawable/grey_circle"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:tint="?attr/cardColor"
+                android:src="@drawable/ic_circle"
+                android:contentDescription="@string/content_description_circle"/>
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
@@ -26,7 +28,7 @@
                 android:tint="?attr/iconTint"
                 android:layout_gravity="center"
                 android:contentDescription="@string/no_internet_connection" />
-        </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
