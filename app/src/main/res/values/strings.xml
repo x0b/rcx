@@ -158,4 +158,5 @@
     <string name="notifications_pref_title">Notifications</string>
     <string name="open_system_settings">Open system settings</string>
     <string name="content_description_circle">circle</string>
+    <string name="loading">Loading</string>
 </resources>

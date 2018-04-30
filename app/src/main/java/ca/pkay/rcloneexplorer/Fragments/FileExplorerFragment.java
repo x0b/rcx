@@ -35,6 +35,9 @@ import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1144,6 +1147,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         public static final int OPEN_AS_VIDEO = 0;
         public static final int OPEN_AS_AUDIO = 1;
         private int openAs;
+        private LoadingDialog loadingDialog;
 
         StreamTask() {
             this(-1);
@@ -1151,6 +1155,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         StreamTask(int openAs) {
             this.openAs = openAs;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingDialog = new LoadingDialog()
+                    .setContext(context)
+                    .setCanCancel(false)
+                    .setDarkTheme(isDarkTheme)
+                    .setTitle(R.string.loading);
+
+            if (getFragmentManager() != null) {
+                loadingDialog.show(getFragmentManager(), "loading dialog");
+            }
         }
 
         @Override
@@ -1182,7 +1200,36 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     intent.setData(Uri.parse(url));
                 }
             }
+
+            int code = -1;
+            HttpURLConnection connection;
+
+            int retries = 10;
+            while (retries > 0) {
+                try {
+                    URL checkUrl = new URL(url);
+                    connection = (HttpURLConnection) checkUrl.openConnection();
+                    code = connection.getResponseCode();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (code == 200) {
+                    break;
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                retries--;
+            }
+
+            loadingDialog.dismiss();
             startActivityForResult(intent, STREAMING_INTENT_RESULT);
+
+
             return null;
         }
     }
