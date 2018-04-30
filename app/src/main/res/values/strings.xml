@@ -157,4 +157,5 @@
     <string name="accent_color_picker_title">Select accent color</string>
     <string name="notifications_pref_title">Notifications</string>
     <string name="open_system_settings">Open system settings</string>
+    <string name="content_description_circle">circle</string>
 </resources>
