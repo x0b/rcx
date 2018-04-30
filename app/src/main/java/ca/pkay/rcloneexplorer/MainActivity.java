@@ -109,8 +109,13 @@ public class MainActivity extends AppCompatActivity
         int lastVersionCode = sharedPreferences.getInt(getString(R.string.pref_key_version_code), -1);
         int currentVersionCode = BuildConfig.VERSION_CODE;
 
-        if (!rclone.isRcloneBinaryCreated() || lastVersionCode != currentVersionCode) {
+        if (!rclone.isRcloneBinaryCreated()) {
             new CreateRcloneBinary().execute();
+        } else if (lastVersionCode < currentVersionCode) {
+            new CreateRcloneBinary().execute();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt(getString(R.string.pref_key_version_code), currentVersionCode);
+            editor.apply();
         } else if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
         } else if (bundle != null && bundle.containsKey(APP_SHORTCUT_REMOTE_NAME) && bundle.containsKey(APP_SHORTCUT_REMOTE_TYPE)) {

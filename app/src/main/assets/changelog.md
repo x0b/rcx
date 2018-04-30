@@ -1,6 +1,8 @@
 ### 1.2.2
-* **Update:** rclone binary
+* **Update:** Rclone to version 1.41
 * **New:** App shortcuts
+* **Fix:** Color picker not working on sdk 21
+* **Fix:** Rclone not getting updated
 
 ***
 
