@@ -1,5 +1,6 @@
 ### 1.2.2
 * **Update:** rclone binary
+* **New:** App shortcuts
 
 ***
 

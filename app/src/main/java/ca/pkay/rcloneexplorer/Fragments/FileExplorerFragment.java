@@ -128,7 +128,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
-        sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, -1);
+        sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
