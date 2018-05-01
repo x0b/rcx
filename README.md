@@ -11,6 +11,8 @@ Features
 - Create new folders
 - Streaming media files
 - Serving directories over HTTP
+- Dark theme
+- Customizable primary and accent colors
 
 Limitations
 ------------
@@ -19,11 +21,17 @@ Limitations
 Screenshots
 -----------
 
-Remotes|File Explorer|File Upload
-:-----:|:-----------:|:----------:
-![screenshot1](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_1.png?raw=true)|![screenshot2](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_2.png?raw=true)|![screenshot3](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_3.png?raw=true)
-**File Editing**|**Empty Folder**|**Dark Theme**
-![screenshot4](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_4.png?raw=true)|![screenshot5](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_5.png?raw=true)|![screenshot6](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_6.png?raw=true)
+Remotes|Encrypted Config|File Explorer|File Upload
+:-----:|:--------------:|:-----------:|:---------:|
+![screenshot1](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_1.png?raw=true)|![screenshot11](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_11.png?raw=true)|![screenshot2](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_2.png?raw=true)|![screenshot3](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_3.png?raw=true)
+
+File Editing|Empty Folder|Dark Theme|Encrypted Config
+:----------:|:----------:|:--------:|:-------------:|
+![screenshot4](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_4.png?raw=true)|![screenshot5](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_5.png?raw=true)|![screenshot6](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_6.png?raw=true)|![screenshot10](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_10.png?raw=true)
+
+File Explorer|File Editing|Empty Folder|
+:-----------:|:----------:|:----------:|
+![screenshot7](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_7.png?raw=true)|![screenshot8](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_8.png?raw=true)|![screenshot9](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_9.png?raw=true)|
 
 Installation
 ------------
