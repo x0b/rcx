@@ -28,9 +28,7 @@ Remotes|Encrypted Config|File Explorer|File Upload
 File Editing|Empty Folder|Dark Theme|Encrypted Config
 :----------:|:----------:|:--------:|:-------------:|
 ![screenshot4](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_4.png?raw=true)|![screenshot5](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_5.png?raw=true)|![screenshot6](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_6.png?raw=true)|![screenshot10](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_10.png?raw=true)
-
-File Explorer|File Editing|Empty Folder|
-:-----------:|:----------:|:----------:|
+**File Explorer**|**File Editing**|**Empty Folder**|
 ![screenshot7](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_7.png?raw=true)|![screenshot8](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_8.png?raw=true)|![screenshot9](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_9.png?raw=true)|
 
 Installation
