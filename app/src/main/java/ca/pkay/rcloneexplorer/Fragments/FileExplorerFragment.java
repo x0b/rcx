@@ -193,6 +193,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
         view.findViewById(R.id.bottom_bar).setBackgroundColor(accentColorValue.data);
         view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
+        if (view.findViewById(R.id.background) != null) {
+            view.findViewById(R.id.background).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickOutsideOfView();
+                }
+            });
+        }
 
         setBottomBarClickListeners(view);
 
@@ -518,6 +526,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             default:
                 Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
                 sortOrder = SortDialog.ALPHA_DESCENDING;
+        }
+    }
+
+    private void onClickOutsideOfView() {
+        if (recyclerViewAdapter.isInSelectMode()) {
+            recyclerViewAdapter.cancelSelection();
+        } else if (recyclerViewAdapter.isInMoveMode()) {
+            cancelMoveClicked();
         }
     }
 

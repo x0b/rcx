@@ -6,8 +6,8 @@ android {
         applicationId "ca.pkay.rcloneexplorer"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 11
-        versionName "1.2.2"
+        versionCode 12
+        versionName "1.2.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
