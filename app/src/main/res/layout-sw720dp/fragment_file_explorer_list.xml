@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="?attr/backgroundColor">
+
+    <include
+        layout="@layout/empty_directory_state" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/file_explorer_srl"
+        android:layout_width="600dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_above="@+id/bottom_bar" >
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/file_explorer_list"
+            android:clipToPadding="false"
+            android:paddingBottom="54dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/fragment_file_explorer_item" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/fab_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fabOverlayColor"
+        app:clickable_overlay="true"/>
+
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="2dp"
+        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
+        app:sdExpansionMode="top"
+        app:sdFabCloseSrc="@drawable/ic_close"
+        app:sdFabRotateOnToggle="true"
+        app:srcCompat="@drawable/ic_add" />
+
+    <include
+        android:id="@+id/bottom_bar"
+        android:layout_width="600dp"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|center"
+        android:background="@color/colorPrimary"
+        android:elevation="8dp"
+        android:visibility="gone"
+        android:clickable="true"
+        tools:visibility="visible"
+        android:focusable="true"
+        layout="@layout/bottom_bar"/>
+
+    <include
+        android:id="@+id/move_bar"
+        android:layout_width="600dp"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|center"
+        android:background="@color/colorPrimary"
+        android:elevation="8dp"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        layout="@layout/move_bar"/>
+</android.support.design.widget.CoordinatorLayout>

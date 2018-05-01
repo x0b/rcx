@@ -1,3 +1,10 @@
+### 1.2.3
+* **New:** Files can be shared with Rclone Explorer
+* **New:** Tablet layout
+* **Fix:** Wait for streaming service be available before streaming
+
+***
+
 ### 1.2.2
 * **Update:** Rclone to version 1.41
 * **New:** App shortcuts

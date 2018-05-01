@@ -204,6 +204,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         return selectedItems.size();
     }
 
+    public Boolean isInMoveMode() {
+        return isInMoveMode;
+    }
+
     private void onClickAction(FileItem item) {
         if (item.isDir() && null != listener) {
             listener.onDirectoryClicked(item);
