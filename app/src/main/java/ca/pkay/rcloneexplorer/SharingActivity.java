@@ -244,14 +244,21 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
         @Override
         protected Boolean doInBackground(Void... voids) {
             for (Uri uri : uris) {
-                Cursor returnCursor = getContentResolver().query(uri, null, null, null, null);
-                if (returnCursor == null) {
-                    return false;
+                String fileName;
+                if (uri.getScheme().equals("content")) {
+                    Cursor returnCursor = getContentResolver().query(uri, null, null, null, null);
+                    if (returnCursor == null) {
+                        return false;
+                    }
+                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    returnCursor.moveToFirst();
+                    fileName = returnCursor.getString(nameIndex);
+                    returnCursor.close();
+                } else {
+                    fileName = uri.getPath();
+                    int index = fileName.lastIndexOf("/");
+                    fileName = fileName.substring(index + 1);
                 }
-                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                returnCursor.moveToFirst();
-                String fileName = returnCursor.getString(nameIndex);
-                returnCursor.close();
 
                 File cacheDir = getExternalCacheDir();
                 InputStream inputStream;
