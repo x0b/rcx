@@ -26,6 +26,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private Boolean isInSelectMode;
     private List<FileItem> selectedItems;
     private Boolean isInMoveMode;
+    private Boolean canSelect;
     private int cardColor;
 
     public interface OnClickListener {
@@ -41,6 +42,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
         isInMoveMode = false;
+        canSelect = true;
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
@@ -112,7 +114,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (!isInMoveMode) {
+                if (!isInMoveMode && canSelect) {
                     onLongClickAction(item, holder);
                 }
                 return true;
@@ -122,7 +124,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         holder.icons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onLongClickAction(item, holder);
+                if (!isInMoveMode && canSelect) {
+                    onLongClickAction(item, holder);
+                }
             }
         });
     }
@@ -230,6 +234,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         selectedItems.clear();
         listener.onFilesSelected(false);
         notifyDataSetChanged();
+    }
+
+    public void setCanSelect(Boolean canSelect) {
+        this.canSelect = canSelect;
     }
 
     private void onLongClickAction(FileItem item, ViewHolder holder) {

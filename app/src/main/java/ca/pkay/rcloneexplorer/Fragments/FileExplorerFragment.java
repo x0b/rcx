@@ -790,6 +790,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setMessage(R.string.type_new_folder_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
+                    .setDarkTheme(isDarkTheme)
                     .setOnPositiveListener(new InputDialog.OnPositive() {
                         @Override
                         public void onPositive(String input) {

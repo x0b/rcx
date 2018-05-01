@@ -159,4 +159,7 @@
     <string name="open_system_settings">Open system settings</string>
     <string name="content_description_circle">circle</string>
     <string name="loading">Loading</string>
+    <string name="app_not_configured">Rclone Explorer is not configured</string>
+    <string name="open_app_to_configure">Please open the app to set it up first</string>
+    <string name="error_retrieving_files">Error retrieving files</string>
 </resources>

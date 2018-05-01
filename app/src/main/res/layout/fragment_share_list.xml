@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="?attr/backgroundColor" >
+
+    <include
+        layout="@layout/empty_directory_state" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_bar" >
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recycler_view"
+            android:clipToPadding="false"
+            android:paddingBottom="54dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/fragment_file_explorer_item" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <include
+        layout="@layout/move_bar"/>
+</android.support.design.widget.CoordinatorLayout>
