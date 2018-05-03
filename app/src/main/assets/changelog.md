@@ -1,6 +1,8 @@
 ### 1.2.4
 * **Update:** App shortcut icons are now adaptive and with color
 
+***
+
 ### 1.2.3
 * **New:** Files can be shared with Rclone Explorer
 * **New:** Tablet layout

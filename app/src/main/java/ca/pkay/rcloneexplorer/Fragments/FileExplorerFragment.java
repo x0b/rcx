@@ -1,9 +1,11 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -134,6 +136,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
+        registerReceivers();
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
         directoryCache = new HashMap<>();
@@ -206,6 +209,33 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         isRunning = true;
         return view;
+    }
+
+    private BroadcastReceiver uploadFinishedBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String uploadRemote = intent.getStringExtra(UploadService.BROADCAST_EXTRA_REMOTE);
+            String uploadPath = intent.getStringExtra(UploadService.BROADCAST_EXTRA_PATH);
+            if (!remote.equals(uploadRemote)) {
+                return;
+            }
+
+            if (path.equals(uploadPath)) {
+                if (fetchDirectoryTask != null) {
+                    fetchDirectoryTask.cancel(true);
+                }
+                fetchDirectoryTask = new FetchDirectoryContent().execute();
+            }
+            if (directoryCache.containsKey(uploadPath)) {
+                directoryCache.remove(uploadPath);
+            }
+        }
+    };
+
+    private void registerReceivers() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(UploadService.UPLOAD_FINISHED_BROADCAST);
+        context.registerReceiver(uploadFinishedBroadcastReceiver, intentFilter);
     }
 
     @Override

@@ -28,6 +28,9 @@ public class UploadService extends IntentService {
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
+    public static final String UPLOAD_FINISHED_BROADCAST = "ca.pkay.rcexplorer.upload_service.broadcast";
+    public static final String BROADCAST_EXTRA_REMOTE = "ca.pkay.rcexplorer.upload_service.broadcast_data_remote";
+    public static final String BROADCAST_EXTRA_PATH = "ca.pkay.rcexplorer.upload_service.broadcast_data_path";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.UPLOAD_CHANNEL";
     private final String UPLOAD_FINISHED_GROUP = "ca.pkay.rcexplorer.UPLOAD_FINISHED_GROUP";
     private final String UPLOAD_FAILED_GROUP = "ca.pkay.rcexplorer.UPLOAD_FAILED_GROUP";
@@ -85,7 +88,7 @@ public class UploadService extends IntentService {
         numOfFailedUploads = 0;
         AsyncTask[] asyncTasks = new AsyncTask[numOfProcessesRunning];
         for (int i = 0; i < numOfProcessesRunning; i++) {
-            asyncTasks[i] = new MonitorUpload(uploadList.get(0), runningProcesses.get(0)).execute();
+            asyncTasks[i] = new MonitorUpload(remote, uploadPath, uploadList.get(0), runningProcesses.get(0)).execute();
         }
         
         for (AsyncTask asyncTask : asyncTasks) {
@@ -97,6 +100,14 @@ public class UploadService extends IntentService {
         }
 
         stopForeground(true);
+    }
+
+    private void sendUploadFinishedBroadcast(String remote, String uploadPath) {
+        Intent intent = new Intent();
+        intent.setAction(UPLOAD_FINISHED_BROADCAST);
+        intent.putExtra(BROADCAST_EXTRA_REMOTE, remote);
+        intent.putExtra(BROADCAST_EXTRA_PATH, uploadPath);
+        sendBroadcast(intent);
     }
 
     private void showUploadFinishedNotification(int notificationID, String contentText) {
@@ -185,10 +196,14 @@ public class UploadService extends IntentService {
     @SuppressLint("StaticFieldLeak")
     private class MonitorUpload extends AsyncTask<Void, Void, Boolean> {
 
+        private String remote;
+        private String uploadPath;
         private String file;
         private Process process;
 
-        MonitorUpload(String file, Process process) {
+        MonitorUpload(String remote, String uploadPath, String file, Process process) {
+            this.remote = remote;
+            this.uploadPath = uploadPath;
             this.file = file;
             this.process = process;
         }
@@ -214,6 +229,8 @@ public class UploadService extends IntentService {
             } else {
                 fileName = file;
             }
+
+            sendUploadFinishedBroadcast(remote, uploadPath);
 
             if (result) {
                 showUploadFinishedNotification(notificationId, fileName);
