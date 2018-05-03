@@ -14,9 +14,10 @@ Features
 - Dark theme
 - Customizable primary and accent colors
 
-Limitations
+TODO
 ------------
-- Does not support adding or editting remotes from the app (planned feature)
+- [ ] Creating new remotes
+- [ ] Deleting existing remotes
 
 Screenshots
 -----------
