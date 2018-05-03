@@ -49,9 +49,6 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
             case "amazon cloud drive":
                 holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_amazon));
                 break;
-            case "b2":
-                holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_b2));
-                break;
             case "drive":
                 holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_google_drive));
                 break;

@@ -34,6 +34,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -140,6 +141,10 @@ public class MainActivity extends AppCompatActivity
         } else {
             getTheme().applyStyle(R.style.LightTheme, true);
         }
+
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        getWindow().setStatusBarColor(typedValue.data);
 
         // set recents app color to the primary color
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
