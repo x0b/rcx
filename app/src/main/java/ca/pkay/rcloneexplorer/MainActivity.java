@@ -34,6 +34,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -140,6 +141,10 @@ public class MainActivity extends AppCompatActivity
         } else {
             getTheme().applyStyle(R.style.LightTheme, true);
         }
+
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        getWindow().setStatusBarColor(typedValue.data);
 
         // set recents app color to the primary color
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
@@ -368,29 +373,25 @@ public class MainActivity extends AppCompatActivity
     private int getRemoteIcon(String remoteType) {
         switch (remoteType) {
             case "crypt":
-                return R.drawable.ic_lock_black;
+                return R.mipmap.ic_shortcut_lock;
             case "amazon cloud drive":
-                return R.drawable.ic_amazon;
-            case "b2":
-                return R.drawable.ic_b2;
+                return R.mipmap.ic_shortcut_amazon;
             case "drive":
-                return R.drawable.ic_google_drive;
+                return R.mipmap.ic_shortcut_drive;
             case "dropbox":
-                return R.drawable.ic_dropbox;
+                return R.mipmap.ic_shortcut_dropbox;
             case "google cloud storage":
-                return R.drawable.ic_google;
+                return R.mipmap.ic_shortcut_google;
             case "onedrive":
-                return R.drawable.ic_onedrive;
+                return R.mipmap.ic_shortcut_onedrive;
             case "s3":
-                return R.drawable.ic_amazon;
-            case "yandex":
-                return R.drawable.ic_yandex;
+                return R.mipmap.ic_shortcut_amazon;
             case "box":
-                return R.drawable.ic_box;
+                return R.mipmap.ic_shortcut_box;
             case "sftp":
-                return R.drawable.ic_terminal;
+                return R.mipmap.ic_shortcut_terminal;
             default:
-                return R.drawable.ic_cloud;
+                return R.mipmap.ic_shortcut_cloud;
         }
     }
 

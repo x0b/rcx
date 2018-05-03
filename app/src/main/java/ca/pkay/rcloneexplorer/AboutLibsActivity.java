@@ -99,12 +99,6 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryLicences.put(floatingActionButtonSpeedDial, "Licensed under Apache-2.0");
         libraryLicenceUrls.put(floatingActionButtonSpeedDial, "https://github.com/leinardi/FloatingActionButtonSpeedDial/blob/master/LICENSE");
 
-        String fontAwesome = "Font Awesome";
-        libraryNames.add(fontAwesome);
-        libraryUrls.put(fontAwesome, "https://fontawesome.com/");
-        libraryLicences.put(fontAwesome, "Licensed under CC BY 4.0");
-        libraryLicenceUrls.put(fontAwesome, "https://fontawesome.com/license");
-
         String markDownView = "MarkDown View";
         libraryNames.add(markDownView);
         libraryUrls.put(markDownView, "https://github.com/falnatsheh/MarkdownView");
