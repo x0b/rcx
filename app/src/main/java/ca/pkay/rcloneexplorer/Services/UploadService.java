@@ -13,6 +13,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,6 @@ public class UploadService extends IntentService {
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
-    public static final String UPLOAD_FINISHED_BROADCAST = "ca.pkay.rcexplorer.upload_service.broadcast";
-    public static final String BROADCAST_EXTRA_REMOTE = "ca.pkay.rcexplorer.upload_service.broadcast_data_remote";
-    public static final String BROADCAST_EXTRA_PATH = "ca.pkay.rcexplorer.upload_service.broadcast_data_path";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.UPLOAD_CHANNEL";
     private final String UPLOAD_FINISHED_GROUP = "ca.pkay.rcexplorer.UPLOAD_FINISHED_GROUP";
     private final String UPLOAD_FAILED_GROUP = "ca.pkay.rcexplorer.UPLOAD_FAILED_GROUP";
@@ -88,7 +86,7 @@ public class UploadService extends IntentService {
         numOfFailedUploads = 0;
         AsyncTask[] asyncTasks = new AsyncTask[numOfProcessesRunning];
         for (int i = 0; i < numOfProcessesRunning; i++) {
-            asyncTasks[i] = new MonitorUpload(remote, uploadPath, uploadList.get(0), runningProcesses.get(0)).execute();
+            asyncTasks[i] = new MonitorUpload(remote, uploadPath, uploadList.get(i), runningProcesses.get(i)).execute();
         }
         
         for (AsyncTask asyncTask : asyncTasks) {
@@ -104,10 +102,10 @@ public class UploadService extends IntentService {
 
     private void sendUploadFinishedBroadcast(String remote, String uploadPath) {
         Intent intent = new Intent();
-        intent.setAction(UPLOAD_FINISHED_BROADCAST);
-        intent.putExtra(BROADCAST_EXTRA_REMOTE, remote);
-        intent.putExtra(BROADCAST_EXTRA_PATH, uploadPath);
-        sendBroadcast(intent);
+        intent.setAction(getString(R.string.background_service_broadcast));
+        intent.putExtra(getString(R.string.background_service_broadcast_data_remote), remote);
+        intent.putExtra(getString(R.string.background_service_broadcast_data_path), uploadPath);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void showUploadFinishedNotification(int notificationID, String contentText) {

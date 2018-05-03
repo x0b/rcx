@@ -322,7 +322,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 }
                 break;
         }
-        recyclerViewAdapter.updateData(directoryContent);
+        recyclerViewAdapter.updateSortedData(directoryContent);
         if (sortOrder > 0) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();

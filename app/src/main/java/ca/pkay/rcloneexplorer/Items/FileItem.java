@@ -134,6 +134,11 @@ public class FileItem implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof FileItem && ((FileItem) obj).getRemote().equals(this.remote) && ((FileItem) obj).getPath().equals(this.path) && ((FileItem) obj).getName().equals(this.name);
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

@@ -171,6 +171,34 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     public void updateData(List<FileItem> data) {
+        if (data.isEmpty()) {
+            int count = files.size();
+            files.clear();
+            notifyItemRangeRemoved(0, count);
+            emptyView.setVisibility(View.VISIBLE);
+            return;
+        }
+        emptyView.setVisibility(View.INVISIBLE);
+        List<FileItem> newData = new ArrayList<>(data);
+        List<FileItem> diff = new ArrayList<>(files);
+
+        diff.removeAll(newData);
+        for (FileItem fileItem : diff) {
+            int index = files.indexOf(fileItem);
+            files.remove(index);
+            notifyItemRemoved(index);
+        }
+
+        diff = new ArrayList<>(data);
+        diff.removeAll(files);
+        for (FileItem fileItem : diff) {
+            int index = newData.indexOf(fileItem);
+            files.add(index, fileItem);
+            notifyItemInserted(index);
+        }
+    }
+
+    public void updateSortedData(List<FileItem> data) {
         this.clear();
         files = new ArrayList<>(data);
         if (files.isEmpty()) {
