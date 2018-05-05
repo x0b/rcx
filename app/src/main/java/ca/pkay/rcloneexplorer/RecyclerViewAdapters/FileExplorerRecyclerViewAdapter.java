@@ -35,8 +35,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFilesSelected(boolean selection);
     }
 
-    public FileExplorerRecyclerViewAdapter(Context context, List<FileItem> files, View emptyView, OnClickListener listener) {
-        this.files = files;
+    public FileExplorerRecyclerViewAdapter(Context context, View emptyView, OnClickListener listener) {
+        files = new ArrayList<>();
         this.emptyView = emptyView;
         this.listener = listener;
         isInSelectMode = false;

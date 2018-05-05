@@ -170,4 +170,7 @@
     <string name="moving_info">Moving...</string>
     <string name="deleting_info">Deleting...</string>
     <string name="operation_failed">Operation failed</string>
+    <string name="moving_service">Moving Service</string>
+    <string name="delete_service">Delete Service</string>
+    <string name="and_X_other">and %1$d other</string>
 </resources>

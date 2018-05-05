@@ -33,6 +33,7 @@ import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
+import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
@@ -56,13 +57,11 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     private Context context;
     private String remote;
     private String remoteType;
-    private String path;
     private String originalToolbarTitle;
     private int sortOrder;
     private Rclone rclone;
-    private List<FileItem> directoryContent;
     private Stack<String> pathStack;
-    private Map<String, List<FileItem>> directoryCache;
+    private DirectoryObject directoryObject;
     private SwipeRefreshLayout swipeRefreshLayout;
     private AsyncTask fetchDirectoryTask;
     private boolean isDarkTheme;
@@ -85,11 +84,13 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            remote = getArguments().getString(ARG_REMOTE);
-            remoteType = getArguments().getString(ARG_REMOTE_TYPE);
-            path = "//" + getArguments().getString(ARG_REMOTE);
+        if (getArguments() == null) {
+            return;
         }
+        remote = getArguments().getString(ARG_REMOTE);
+        remoteType = getArguments().getString(ARG_REMOTE_TYPE);
+        String path = "//" + getArguments().getString(ARG_REMOTE);
+
         if (getContext() == null) {
             return;
         } else {
@@ -105,8 +106,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
-        directoryCache = new HashMap<>();
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+        directoryObject = new DirectoryObject();
+        directoryObject.setPath(path);
     }
 
     @Nullable
@@ -116,11 +117,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
-        if (directoryContent != null && fetchDirectoryTask != null) {
-            swipeRefreshLayout.setRefreshing(false);
-        } else {
-            swipeRefreshLayout.setRefreshing(true);
-        }
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
@@ -128,7 +126,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, directoryContent, view.findViewById(R.id.empty_folder_view), this);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, view.findViewById(R.id.empty_folder_view), this);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);
         recyclerViewAdapter.setCanSelect(false);
@@ -151,7 +149,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onShareDestinationSelected(remote, path);
+                listener.onShareDestinationSelected(remote, directoryObject.getCurrentPath());
             }
         });
         view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
@@ -222,23 +220,21 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     public void onDirectoryClicked(FileItem fileItem) {
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
-        pathStack.push(path);
-        directoryCache.put(path, new ArrayList<>(directoryContent));
+        pathStack.push(directoryObject.getCurrentPath());
 
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
-        if (directoryCache.containsKey(fileItem.getPath())) {
-            path = fileItem.getPath();
-            directoryContent = directoryCache.get(path);
+        if (directoryObject.isPathInCache(fileItem.getPath()) && directoryObject.isContentValid(fileItem.getPath())) {
+            String path = fileItem.getPath();
+            directoryObject.restoreFromCache(path);
             sortDirectory();
-            recyclerViewAdapter.newData(directoryContent);
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
             swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        path = fileItem.getPath();
+        directoryObject.setPath(fileItem.getPath());
         recyclerViewAdapter.clear();
-        directoryContent.clear();
         fetchDirectoryTask = new FetchDirectoryContent().execute();
     }
 
@@ -249,23 +245,24 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
     @Override
     public void onBreadCrumbClicked(String path) {
-        if (this.path.equals(path)) {
+        if (directoryObject.getCurrentPath().equals(path)) {
             return;
         }
         swipeRefreshLayout.setRefreshing(false);
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
-        this.path = path;
+        directoryObject.setPath(path);
         //noinspection StatementWithEmptyBody
         while (!pathStack.pop().equals(path)) {
             // pop stack until we find path
         }
         breadcrumbView.removeCrumbsUpTo(path);
         recyclerViewAdapter.clear();
-        if (directoryCache.containsKey(path)) {
-            directoryContent = directoryCache.get(path);
-            recyclerViewAdapter.newData(directoryContent);
+        if (directoryObject.isPathInCache(path) && directoryObject.isContentValid(path)) {
+            directoryObject.restoreFromCache(path);
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
@@ -280,7 +277,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 .setListener(new SortDialog.OnClickListener() {
                     @Override
                     public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                        if (directoryContent != null && !directoryContent.isEmpty()) {
+                        if (!directoryObject.isDirectoryContentEmpty()) {
                             sortSelected(sortById, sortOrderId);
                         }
                     }
@@ -293,6 +290,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     private void sortSelected(int sortById, int sortOrderId) {
+        List<FileItem> directoryContent = directoryObject.getDirectoryContent();
         switch (sortById) {
             case R.id.radio_sort_name:
                 if (sortOrderId == R.id.radio_sort_ascending) {
@@ -322,6 +320,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 }
                 break;
         }
+        directoryObject.setContent(directoryContent);
         recyclerViewAdapter.updateSortedData(directoryContent);
         if (sortOrder > 0) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
@@ -330,6 +329,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     private void sortDirectory() {
+        List<FileItem> directoryContent = directoryObject.getDirectoryContent();
         switch (sortOrder) {
             case SortDialog.MOD_TIME_DESCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
@@ -356,20 +356,27 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
                 sortOrder = SortDialog.ALPHA_DESCENDING;
         }
+        directoryObject.setContent(directoryContent);
     }
 
     public boolean onBackButtonPressed() {
-        if (pathStack.isEmpty() || directoryCache.isEmpty()) {
+        if (pathStack.isEmpty()) {
             return false;
         }
         swipeRefreshLayout.setRefreshing(false);
         fetchDirectoryTask.cancel(true);
         breadcrumbView.removeLastCrumb();
-        path = pathStack.pop();
+        String path = pathStack.pop();
         recyclerViewAdapter.clear();
-        if (directoryCache.containsKey(path)) {
-            directoryContent = directoryCache.get(path);
-            recyclerViewAdapter.newData(directoryContent);
+
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
+
+        if (directoryObject.isPathInCache(path) && directoryObject.isContentValid(path)) {
+            directoryObject.restoreFromCache(path);
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
@@ -392,10 +399,10 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                                 return;
                             }
                             String newDir;
-                            if (path.equals("//" + remote)) {
+                            if (directoryObject.getCurrentPath().equals("//" + remote)) {
                                 newDir = input;
                             } else {
-                                newDir = path + "/" + input;
+                                newDir = directoryObject.getCurrentPath() + "/" + input;
                             }
                             new MakeDirectoryTask().execute(newDir);
                         }
@@ -420,7 +427,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, path);
+            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
             return fileItemList;
         }
 
@@ -431,12 +438,11 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 Toasty.error(context, getString(R.string.error_getting_dir_content), Toast.LENGTH_SHORT, true).show();
                 fileItems = new ArrayList<>();
             }
-            directoryContent = fileItems;
+            directoryObject.setContent(fileItems);
             sortDirectory();
-            directoryCache.put(path, new ArrayList<>(directoryContent));
 
             if (recyclerViewAdapter != null) {
-                recyclerViewAdapter.newData(fileItems);
+                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
             }
 
             if (null != swipeRefreshLayout) {
@@ -461,7 +467,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pathWhenTaskStarted = path;
+            pathWhenTaskStarted = directoryObject.getCurrentPath();
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -482,8 +488,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
             } else {
                 Toasty.error(context, getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
             }
-            if (!pathWhenTaskStarted.equals(path)) {
-                directoryCache.remove(pathWhenTaskStarted);
+            if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
+                directoryObject.removePathFromCache(pathWhenTaskStarted);
                 return;
             }
             swipeRefreshLayout.setRefreshing(false);

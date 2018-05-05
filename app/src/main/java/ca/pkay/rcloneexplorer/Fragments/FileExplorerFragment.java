@@ -54,6 +54,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
+import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
@@ -80,15 +81,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
     private String originalToolbarTitle;
-    private List<FileItem> directoryContent;
     private Stack<String> pathStack;
-    private Map<String, List<FileItem>> directoryCache;
+    private DirectoryObject directoryObject;
     private ArrayList<FileItem> moveList;
     private BreadcrumbView breadcrumbView;
     private Rclone rclone;
     private String remote;
     private String remoteType;
-    private String path;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private AsyncTask fetchDirectoryTask;
@@ -101,7 +100,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Boolean isDarkTheme;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
-    private boolean firstRun;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -123,11 +121,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            remote = getArguments().getString(ARG_REMOTE);
-            remoteType = getArguments().getString(ARG_REMOTE_TYPE);
-            path = "//" + getArguments().getString(ARG_REMOTE);
+        if (getArguments() == null) {
+            return;
         }
+        remote = getArguments().getString(ARG_REMOTE);
+        remoteType = getArguments().getString(ARG_REMOTE_TYPE);
+        String path = "//" + getArguments().getString(ARG_REMOTE);
+
         if (getContext() == null) {
             return;
         }
@@ -141,11 +141,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
-        directoryCache = new HashMap<>();
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+        directoryObject = new DirectoryObject();
+        directoryObject.setPath(path);
 
         isInMoveMode = false;
-        firstRun = true;
     }
 
     @Nullable
@@ -155,11 +154,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
-        if (directoryContent != null && fetchDirectoryTask != null) {
-            swipeRefreshLayout.setRefreshing(false);
-        } else {
-            swipeRefreshLayout.setRefreshing(true);
-        }
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
 
         Context context = view.getContext();
 
@@ -169,7 +165,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, directoryContent, view.findViewById(R.id.empty_folder_view), this);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, view.findViewById(R.id.empty_folder_view), this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);
@@ -218,15 +214,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onStart() {
         super.onStart();
         registerReceivers();
-        if (firstRun) {
-            firstRun = false;
-        } else {
-            if (fetchDirectoryTask != null) {
-                fetchDirectoryTask.cancel(true);
-            }
-            swipeRefreshLayout.setRefreshing(true);
-            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+        if (directoryObject.isContentValid()) {
+            return;
         }
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+    }
+
+    private void registerReceivers() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(getString(R.string.background_service_broadcast));
+        LocalBroadcastManager.getInstance(context).registerReceiver(backgroundTaskBroadcastReceiver, intentFilter);
     }
 
     private BroadcastReceiver backgroundTaskBroadcastReceiver = new BroadcastReceiver() {
@@ -235,7 +236,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             String broadcastRemote = intent.getStringExtra(getString(R.string.background_service_broadcast_data_remote));
             String broadcastPath = intent.getStringExtra(getString(R.string.background_service_broadcast_data_path));
             String broadcastPath2 = intent.getStringExtra(getString(R.string.background_service_broadcast_data_path2));
-
+            String path = directoryObject.getCurrentPath();
             if (!remote.equals(broadcastRemote)) {
                 return;
             }
@@ -244,12 +245,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 if (fetchDirectoryTask != null) {
                     fetchDirectoryTask.cancel(true);
                 }
-                if (directoryCache.containsKey(broadcastPath)) {
-                    directoryCache.remove(broadcastPath);
+                if (directoryObject.isPathInCache(broadcastPath)) {
+                    directoryObject.removePathFromCache(broadcastPath);
                 }
                 fetchDirectoryTask = new FetchDirectoryContent(true).execute();
-            } else if (directoryCache.containsKey(broadcastPath)) {
-                directoryCache.remove(broadcastPath);
+            } else if (directoryObject.isPathInCache(broadcastPath)) {
+                directoryObject.removePathFromCache(broadcastPath);
             }
 
             if (broadcastPath2 == null) {
@@ -261,21 +262,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     fetchDirectoryTask.cancel(true);
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                if (directoryCache.containsKey(broadcastPath2)) {
-                    directoryCache.remove(broadcastPath2);
+                if (directoryObject.isPathInCache(broadcastPath2)) {
+                    directoryObject.removePathFromCache(broadcastPath2);
                 }
                 fetchDirectoryTask = new FetchDirectoryContent(true).execute();
-            } else if (directoryCache.containsKey(broadcastPath2)) {
-                directoryCache.remove(broadcastPath2);
+            } else if (directoryObject.isPathInCache(broadcastPath2)) {
+                directoryObject.removePathFromCache(broadcastPath2);
             }
         }
     };
-
-    private void registerReceivers() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(getString(R.string.background_service_broadcast));
-        LocalBroadcastManager.getInstance(context).registerReceiver(backgroundTaskBroadcastReceiver, intentFilter);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -289,7 +284,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
                 Intent intent = new Intent(getContext(), UploadService.class);
                 intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
-                intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
+                intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
                 intent.putExtra(UploadService.REMOTE_ARG, remote);
                 context.startService(intent);
             }
@@ -332,7 +327,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return true;
             case R.id.action_http_serve:
                 Intent intent = new Intent(getContext(), StreamingService.class);
-                intent.putExtra(StreamingService.SERVE_PATH_ARG, path);
+                intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
                 intent.putExtra(StreamingService.REMOTE_ARG, remote);
                 intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
                 context.startService(intent);
@@ -500,6 +495,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fab.setVisibility(View.VISIBLE);
         ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
         recyclerViewAdapter.setMoveMode(false);
+        recyclerViewAdapter.refreshData();
         isInMoveMode = false;
         String oldPath = moveList.get(0).getPath();
         int index = oldPath.lastIndexOf(moveList.get(0).getName());
@@ -512,7 +508,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         Intent intent = new Intent(context, BackgroundService.class);
         intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_MOVE);
         intent.putExtra(BackgroundService.REMOTE_ARG, remote);
-        intent.putExtra(BackgroundService.MOVE_DEST_PATH, path);
+        intent.putExtra(BackgroundService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
         intent.putExtra(BackgroundService.MOVE_LIST, moveList);
         intent.putExtra(BackgroundService.PATH2, path2);
         context.startService(intent);
@@ -529,7 +525,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setListener(new SortDialog.OnClickListener() {
                     @Override
                     public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                        if (directoryContent != null && !directoryContent.isEmpty()) {
+                        if (!directoryObject.isDirectoryContentEmpty()) {
                             sortSelected(sortById, sortOrderId);
                         }
                     }
@@ -542,6 +538,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void sortSelected(int sortById, int sortOrderId) {
+        List<FileItem> directoryContent = directoryObject.getDirectoryContent();
         switch (sortById) {
             case R.id.radio_sort_name:
                 if (sortOrderId == R.id.radio_sort_ascending) {
@@ -571,6 +568,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
                 break;
         }
+        directoryObject.setContent(directoryContent);
         recyclerViewAdapter.updateSortedData(directoryContent);
         if (sortOrder > 0) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
@@ -579,6 +577,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void sortDirectory() {
+        List<FileItem> directoryContent = directoryObject.getDirectoryContent();
         switch (sortOrder) {
             case SortDialog.MOD_TIME_DESCENDING:
                 Collections.sort(directoryContent, new FileComparators.SortModTimeDescending());
@@ -605,6 +604,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Collections.sort(directoryContent, new FileComparators.SortAlphaDescending());
                 sortOrder = SortDialog.ALPHA_DESCENDING;
         }
+        directoryObject.setContent(directoryContent);
     }
 
     private void onClickOutsideOfView() {
@@ -625,7 +625,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(context).unregisterReceiver(backgroundTaskBroadcastReceiver);
-        backgroundTaskBroadcastReceiver = null;
     }
 
     @Override
@@ -646,17 +645,27 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else if (fab.isFabMenuOpen()) {
             fab.closeOptionsMenu();
             return true;
-        } else if (pathStack.isEmpty() || directoryCache.isEmpty()) {
+        } else if (pathStack.isEmpty()) {
             return false;
+        }
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
         }
         swipeRefreshLayout.setRefreshing(false);
         fetchDirectoryTask.cancel(true);
         breadcrumbView.removeLastCrumb();
-        path = pathStack.pop();
+        String path = pathStack.pop();
         recyclerViewAdapter.clear();
-        if (directoryCache.containsKey(path)) {
-            directoryContent = directoryCache.get(path);
-            recyclerViewAdapter.newData(directoryContent);
+        if (!directoryObject.isContentValid(path)) {
+            swipeRefreshLayout.setRefreshing(true);
+            directoryObject.restoreFromCache(path);
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+        } else if (directoryObject.isPathInCache(path)) {
+            directoryObject.restoreFromCache(path);
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
@@ -680,25 +689,28 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onDirectoryClicked(FileItem fileItem) {
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
-        pathStack.push(path);
-        directoryCache.put(path, new ArrayList<>(directoryContent));
+        pathStack.push(directoryObject.getCurrentPath());
 
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
-        if (directoryCache.containsKey(fileItem.getPath())) {
-            path = fileItem.getPath();
-            directoryContent = directoryCache.get(path);
-            sortDirectory();
-            recyclerViewAdapter.newData(directoryContent);
-            swipeRefreshLayout.setRefreshing(false);
-            return;
-        }
-        path = fileItem.getPath();
-        recyclerViewAdapter.clear();
-        directoryContent.clear();
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
 
+        if (!directoryObject.isContentValid(fileItem.getPath())) {
+            swipeRefreshLayout.setRefreshing(true);
+            directoryObject.restoreFromCache(fileItem.getPath());
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+        } else if (directoryObject.isPathInCache(fileItem.getPath())) {
+            directoryObject.restoreFromCache(fileItem.getPath());
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            swipeRefreshLayout.setRefreshing(false);
+        } else {
+            directoryObject.setPath(fileItem.getPath());
+            recyclerViewAdapter.clear();
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+        }
     }
 
     @Override
@@ -740,23 +752,31 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (fab.isFabMenuOpen()) {
             fab.closeOptionsMenu();
         }
-        if (this.path.equals(path)) {
+        if (directoryObject.getCurrentPath().equals(path)) {
             return;
         }
         swipeRefreshLayout.setRefreshing(false);
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
-        this.path = path;
+        directoryObject.setPath(path);
         //noinspection StatementWithEmptyBody
         while (!pathStack.pop().equals(path)) {
             // pop stack until we find path
         }
         breadcrumbView.removeCrumbsUpTo(path);
         recyclerViewAdapter.clear();
-        if (directoryCache.containsKey(path)) {
-            directoryContent = directoryCache.get(path);
-            recyclerViewAdapter.newData(directoryContent);
+
+        if (!directoryObject.isContentValid(path)) {
+            swipeRefreshLayout.setRefreshing(true);
+            directoryObject.restoreFromCache(path);
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+        } else if (directoryObject.isPathInCache(path)) {
+            directoryObject.restoreFromCache(path);
+            sortDirectory();
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
@@ -815,7 +835,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_DELETE);
                         intent.putExtra(BackgroundService.REMOTE_ARG, remote);
                         intent.putExtra(BackgroundService.DELETE_LIST, deleteList);
-                        intent.putExtra(BackgroundService.PATH, path);
+                        intent.putExtra(BackgroundService.PATH, directoryObject.getCurrentPath());
                         context.startService(intent);
                         Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
                     }
@@ -850,10 +870,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                             }
                             recyclerViewAdapter.cancelSelection();
                             String newFilePath;
-                            if (path.equals("//" + remote)) {
+                            if (directoryObject.getCurrentPath().equals("//" + remote)) {
                                 newFilePath = input;
                             } else {
-                                newFilePath = path + "/" + input;
+                                newFilePath = directoryObject.getCurrentPath() + "/" + input;
                             }
                             new RenameFileTask().execute(renameItem.getPath(), newFilePath);
                         }
@@ -905,10 +925,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                 return;
                             }
                             String newDir;
-                            if (path.equals("//" + remote)) {
+                            if (directoryObject.getCurrentPath().equals("//" + remote)) {
                                 newDir = input;
                             } else {
-                                newDir = path + "/" + input;
+                                newDir = directoryObject.getCurrentPath() + "/" + input;
                             }
                             new MakeDirectoryTask().execute(newDir);
                         }
@@ -953,7 +973,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, path);
+            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
             return fileItemList;
         }
 
@@ -971,15 +991,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 fileItems = new ArrayList<>();
             }
 
-            directoryContent = fileItems;
+            directoryObject.setContent(fileItems);
             sortDirectory();
-            directoryCache.put(path, new ArrayList<>(directoryContent));
 
             if (recyclerViewAdapter != null) {
                 if (silentFetch) {
-                    recyclerViewAdapter.updateData(directoryContent);
+                    recyclerViewAdapter.updateData(directoryObject.getDirectoryContent());
                 } else {
-                    recyclerViewAdapter.newData(fileItems);
+                    recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
                 }
             }
         }
@@ -1001,7 +1020,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pathWhenTaskStarted = path;
+            pathWhenTaskStarted = directoryObject.getCurrentPath();
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -1025,8 +1044,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Toasty.error(context, getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
 
             }
-            if (!pathWhenTaskStarted.equals(path)) {
-                directoryCache.remove(pathWhenTaskStarted);
+            if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
+                directoryObject.restoreFromCache(pathWhenTaskStarted);
                 return;
             }
             if (null != fetchDirectoryTask) {
@@ -1046,7 +1065,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pathWhenTaskStarted = path;
+            pathWhenTaskStarted = directoryObject.getCurrentPath();
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -1067,8 +1086,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             } else {
                 Toasty.error(context, getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
             }
-            if (!pathWhenTaskStarted.equals(path)) {
-                directoryCache.remove(pathWhenTaskStarted);
+            if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
+                directoryObject.restoreFromCache(pathWhenTaskStarted);
                 return;
             }
             swipeRefreshLayout.setRefreshing(false);

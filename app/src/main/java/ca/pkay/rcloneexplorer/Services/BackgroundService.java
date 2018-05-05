@@ -75,12 +75,16 @@ public class BackgroundService extends IntentService {
             return;
         }
 
-        String title = "Moving ";
-        title += (moveList.size() > 1) ? "files" : "file";
+        String content = moveList.get(0).getName();
+        if (moveList.size() > 1) {
+            int num = moveList.size() - 1;
+            content += " " + getString(R.string.and_X_other, num);
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
+                .setContentTitle(getString(R.string.moving_service))
+                .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_MOVE, builder.build());
@@ -109,12 +113,16 @@ public class BackgroundService extends IntentService {
             return;
         }
 
-        String title = "Deleting ";
-        title += (deleteList.size() > 1) ? "files" : "file";
+        String content = deleteList.get(0).getName();
+        if (deleteList.size() > 1) {
+            int num = deleteList.size() - 1;
+            content += " " + getString(R.string.and_X_other, num);
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
+                .setContentTitle(getString(R.string.delete_service))
+                .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_DELETE, builder.build());

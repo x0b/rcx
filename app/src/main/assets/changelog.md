@@ -1,5 +1,6 @@
 ### 1.2.5
 * **New:** Run long running tasks in a Service
+* **Improve:** Caching of directory content
 * **Fix:** Bugs
 
 ***
