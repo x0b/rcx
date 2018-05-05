@@ -1,3 +1,9 @@
+### 1.2.5
+* **New:** Run long running tasks in a Service
+* **Fix:** Bugs
+
+***
+
 ### 1.2.4
 * **Update:** App shortcut icons are now adaptive and with color
 
