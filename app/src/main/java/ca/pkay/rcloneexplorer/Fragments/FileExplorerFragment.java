@@ -172,7 +172,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, view.findViewById(R.id.empty_folder_view), this);
+        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
+        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);
@@ -375,12 +377,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             searchBar.setVisibility(View.GONE);
             searchDirContent("");
             ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
+            recyclerViewAdapter.setSearchMode(false);
             isSearchMode = false;
         } else {
             if (!is720dp) {
                 breadcrumbView.setVisibility(View.GONE);
             }
             searchBar.setVisibility(View.VISIBLE);
+            recyclerViewAdapter.setSearchMode(true);
             isSearchMode = true;
         }
     }
