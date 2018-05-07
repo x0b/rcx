@@ -22,10 +22,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private List<FileItem> files;
     private int selectionColor;
     private View emptyView;
+    private View noSearchResultsView;
     private OnClickListener listener;
     private Boolean isInSelectMode;
     private List<FileItem> selectedItems;
     private Boolean isInMoveMode;
+    private Boolean isInSearchMode;
     private Boolean canSelect;
     private int cardColor;
 
@@ -36,13 +38,15 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFileDeselected();
     }
 
-    public FileExplorerRecyclerViewAdapter(Context context, View emptyView, OnClickListener listener) {
+    public FileExplorerRecyclerViewAdapter(Context context, View emptyView, View noSearchResultsView, OnClickListener listener) {
         files = new ArrayList<>();
         this.emptyView = emptyView;
+        this.noSearchResultsView = noSearchResultsView;
         this.listener = listener;
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
         isInMoveMode = false;
+        isInSearchMode = false;
         canSelect = true;
 
         TypedValue typedValue = new TypedValue();
@@ -164,9 +168,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         files = new ArrayList<>(data);
         isInSelectMode = false;
         if (files.isEmpty()) {
-            emptyView.setVisibility(View.VISIBLE);
+            showEmptyState(true);
         } else {
-            emptyView.setVisibility(View.INVISIBLE);
+            showEmptyState(false);
         }
         if (isInMoveMode) {
             notifyDataSetChanged();
@@ -180,10 +184,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             int count = files.size();
             files.clear();
             notifyItemRangeRemoved(0, count);
-            emptyView.setVisibility(View.VISIBLE);
+            showEmptyState(true);
             return;
         }
-        emptyView.setVisibility(View.INVISIBLE);
+        showEmptyState(false);
         List<FileItem> newData = new ArrayList<>(data);
         List<FileItem> diff = new ArrayList<>(files);
 
@@ -211,9 +215,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
         files = new ArrayList<>(data);
         if (files.isEmpty()) {
-            emptyView.setVisibility(View.VISIBLE);
+            showEmptyState(true);
         } else {
-            emptyView.setVisibility(View.INVISIBLE);
+            showEmptyState(false);
         }
         if (isInMoveMode) {
             notifyDataSetChanged();
@@ -227,6 +231,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public void setMoveMode(Boolean mode) {
         isInMoveMode = mode;
+    }
+
+    public void setSearchMode(Boolean mode) {
+        isInSearchMode = mode;
     }
 
     public Boolean isInSelectMode() {
@@ -243,6 +251,22 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public Boolean isInMoveMode() {
         return isInMoveMode;
+    }
+
+    private void showEmptyState(Boolean show) {
+        if (isInSearchMode) {
+            if (show) {
+                noSearchResultsView.setVisibility(View.VISIBLE);
+            } else {
+                noSearchResultsView.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            if (show) {
+                emptyView.setVisibility(View.VISIBLE);
+            } else {
+                emptyView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void onClickAction(FileItem item) {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/no_search_results_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    android:visibility="invisible"
+    tools:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:tint="?attr/cardColor"
+                android:src="@drawable/ic_circle"
+                android:contentDescription="@string/content_description_circle"/>
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_search"
+                android:tint="?attr/iconTint"
+                android:layout_gravity="center"
+                android:contentDescription="@string/no_search_results" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_search_results"
+            android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
+            android:paddingTop="16dp"/>
+    </LinearLayout>
+</RelativeLayout>

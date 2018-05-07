@@ -126,7 +126,9 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, view.findViewById(R.id.empty_folder_view), this);
+        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
+        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);
         recyclerViewAdapter.setCanSelect(false);
