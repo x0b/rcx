@@ -21,6 +21,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -43,9 +46,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
@@ -90,6 +91,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private String remoteType;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private View searchBar;
     private AsyncTask fetchDirectoryTask;
     private Boolean isRunning;
     private int sortOrder;
@@ -97,7 +99,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private SpeedDialView fab;
     private MenuItem menuPropertiesAction;
     private MenuItem menuOpenAsAction;
+    private MenuItem menuSelectAll;
     private Boolean isDarkTheme;
+    private Boolean isSearchMode;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
 
@@ -144,6 +148,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         directoryObject = new DirectoryObject();
         directoryObject.setPath(path);
 
+        isSearchMode = false;
         isInMoveMode = false;
     }
 
@@ -190,6 +195,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
         breadcrumbView.addCrumb(remote, "//" + remote);
+
+        searchBar = ((FragmentActivity) context).findViewById(R.id.search_bar);
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
@@ -312,6 +319,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         inflater.inflate(R.menu.file_explorer, menu);
         menuPropertiesAction = menu.findItem(R.id.action_file_properties);
         menuOpenAsAction = menu.findItem(R.id.action_open_as);
+        menuSelectAll = menu.findItem(R.id.action_select_all);
     }
 
     @Override
@@ -319,6 +327,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.action_search:
+                searchClicked();
+                return true;
             case R.id.action_sort:
                 showSortMenu();
                 return true;
@@ -352,6 +363,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent().execute();
+    }
+
+    private void searchClicked() {
+        if (isSearchMode) {
+            searchBar.setVisibility(View.GONE);
+            breadcrumbView.setVisibility(View.VISIBLE);
+            searchDirContent("");
+            ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
+            isSearchMode = false;
+        } else {
+            breadcrumbView.setVisibility(View.GONE);
+            searchBar.setVisibility(View.VISIBLE);
+            isSearchMode = true;
+        }
     }
 
     private void showOpenAsDialog() {
@@ -475,6 +500,57 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 onCreateNewDirectory();
             }
         });
+
+        ((EditText)searchBar.findViewById(R.id.search_field)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchDirContent(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        searchBar.findViewById(R.id.search_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchDirContent("");
+                ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
+            }
+        });
+    }
+
+    private void searchDirContent(String search) {
+        List<FileItem> content = directoryObject.getDirectoryContent();
+        List<FileItem> currentShown = recyclerViewAdapter.getCurrentContent();
+        List<FileItem> results = new ArrayList<>();
+
+        if (search.isEmpty()) {
+            if (currentShown.equals(content)) {
+                return;
+            } else {
+                recyclerViewAdapter.newData(content);
+            }
+        }
+
+        for (FileItem item : content) {
+            String fileName = item.getName().toLowerCase();
+            if (fileName.contains(search.toLowerCase())) {
+                results.add(item);
+            }
+        }
+
+        if (currentShown.equals(results)) {
+            return;
+        }
+        recyclerViewAdapter.newData(results);
     }
 
     private void cancelMoveClicked() {
@@ -484,7 +560,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
-        ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+        menuSelectAll.setVisible(true);
         recyclerViewAdapter.refreshData();
     }
 
@@ -493,7 +569,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
-        ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.VISIBLE);
+        menuSelectAll.setVisible(true);
         recyclerViewAdapter.setMoveMode(false);
         recyclerViewAdapter.refreshData();
         isInMoveMode = false;
@@ -642,6 +718,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (recyclerViewAdapter.isInSelectMode()) {
             recyclerViewAdapter.cancelSelection();
             return true;
+        } else if (isSearchMode) {
+            searchClicked();
+            return true;
         } else if (fab.isFabMenuOpen()) {
             fab.closeOptionsMenu();
             return true;
@@ -690,6 +769,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());
+
+        if (isSearchMode) {
+            searchClicked();
+        }
 
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
@@ -751,6 +834,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onBreadCrumbClicked(String path) {
         if (fab.isFabMenuOpen()) {
             fab.closeOptionsMenu();
+        }
+        if (isSearchMode) {
+            searchClicked();
         }
         if (directoryObject.getCurrentPath().equals(path)) {
             return;
@@ -904,7 +990,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         isInMoveMode = true;
         ((FragmentActivity) context).setTitle(getString(R.string.select_destination));
         ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        ((FragmentActivity) context).findViewById(R.id.action_select_all).setVisibility(View.GONE);
+        menuSelectAll.setVisible(false);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
     }

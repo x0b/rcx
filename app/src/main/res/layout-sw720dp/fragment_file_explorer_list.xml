@@ -75,4 +75,5 @@
         android:clickable="true"
         android:focusable="true"
         layout="@layout/move_bar"/>
+
 </android.support.design.widget.CoordinatorLayout>

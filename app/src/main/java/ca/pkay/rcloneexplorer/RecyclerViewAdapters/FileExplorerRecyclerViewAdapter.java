@@ -140,6 +140,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
+    public List<FileItem> getCurrentContent() {
+        return new ArrayList<>(files);
+    }
+
     public void clear() {
         if (files == null) {
             return;

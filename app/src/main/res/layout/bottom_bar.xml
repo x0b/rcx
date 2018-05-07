@@ -6,7 +6,7 @@
     android:layout_height="56dp"
     android:orientation="horizontal"
     android:layout_gravity="bottom"
-    android:background="@color/colorPrimary"
+    android:background="?attr/colorAccent"
     android:elevation="8dp"
     android:visibility="gone"
     android:clickable="true"

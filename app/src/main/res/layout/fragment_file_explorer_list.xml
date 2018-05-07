@@ -52,4 +52,5 @@
 
     <include
         layout="@layout/move_bar"/>
+
 </android.support.design.widget.CoordinatorLayout>
