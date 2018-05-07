@@ -102,6 +102,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private MenuItem menuSelectAll;
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
+    private Boolean is720dp;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
 
@@ -150,6 +151,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         isSearchMode = false;
         isInMoveMode = false;
+        is720dp = getResources().getBoolean(R.bool.is720dp);
     }
 
     @Nullable
@@ -367,13 +369,17 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void searchClicked() {
         if (isSearchMode) {
+            if (!is720dp) {
+                breadcrumbView.setVisibility(View.VISIBLE);
+            }
             searchBar.setVisibility(View.GONE);
-            breadcrumbView.setVisibility(View.VISIBLE);
             searchDirContent("");
             ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
             isSearchMode = false;
         } else {
-            breadcrumbView.setVisibility(View.GONE);
+            if (!is720dp) {
+                breadcrumbView.setVisibility(View.GONE);
+            }
             searchBar.setVisibility(View.VISIBLE);
             isSearchMode = true;
         }

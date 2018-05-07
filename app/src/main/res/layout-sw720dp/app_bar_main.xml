@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.pkay.rcloneexplorer.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" >
+
+            <ca.pkay.rcloneexplorer.BreadcrumbView
+                android:id="@+id/breadcrumb_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="gone"
+                android:paddingStart="0dp"
+                android:paddingEnd="32dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_bar" />
+
+            <include
+                android:id="@+id/search_bar"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/breadcrumb_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                layout="@layout/search_bar" />
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_main" />
+
+    <include layout="@layout/locked_config" />
+
+</android.support.design.widget.CoordinatorLayout>
