@@ -13,6 +13,7 @@ Features
 - Serving directories over HTTP
 - Dark theme
 - Customizable primary and accent colors
+- Supports SDK 21+ (Lollipop 5.0)
 
 TODO
 ------------
@@ -34,7 +35,7 @@ File Editing|Empty Folder|Dark Theme|Encrypted Config
 
 Installation
 ------------
-Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest) of the signed APK and install it on your phone.
+Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. Only devices running Android Lollipop 5.0 and up are supported.
 
 - For ARM 32-bit devices download RcloneExplorer-ARM_32.apk
 - For ARM 64-bit devices download RcloneExplorer-ARM_64.apk
