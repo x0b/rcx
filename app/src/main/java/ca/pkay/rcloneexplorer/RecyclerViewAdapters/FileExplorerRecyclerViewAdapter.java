@@ -204,7 +204,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     public void updateSortedData(List<FileItem> data) {
-        this.clear();
+        if (files != null) {
+            int count = files.size();
+            files.clear();
+            notifyItemRangeRemoved(0, count);
+        }
         files = new ArrayList<>(data);
         if (files.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
