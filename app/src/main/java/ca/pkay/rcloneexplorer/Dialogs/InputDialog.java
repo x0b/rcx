@@ -27,9 +27,7 @@ public class InputDialog extends DialogFragment {
     private int titleId;
     private String message;
     private int messageId;
-    private String positiveText;
     private int positiveTextId;
-    private String negativeText;
     private int negativeTextId;
     private String filledText;
     private int inputType;
@@ -64,15 +62,7 @@ public class InputDialog extends DialogFragment {
         } else if (messageId > 1) {
             builder.setMessage(messageId);
         }
-        if (positiveText != null) {
-            builder.setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String input = editText.getText().toString();
-                    onPositiveListener.onPositive(input);
-                }
-            });
-        } else if (positiveTextId > 1) {
+        if (positiveTextId > 1) {
             builder.setPositiveButton(positiveTextId, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -81,14 +71,7 @@ public class InputDialog extends DialogFragment {
                 }
             });
         }
-        if (negativeText != null) {
-            builder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-        } else if (negativeTextId > 1) {
+        if (negativeTextId > 1) {
             builder.setNegativeButton(negativeTextId, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -142,20 +125,11 @@ public class InputDialog extends DialogFragment {
         return this;
     }
 
-    public InputDialog setPositiveButton(String text) {
-        positiveText = text;
-        return this;
-    }
-
     public InputDialog setPositiveButton(int id) {
         positiveTextId = id;
         return this;
     }
 
-    public InputDialog setNegativeButton(String text) {
-        negativeText = text;
-        return this;
-    }
 
     public InputDialog setNegativeButton(int id) {
         negativeTextId = id;

@@ -13,6 +13,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,7 @@ public class UploadService extends IntentService {
         numOfFailedUploads = 0;
         AsyncTask[] asyncTasks = new AsyncTask[numOfProcessesRunning];
         for (int i = 0; i < numOfProcessesRunning; i++) {
-            asyncTasks[i] = new MonitorUpload(uploadList.get(0), runningProcesses.get(0)).execute();
+            asyncTasks[i] = new MonitorUpload(remote, uploadPath, uploadList.get(i), runningProcesses.get(i)).execute();
         }
         
         for (AsyncTask asyncTask : asyncTasks) {
@@ -97,6 +98,14 @@ public class UploadService extends IntentService {
         }
 
         stopForeground(true);
+    }
+
+    private void sendUploadFinishedBroadcast(String remote, String uploadPath) {
+        Intent intent = new Intent();
+        intent.setAction(getString(R.string.background_service_broadcast));
+        intent.putExtra(getString(R.string.background_service_broadcast_data_remote), remote);
+        intent.putExtra(getString(R.string.background_service_broadcast_data_path), uploadPath);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void showUploadFinishedNotification(int notificationID, String contentText) {
@@ -185,10 +194,14 @@ public class UploadService extends IntentService {
     @SuppressLint("StaticFieldLeak")
     private class MonitorUpload extends AsyncTask<Void, Void, Boolean> {
 
+        private String remote;
+        private String uploadPath;
         private String file;
         private Process process;
 
-        MonitorUpload(String file, Process process) {
+        MonitorUpload(String remote, String uploadPath, String file, Process process) {
+            this.remote = remote;
+            this.uploadPath = uploadPath;
             this.file = file;
             this.process = process;
         }
@@ -214,6 +227,8 @@ public class UploadService extends IntentService {
             } else {
                 fileName = file;
             }
+
+            sendUploadFinishedBroadcast(remote, uploadPath);
 
             if (result) {
                 showUploadFinishedNotification(notificationId, fileName);

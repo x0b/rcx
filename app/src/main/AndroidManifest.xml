@@ -27,6 +27,7 @@
         <service android:name=".Services.DownloadService" />
         <service android:name=".Services.UploadService" />
         <service android:name=".Services.StreamingService" />
+        <service android:name=".Services.BackgroundService" />
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />

@@ -35,8 +35,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFilesSelected(boolean selection);
     }
 
-    public FileExplorerRecyclerViewAdapter(Context context, List<FileItem> files, View emptyView, OnClickListener listener) {
-        this.files = files;
+    public FileExplorerRecyclerViewAdapter(Context context, View emptyView, OnClickListener listener) {
+        files = new ArrayList<>();
         this.emptyView = emptyView;
         this.listener = listener;
         isInSelectMode = false;
@@ -140,6 +140,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
+    public List<FileItem> getCurrentContent() {
+        return new ArrayList<>(files);
+    }
+
     public void clear() {
         if (files == null) {
             return;
@@ -171,6 +175,34 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     public void updateData(List<FileItem> data) {
+        if (data.isEmpty()) {
+            int count = files.size();
+            files.clear();
+            notifyItemRangeRemoved(0, count);
+            emptyView.setVisibility(View.VISIBLE);
+            return;
+        }
+        emptyView.setVisibility(View.INVISIBLE);
+        List<FileItem> newData = new ArrayList<>(data);
+        List<FileItem> diff = new ArrayList<>(files);
+
+        diff.removeAll(newData);
+        for (FileItem fileItem : diff) {
+            int index = files.indexOf(fileItem);
+            files.remove(index);
+            notifyItemRemoved(index);
+        }
+
+        diff = new ArrayList<>(data);
+        diff.removeAll(files);
+        for (FileItem fileItem : diff) {
+            int index = newData.indexOf(fileItem);
+            files.add(index, fileItem);
+            notifyItemInserted(index);
+        }
+    }
+
+    public void updateSortedData(List<FileItem> data) {
         this.clear();
         files = new ArrayList<>(data);
         if (files.isEmpty()) {

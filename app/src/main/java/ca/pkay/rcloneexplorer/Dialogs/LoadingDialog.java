@@ -19,7 +19,6 @@ public class LoadingDialog extends DialogFragment {
         void onNegative();
     }
 
-
     private Context context;
     private OnNegative onNegativeListener;
     private Boolean cancelable;

@@ -18,7 +18,7 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <FrameLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -28,14 +28,24 @@
 
             <ca.pkay.rcloneexplorer.BreadcrumbView
                 android:id="@+id/breadcrumb_view"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:scrollbars="none"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:paddingStart="0dp"
+                android:paddingEnd="32dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_bar" />
 
             <include
+                android:id="@+id/search_bar"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/breadcrumb_view"
+                app:layout_constraintEnd_toEndOf="parent"
                 layout="@layout/search_bar" />
-        </FrameLayout>
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.design.widget.AppBarLayout>
 

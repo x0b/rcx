@@ -162,4 +162,17 @@
     <string name="app_not_configured">Rclone Explorer is not configured</string>
     <string name="open_app_to_configure">Please open the app to set it up first</string>
     <string name="error_retrieving_files">Error retrieving files</string>
+    <string name="background_service_broadcast">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST</string>
+    <string name="background_service_broadcast_data_remote">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_REMOTE</string>
+    <string name="background_service_broadcast_data_path">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH</string>
+    <string name="background_service_broadcast_data_path2">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH2</string>
+    <string name="background_service_notification_channel_description">Background service for possibly long running tasks like Move and Delete</string>
+    <string name="moving_info">Moving...</string>
+    <string name="deleting_info">Deleting...</string>
+    <string name="operation_failed">Operation failed</string>
+    <string name="moving_service">Moving Service</string>
+    <string name="delete_service">Delete Service</string>
+    <string name="and_X_other">and %1$d other</string>
+    <string name="search">Search</string>
+    <string name="search_clear_button">Search clear button</string>
 </resources>
