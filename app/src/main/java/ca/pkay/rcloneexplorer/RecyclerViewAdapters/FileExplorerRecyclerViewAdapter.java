@@ -32,7 +32,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
         void onDirectoryClicked(FileItem fileItem);
-        void onFilesSelected(boolean selection);
+        void onFilesSelected();
+        void onFileDeselected();
     }
 
     public FileExplorerRecyclerViewAdapter(Context context, View emptyView, OnClickListener listener) {
@@ -151,8 +152,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         int count = files.size();
         files.clear();
         isInSelectMode = false;
-        selectedItems.clear();
-        listener.onFilesSelected(false);
+        if (!selectedItems.isEmpty()) {
+            selectedItems.clear();
+            listener.onFileDeselected();
+        }
         notifyItemRangeRemoved(0, count);
     }
 
@@ -160,8 +163,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         this.clear();
         files = new ArrayList<>(data);
         isInSelectMode = false;
-        selectedItems.clear();
-        listener.onFilesSelected(false);
         if (files.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         } else {
@@ -203,7 +204,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     public void updateSortedData(List<FileItem> data) {
-        this.clear();
+        if (files != null) {
+            int count = files.size();
+            files.clear();
+            notifyItemRangeRemoved(0, count);
+        }
         files = new ArrayList<>(data);
         if (files.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
@@ -255,12 +260,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         if (selectedItems.size() == files.size()) {
             isInSelectMode = false;
             selectedItems.clear();
-            listener.onFilesSelected(false);
+            listener.onFileDeselected();
         } else {
             isInSelectMode = true;
             selectedItems.clear();
             selectedItems.addAll(files);
-            listener.onFilesSelected(true);
+            listener.onFilesSelected();
         }
         notifyDataSetChanged();
     }
@@ -268,7 +273,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     public void cancelSelection() {
         isInSelectMode = false;
         selectedItems.clear();
-        listener.onFilesSelected(false);
+        listener.onFileDeselected();
         notifyDataSetChanged();
     }
 
@@ -282,14 +287,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.view.setBackgroundColor(cardColor);
             if (selectedItems.size() == 0) {
                 isInSelectMode = false;
-                listener.onFilesSelected(false);
+                listener.onFileDeselected();
             }
-            listener.onFilesSelected(true);
+            listener.onFilesSelected();
         } else {
             selectedItems.add(item);
             isInSelectMode = true;
             holder.view.setBackgroundColor(selectionColor);
-            listener.onFilesSelected(true);
+            listener.onFilesSelected();
         }
     }
 

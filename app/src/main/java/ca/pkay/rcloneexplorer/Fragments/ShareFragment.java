@@ -239,7 +239,12 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     @Override
-    public void onFilesSelected(boolean selection) {
+    public void onFilesSelected() {
+        // Don't do anything
+    }
+
+    @Override
+    public void onFileDeselected() {
         // Don't do anything
     }
 
