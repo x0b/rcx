@@ -621,6 +621,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void sortSelected(int sortById, int sortOrderId) {
         List<FileItem> directoryContent = directoryObject.getDirectoryContent();
+
         switch (sortById) {
             case R.id.radio_sort_name:
                 if (sortOrderId == R.id.radio_sort_ascending) {
@@ -651,7 +652,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 break;
         }
         directoryObject.setContent(directoryContent);
-        recyclerViewAdapter.updateSortedData(directoryContent);
+
+        if (isSearchMode) {
+            List<FileItem> sortedSearch = new ArrayList<>();
+            List<FileItem> searchResult = recyclerViewAdapter.getCurrentContent();
+            for (FileItem item : directoryContent) {
+                if (searchResult.contains(item)) {
+                    sortedSearch.add(item);
+                }
+            }
+            recyclerViewAdapter.updateSortedData(sortedSearch);
+        } else {
+            recyclerViewAdapter.updateSortedData(directoryContent);
+        }
         if (sortOrder > 0) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();
@@ -715,6 +728,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fetchDirectoryTask.cancel(true);
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
+        searchBar.setVisibility(View.GONE);
         ((FragmentActivity) context).setTitle(originalToolbarTitle);
         isRunning = false;
         context = null;
@@ -803,7 +817,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     @Override
-    public void onFilesSelected(boolean longClick) {
+    public void onFilesSelected() {
         int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
 
         if (numOfSelected > 0) { // something is selected
@@ -826,7 +840,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     menuOpenAsAction.setVisible(true);
                 }
             }
-        } else if (!isInMoveMode) {
+        }
+    }
+
+    @Override
+    public void onFileDeselected() {
+        if (!isInMoveMode) {
             ((FragmentActivity) context).setTitle(remoteType);
             menuPropertiesAction.setVisible(false);
             menuOpenAsAction.setVisible(false);
