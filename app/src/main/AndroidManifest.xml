@@ -96,6 +96,9 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".FilePicker"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 

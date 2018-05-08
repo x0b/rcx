@@ -44,7 +44,6 @@ Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/rele
 
 Credits/Libraries
 -----------------
-- [ExFile Picker](https://github.com/bartwell/ExFilePicker) - Open source Android library. Implement choosing files and directories in your application.
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification.
 - [Markdown View](https://github.com/falnatsheh/MarkdownView) - MarkdownView is an Android webview with the capablity of loading Markdown text or file and display it as HTML, it uses MarkdownJ and extends Android webview.
 - [Material Design Icons](https://github.com/Templarian/MaterialDesign) - 2200+ Material Design Icons from the Community.

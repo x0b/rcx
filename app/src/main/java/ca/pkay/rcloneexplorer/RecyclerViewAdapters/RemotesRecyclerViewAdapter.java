@@ -87,6 +87,9 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
     @Override
     public int getItemCount() {
+        if (remotes == null) {
+            return 0;
+        }
         return remotes.size();
     }
 
