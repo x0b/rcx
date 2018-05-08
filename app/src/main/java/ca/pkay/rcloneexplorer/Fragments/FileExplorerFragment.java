@@ -55,6 +55,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
+import ca.pkay.rcloneexplorer.FilePicker;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -68,8 +69,6 @@ import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import ru.bartwell.exfilepicker.ExFilePicker;
-import ru.bartwell.exfilepicker.data.ExFilePickerResult;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
@@ -78,8 +77,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
-    private static final int EX_FILE_PICKER_UPLOAD_RESULT = 186;
-    private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
+    private static final int FILE_PICKER_UPLOAD_RESULT = 186;
+    private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
     private String originalToolbarTitle;
     private Stack<String> pathStack;
@@ -286,31 +285,27 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EX_FILE_PICKER_UPLOAD_RESULT) {
-            ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
-            if (result != null && result.getCount() > 0) {
-                ArrayList<String> uploadList = new ArrayList<>();
-                for (String fileName : result.getNames()) {
-                    uploadList.add(result.getPath() + fileName);
-                }
-                Intent intent = new Intent(getContext(), UploadService.class);
-                intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
-                intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
-                intent.putExtra(UploadService.REMOTE_ARG, remote);
-                context.startService(intent);
+        if (requestCode == FILE_PICKER_UPLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
+            @SuppressWarnings("unchecked")
+            ArrayList<File> result = (ArrayList<File>) data.getSerializableExtra(FilePicker.FILE_PICKER_RESULT);
+            ArrayList<String> uploadList = new ArrayList<>();
+            for (File file : result) {
+                uploadList.add(file.getPath());
             }
-        } else if (requestCode == EX_FILE_PICKER_DOWNLOAD_RESULT) {
-            ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
-            if (result != null && result.getCount() > 0) {
-                final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
-                recyclerViewAdapter.cancelSelection();
-                String selectedPath = result.getPath() + result.getNames().get(0);
-                Intent intent = new Intent(getContext(), DownloadService.class);
-                intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
-                intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
-                intent.putExtra(DownloadService.REMOTE_ARG, remote);
-                context.startService(intent);
-            }
+            Intent intent = new Intent(getContext(), UploadService.class);
+            intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
+            intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
+            intent.putExtra(UploadService.REMOTE_ARG, remote);
+            context.startService(intent);
+        } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
+            String selectedPath = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
+            final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+            recyclerViewAdapter.cancelSelection();
+            Intent intent = new Intent(getContext(), DownloadService.class);
+            intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
+            intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
+            intent.putExtra(DownloadService.REMOTE_ARG, remote);
+            context.startService(intent);
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);
@@ -320,7 +315,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.file_explorer, menu);
+        inflater.inflate(R.menu.file_explorer_menu, menu);
         menuPropertiesAction = menu.findItem(R.id.action_file_properties);
         menuOpenAsAction = menu.findItem(R.id.action_open_as);
         menuSelectAll = menu.findItem(R.id.action_select_all);
@@ -1001,12 +996,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!recyclerViewAdapter.isInSelectMode()) {
             return;
         }
-        ExFilePicker exFilePicker = new ExFilePicker();
-        exFilePicker.setUseFirstItemAsUpEnabled(true);
-        exFilePicker.setChoiceType(ExFilePicker.ChoiceType.DIRECTORIES);
-        exFilePicker.setCanChooseOnlyOneItem(true);
-        exFilePicker.setQuitButtonEnabled(true);
-        exFilePicker.start(this, EX_FILE_PICKER_DOWNLOAD_RESULT);
+        Intent intent = new Intent(context, FilePicker.class);
+        intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
+        startActivityForResult(intent, FILE_PICKER_DOWNLOAD_RESULT);
     }
 
     private void moveClicked() {
@@ -1053,11 +1045,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void onUploadFiles() {
-        ExFilePicker exFilePicker = new ExFilePicker();
-        exFilePicker.setUseFirstItemAsUpEnabled(true);
-        exFilePicker.setChoiceType(ExFilePicker.ChoiceType.ALL);
-        exFilePicker.setQuitButtonEnabled(true);
-        exFilePicker.start(this, EX_FILE_PICKER_UPLOAD_RESULT);
+        Intent intent = new Intent(context, FilePicker.class);
+        startActivityForResult(intent, FILE_PICKER_UPLOAD_RESULT);
     }
 
     /***********************************************************************************************
