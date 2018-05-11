@@ -1224,7 +1224,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             }
             if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
-                directoryObject.restoreFromCache(pathWhenTaskStarted);
+                directoryObject.removePathFromCache(pathWhenTaskStarted);
                 return;
             }
             if (null != fetchDirectoryTask) {
@@ -1232,7 +1232,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
             swipeRefreshLayout.setRefreshing(false);
 
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         }
     }
 
@@ -1266,14 +1266,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Toasty.error(context, getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
             }
             if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
-                directoryObject.restoreFromCache(pathWhenTaskStarted);
+                directoryObject.removePathFromCache(pathWhenTaskStarted);
                 return;
             }
             swipeRefreshLayout.setRefreshing(false);
             if (null != fetchDirectoryTask) {
                 fetchDirectoryTask.cancel(true);
             }
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         }
     }
 
