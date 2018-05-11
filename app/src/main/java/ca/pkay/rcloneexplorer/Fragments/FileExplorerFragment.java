@@ -414,7 +414,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+        fetchDirectoryTask = new FetchDirectoryContent(true).execute();
     }
 
     private void searchClicked() {
