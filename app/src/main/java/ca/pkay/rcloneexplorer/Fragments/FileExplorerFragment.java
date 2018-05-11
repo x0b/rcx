@@ -807,7 +807,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         swipeRefreshLayout.setRefreshing(false);
-        fetchDirectoryTask.cancel(true);
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
         breadcrumbView.removeLastCrumb();
         String path = pathStack.pop();
         recyclerViewAdapter.clear();
@@ -1144,7 +1146,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if (null != swipeRefreshLayout && !silentFetch) {
+            if (swipeRefreshLayout != null&& !silentFetch) {
                 swipeRefreshLayout.setRefreshing(true);
             }
         }
@@ -1159,7 +1161,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(List<FileItem> fileItems) {
             super.onPostExecute(fileItems);
-            if (null != swipeRefreshLayout) {
+            if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
             if (fileItems == null) {
@@ -1185,7 +1187,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            if (null != swipeRefreshLayout) {
+            if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
         }
@@ -1227,7 +1229,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 directoryObject.removePathFromCache(pathWhenTaskStarted);
                 return;
             }
-            if (null != fetchDirectoryTask) {
+            if (fetchDirectoryTask != null) {
                 fetchDirectoryTask.cancel(true);
             }
             swipeRefreshLayout.setRefreshing(false);
@@ -1270,7 +1272,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return;
             }
             swipeRefreshLayout.setRefreshing(false);
-            if (null != fetchDirectoryTask) {
+            if (fetchDirectoryTask != null) {
                 fetchDirectoryTask.cancel(true);
             }
             fetchDirectoryTask = new FetchDirectoryContent(true).execute();
@@ -1466,8 +1468,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             loadingDialog.dismiss();
             startActivityForResult(intent, STREAMING_INTENT_RESULT);
-
-
             return null;
         }
     }
