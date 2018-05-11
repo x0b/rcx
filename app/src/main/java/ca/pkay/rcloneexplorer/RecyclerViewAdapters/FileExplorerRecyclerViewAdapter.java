@@ -223,7 +223,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             notifyDataSetChanged();
         } else {
             notifyItemRangeInserted(0, files.size());
-        }    }
+        }
+    }
 
     public void refreshData() {
         notifyDataSetChanged();
