@@ -57,6 +57,31 @@ public class BreadcrumbView extends HorizontalScrollView {
         onClickListener = listener;
     }
 
+    public void buildBreadCrumbsFromPath(String path) {
+        int index = 0;
+        while ((index = path.indexOf("/", index)) > 0) {
+            String fullPath = path.substring(0, index);
+            String displayPath;
+
+            int i = fullPath.lastIndexOf("/");
+            if (i > 0) {
+                displayPath = fullPath.substring(i + 1);
+            } else {
+                displayPath = fullPath;
+            }
+            addCrumb(displayPath, fullPath);
+            index++;
+        }
+
+        int i = path.lastIndexOf("/");
+        if (i > 0) {
+            String displayName = path.substring(i + 1);
+            addCrumb(displayName, path);
+        } else {
+            addCrumb(path, path);
+        }
+    }
+
     public void addCrumb(String crumbTitle, final String path) {
         if (numberOfCrumbs >= 1) {
             addArrow(path);

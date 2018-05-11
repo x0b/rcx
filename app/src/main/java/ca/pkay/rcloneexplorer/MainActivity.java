@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private final String APP_SHORTCUT_REMOTE_NAME = "arg_remote_name";
     private final String APP_SHORTCUT_REMOTE_TYPE = "arg_remote_type";
+    private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private Rclone rclone;
     private Fragment fragment;
@@ -119,6 +120,15 @@ public class MainActivity extends AppCompatActivity
             editor.apply();
         } else if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
+        } else if (savedInstanceState != null) {
+            fragment = getSupportFragmentManager().findFragmentByTag(FILE_EXPLORER_FRAGMENT_TAG);
+            if (fragment instanceof FileExplorerFragment) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
+                transaction.commit();
+            } else {
+                startRemotesFragment();
+            }
         } else if (bundle != null && bundle.containsKey(APP_SHORTCUT_REMOTE_NAME) && bundle.containsKey(APP_SHORTCUT_REMOTE_TYPE)) {
             String remoteName = bundle.getString(APP_SHORTCUT_REMOTE_NAME);
             String remoteType = bundle.getString(APP_SHORTCUT_REMOTE_TYPE);
@@ -126,7 +136,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
-
     }
 
     private void applyTheme() {
@@ -403,7 +412,7 @@ public class MainActivity extends AppCompatActivity
     private void startRemote(RemoteItem remote) {
         fragment = FileExplorerFragment.newInstance(remote.getName(), remote.getType());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.flFragment, fragment);
+        transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
         transaction.addToBackStack(null);
         transaction.commit();
 
@@ -414,7 +423,7 @@ public class MainActivity extends AppCompatActivity
     private void startRemote(String remoteName, String remoteType) {
         fragment = FileExplorerFragment.newInstance(remoteName, remoteType);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.flFragment, fragment);
+        transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);

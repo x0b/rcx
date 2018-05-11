@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -80,6 +82,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final int FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
+    private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
+    private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
+    private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private DirectoryObject directoryObject;
@@ -130,7 +135,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         remote = getArguments().getString(ARG_REMOTE);
         remoteType = getArguments().getString(ARG_REMOTE_TYPE);
-        String path = "//" + getArguments().getString(ARG_REMOTE);
+        pathStack = new Stack<>();
+        directoryObject = new DirectoryObject();
+
+        String path;
+        if (savedInstanceState == null) {
+            path = "//" + remote;
+            directoryObject.setPath(path);
+        } else {
+            path = savedInstanceState.getString(SAVED_PATH);
+            if (path == null) {
+                return;
+            }
+            directoryObject.setPath(path);
+            directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
+            buildStackFromPath(remote, path);
+        }
 
         if (getContext() == null) {
             return;
@@ -144,9 +164,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
-        pathStack = new Stack<>();
-        directoryObject = new DirectoryObject();
-        directoryObject.setPath(path);
 
         isSearchMode = false;
         isInMoveMode = false;
@@ -160,8 +177,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setRefreshing(true);
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+        if (directoryObject.isDirectoryContentEmpty()) {
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
 
         Context context = view.getContext();
 
@@ -198,6 +217,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
         breadcrumbView.addCrumb(remote, "//" + remote);
+        if (savedInstanceState != null) {
+            if (!directoryObject.getCurrentPath().equals("//" + remote)) {
+                breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
+            }
+        }
 
         searchBar = ((FragmentActivity) context).findViewById(R.id.search_bar);
 
@@ -216,6 +240,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         setBottomBarClickListeners(view);
 
+        if (savedInstanceState != null && savedInstanceState.getBoolean(SAVED_SEARCH_MODE, false)) {
+            searchClicked();
+        }
+
         isRunning = true;
         return view;
     }
@@ -232,6 +260,31 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         swipeRefreshLayout.setRefreshing(true);
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_PATH, directoryObject.getCurrentPath());
+        ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
+        outState.putParcelableArrayList(SAVED_CONTENT, content);
+        outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
+    }
+
+    private void buildStackFromPath(String remote, String path) {
+        String root = "//" + remote;
+        if (root.equals(path)) {
+            return;
+        }
+        pathStack.push(root);
+
+        int index = 0;
+
+        while ((index = path.indexOf("/", index)) > 0) {
+            String p = path.substring(0, index);
+            pathStack.push(p);
+            index++;
+        }
     }
 
     private void registerReceivers() {
@@ -567,6 +620,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fab.setVisibility(View.VISIBLE);
         menuSelectAll.setVisible(true);
         recyclerViewAdapter.refreshData();
+        unlockOrientation();
     }
 
     private void moveLocationSelected() {
@@ -595,6 +649,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         context.startService(intent);
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
+        unlockOrientation();
     }
 
     private void showSortMenu() {
@@ -724,7 +779,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onDetach() {
         super.onDetach();
-        fetchDirectoryTask.cancel(true);
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
@@ -765,6 +822,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
+            directoryObject.setPath(path);
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
         return true;
@@ -839,6 +897,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     menuOpenAsAction.setVisible(true);
                 }
             }
+            lockOrientation();
         }
     }
 
@@ -851,6 +910,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
+            unlockOrientation();
         }
     }
 
@@ -1014,6 +1074,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         menuSelectAll.setVisible(false);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
+        lockOrientation();
     }
 
     private void onCreateNewDirectory() {
@@ -1047,6 +1108,20 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void onUploadFiles() {
         Intent intent = new Intent(context, FilePicker.class);
         startActivityForResult(intent, FILE_PICKER_UPLOAD_RESULT);
+    }
+
+    private void lockOrientation() {
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+        }
+        else {
+            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+        }
+    }
+
+    private void unlockOrientation() {
+        ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
     /***********************************************************************************************
