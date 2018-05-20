@@ -1356,7 +1356,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            loadingDialog.dismiss();
+            if(loadingDialog.isStateSaved()){
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
             if (!status) {
                 return;
             }
