@@ -1,3 +1,11 @@
+### 1.2.6
+* **New:** File picker
+* **Fix:** Screen orientation change going back to main screen
+* **Fix:** Sorting while in selection mode
+* **Fix:** Other layout fixed and app crashes
+
+***
+
 ### 1.2.5
 * **New:** Run long running tasks in a Service
 * **New:** File search

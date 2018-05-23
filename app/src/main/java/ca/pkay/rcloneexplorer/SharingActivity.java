@@ -214,7 +214,11 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            loadingDialog.dismiss();
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
             Intent intent = new Intent(context, UploadService.class);
             intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
             intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);

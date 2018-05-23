@@ -463,7 +463,11 @@ public class MainActivity extends AppCompatActivity
                 finish();
                 System.exit(0);
             }
-            loadingDialog.dismiss();
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
             startRemotesFragment();
         }
     }
@@ -498,7 +502,11 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            loadingDialog.dismiss();
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
             if (!success) {
                 return;
             }
