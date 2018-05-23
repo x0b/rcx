@@ -175,4 +175,7 @@
     <string name="and_X_other">and %1$d other</string>
     <string name="search">Search</string>
     <string name="search_clear_button">Search clear button</string>
+    <string name="no_search_results">No search results</string>
+    <string name="nothing_selected">Nothing selected</string>
+    <string name="file_picker_root_title">Device storage</string>
 </resources>

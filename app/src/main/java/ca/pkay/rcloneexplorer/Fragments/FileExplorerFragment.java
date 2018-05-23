@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -55,6 +57,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
+import ca.pkay.rcloneexplorer.FilePicker;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -68,8 +71,6 @@ import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import ru.bartwell.exfilepicker.ExFilePicker;
-import ru.bartwell.exfilepicker.data.ExFilePickerResult;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
@@ -78,9 +79,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
-    private static final int EX_FILE_PICKER_UPLOAD_RESULT = 186;
-    private static final int EX_FILE_PICKER_DOWNLOAD_RESULT = 204;
+    private static final int FILE_PICKER_UPLOAD_RESULT = 186;
+    private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int STREAMING_INTENT_RESULT = 468;
+    private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
+    private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
+    private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private DirectoryObject directoryObject;
@@ -131,7 +135,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         remote = getArguments().getString(ARG_REMOTE);
         remoteType = getArguments().getString(ARG_REMOTE_TYPE);
-        String path = "//" + getArguments().getString(ARG_REMOTE);
+        pathStack = new Stack<>();
+        directoryObject = new DirectoryObject();
+
+        String path;
+        if (savedInstanceState == null) {
+            path = "//" + remote;
+            directoryObject.setPath(path);
+        } else {
+            path = savedInstanceState.getString(SAVED_PATH);
+            if (path == null) {
+                return;
+            }
+            directoryObject.setPath(path);
+            directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
+            buildStackFromPath(remote, path);
+        }
 
         if (getContext() == null) {
             return;
@@ -145,9 +164,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
-        pathStack = new Stack<>();
-        directoryObject = new DirectoryObject();
-        directoryObject.setPath(path);
 
         isSearchMode = false;
         isInMoveMode = false;
@@ -161,8 +177,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setRefreshing(true);
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+        if (directoryObject.isDirectoryContentEmpty()) {
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
 
         Context context = view.getContext();
 
@@ -172,7 +190,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, view.findViewById(R.id.empty_folder_view), this);
+        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
+        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);
@@ -197,6 +217,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
         breadcrumbView.addCrumb(remote, "//" + remote);
+        if (savedInstanceState != null) {
+            if (!directoryObject.getCurrentPath().equals("//" + remote)) {
+                breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
+            }
+        }
 
         searchBar = ((FragmentActivity) context).findViewById(R.id.search_bar);
 
@@ -215,6 +240,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         setBottomBarClickListeners(view);
 
+        if (savedInstanceState != null && savedInstanceState.getBoolean(SAVED_SEARCH_MODE, false)) {
+            searchClicked();
+        }
+
         isRunning = true;
         return view;
     }
@@ -231,6 +260,31 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         swipeRefreshLayout.setRefreshing(true);
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_PATH, directoryObject.getCurrentPath());
+        ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
+        outState.putParcelableArrayList(SAVED_CONTENT, content);
+        outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
+    }
+
+    private void buildStackFromPath(String remote, String path) {
+        String root = "//" + remote;
+        if (root.equals(path)) {
+            return;
+        }
+        pathStack.push(root);
+
+        int index = 0;
+
+        while ((index = path.indexOf("/", index)) > 0) {
+            String p = path.substring(0, index);
+            pathStack.push(p);
+            index++;
+        }
     }
 
     private void registerReceivers() {
@@ -284,31 +338,27 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EX_FILE_PICKER_UPLOAD_RESULT) {
-            ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
-            if (result != null && result.getCount() > 0) {
-                ArrayList<String> uploadList = new ArrayList<>();
-                for (String fileName : result.getNames()) {
-                    uploadList.add(result.getPath() + fileName);
-                }
-                Intent intent = new Intent(getContext(), UploadService.class);
-                intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
-                intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
-                intent.putExtra(UploadService.REMOTE_ARG, remote);
-                context.startService(intent);
+        if (requestCode == FILE_PICKER_UPLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
+            @SuppressWarnings("unchecked")
+            ArrayList<File> result = (ArrayList<File>) data.getSerializableExtra(FilePicker.FILE_PICKER_RESULT);
+            ArrayList<String> uploadList = new ArrayList<>();
+            for (File file : result) {
+                uploadList.add(file.getPath());
             }
-        } else if (requestCode == EX_FILE_PICKER_DOWNLOAD_RESULT) {
-            ExFilePickerResult result = ExFilePickerResult.getFromIntent(data);
-            if (result != null && result.getCount() > 0) {
-                final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
-                recyclerViewAdapter.cancelSelection();
-                String selectedPath = result.getPath() + result.getNames().get(0);
-                Intent intent = new Intent(getContext(), DownloadService.class);
-                intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
-                intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
-                intent.putExtra(DownloadService.REMOTE_ARG, remote);
-                context.startService(intent);
-            }
+            Intent intent = new Intent(getContext(), UploadService.class);
+            intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
+            intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
+            intent.putExtra(UploadService.REMOTE_ARG, remote);
+            context.startService(intent);
+        } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
+            String selectedPath = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
+            final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+            recyclerViewAdapter.cancelSelection();
+            Intent intent = new Intent(getContext(), DownloadService.class);
+            intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
+            intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
+            intent.putExtra(DownloadService.REMOTE_ARG, remote);
+            context.startService(intent);
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);
@@ -318,7 +368,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.file_explorer, menu);
+        inflater.inflate(R.menu.file_explorer_menu, menu);
         menuPropertiesAction = menu.findItem(R.id.action_file_properties);
         menuOpenAsAction = menu.findItem(R.id.action_open_as);
         menuSelectAll = menu.findItem(R.id.action_select_all);
@@ -364,7 +414,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+        fetchDirectoryTask = new FetchDirectoryContent(true).execute();
     }
 
     private void searchClicked() {
@@ -375,12 +425,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             searchBar.setVisibility(View.GONE);
             searchDirContent("");
             ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
+            recyclerViewAdapter.setSearchMode(false);
             isSearchMode = false;
         } else {
             if (!is720dp) {
                 breadcrumbView.setVisibility(View.GONE);
             }
             searchBar.setVisibility(View.VISIBLE);
+            recyclerViewAdapter.setSearchMode(true);
             isSearchMode = true;
         }
     }
@@ -568,6 +620,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fab.setVisibility(View.VISIBLE);
         menuSelectAll.setVisible(true);
         recyclerViewAdapter.refreshData();
+        unlockOrientation();
     }
 
     private void moveLocationSelected() {
@@ -596,6 +649,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         context.startService(intent);
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
+        unlockOrientation();
     }
 
     private void showSortMenu() {
@@ -725,7 +779,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onDetach() {
         super.onDetach();
-        fetchDirectoryTask.cancel(true);
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
@@ -751,7 +807,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         swipeRefreshLayout.setRefreshing(false);
-        fetchDirectoryTask.cancel(true);
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
         breadcrumbView.removeLastCrumb();
         String path = pathStack.pop();
         recyclerViewAdapter.clear();
@@ -766,6 +824,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
+            directoryObject.setPath(path);
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
         return true;
@@ -840,6 +899,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     menuOpenAsAction.setVisible(true);
                 }
             }
+            lockOrientation();
         }
     }
 
@@ -852,6 +912,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
+            unlockOrientation();
         }
     }
 
@@ -997,12 +1058,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!recyclerViewAdapter.isInSelectMode()) {
             return;
         }
-        ExFilePicker exFilePicker = new ExFilePicker();
-        exFilePicker.setUseFirstItemAsUpEnabled(true);
-        exFilePicker.setChoiceType(ExFilePicker.ChoiceType.DIRECTORIES);
-        exFilePicker.setCanChooseOnlyOneItem(true);
-        exFilePicker.setQuitButtonEnabled(true);
-        exFilePicker.start(this, EX_FILE_PICKER_DOWNLOAD_RESULT);
+        Intent intent = new Intent(context, FilePicker.class);
+        intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
+        startActivityForResult(intent, FILE_PICKER_DOWNLOAD_RESULT);
     }
 
     private void moveClicked() {
@@ -1018,6 +1076,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         menuSelectAll.setVisible(false);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
+        lockOrientation();
     }
 
     private void onCreateNewDirectory() {
@@ -1049,11 +1108,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void onUploadFiles() {
-        ExFilePicker exFilePicker = new ExFilePicker();
-        exFilePicker.setUseFirstItemAsUpEnabled(true);
-        exFilePicker.setChoiceType(ExFilePicker.ChoiceType.ALL);
-        exFilePicker.setQuitButtonEnabled(true);
-        exFilePicker.start(this, EX_FILE_PICKER_UPLOAD_RESULT);
+        Intent intent = new Intent(context, FilePicker.class);
+        startActivityForResult(intent, FILE_PICKER_UPLOAD_RESULT);
+    }
+
+    private void lockOrientation() {
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+        }
+        else {
+            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+        }
+    }
+
+    private void unlockOrientation() {
+        ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
     /***********************************************************************************************
@@ -1076,7 +1146,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if (null != swipeRefreshLayout && !silentFetch) {
+            if (swipeRefreshLayout != null&& !silentFetch) {
                 swipeRefreshLayout.setRefreshing(true);
             }
         }
@@ -1091,7 +1161,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(List<FileItem> fileItems) {
             super.onPostExecute(fileItems);
-            if (null != swipeRefreshLayout) {
+            if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
             if (fileItems == null) {
@@ -1117,7 +1187,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            if (null != swipeRefreshLayout) {
+            if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
         }
@@ -1156,15 +1226,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             }
             if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
-                directoryObject.restoreFromCache(pathWhenTaskStarted);
+                directoryObject.removePathFromCache(pathWhenTaskStarted);
                 return;
             }
-            if (null != fetchDirectoryTask) {
+            if (fetchDirectoryTask != null) {
                 fetchDirectoryTask.cancel(true);
             }
             swipeRefreshLayout.setRefreshing(false);
 
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         }
     }
 
@@ -1198,14 +1268,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Toasty.error(context, getString(R.string.error_mkdir), Toast.LENGTH_SHORT, true).show();
             }
             if (!pathWhenTaskStarted.equals(directoryObject.getCurrentPath())) {
-                directoryObject.restoreFromCache(pathWhenTaskStarted);
+                directoryObject.removePathFromCache(pathWhenTaskStarted);
                 return;
             }
             swipeRefreshLayout.setRefreshing(false);
-            if (null != fetchDirectoryTask) {
+            if (fetchDirectoryTask != null) {
                 fetchDirectoryTask.cancel(true);
             }
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         }
     }
 
@@ -1286,7 +1356,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            loadingDialog.dismiss();
+            if(loadingDialog.isStateSaved()){
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
             if (!status) {
                 return;
             }
@@ -1396,10 +1470,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 retries--;
             }
 
-            loadingDialog.dismiss();
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
             startActivityForResult(intent, STREAMING_INTENT_RESULT);
-
-
             return null;
         }
     }

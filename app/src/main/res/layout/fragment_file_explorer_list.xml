@@ -12,6 +12,9 @@
     <include
         layout="@layout/empty_directory_state" />
 
+    <include
+        layout="@layout/no_search_results" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/file_explorer_srl"
         android:layout_width="match_parent"

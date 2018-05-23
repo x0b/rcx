@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer;
 
+import java.io.File;
 import java.util.Comparator;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -97,4 +98,97 @@ public class FileComparators {
                 return Long.compare(fileItem.getModTime(), t1.getModTime());
             }
         }
+
+
+    public static class SortFileAlphaDescending implements Comparator<File> {
+
+        @Override
+        public int compare(File file, File t1) {
+            if (file.isDirectory() && !t1.isDirectory()) {
+                return -1;
+            } else if (!file.isDirectory() && t1.isDirectory()) {
+                return 1;
+            }
+
+            return t1.getName().toLowerCase().compareTo(file.getName().toLowerCase());
+        }
+    }
+
+    public static class SortFileAlphaAscending implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            if (o1.isDirectory() && !o2.isDirectory()) {
+                return -1;
+            } else if (!o1.isDirectory() && o2.isDirectory()) {
+                return 1;
+            }
+
+            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+        }
+    }
+
+    public static class SortFileSizeDescending implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            if (o1.isDirectory() && !o2.isDirectory()) {
+                return -1;
+            } else if (!o1.isDirectory() && o2.isDirectory()) {
+                return 1;
+            }
+
+            if (o1.isDirectory() && o2.isDirectory()) {
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
+
+            return Long.compare(o2.length(), o1.length());
+        }
+    }
+
+    public static class SortFileSizeAscending implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            if (o1.isDirectory() && !o2.isDirectory()) {
+                return -1;
+            } else if (!o1.isDirectory() && o2.isDirectory()) {
+                return 1;
+            }
+
+            if (o1.isDirectory() && o2.isDirectory()) {
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
+
+            return Long.compare(o1.length(), o2.length());
+        }
+    }
+
+    public static class SortFileModTimeDescending implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            if (o1.isDirectory() && !o2.isDirectory()) {
+                return -1;
+            } else if (!o1.isDirectory() && o2.isDirectory()) {
+                return 1;
+            }
+
+            return Long.compare(o2.lastModified(), o1.lastModified());
+        }
+    }
+
+    public static class SortFileModTimeAscending implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            if (o1.isDirectory() && !o2.isDirectory()) {
+                return -1;
+            } else if (!o1.isDirectory() && o2.isDirectory()) {
+                return 1;
+            }
+
+            return Long.compare(o1.lastModified(), o2.lastModified());
+        }
+    }
 }

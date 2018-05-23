@@ -86,12 +86,6 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryUrls.put(androidSupportLibraries, "https://developer.android.com/topic/libraries/support-library/");
         libraryLicences.put(androidSupportLibraries, "Licensed under Apache-2.0");
         libraryLicenceUrls.put(androidSupportLibraries, "http://www.apache.org/licenses/LICENSE-2.0");
-        
-        String exFilePicker = "ExFile Picker";
-        libraryNames.add(exFilePicker);
-        libraryUrls.put(exFilePicker, "https://github.com/bartwell/ExFilePicker");
-        libraryLicences.put(exFilePicker, "Licensed under MIT");
-        libraryLicenceUrls.put(exFilePicker, "https://github.com/bartwell/ExFilePicker/blob/master/LICENSE");
 
         String floatingActionButtonSpeedDial = "Floating Action Button Speed Dial";
         libraryNames.add(floatingActionButtonSpeedDial);

@@ -13,6 +13,9 @@
     <include
         layout="@layout/empty_directory_state" />
 
+    <include
+        layout="@layout/no_search_results" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/file_explorer_srl"
         android:layout_width="600dp"
@@ -43,7 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="2dp"
-        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
         app:sdExpansionMode="top"
         app:sdFabCloseSrc="@drawable/ic_close"
         app:sdFabRotateOnToggle="true"

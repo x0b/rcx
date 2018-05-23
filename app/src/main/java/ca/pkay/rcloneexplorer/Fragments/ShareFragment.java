@@ -3,6 +3,8 @@ package ca.pkay.rcloneexplorer.Fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -126,7 +128,9 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, view.findViewById(R.id.empty_folder_view), this);
+        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
+        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);
         recyclerViewAdapter.setCanSelect(false);
@@ -158,6 +162,15 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 onCreateNewDirectory();
             }
         });
+
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+        }
+        else {
+            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
+        }
+
         isRunning = true;
         return view;
     }
