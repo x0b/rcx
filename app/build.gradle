@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 15
-        versionName "1.2.6"
+        versionName "1.3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,6 +32,7 @@ dependencies {
     implementation "com.android.support:support-compat:27.1.1"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:customtabs:27.1.1'
     implementation "com.leinardi.android:speed-dial:1.0-alpha03"
     implementation 'us.feras.mdv:markdownview:1.1.0'
     implementation 'jp.wasabeef:recyclerview-animators:2.3.0'

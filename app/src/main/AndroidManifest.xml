@@ -99,6 +99,10 @@
         <activity
             android:name=".FilePicker"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RemoteConfig.RemoteConfig"
+            android:label="@string/title_activity_remote_config"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 

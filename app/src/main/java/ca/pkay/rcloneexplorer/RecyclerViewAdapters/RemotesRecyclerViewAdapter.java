@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import ca.pkay.rcloneexplorer.R;
 
 public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecyclerViewAdapter.ViewHolder>{
 
-    private final List<RemoteItem> remotes;
+    private List<RemoteItem> remotes;
     private final RemotesFragment.OnRemoteClickListener clickListener;
     private View view;
 
@@ -83,6 +84,11 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                 }
             }
         });
+    }
+
+    public void newData(List<RemoteItem> data) {
+        remotes = new ArrayList<>(data);
+        notifyDataSetChanged();
     }
 
     @Override

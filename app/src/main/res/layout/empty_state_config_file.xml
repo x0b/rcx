@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/backgroundColor">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_gravity="center">
         <ImageView
             android:id="@+id/empty_state_ic"
             android:layout_width="wrap_content"
@@ -49,4 +50,12 @@
             android:layout_marginTop="16dp"
             android:text="@string/import_configuration"/>
     </RelativeLayout>
-</RelativeLayout>
+
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_add"
+        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior" />
+</android.support.design.widget.CoordinatorLayout>

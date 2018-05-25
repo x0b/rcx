@@ -37,7 +37,7 @@ import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
 
 public class SharingActivity extends AppCompatActivity implements   RemotesFragment.OnRemoteClickListener,
-                                                                    ShareFragment.OnShareDestincationSelected {
+        ShareFragment.onShareDestincationSelected {
 
     private boolean isDarkTheme;
     private Rclone rclone;

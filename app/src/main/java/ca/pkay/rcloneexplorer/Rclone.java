@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -162,6 +163,43 @@ public class Rclone {
         }
 
         return remoteItemList;
+    }
+
+    public Process configCreate(List<String> options) {
+        String[] command = createCommand("config", "create");
+        String[] opt = options.toArray(new String[0]);
+        String[] commandWithOptions = new String[command.length + options.size()];
+
+        System.arraycopy(command, 0, commandWithOptions, 0, command.length);
+
+        System.arraycopy(opt, 0, commandWithOptions, command.length, opt.length);
+
+
+        try {
+            return Runtime.getRuntime().exec(commandWithOptions);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String obscure(String pass) {
+        String[] command = createCommand("obscure", pass);
+
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                return null;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            return  reader.readLine();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Process serveHttp(String remote, String servePath) {

@@ -26,9 +26,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
@@ -48,14 +46,14 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                                                         FileExplorerRecyclerViewAdapter.OnClickListener,
                                                         BreadcrumbView.OnClickListener {
 
-    public interface OnShareDestincationSelected {
+    public interface onShareDestincationSelected {
         void onShareDestinationSelected(String remote, String path);
     }
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
-    private OnShareDestincationSelected listener;
+    private onShareDestincationSelected listener;
     private Context context;
     private String remote;
     private String remoteType;
@@ -198,8 +196,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        if (context instanceof OnShareDestincationSelected) {
-            listener = (OnShareDestincationSelected) context;
+        if (context instanceof onShareDestincationSelected) {
+            listener = (onShareDestincationSelected) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnShareDestinationSelected");
         }
@@ -396,6 +394,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
         } else {
+            directoryObject.setPath(path);
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
         return true;

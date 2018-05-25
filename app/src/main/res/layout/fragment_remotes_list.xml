@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/remotes_list"
-    android:name="ca.pkay.rcloneexplorer.RemotesFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/backgroundColor"
-    app:layoutManager="LinearLayoutManager"
-    tools:listitem="@layout/fragment_remotes_item">
+    android:layout_height="match_parent" >
 
-</android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/remotes_list"
+        android:name="ca.pkay.rcloneexplorer.RemotesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/backgroundColor"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/fragment_remotes_item" />
+
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_add"
+        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior" />
+
+
+</android.support.design.widget.CoordinatorLayout>

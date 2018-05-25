@@ -15,7 +15,7 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_bar" >
+        android:layout_above="@+id/move_bar" >
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"

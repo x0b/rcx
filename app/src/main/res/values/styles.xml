@@ -22,6 +22,27 @@
     <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">#424242</item>
         <item name="android:textColorPrimary">#FFFFFFFF</item>
+        <item name="textColorAlertDialogListItem">#FFFFFFFF</item>
+        <item name="android:colorPrimary">?attr/colorPrimary</item>
+        <item name="android:colorAccent">?attr/colorAccent</item>
+        <item name="colorControlNormal">#B3FFFFFF</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="colorControlHighlight">#B3FFFFFF</item>
+        <item name="android:textColorHint">#B3FFFFFF</item>
+    </style>
+
+    <style name="DialogThemeFullScreen">
+        <item name="android:background">#424242</item>
+        <item name="android:textColorPrimary">#FFFFFFFF</item>
+        <item name="textColorAlertDialogListItem">#FFFFFFFF</item>
+        <item name="android:colorPrimary">?attr/colorPrimary</item>
+        <item name="android:colorAccent">?attr/colorAccent</item>
+        <item name="colorControlNormal">#B3FFFFFF</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="colorControlHighlight">#B3FFFFFF</item>
+        <item name="android:textColorHint">#B3FFFFFF</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
 
     <style name="LightTheme">
@@ -31,6 +52,9 @@
         <item name="textColorSecondary">#757575</item>
         <item name="dividerColor">#BDBDBD</item>
         <item name="iconTint">#4A4A4A</item>
+        <item name="colorControlNormal">#757575</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="colorControlHighlight">#757575</item>
     </style>
 
     <style name="DarkTheme">
@@ -40,8 +64,12 @@
         <item name="textColorSecondary">#B3FFFFFF</item>
         <item name="dividerColor">#1FFFFFFF</item>
         <item name="iconTint">#FFFFFF</item>
+        <item name="colorControlNormal">#B3FFFFFF</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="colorControlHighlight">#B3FFFFFF</item>
+        <item name="android:textColorHint">#B3FFFFFF</item>
     </style>
-    
+
     <style name="CustomPrimaryRed">
         <item name="colorPrimary">@color/colorPrimary_Red</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Red</item>
