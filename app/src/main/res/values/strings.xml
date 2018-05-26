@@ -12,6 +12,7 @@
     <string name="remotes">Remotes</string>
     <string name="settings">Settings</string>
     <string name="import_rclone_config">Import rclone config</string>
+    <string name="export_rclone_config">Export rclone config</string>
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
@@ -140,6 +141,7 @@
     <string name="pref_key_color_primary">pref_key_color_primary</string>
     <string name="pref_key_color_accent">pref_key_color_accent</string>
     <string name="pref_key_dark_theme">pref_key_dark_theme</string>
+    <string name="pref_key_app_updates">pref_key_app_updates</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color_content_desc">Primary color</string>
@@ -264,4 +266,11 @@
     <string name="azureblob_key_hint">Storage Account Key</string>
     <string name="provider_azureblob">Microsoft Azure Blob Storage</string>
     <string name="no_remotes">There are no remotes</string>
+    <string name="choose_dir">Choose directory</string>
+    <string name="error_exporting_config_file">Error exporting config file</string>
+    <string name="firebase_msg_app_updates_topic">app_updates</string>
+    <string name="app_update_notification_title">New version of Rclone Explorer is available on GitHub</string>
+    <string name="app_updates_notifications">Get notified about app updates</string>
+    <string name="app_updates_icon_content_description">App updates icon</string>
+    <string name="delete_remote_title">Delete remote?</string>
 </resources>

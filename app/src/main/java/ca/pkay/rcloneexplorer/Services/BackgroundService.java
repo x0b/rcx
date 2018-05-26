@@ -30,7 +30,7 @@ public class BackgroundService extends IntentService {
     public static final String PATH = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_PATH_ARG";
     public static final String PATH2 = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_PATH2_ARG";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.background_service";
-    private final String CHANNEL_NAME = "background service";
+    private final String CHANNEL_NAME = "Background service";
     private final String OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP";
     private final int PERSISTENT_NOTIFICATION_ID_FOR_MOVE = 43;
     private final int PERSISTENT_NOTIFICATION_ID_FOR_DELETE = 124;

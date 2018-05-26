@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,11 +22,17 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
     private List<RemoteItem> remotes;
     private final RemotesFragment.OnRemoteClickListener clickListener;
+    private OnRemoteOptionsClick optionsListener;
     private View view;
 
-    public RemotesRecyclerViewAdapter(List<RemoteItem> remotes, RemotesFragment.OnRemoteClickListener clickListener) {
+    public interface OnRemoteOptionsClick {
+        void onRemoteOptionsClicked(View view, RemoteItem remoteItem);
+    }
+
+    public RemotesRecyclerViewAdapter(List<RemoteItem> remotes, RemotesFragment.OnRemoteClickListener clickListener, OnRemoteOptionsClick optionsListener) {
         this.remotes = remotes;
         Collections.sort(remotes);
+        this.optionsListener = optionsListener;
         this.clickListener = clickListener;
     }
 
@@ -76,6 +83,13 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                     break;
         }
 
+        holder.options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionsListener.onRemoteOptionsClicked(holder.options, remotes.get(holder.getAdapterPosition()));
+            }
+        });
+
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,6 +118,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         public final View view;
         public final ImageView ivIcon;
         public final TextView tvName;
+        public final ImageButton options;
         public String remoteName;
 
         ViewHolder(View itemView) {
@@ -111,6 +126,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
             this.view = itemView;
             this.ivIcon = view.findViewById(R.id.remoteIcon);
             this.tvName = view.findViewById(R.id.remoteName);
+            this.options = view.findViewById(R.id.remote_options);
         }
     }
 

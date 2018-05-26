@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
@@ -140,6 +141,7 @@ public class AliasConfig extends Fragment {
         for (RemoteItem remote : remotes) {
             options[i++] = remote.getName();
         }
+        Arrays.sort(options);
 
         AlertDialog.Builder builder;
         if (isDarkTheme) {

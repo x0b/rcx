@@ -13,10 +13,12 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,6 +182,18 @@ public class Rclone {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void deleteRemote(String remoteName) {
+        String[] command = createCommand("config", "delete", remoteName);
+        Process process;
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -539,6 +553,26 @@ public class Rclone {
         inputStream.close();
         fileOutputStream.flush();
         fileOutputStream.close();
+    }
+
+    public void exportConfigFile(Uri uri) throws IOException {
+        File configFile = new File(rcloneConf);
+        Uri config = Uri.fromFile(configFile);
+        InputStream inputStream = context.getContentResolver().openInputStream(config);
+        OutputStream outputStream = context.getContentResolver().openOutputStream(uri);
+
+        if (inputStream == null || outputStream == null) {
+            return;
+        }
+
+        byte[] buffer = new byte[4096];
+        int offset;
+        while ((offset = inputStream.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, offset);
+        }
+        inputStream.close();
+        outputStream.flush();
+        outputStream.close();
     }
 
     public boolean isRcloneBinaryCreated() {

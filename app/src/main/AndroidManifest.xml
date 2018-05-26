@@ -6,6 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/ic_notification" />
+    <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@color/white" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -28,6 +34,16 @@
         <service android:name=".Services.UploadService" />
         <service android:name=".Services.StreamingService" />
         <service android:name=".Services.BackgroundService" />
+        <service android:name=".Services.FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:name=".Services.FirebaseIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />

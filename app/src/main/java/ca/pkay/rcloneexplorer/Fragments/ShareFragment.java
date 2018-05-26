@@ -98,7 +98,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         }
 
         originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
-        ((FragmentActivity) context).setTitle(remoteType);
+        ((FragmentActivity) context).setTitle("Select destination");
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);

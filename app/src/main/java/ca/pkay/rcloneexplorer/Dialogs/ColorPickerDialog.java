@@ -54,6 +54,7 @@ public class ColorPickerDialog extends DialogFragment {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dismiss();
                 listener.onColorSelected(getSelectedColor());
             }
         });

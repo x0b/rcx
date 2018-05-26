@@ -11,6 +11,8 @@
         android:name="ca.pkay.rcloneexplorer.RemotesFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="88dp"
         android:background="?attr/backgroundColor"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/fragment_remotes_item" />
@@ -22,6 +24,5 @@
         android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_add"
         app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior" />
-
 
 </android.support.design.widget.CoordinatorLayout>

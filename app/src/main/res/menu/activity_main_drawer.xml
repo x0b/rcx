@@ -5,12 +5,11 @@
 
     <group
         android:id="@+id/nav_top"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_remotes"
             android:icon="@drawable/ic_cloud"
-            android:title="@string/remotes"
-            android:checked="true" />
+            android:title="@string/remotes" />
     </group>
 
     <group
@@ -21,6 +20,11 @@
             android:id="@+id/nav_import"
             android:icon="@drawable/ic_import"
             android:title="@string/import_rclone_config" />
+
+        <item
+            android:id="@+id/nav_export"
+            android:icon="@drawable/ic_export"
+            android:title="@string/export_rclone_config" />
 
         <item
             android:id="@+id/nav_settings"
