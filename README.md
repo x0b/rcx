@@ -17,8 +17,8 @@ Features
 
 TODO
 ------------
-- [ ] Creating new remotes (in progress, coming in 1.3.0)
-- [ ] Deleting existing remotes (coming in 1.3.X)
+- [X] Creating new remotes
+- [ ] Deleting existing remotes
 
 Screenshots
 -----------
