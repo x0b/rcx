@@ -228,33 +228,7 @@ public class Rclone {
         }
     }
 
-    public List<Process> downloadItems(String remote, List<FileItem> downloadList, String downloadPath) {
-        List<Process> runningProcesses = new ArrayList<>();
-        Process process;
-        String[] command;
-        String remoteFilePath;
-        String localFilePath;
-
-        for (FileItem item : downloadList) {
-            remoteFilePath = remote + ":" + item.getPath();
-            if (item.isDir()) {
-                localFilePath = downloadPath + "/" + item.getName();
-            } else {
-                localFilePath = downloadPath;
-            }
-            command = createCommand("copy", remoteFilePath, localFilePath);
-
-            try {
-                process = Runtime.getRuntime().exec(command);
-                runningProcesses.add(process);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return  runningProcesses;
-    }
-
-    public Process downloadItems(String remote, FileItem downloadItem, String downloadPath) {
+    public Process downloadFile(String remote, FileItem downloadItem, String downloadPath) {
         String[] command;
         String remoteFilePath;
         String localFilePath;
@@ -275,58 +249,51 @@ public class Rclone {
         }
     }
 
-    public List<Process> uploadFiles(String remote, String uploadPath, ArrayList<String> uploadList) {
-        List<Process> runningProcesses = new ArrayList<>();
-        Process process;
+    public Process uploadFile(String remote, String uploadPath, String uploadFile) {
         String path;
         String[] command;
 
-        for (String localPath : uploadList) {
-            File file = new File(localPath);
-            if (file.isDirectory()) {
-                int index = localPath.lastIndexOf('/');
-                String dirName = localPath.substring(index + 1);
-                path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" + dirName: remote + ":" + uploadPath + "/" + dirName;
-            } else {
-                path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
-            }
-
-            command = createCommand("copy", localPath, path);
-
-            try {
-                process = Runtime.getRuntime().exec(command);
-                runningProcesses.add(process);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        File file = new File(uploadFile);
+        if (file.isDirectory()) {
+            int index = uploadFile.lastIndexOf('/');
+            String dirName = uploadFile.substring(index + 1);
+            path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" + dirName: remote + ":" + uploadPath + "/" + dirName;
+        } else {
+            path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
         }
 
-        return runningProcesses;
+        command = createCommand("copy", uploadFile, path);
+
+        try {
+            return Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
-    public Boolean deleteItems(String remote, List<FileItem> deleteList) {
+    public Boolean deleteItems(String remote, FileItem deleteItem) {
         String[] command;
         String filePath;
         Boolean result = true;
 
-        for (FileItem item : deleteList) {
-            filePath = remote + ":" + item.getPath();
-            if (item.isDir()) {
-                command = createCommand("purge", filePath);
-            } else {
-                command = createCommand("delete", filePath);
-            }
+        filePath = remote + ":" + deleteItem.getPath();
+        if (deleteItem.isDir()) {
+            command = createCommand("purge", filePath);
+        } else {
+            command = createCommand("delete", filePath);
+        }
 
-            try {
-                Process process = Runtime.getRuntime().exec(command);
-                process.waitFor();
-                if (process.exitValue() != 0) {
-                    result = false;
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
                 result = false;
             }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            result = false;
         }
         return result;
     }
@@ -348,27 +315,25 @@ public class Rclone {
         return true;
     }
 
-    public Boolean moveTo(String remote, List<FileItem> moveList, String newLocation) {
+    public Boolean moveTo(String remote, FileItem moveItem, String newLocation) {
         String[] command;
         String oldFilePath;
         String newFilePath;
         Boolean result = true;
 
-        for (FileItem fileItem : moveList) {
-            oldFilePath = remote + ":" + fileItem.getPath();
-            newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + fileItem.getName() : remote + ":" + newLocation + "/" + fileItem.getName();
-            command = createCommand("moveto", oldFilePath, newFilePath);
-            try {
-                Process process = Runtime.getRuntime().exec(command);
-                process.waitFor();
-                if (process.exitValue() != 0) {
-                    logErrorOutput(process);
-                    result = false;
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+        oldFilePath = remote + ":" + moveItem.getPath();
+        newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + moveItem.getName() : remote + ":" + newLocation + "/" + moveItem.getName();
+        command = createCommand("moveto", oldFilePath, newFilePath);
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                logErrorOutput(process);
                 result = false;
             }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            result = false;
         }
         return result;
     }
@@ -389,6 +354,20 @@ public class Rclone {
             return false;
         }
         return true;
+    }
+
+    public boolean emptyTrashCan(String remote) {
+        String[] command = createCommand("cleanup", remote + ":");
+        Process process = null;
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return process != null && process.exitValue() == 0;
     }
 
     public String calculateMD5(String remote, FileItem fileItem) {

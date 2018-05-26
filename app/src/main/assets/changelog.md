@@ -1,3 +1,19 @@
+### 1.3.1
+* **New:** Option to delete remotes
+* **New:** Option to export rclone config file
+* **New:** Option to empty trash for remotes that support it
+    * Encrypted remotes (crypt) are not supported
+* **New:** Firebase Crashlytics
+    * Any app crashes will be reported to help fix them faster
+    * No identifiable information is sent, only line of code on which the crash occurred
+* **New:** Push notifications when new app version is available on GitHub (can be disabled in settings)
+* **Fix:** Recreate view after theme changes
+* **Update:** Upload only one file at a time (fix any possible bottlenecks)
+* **Update:** Download only one file at a time (fix any possible bottlenecks)
+* **Update:** Move/delete operations - view is updated after each file is moved or deleted
+
+***
+
 ### 1.3.0
 * **New:** Remote creation - ability to create new remotes right from the app!
     * Most of the rclone remotes are here

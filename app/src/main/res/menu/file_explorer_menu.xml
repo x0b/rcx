@@ -43,4 +43,10 @@
         android:title="@string/http_serve"
         android:orderInCategory="6"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_empty_trash"
+        android:title="@string/empty_trash"
+        android:orderInCategory="7"
+        app:showAsAction="never" />
 </menu>

@@ -44,7 +44,9 @@ Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/rele
 
 Credits/Libraries
 -----------------
+- [Android Support Libraries](https://developer.android.com/topic/libraries/support-library)
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification.
+- [Glide](https://github.com/bumptech/glide) - An image loading and caching library for Android focused on smooth scrolling.
 - [Markdown View](https://github.com/falnatsheh/MarkdownView) - MarkdownView is an Android webview with the capablity of loading Markdown text or file and display it as HTML, it uses MarkdownJ and extends Android webview.
 - [Material Design Icons](https://github.com/Templarian/MaterialDesign) - 2200+ Material Design Icons from the Community.
 - [rclone](https://github.com/ncw/rclone) - "rsync for cloud storage"

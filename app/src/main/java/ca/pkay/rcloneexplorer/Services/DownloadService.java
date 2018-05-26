@@ -1,6 +1,5 @@
 package ca.pkay.rcloneexplorer.Services;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,14 +7,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -25,7 +20,7 @@ import ca.pkay.rcloneexplorer.Rclone;
 
 public class DownloadService extends IntentService {
 
-    public static final String DOWNLOAD_LIST_ARG = "ca.pkay.rcexplorer.download_service.arg1";
+    public static final String DOWNLOAD_ITEM_ARG = "ca.pkay.rcexplorer.download_service.arg1";
     public static final String DOWNLOAD_PATH_ARG = "ca.pkay.rcexplorer.download_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.download_service.arg3";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.DOWNLOAD_CHANNEL";
@@ -35,11 +30,8 @@ public class DownloadService extends IntentService {
     private final int PERSISTENT_NOTIFICATION_ID = 167;
     private final int FAILED_DOWNLOAD_NOTIFICATION_ID = 138;
     private final int DOWNLOAD_FINISHED_NOTIFICATION_ID = 80;
-    private int numOfRunningProcesses;
-    private int numOfFinishedDownloads;
-    private int numOfFailedDownloads;
     private Rclone rclone;
-    private List<Process> runningProcesses;
+    private Process currentProcess;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -76,25 +68,23 @@ public class DownloadService extends IntentService {
             return;
         }
 
-        final List<FileItem> downloadList = intent.getParcelableArrayListExtra(DOWNLOAD_LIST_ARG);
+        final FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
         final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        runningProcesses = rclone.downloadItems(remote, downloadList, downloadPath);
-        numOfRunningProcesses = runningProcesses.size();
-        numOfFinishedDownloads = 0;
-        numOfFailedDownloads = 0;
-        AsyncTask[] asyncTasks = new AsyncTask[numOfRunningProcesses];
-        for (int i = 0; i < numOfRunningProcesses; i++) {
-            asyncTasks[i] = new MonitorDownload(downloadList.get(i), runningProcesses.get(i)).execute();
+        currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
+        try {
+            currentProcess.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        for (AsyncTask asyncTask : asyncTasks) {
-            try {
-                asyncTask.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+        int notificationId = (int)System.currentTimeMillis();
+
+        if (currentProcess.exitValue() == 0) {
+            showDownloadFinishedNotification(notificationId, downloadItem.getName());
+        } else {
+            showDownloadFailedNotification(notificationId, downloadItem.getName());
         }
 
         stopForeground(true);
@@ -164,8 +154,8 @@ public class DownloadService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (Process process : runningProcesses) {
-            process.destroy();
+        if (currentProcess != null) {
+            currentProcess.destroy();
         }
     }
 
@@ -179,40 +169,6 @@ public class DownloadService extends IntentService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class MonitorDownload extends AsyncTask<Void, Void, Boolean> {
-
-        private FileItem file;
-        private Process process;
-
-        MonitorDownload(FileItem file, Process process) {
-            this.file = file;
-            this.process = process;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return process.exitValue() == 0;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            int notificationId = (int)System.currentTimeMillis();
-
-            if (result) {
-                showDownloadFinishedNotification(notificationId, file.getName());
-            } else {
-                showDownloadFailedNotification(notificationId, file.getName());
             }
         }
     }

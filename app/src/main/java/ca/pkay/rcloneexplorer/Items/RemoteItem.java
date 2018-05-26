@@ -12,6 +12,17 @@ public class RemoteItem implements Comparable<RemoteItem> {
         this.type = type;
     }
 
+    public static boolean hasTrashCan(String remoteType) {
+        switch (remoteType) {
+            case "drive":
+            case "pcloud":
+            case "yandex":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public String getName() {
         return name;
     }

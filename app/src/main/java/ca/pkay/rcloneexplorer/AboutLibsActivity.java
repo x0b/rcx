@@ -93,6 +93,12 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryLicences.put(floatingActionButtonSpeedDial, "Licensed under Apache-2.0");
         libraryLicenceUrls.put(floatingActionButtonSpeedDial, "https://github.com/leinardi/FloatingActionButtonSpeedDial/blob/master/LICENSE");
 
+        String glide = "Glide";
+        libraryNames.add(glide);
+        libraryUrls.put(glide, "https://github.com/bumptech/glide");
+        libraryLicences.put(glide, "BSD, part MIT and Apache 2.0");
+        libraryLicenceUrls.put(glide, "https://github.com/bumptech/glide/blob/master/LICENSE");
+
         String markDownView = "MarkDown View";
         libraryNames.add(markDownView);
         libraryUrls.put(markDownView, "https://github.com/falnatsheh/MarkdownView");

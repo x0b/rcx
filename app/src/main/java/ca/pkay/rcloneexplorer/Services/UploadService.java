@@ -37,10 +37,7 @@ public class UploadService extends IntentService {
     private final int UPLOAD_FINISHED_NOTIFICATION_ID = 41;
     private final int UPLOAD_FAILED_NOTIFICATION_ID = 14;
     private Rclone rclone;
-    private int numOfProcessesRunning;
-    private int numOfFinishedUploads;
-    private int numOfFailedUploads;
-    private List<Process> runningProcesses;
+    private Process currentProcess;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -77,27 +74,38 @@ public class UploadService extends IntentService {
             return;
         }
         final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
-        final ArrayList<String> uploadList = intent.getStringArrayListExtra(LOCAL_PATH_ARG);
+        final String uploadFile = intent.getStringExtra(LOCAL_PATH_ARG);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        runningProcesses = rclone.uploadFiles(remote, uploadPath, uploadList);
-        numOfProcessesRunning = runningProcesses.size();
-        numOfFinishedUploads = 0;
-        numOfFailedUploads = 0;
-        AsyncTask[] asyncTasks = new AsyncTask[numOfProcessesRunning];
-        for (int i = 0; i < numOfProcessesRunning; i++) {
-            asyncTasks[i] = new MonitorUpload(remote, uploadPath, uploadList.get(i), runningProcesses.get(i)).execute();
-        }
-        
-        for (AsyncTask asyncTask : asyncTasks) {
-            try {
-                asyncTask.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+        currentProcess = rclone.uploadFile(remote, uploadPath, uploadFile);
+        try {
+            currentProcess.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
+        onUploadFinished(remote, uploadPath, uploadFile, currentProcess.exitValue() == 0);
+
         stopForeground(true);
+    }
+
+    private void onUploadFinished(String remote, String uploadPath, String file, boolean result) {
+        int notificationId = (int)System.currentTimeMillis();
+        int startIndex = file.lastIndexOf("/");
+        String fileName;
+        if (startIndex >= 0 && startIndex < file.length()) {
+            fileName = file.substring(startIndex + 1);
+        } else {
+            fileName = file;
+        }
+
+        sendUploadFinishedBroadcast(remote, uploadPath);
+
+        if (result) {
+            showUploadFinishedNotification(notificationId, fileName);
+        } else {
+            showUploadFailedNotification(notificationId, fileName);
+        }
     }
 
     private void sendUploadFinishedBroadcast(String remote, String uploadPath) {
@@ -172,8 +180,8 @@ public class UploadService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (Process process : runningProcesses) {
-            process.destroy();
+        if (currentProcess != null) {
+            currentProcess.destroy();
         }
     }
 
@@ -187,53 +195,6 @@ public class UploadService extends IntentService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class MonitorUpload extends AsyncTask<Void, Void, Boolean> {
-
-        private String remote;
-        private String uploadPath;
-        private String file;
-        private Process process;
-
-        MonitorUpload(String remote, String uploadPath, String file, Process process) {
-            this.remote = remote;
-            this.uploadPath = uploadPath;
-            this.file = file;
-            this.process = process;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return process.exitValue() == 0;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            int notificationId = (int)System.currentTimeMillis();
-            int startIndex = file.lastIndexOf("/");
-            String fileName;
-            if (startIndex >= 0 && startIndex < file.length()) {
-                fileName = file.substring(startIndex + 1);
-            } else {
-                fileName = file;
-            }
-
-            sendUploadFinishedBroadcast(remote, uploadPath);
-
-            if (result) {
-                showUploadFinishedNotification(notificationId, fileName);
-            } else {
-                showUploadFailedNotification(notificationId, fileName);
             }
         }
     }

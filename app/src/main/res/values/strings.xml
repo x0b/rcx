@@ -273,4 +273,7 @@
     <string name="app_updates_notifications">Get notified about app updates</string>
     <string name="app_updates_icon_content_description">App updates icon</string>
     <string name="delete_remote_title">Delete remote?</string>
+    <string name="empty_trash">Empty trash</string>
+    <string name="trash_emptied">Trash emptied</string>
+    <string name="error_emptying_trash">Error emptying trash</string>
 </resources>

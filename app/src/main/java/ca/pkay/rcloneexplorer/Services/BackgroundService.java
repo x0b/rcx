@@ -25,8 +25,8 @@ public class BackgroundService extends IntentService {
     public static final int TASK_TYPE_DELETE = 2;
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_REMOTE_ARG";
     public static final String MOVE_DEST_PATH = "ca.pkat.rcexplorer.BACKGROUND_SERVICE_MOVE_DEST_ARG";
-    public static final String MOVE_LIST = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_MOVE_ARG";
-    public static final String DELETE_LIST = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_DELETE_ARG";
+    public static final String MOVE_ITEM = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_MOVE_ARG";
+    public static final String DELETE_ITEM = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_DELETE_ARG";
     public static final String PATH = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_PATH_ARG";
     public static final String PATH2 = "ca.pkay.rcexplorer.BACKGROUND_SERVICE_PATH2_ARG";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.background_service";
@@ -66,20 +66,16 @@ public class BackgroundService extends IntentService {
     }
 
     private void moveTask(Intent intent) {
-        final List<FileItem> moveList = intent.getParcelableArrayListExtra(MOVE_LIST);
+        final FileItem moveItem = intent.getParcelableExtra(MOVE_ITEM);
         final String moveDestPath = intent.getStringExtra(MOVE_DEST_PATH);
         final String path = intent.getStringExtra(PATH2);
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
-        if (moveList == null || moveDestPath == null || remote == null || path == null) {
+        if (moveItem == null || moveDestPath == null || remote == null || path == null) {
             return;
         }
 
-        String content = moveList.get(0).getName();
-        if (moveList.size() > 1) {
-            int num = moveList.size() - 1;
-            content += " " + getString(R.string.and_X_other, num);
-        }
+        String content = moveItem.getName();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
@@ -89,35 +85,27 @@ public class BackgroundService extends IntentService {
 
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_MOVE, builder.build());
 
-        Boolean success = rclone.moveTo(remote, moveList, moveDestPath);
+        Boolean success = rclone.moveTo(remote, moveItem, moveDestPath);
         sendUploadFinishedBroadcast(remote, moveDestPath, path);
 
         if (!success) {
             String errorTitle = "Move operation failed";
-            String errorContent = "Expand to see file list";
-            NotificationCompat.InboxStyle failedFileList = new NotificationCompat.InboxStyle();
-            for (FileItem fileItem : moveList) {
-                failedFileList.addLine(fileItem.getName());
-            }
+            String errorContent = moveItem.getName();
             int notificationId = (int)System.currentTimeMillis();
-            showFailedNotification(errorTitle, errorContent, notificationId, failedFileList);
+            showFailedNotification(errorTitle, errorContent, notificationId);
         }
     }
 
     private void deleteTask(Intent intent) {
         final String remote = intent.getStringExtra(REMOTE_ARG);
         final String path = intent.getStringExtra(PATH);
-        final List<FileItem> deleteList = intent.getParcelableArrayListExtra(DELETE_LIST);
+        final FileItem deleteItem = intent.getParcelableExtra(DELETE_ITEM);
 
-        if (remote == null || deleteList == null) {
+        if (remote == null || deleteItem == null) {
             return;
         }
 
-        String content = deleteList.get(0).getName();
-        if (deleteList.size() > 1) {
-            int num = deleteList.size() - 1;
-            content += " " + getString(R.string.and_X_other, num);
-        }
+        String content = deleteItem.getName();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
@@ -127,18 +115,14 @@ public class BackgroundService extends IntentService {
 
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_DELETE, builder.build());
 
-        Boolean success = rclone.deleteItems(remote, deleteList);
+        Boolean success = rclone.deleteItems(remote, deleteItem);
         sendUploadFinishedBroadcast(remote, path, null);
 
         if (!success) {
             String errorTitle = "Delete operation failed";
-            String errorContent = "Expand to see file list";
-            NotificationCompat.InboxStyle failedFileList = new NotificationCompat.InboxStyle();
-            for (FileItem fileItem : deleteList) {
-                failedFileList.addLine(fileItem.getName());
-            }
+            String errorContent = deleteItem.getName();
             int notificationId = (int)System.currentTimeMillis();
-            showFailedNotification(errorTitle, errorContent, notificationId, failedFileList);
+            showFailedNotification(errorTitle, errorContent, notificationId);
         }
     }
 
@@ -153,7 +137,7 @@ public class BackgroundService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-    private void showFailedNotification(String title, String content, int notificationId, NotificationCompat.InboxStyle style) {
+    private void showFailedNotification(String title, String content, int notificationId) {
         createSummaryNotificationForFailed();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -161,7 +145,6 @@ public class BackgroundService extends IntentService {
                 .setContentTitle(title)
                 .setContentText(content)
                 .setGroup(OPERATION_FAILED_GROUP)
-                .setStyle(style)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);

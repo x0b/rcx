@@ -219,11 +219,14 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
             } else {
                 loadingDialog.dismiss();
             }
-            Intent intent = new Intent(context, UploadService.class);
-            intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
-            intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
-            intent.putExtra(UploadService.REMOTE_ARG, remote);
-            startService(intent);
+
+            for (String uploadFile : uploadList) {
+                Intent intent = new Intent(context, UploadService.class);
+                intent.putExtra(UploadService.LOCAL_PATH_ARG, uploadFile);
+                intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
+                intent.putExtra(UploadService.REMOTE_ARG, remote);
+                startService(intent);
+            }
             finish();
         }
     }

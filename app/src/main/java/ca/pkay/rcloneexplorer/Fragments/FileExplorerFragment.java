@@ -60,6 +60,7 @@ import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.FilePicker;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
 import ca.pkay.rcloneexplorer.R;
@@ -345,20 +346,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             for (File file : result) {
                 uploadList.add(file.getPath());
             }
-            Intent intent = new Intent(getContext(), UploadService.class);
-            intent.putStringArrayListExtra(UploadService.LOCAL_PATH_ARG, uploadList);
-            intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
-            intent.putExtra(UploadService.REMOTE_ARG, remote);
-            context.startService(intent);
+
+            for (String uploadFile : uploadList) {
+                Intent intent = new Intent(getContext(), UploadService.class);
+                intent.putExtra(UploadService.LOCAL_PATH_ARG, uploadFile);
+                intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
+                intent.putExtra(UploadService.REMOTE_ARG, remote);
+                context.startService(intent);
+            }
         } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
             String selectedPath = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
             final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
             recyclerViewAdapter.cancelSelection();
-            Intent intent = new Intent(getContext(), DownloadService.class);
-            intent.putParcelableArrayListExtra(DownloadService.DOWNLOAD_LIST_ARG, downloadList);
-            intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
-            intent.putExtra(DownloadService.REMOTE_ARG, remote);
-            context.startService(intent);
+
+            for (FileItem downloadItem : downloadList) {
+                Intent intent = new Intent(getContext(), DownloadService.class);
+                intent.putExtra(DownloadService.DOWNLOAD_ITEM_ARG, downloadItem);
+                intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
+                intent.putExtra(DownloadService.REMOTE_ARG, remote);
+                context.startService(intent);
+            }
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);
@@ -372,6 +379,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         menuPropertiesAction = menu.findItem(R.id.action_file_properties);
         menuOpenAsAction = menu.findItem(R.id.action_open_as);
         menuSelectAll = menu.findItem(R.id.action_select_all);
+
+        if (!RemoteItem.hasTrashCan(remoteType)) {
+            menu.findItem(R.id.action_empty_trash).setVisible(false);
+        }
     }
 
     @Override
@@ -400,6 +411,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return true;
             case R.id.action_open_as:
                 showOpenAsDialog();
+                return true;
+            case R.id.action_empty_trash:
+                new EmptyTrashTash().execute();
                 return true;
             default:
                     return super.onOptionsItemSelected(item);
@@ -640,13 +654,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             path2 = "//" + remote;
         }
-        Intent intent = new Intent(context, BackgroundService.class);
-        intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_MOVE);
-        intent.putExtra(BackgroundService.REMOTE_ARG, remote);
-        intent.putExtra(BackgroundService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
-        intent.putExtra(BackgroundService.MOVE_LIST, moveList);
-        intent.putExtra(BackgroundService.PATH2, path2);
-        context.startService(intent);
+        for (FileItem moveItem : moveList) {
+            Intent intent = new Intent(context, BackgroundService.class);
+            intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_MOVE);
+            intent.putExtra(BackgroundService.REMOTE_ARG, remote);
+            intent.putExtra(BackgroundService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
+            intent.putExtra(BackgroundService.MOVE_ITEM, moveItem);
+            intent.putExtra(BackgroundService.PATH2, path2);
+            context.startService(intent);
+        }
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
         unlockOrientation();
@@ -1003,12 +1019,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         recyclerViewAdapter.cancelSelection();
-                        Intent intent = new Intent(context, BackgroundService.class);
-                        intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_DELETE);
-                        intent.putExtra(BackgroundService.REMOTE_ARG, remote);
-                        intent.putExtra(BackgroundService.DELETE_LIST, deleteList);
-                        intent.putExtra(BackgroundService.PATH, directoryObject.getCurrentPath());
-                        context.startService(intent);
+                        for (FileItem deleteItem : deleteList) {
+                            Intent intent = new Intent(context, BackgroundService.class);
+                            intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_DELETE);
+                            intent.putExtra(BackgroundService.REMOTE_ARG, remote);
+                            intent.putExtra(BackgroundService.DELETE_ITEM, deleteItem);
+                            intent.putExtra(BackgroundService.PATH, directoryObject.getCurrentPath());
+                            context.startService(intent);
+                        }
                         Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
                     }
                 });
@@ -1336,7 +1354,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             fileLocation = saveLocation + "/" + fileItem.getName();
 
-            process = rclone.downloadItems(remote, fileItem, saveLocation);
+            process = rclone.downloadFile(remote, fileItem, saveLocation);
 
             try {
                 process.waitFor();
@@ -1477,6 +1495,25 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
             startActivityForResult(intent, STREAMING_INTENT_RESULT);
             return null;
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class EmptyTrashTash extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return rclone.emptyTrashCan(remote);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result) {
+                Toasty.success(context, getString(R.string.trash_emptied), Toast.LENGTH_SHORT, true).show();
+            } else {
+                Toasty.error(context, getString(R.string.error_emptying_trash), Toast.LENGTH_SHORT, true).show();
+            }
         }
     }
 }
