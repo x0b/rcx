@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 
 import com.leinardi.android.speeddial.SpeedDialView;
 
+import java.util.Collections;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -65,6 +66,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         ((FragmentActivity) context).setTitle(getString(R.string.remotes_toolbar_title));
         rclone = new Rclone(getContext());
         remotes = rclone.getRemotes();
+        Collections.sort(remotes);
     }
 
     @Nullable
