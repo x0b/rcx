@@ -6,6 +6,7 @@ Features
 - Allows to browse rclone remotes, including encrypted ones
 - Support for ARM and x86 devices
 - Import configuration file from rclone
+- Create new remotes from the app
 - Download and upload files
 - Move, rename, and delete files and folders
 - Create new folders
@@ -18,7 +19,7 @@ Features
 TODO
 ------------
 - [X] Creating new remotes
-- [ ] Deleting existing remotes
+- [X] Deleting existing remotes
 
 Screenshots
 -----------
