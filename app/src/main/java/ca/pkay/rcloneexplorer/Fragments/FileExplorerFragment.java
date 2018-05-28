@@ -86,6 +86,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
     private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
+    private final String SAVED_SEARCH_STRING = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_STRING";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private DirectoryObject directoryObject;
@@ -107,6 +108,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private MenuItem menuSelectAll;
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
+    private String searchString;
     private Boolean is720dp;
     //private NetworkStateReceiver networkStateReceiver;
     private Context context;
@@ -242,6 +244,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         setBottomBarClickListeners(view);
 
         if (savedInstanceState != null && savedInstanceState.getBoolean(SAVED_SEARCH_MODE, false)) {
+            searchString = savedInstanceState.getString(SAVED_SEARCH_STRING);
             searchClicked();
         }
 
@@ -270,6 +273,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
         outState.putParcelableArrayList(SAVED_CONTENT, content);
         outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
+        if (isSearchMode) {
+            outState.putString(SAVED_SEARCH_STRING, searchString);
+        }
     }
 
     private void buildStackFromPath(String remote, String path) {
@@ -603,6 +609,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         List<FileItem> content = directoryObject.getDirectoryContent();
         List<FileItem> currentShown = recyclerViewAdapter.getCurrentContent();
         List<FileItem> results = new ArrayList<>();
+
+        searchString = search;
 
         if (search.isEmpty()) {
             if (currentShown.equals(content)) {
@@ -1193,11 +1201,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             directoryObject.setContent(fileItems);
             sortDirectory();
 
-            if (recyclerViewAdapter != null) {
-                if (silentFetch) {
-                    recyclerViewAdapter.updateData(directoryObject.getDirectoryContent());
-                } else {
-                    recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            if (isSearchMode && searchString != null) {
+                searchDirContent(searchString);
+            } else {
+                if (recyclerViewAdapter != null) {
+                    if (silentFetch) {
+                        recyclerViewAdapter.updateData(directoryObject.getDirectoryContent());
+                    } else {
+                        recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+                    }
                 }
             }
         }
