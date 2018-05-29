@@ -250,8 +250,9 @@
     <string name="webdav_spinner_prompt">Name of the Webdav service</string>
     <string name="filename_encryption_spinner_prompt">How to encrypt the filenames</string>
     <string name="directory_name_encryption_hint">Directory name encryption</string>
-    <string name="crypt_pass_hint">Password or pass phrase for encryption</string>
-    <string name="crypt_pass2_hint">Password or pass phrase for salt</string>
+    <string name="crypt_pass_hint">Password for encryption</string>
+    <string name="crypt_pass2_hint">Password for salt</string>
+    <string name="crypt_pass2_helper_text">Optional but recommended</string>
     <string name="qingstor_access_key_hint">QingStor Access Key ID</string>
     <string name="qingstor_secret_access_key_hint">QingStor Secret Access Key (password)</string>
     <string name="qingstor_endpoint_hint">Enter an enpoint URL to connection QingStor API</string>

@@ -142,8 +142,10 @@ public class CryptConfig extends Fragment {
         formContent.addView(password2Template);
         password2InputLayout = password2Template.findViewById(R.id.pass_input_layout);
         password2InputLayout.setHintEnabled(true);
-        password2InputLayout.setHint(getString(R.string.crypt_pass_hint));
-        password2Template.findViewById(R.id.helper_text).setVisibility(View.VISIBLE);
+        password2InputLayout.setHint(getString(R.string.crypt_pass2_hint));
+        TextView pass2HelperText = password2Template.findViewById(R.id.helper_text);
+        pass2HelperText.setVisibility(View.VISIBLE);
+        pass2HelperText.setText(R.string.crypt_pass2_helper_text);
         password2 = password2Template.findViewById(R.id.pass);
 
         View spinnerTemplate = View.inflate(context, R.layout.config_form_template_spinner, null);

@@ -33,6 +33,6 @@ public class RemoteItem implements Comparable<RemoteItem> {
 
     @Override
     public int compareTo(@NonNull RemoteItem remoteItem) {
-        return name.compareTo(remoteItem.getName());
+        return name.toLowerCase().compareTo(remoteItem.getName().toLowerCase());
     }
 }
