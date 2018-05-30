@@ -38,8 +38,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         }
     };
 
-    public static boolean hasTrashCan(String remoteType) {
-        switch (remoteType) {
+    public boolean hasTrashCan() {
+        switch (type) {
             case "drive":
             case "pcloud":
             case "yandex":
@@ -55,14 +55,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     public String getType() {
         return type;
-    }
-
-    public String getUnderlyingRemote() {
-        int i = remote.indexOf(":");
-        if (i > 0) {
-            return remote.substring(0, i - 1);
-        }
-        return null;
     }
 
     @Override
