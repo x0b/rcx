@@ -35,6 +35,7 @@ import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -51,12 +52,10 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     private static final String ARG_REMOTE = "remote_param";
-    private static final String ARG_REMOTE_TYPE = "remote_type_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private onShareDestincationSelected listener;
     private Context context;
-    private String remote;
-    private String remoteType;
+    private String remoteName;
     private String originalToolbarTitle;
     private int sortOrder;
     private Rclone rclone;
@@ -72,11 +71,10 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     public ShareFragment() {
     }
 
-    public static ShareFragment newInstance(String remote, String remoteType) {
+    public static ShareFragment newInstance(RemoteItem remoteItem) {
         ShareFragment fragment = new ShareFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_REMOTE, remote);
-        args.putString(ARG_REMOTE_TYPE, remoteType);
+        args.putParcelable(ARG_REMOTE, remoteItem);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,9 +85,12 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         if (getArguments() == null) {
             return;
         }
-        remote = getArguments().getString(ARG_REMOTE);
-        remoteType = getArguments().getString(ARG_REMOTE_TYPE);
-        String path = "//" + getArguments().getString(ARG_REMOTE);
+        RemoteItem remote = getArguments().getParcelable(ARG_REMOTE);
+        if (remote == null) {
+            return;
+        }
+        remoteName = remote.getName();
+        String path = "//" + remoteName;
 
         if (getContext() == null) {
             return;
@@ -136,7 +137,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         breadcrumbView = ((FragmentActivity)context).findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
-        breadcrumbView.addCrumb(remote, "//" + remote);
+        breadcrumbView.addCrumb(remoteName, "//" + remoteName);
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
@@ -151,7 +152,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onShareDestinationSelected(remote, directoryObject.getCurrentPath());
+                listener.onShareDestinationSelected(remoteName, directoryObject.getCurrentPath());
             }
         });
         view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
@@ -416,7 +417,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                                 return;
                             }
                             String newDir;
-                            if (directoryObject.getCurrentPath().equals("//" + remote)) {
+                            if (directoryObject.getCurrentPath().equals("//" + remoteName)) {
                                 newDir = input;
                             } else {
                                 newDir = directoryObject.getCurrentPath() + "/" + input;
@@ -444,7 +445,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
+            fileItemList = rclone.getDirectoryContent(remoteName, directoryObject.getCurrentPath());
             return fileItemList;
         }
 
@@ -491,7 +492,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected Boolean doInBackground(String... strings) {
             String newDir = strings[0];
-            return rclone.makeDirectory(remote, newDir);
+            return rclone.makeDirectory(remoteName, newDir);
         }
 
         @Override

@@ -142,7 +142,10 @@ public class MainActivity extends AppCompatActivity
         } else if (bundle != null && bundle.containsKey(APP_SHORTCUT_REMOTE_NAME) && bundle.containsKey(APP_SHORTCUT_REMOTE_TYPE)) {
             String remoteName = bundle.getString(APP_SHORTCUT_REMOTE_NAME);
             String remoteType = bundle.getString(APP_SHORTCUT_REMOTE_TYPE);
-            startRemote(remoteName, remoteType);
+            RemoteItem remoteItem = getRemoteItemFromName(remoteName, remoteType);
+            if (remoteItem != null) {
+                restoreRemote(remoteItem);
+            }
         } else {
             startRemotesFragment();
         }
@@ -277,6 +280,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
+    }
+
+    private RemoteItem getRemoteItemFromName(String remoteName, String remoteType) {
+        List<RemoteItem> remoteItemList = rclone.getRemotes();
+        for (RemoteItem remoteItem : remoteItemList) {
+            if (remoteItem.getName().equals(remoteName) && remoteItem.getType().equals(remoteType)) {
+                return remoteItem;
+            }
+        }
+        return null;
     }
 
     private void warnUserAboutOverwritingConfiguration() {
@@ -447,7 +460,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startRemote(RemoteItem remote) {
-        fragment = FileExplorerFragment.newInstance(remote.getName(), remote.getType());
+        fragment = FileExplorerFragment.newInstance(remote);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
         transaction.addToBackStack(null);
@@ -457,8 +470,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(false);
     }
 
-    private void startRemote(String remoteName, String remoteType) {
-        fragment = FileExplorerFragment.newInstance(remoteName, remoteType);
+    private void restoreRemote(RemoteItem remoteItem) {
+        fragment = FileExplorerFragment.newInstance(remoteItem);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
         transaction.commit();

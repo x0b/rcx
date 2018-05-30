@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -134,9 +133,10 @@ public class Rclone {
     }
 
     public List<RemoteItem> getRemotes() {
-        String[] command = createCommand("listremotes", "-l");
-        ArrayList<String> result = new ArrayList<>();
+        String[] command = createCommand("config", "dump");
+        StringBuilder output = new StringBuilder();
         Process process;
+        JSONObject remotesJSON;
         try {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
@@ -149,24 +149,54 @@ public class Rclone {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                result.add(line);
+                output.append(line);
             }
-        } catch (IOException | InterruptedException e) {
+
+            remotesJSON = new JSONObject(output.toString());
+        } catch (IOException | InterruptedException | JSONException e) {
             Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
             e.printStackTrace();
             return new ArrayList<>();
         }
 
         List<RemoteItem> remoteItemList = new ArrayList<>();
-        for (String line : result) {
-            String[] split = line.split(":");
-            RemoteItem remoteItem = new RemoteItem(split[0], split[1].trim());
-            remoteItemList.add(remoteItem);
+        Iterator<String> iterator = remotesJSON.keys();
+        while (iterator.hasNext()) {
+            RemoteItem remoteItem;
+            String key = iterator.next();
+            try {
+                JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
+                String type = remoteJSON.getString("type");
+                if (remoteJSON.has("remote")) {
+                    String remote = remoteJSON.getString("remote");
+                    remoteItem = new RemoteItem(key, type, remote);
+                } else {
+                    remoteItem = new RemoteItem(key, type);
+                }
+                remoteItemList.add(remoteItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (RemoteItem remoteItem : remoteItemList) {
+            if (!remoteItem.hasRemote()) {
+                continue;
+            }
+
+            String remotePath = remoteItem.getOriginalRemote();
+            int index = remotePath.indexOf(":");
+            String remote = remotePath.substring(0, index);
+            for (RemoteItem remoteItem1 : remoteItemList) {
+                if (remoteItem1.getName().equals(remote)) {
+                    remoteItem.setOriginalRemote(remoteItem1.getType());
+                }
+            }
         }
 
         return remoteItemList;
     }
-
+    
     public Process configCreate(List<String> options) {
         String[] command = createCommand("config", "create");
         String[] opt = options.toArray(new String[0]);

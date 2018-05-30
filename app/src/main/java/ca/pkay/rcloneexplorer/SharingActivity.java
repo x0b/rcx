@@ -137,7 +137,7 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
     }
 
     private void startRemote(RemoteItem remoteItem) {
-        fragment = ShareFragment.newInstance(remoteItem.getName(), remoteItem.getType());
+        fragment = ShareFragment.newInstance(remoteItem);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment);
         transaction.addToBackStack(null);
