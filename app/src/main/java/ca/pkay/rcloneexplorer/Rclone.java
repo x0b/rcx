@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +20,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -162,9 +160,9 @@ public class Rclone {
         }
 
         List<RemoteItem> remoteItemList = new ArrayList<>();
-        RemoteItem remoteItem;
         Iterator<String> iterator = remotesJSON.keys();
         while (iterator.hasNext()) {
+            RemoteItem remoteItem;
             String key = iterator.next();
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
@@ -181,9 +179,24 @@ public class Rclone {
             }
         }
 
+        for (RemoteItem remoteItem : remoteItemList) {
+            if (!remoteItem.hasRemote()) {
+                continue;
+            }
+
+            String remotePath = remoteItem.getOriginalRemote();
+            int index = remotePath.indexOf(":");
+            String remote = remotePath.substring(0, index);
+            for (RemoteItem remoteItem1 : remoteItemList) {
+                if (remoteItem1.getName().equals(remote)) {
+                    remoteItem.setOriginalRemote(remoteItem1.getType());
+                }
+            }
+        }
+
         return remoteItemList;
     }
-
+    
     public Process configCreate(List<String> options) {
         String[] command = createCommand("config", "create");
         String[] opt = options.toArray(new String[0]);

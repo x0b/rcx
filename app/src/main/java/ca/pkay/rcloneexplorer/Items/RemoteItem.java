@@ -8,22 +8,22 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     private String name;
     private String type;
-    private String remote;
+    private String originalRemote;
 
     public RemoteItem(String name, String type) {
         this.name = name;
         this.type = type;
     }
 
-    public RemoteItem(String name, String type, String remote) {
+    public RemoteItem(String name, String type, String originalRemote) {
         this(name, type);
-        this.remote = remote;
+        this.originalRemote = originalRemote;
     }
 
     private RemoteItem(Parcel in) {
         name = in.readString();
         type = in.readString();
-        remote = in.readString();
+        originalRemote = in.readString();
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -39,7 +39,11 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     };
 
     public boolean hasTrashCan() {
-        switch (type) {
+        String remoteType = type;
+        if (originalRemote != null && !originalRemote.trim().isEmpty()) {
+            remoteType = originalRemote;
+        }
+        switch (remoteType) {
             case "drive":
             case "pcloud":
             case "yandex":
@@ -57,6 +61,18 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return type;
     }
 
+    public boolean hasRemote() {
+        return originalRemote != null && !originalRemote.trim().isEmpty();
+    }
+
+    public void setOriginalRemote(String originalRemote) {
+        this.originalRemote = originalRemote;
+    }
+
+    public String getOriginalRemote() {
+        return originalRemote;
+    }
+
     @Override
     public int compareTo(@NonNull RemoteItem remoteItem) {
         return name.toLowerCase().compareTo(remoteItem.getName().toLowerCase());
@@ -71,6 +87,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(type);
-        dest.writeString(remote);
+        dest.writeString(originalRemote);
     }
 }
