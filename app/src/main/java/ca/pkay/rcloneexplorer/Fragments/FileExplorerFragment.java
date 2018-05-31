@@ -22,6 +22,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -89,7 +90,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private DirectoryObject directoryObject;
-    private ArrayList<FileItem> moveList;
+    private List<FileItem> moveList;
+    private List<FileItem> downloadList;
     private BreadcrumbView breadcrumbView;
     private Rclone rclone;
     private RemoteItem remote;
@@ -103,8 +105,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private int sortOrder;
     private Boolean isInMoveMode;
     private SpeedDialView fab;
-    private MenuItem menuPropertiesAction;
-    private MenuItem menuOpenAsAction;
     private MenuItem menuSelectAll;
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
@@ -363,9 +363,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(UploadService.REMOTE_ARG, remoteName);
                 context.startService(intent);
             }
-        } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
+        } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT) {
+            if (resultCode != FragmentActivity.RESULT_OK) {
+                downloadList.clear();
+                return;
+            }
             String selectedPath = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
-            final ArrayList<FileItem> downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
             recyclerViewAdapter.cancelSelection();
 
             for (FileItem downloadItem : downloadList) {
@@ -375,6 +378,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(DownloadService.REMOTE_ARG, remoteName);
                 context.startService(intent);
             }
+            downloadList.clear();
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);
@@ -384,9 +388,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.file_explorer_menu, menu);
-        menuPropertiesAction = menu.findItem(R.id.action_file_properties);
-        menuOpenAsAction = menu.findItem(R.id.action_open_as);
+        inflater.inflate(R.menu.file_explorer_folder_menu, menu);
         menuSelectAll = menu.findItem(R.id.action_select_all);
 
         if (!remote.hasTrashCan()) {
@@ -416,10 +418,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 context.startService(intent);
                 return true;
             case R.id.action_file_properties:
-                showFileProperties();
-                return true;
-            case R.id.action_open_as:
-                showOpenAsDialog();
+                //showFileProperties(); TODO
                 return true;
             case R.id.action_empty_trash:
                 new EmptyTrashTask().execute();
@@ -460,7 +459,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
-    private void showOpenAsDialog() {
+    private void showOpenAsDialog(final FileItem fileItem) {
         OpenAsDialog openAsDialog = new OpenAsDialog();
         openAsDialog
                 .setContext(context)
@@ -469,25 +468,23 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     @Override
                     public void onClickText() {
                         if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
-                            FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
                             new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
                         }
                     }
                     @Override
                     public void onClickAudio() {
                         if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
-                            new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(recyclerViewAdapter.getSelectedItems().get(0));
+                            new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(fileItem);
                         }
                     }
                     @Override
                     public void onClickVideo() {
                         if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
-                            new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(recyclerViewAdapter.getSelectedItems().get(0));
+                            new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(fileItem);
                         }
                     }
                     @Override
                     public void onClickImage() {
-                        FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
                         new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
                     }
                 });
@@ -496,11 +493,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
-    private void showFileProperties() {
-        if (!recyclerViewAdapter.isInSelectMode() || recyclerViewAdapter.getNumberOfSelectedItems() > 2) {
-            return;
-        }
-        FileItem fileItem = recyclerViewAdapter.getSelectedItems().get(0);
+    private void showFileProperties(FileItem fileItem) {
         FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog()
                 .withContext(context)
                 .setFile(fileItem)
@@ -536,28 +529,29 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                downloadClicked();
+                downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+                downloadFiles();
             }
         });
 
         view.findViewById(R.id.file_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                moveClicked();
+                moveFiles(recyclerViewAdapter.getSelectedItems());
             }
         });
 
         view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                renameClicked();
+                renameFiles(recyclerViewAdapter.getSelectedItems());
             }
         });
 
         view.findViewById(R.id.file_delete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteClicked();
+                deleteFiles(recyclerViewAdapter.getSelectedItems());
             }
         });
 
@@ -914,17 +908,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (numOfSelected > 1) {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
-                menuPropertiesAction.setVisible(false);
-                menuOpenAsAction.setVisible(false);
             } else {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(1f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(true);
-                menuPropertiesAction.setVisible(true);
-                if (recyclerViewAdapter.getSelectedItems().get(0).isDir()) {
-                    menuOpenAsAction.setVisible(false);
-                } else {
-                    menuOpenAsAction.setVisible(true);
-                }
             }
             lockOrientation();
         }
@@ -934,12 +920,61 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onFileDeselected() {
         if (!isInMoveMode) {
             ((FragmentActivity) context).setTitle(remoteType);
-            menuPropertiesAction.setVisible(false);
-            menuOpenAsAction.setVisible(false);
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
             unlockOrientation();
+        }
+    }
+
+    @Override
+    public void onFileOptionsClicked(View view, FileItem fileItem) {
+        showFileMenu(view, fileItem);
+    }
+
+    private void showFileMenu(View view, final FileItem fileItem) {
+        PopupMenu popupMenu = new PopupMenu(context, view);
+        popupMenu.getMenuInflater().inflate(R.menu.file_explorer_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_file_properties:
+                        showFileProperties(fileItem);
+                        break;
+                    case R.id.action_open_as:
+                        showOpenAsDialog(fileItem);
+                        break;
+                    case R.id.action_http_serve:
+                        Intent intent = new Intent(getContext(), StreamingService.class);
+                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
+                        intent.putExtra(StreamingService.REMOTE_ARG, remoteName);
+                        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                        context.startService(intent);
+                        break;
+                    case R.id.action_download:
+                        downloadList = new ArrayList<>();
+                        downloadList.add(fileItem);
+                        downloadFiles();
+                        break;
+                    case R.id.action_move:
+                        moveFiles(Collections.singletonList(fileItem));
+                        break;
+                    case R.id.action_rename:
+                        renameFiles(Collections.singletonList(fileItem));
+                        break;
+                    case R.id.action_delete:
+                        deleteFiles(Collections.singletonList(fileItem));
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
+        if (fileItem.isDir()) {
+            popupMenu.getMenu().findItem(R.id.action_open_as).setVisible(false);
         }
     }
 
@@ -1008,12 +1043,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         moveBar.setVisibility(View.GONE);
     }
 
-    private void deleteClicked() {
-        if (!recyclerViewAdapter.isInSelectMode()) {
-            return;
-        }
-
-        final ArrayList<FileItem> deleteList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+    private void deleteFiles(final List<FileItem> deleteList) {
         String title = "Delete " + deleteList.size();
         final String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
         title += (deleteList.size() > 1) ? " items?" : " item?";
@@ -1047,12 +1077,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         builder.create().show();
     }
 
-    private void renameClicked() {
-        if (!recyclerViewAdapter.isInSelectMode() || recyclerViewAdapter.getNumberOfSelectedItems() > 1) {
-            return;
-        }
-
-        List<FileItem> list = recyclerViewAdapter.getSelectedItems();
+    private void renameFiles(List<FileItem> list) {
         final FileItem renameItem = list.get(0);
         if (getFragmentManager() != null) {
             new InputDialog()
@@ -1083,20 +1108,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
-    private void downloadClicked() {
-        if (!recyclerViewAdapter.isInSelectMode()) {
-            return;
-        }
+    private void downloadFiles() {
         Intent intent = new Intent(context, FilePicker.class);
         intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
         startActivityForResult(intent, FILE_PICKER_DOWNLOAD_RESULT);
     }
 
-    private void moveClicked() {
-        if (recyclerViewAdapter.getNumberOfSelectedItems() < 1) {
-            return;
-        }
-        moveList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+    private void moveFiles(List<FileItem> moveItems) {
+        moveList = new ArrayList<>(moveItems);
         recyclerViewAdapter.cancelSelection();
         recyclerViewAdapter.setMoveMode(true);
         isInMoveMode = true;
@@ -1175,7 +1194,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if (swipeRefreshLayout != null&& !silentFetch) {
+            if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(true);
             }
         }

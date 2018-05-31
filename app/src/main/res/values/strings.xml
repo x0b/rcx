@@ -227,7 +227,7 @@
     <string name="webdav_user_hint">User name</string>
     <string name="webdav_pass_hint">Password</string>
     <string name="provider_webdav">Webdav</string>
-    <string name="error_creating_remote">Error creating originalRemote</string>
+    <string name="error_creating_remote">Error creating remote</string>
     <string name="ftp_default_port">21</string>
     <string name="sftp_default_port">22</string>
     <string name="remote_creation_success">Remote created successfully</string>
@@ -240,11 +240,11 @@
     <string name="onedrive_account_type">OneDrive account type</string>
     <string name="personal_account_type">Personal account</string>
     <string name="business_account_type">Business account</string>
-    <string name="alias_remote_hint">Click to select originalRemote or path to alias</string>
-    <string name="encrypt_remote_hint">Click to select originalRemote or path to encrypt</string>
+    <string name="alias_remote_hint">Click to select remote or path to alias</string>
+    <string name="encrypt_remote_hint">Click to select remote or path to encrypt</string>
     <string name="remote_cannot_be_empty">Remote can\'t be empty</string>
     <string name="provider_alias">Alias</string>
-    <string name="select_remote">Select a originalRemote</string>
+    <string name="select_remote">Select a remote</string>
     <string name="select_path_to_alias">Select path to Alias</string>
     <string name="select_path_to_crypt">Select path to Encrypt</string>
     <string name="webdav_spinner_prompt">Name of the Webdav service</string>
@@ -273,8 +273,9 @@
     <string name="app_update_notification_title">New version of Rclone Explorer is available on GitHub</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
     <string name="app_updates_icon_content_description">App updates icon</string>
-    <string name="delete_remote_title">Delete originalRemote?</string>
+    <string name="delete_remote_title">Delete remote?</string>
     <string name="empty_trash">Empty trash</string>
     <string name="trash_emptied">Trash emptied</string>
     <string name="error_emptying_trash">Error emptying trash</string>
+    <string name="file_options_content_description">File options</string>
 </resources>

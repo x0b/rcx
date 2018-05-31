@@ -41,8 +41,9 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/icons"
                 android:orientation="vertical"
+                android:layout_toStartOf="@id/file_options"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="0dp"
                 android:layout_centerVertical="true">
 
                 <TextView
@@ -87,6 +88,21 @@
                         tools:text="2 MB"/>
                 </LinearLayout>
             </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/file_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:paddingStart="16dp"
+            android:paddingTop="26dp"
+            android:paddingBottom="26dp"
+            android:paddingEnd="16dp"
+            android:src="@drawable/ic_more_vert"
+            android:tint="?attr/iconTint"
+            android:contentDescription="@string/file_options_content_description" />
 
         <View
             android:layout_width="match_parent"

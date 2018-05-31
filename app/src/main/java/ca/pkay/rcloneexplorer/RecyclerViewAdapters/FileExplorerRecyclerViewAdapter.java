@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,12 +31,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private Boolean isInSearchMode;
     private Boolean canSelect;
     private int cardColor;
+    private Boolean optionsDisabled;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
         void onDirectoryClicked(FileItem fileItem);
         void onFilesSelected();
         void onFileDeselected();
+        void onFileOptionsClicked(View view, FileItem fileItem);
     }
 
     public FileExplorerRecyclerViewAdapter(Context context, View emptyView, View noSearchResultsView, OnClickListener listener) {
@@ -56,6 +59,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
         theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
         selectionColor = typedValue.data;
+        optionsDisabled = false;
     }
 
     @NonNull
@@ -105,6 +109,20 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.view.setAlpha(1f);
         }
 
+        if ((isInSelectMode || isInMoveMode) && !optionsDisabled) {
+            holder.fileOptions.setVisibility(View.INVISIBLE);
+        } else if (optionsDisabled) {
+            holder.fileOptions.setVisibility(View.GONE);
+        } else {
+            holder.fileOptions.setVisibility(View.VISIBLE);
+            holder.fileOptions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onFileOptionsClicked(v, item);
+                }
+            });
+        }
+
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,6 +161,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else {
             return files.size();
         }
+    }
+
+    public void disableFileOptions() {
+        optionsDisabled = true;
     }
 
     public List<FileItem> getCurrentContent() {
@@ -321,6 +343,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.view.setBackgroundColor(selectionColor);
             listener.onFilesSelected();
         }
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -333,6 +356,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         public final TextView fileModTime;
         public final TextView fileSize;
         public final TextView interpunct;
+        public final ImageButton fileOptions;
         public FileItem fileItem;
 
         ViewHolder(View itemView) {
@@ -344,6 +368,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             this.fileName = view.findViewById(R.id.file_name);
             this.fileModTime = view.findViewById(R.id.file_modtime);
             this.fileSize = view.findViewById(R.id.file_size);
+            this.fileOptions = view.findViewById(R.id.file_options);
             this.interpunct = view.findViewById(R.id.interpunct);
         }
     }

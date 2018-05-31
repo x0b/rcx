@@ -91,6 +91,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         View emptyFolderView = view.findViewById(R.id.empty_folder_view);
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
+        recyclerViewAdapter.disableFileOptions();
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);
         recyclerViewAdapter.setCanSelect(false);
@@ -223,6 +224,11 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
     @Override
     public void onFileDeselected() {
+        // don't do anything
+    }
+
+    @Override
+    public void onFileOptionsClicked(View view, FileItem fileItem) {
         // don't do anything
     }
 

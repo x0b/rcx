@@ -130,6 +130,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         View emptyFolderView = view.findViewById(R.id.empty_folder_view);
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
+        recyclerViewAdapter.disableFileOptions();
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);
         recyclerViewAdapter.setCanSelect(false);
@@ -257,6 +258,11 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
     @Override
     public void onFileDeselected() {
+        // Don't do anything
+    }
+
+    @Override
+    public void onFileOptionsClicked(View view, FileItem fileItem) {
         // Don't do anything
     }
 
