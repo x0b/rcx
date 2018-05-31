@@ -186,15 +186,33 @@ public class Rclone {
 
             String remotePath = remoteItem.getOriginalRemote();
             int index = remotePath.indexOf(":");
-            String remote = remotePath.substring(0, index);
-            for (RemoteItem remoteItem1 : remoteItemList) {
-                if (remoteItem1.getName().equals(remote)) {
-                    remoteItem.setOriginalRemote(remoteItem1.getType());
+            String remoteString = remotePath.substring(0, index);
+            while (true) {
+                RemoteItem remote = findRemote(remoteItemList, remoteString);
+                if (remote == null) {
+                    break;
                 }
+                if (remote.getType().equals("crypt") || remote.getType().equals("alias")) {
+                    remotePath = remote.getOriginalRemote();
+                    index = remotePath.indexOf(":");
+                    remoteString = remotePath.substring(0, index);
+                    continue;
+                }
+                remoteItem.setOriginalRemote(remote.getType());
+                break;
             }
         }
 
         return remoteItemList;
+    }
+
+    private RemoteItem findRemote(List<RemoteItem> remoteItemList, String remote) {
+        for (RemoteItem remoteItem : remoteItemList) {
+            if (remoteItem.getName().equals(remote)) {
+                return remoteItem;
+            }
+        }
+        return null;
     }
     
     public Process configCreate(List<String> options) {
