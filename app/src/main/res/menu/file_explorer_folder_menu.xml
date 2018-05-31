@@ -32,6 +32,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_link"
+        android:title="@string/link"
+        android:orderInCategory="5"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_http_serve"
         android:title="@string/http_serve"
         android:orderInCategory="6"

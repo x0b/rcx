@@ -422,6 +422,34 @@ public class Rclone {
         return process != null && process.exitValue() == 0;
     }
 
+    public String link(String remote, String filePath) {
+        String linkPath = remote + ":";
+        if (!filePath.equals("//" + remote)) {
+            linkPath += filePath;
+        }
+        String[] command = createCommand("link", linkPath);
+        Process process = null;
+
+        try {
+            process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                logErrorOutput(process);
+                return null;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+             return reader.readLine();
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            if (process != null) {
+                logErrorOutput(process);
+            }
+        }
+        return null;
+    }
+
     public String calculateMD5(String remote, FileItem fileItem) {
         String remoteAndPath = remote + ":" + fileItem.getName();
         String[] command = createCommand("md5sum", remoteAndPath);

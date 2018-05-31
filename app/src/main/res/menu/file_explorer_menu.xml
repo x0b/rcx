@@ -33,6 +33,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_link"
+        android:title="@string/link"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_http_serve"
         android:title="@string/http_serve"
         app:showAsAction="never" />
