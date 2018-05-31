@@ -168,8 +168,14 @@ public class Rclone {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
                 String type = remoteJSON.getString("type");
                 if (remoteJSON.has("remote")) {
-                    String remote = remoteJSON.getString("remote");
-                    remoteItem = new RemoteItem(key, type, remote);
+                    String remotePath = remoteJSON.getString("remote");
+                    int index = remotePath.indexOf(":");
+                    RemoteItem remote = getRemote(remotesJSON, remotePath.substring(0, index));
+                    if (remote.hasRemote()) {
+                        remoteItem = new RemoteItem(key, type, remote.getRemote());
+                    } else {
+                        remoteItem = new RemoteItem(key, type, remote.getType());
+                    }
                 } else {
                     remoteItem = new RemoteItem(key, type);
                 }
@@ -179,42 +185,40 @@ public class Rclone {
             }
         }
 
-        for (RemoteItem remoteItem : remoteItemList) {
-            if (!remoteItem.hasRemote()) {
-                continue;
-            }
-
-            String remotePath = remoteItem.getOriginalRemote();
-            int index = remotePath.indexOf(":");
-            String remoteString = remotePath.substring(0, index);
-            while (true) {
-                RemoteItem remote = findRemote(remoteItemList, remoteString);
-                if (remote == null) {
-                    break;
-                }
-                if (remote.getType().equals("crypt") || remote.getType().equals("alias")) {
-                    remotePath = remote.getOriginalRemote();
-                    index = remotePath.indexOf(":");
-                    remoteString = remotePath.substring(0, index);
-                    continue;
-                }
-                remoteItem.setOriginalRemote(remote.getType());
-                break;
-            }
-        }
-
         return remoteItemList;
     }
 
-    private RemoteItem findRemote(List<RemoteItem> remoteItemList, String remote) {
-        for (RemoteItem remoteItem : remoteItemList) {
-            if (remoteItem.getName().equals(remote)) {
+    private RemoteItem getRemote(JSONObject remotesJSON, String remoteName) {
+        RemoteItem nullRemoteItem = new RemoteItem("", "", "");
+        Iterator<String> iterator = remotesJSON.keys();
+        while (iterator.hasNext()) {
+            RemoteItem remoteItem;
+            String key = iterator.next();
+
+            if (!key.equals(remoteName)) {
+                continue;
+            }
+
+            try {
+                JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
+                String type = remoteJSON.getString("type");
+                if (remoteJSON.has("remote")) {
+                    String remotePath = remoteJSON.getString("remote");
+                    int index = remotePath.indexOf(":");
+                    RemoteItem remote = getRemote(remotesJSON, remotePath.substring(0, index));
+                    remoteItem = new RemoteItem(key, type, remote.getType());
+                } else {
+                    remoteItem = new RemoteItem(key, type);
+                }
                 return remoteItem;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
-        return null;
+
+        return nullRemoteItem;
     }
-    
+
     public Process configCreate(List<String> options) {
         String[] command = createCommand("config", "create");
         String[] opt = options.toArray(new String[0]);

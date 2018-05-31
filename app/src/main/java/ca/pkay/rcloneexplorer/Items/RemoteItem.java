@@ -8,22 +8,22 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     private String name;
     private String type;
-    private String originalRemote;
+    private String remote;
 
     public RemoteItem(String name, String type) {
         this.name = name;
         this.type = type;
     }
 
-    public RemoteItem(String name, String type, String originalRemote) {
+    public RemoteItem(String name, String type, String remote) {
         this(name, type);
-        this.originalRemote = originalRemote;
+        this.remote = remote;
     }
 
     private RemoteItem(Parcel in) {
         name = in.readString();
         type = in.readString();
-        originalRemote = in.readString();
+        remote = in.readString();
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -40,8 +40,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     public boolean hasTrashCan() {
         String remoteType = type;
-        if (originalRemote != null && !originalRemote.trim().isEmpty()) {
-            remoteType = originalRemote;
+        if (remote != null && !remote.trim().isEmpty()) {
+            remoteType = remote;
         }
         switch (remoteType) {
             case "drive":
@@ -62,15 +62,11 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     }
 
     public boolean hasRemote() {
-        return originalRemote != null && !originalRemote.trim().isEmpty();
+        return remote != null && !remote.trim().isEmpty();
     }
 
-    public void setOriginalRemote(String originalRemote) {
-        this.originalRemote = originalRemote;
-    }
-
-    public String getOriginalRemote() {
-        return originalRemote;
+    public String getRemote() {
+        return remote;
     }
 
     @Override
@@ -87,6 +83,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(type);
-        dest.writeString(originalRemote);
+        dest.writeString(remote);
     }
 }
