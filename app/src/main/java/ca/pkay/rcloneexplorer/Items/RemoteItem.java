@@ -9,21 +9,25 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private String name;
     private String type;
     private String remote;
+    private boolean isCrypt;
 
     public RemoteItem(String name, String type) {
         this.name = name;
         this.type = type;
+        this.isCrypt = type.equals("crypt");
     }
 
     public RemoteItem(String name, String type, String remote) {
         this(name, type);
         this.remote = remote;
+        this.isCrypt = remote.equals("crypt") || type.equals("crypt");
     }
 
     private RemoteItem(Parcel in) {
         name = in.readString();
         type = in.readString();
         remote = in.readString();
+        isCrypt = in.readByte() != 0;
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -69,6 +73,14 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return remote;
     }
 
+    public boolean isCrypt() {
+        return this.isCrypt;
+    }
+
+    public void setIsCrypt(boolean isCrypt) {
+        this.isCrypt = isCrypt;
+    }
+
     @Override
     public int compareTo(@NonNull RemoteItem remoteItem) {
         return name.toLowerCase().compareTo(remoteItem.getName().toLowerCase());
@@ -84,5 +96,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         dest.writeString(name);
         dest.writeString(type);
         dest.writeString(remote);
+        dest.writeByte((byte) (isCrypt ? 1 : 0));
     }
 }

@@ -39,7 +39,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -398,11 +397,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
-        // TODO check if remote has crypt
         if (remote.hasRemote() && remote.getRemote().equals("crypt")) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
-        if (remote.getType().equals("crypt")) {
+        if (remote.isCrypt()) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
     }
@@ -513,7 +511,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setRclone(rclone)
                 .setRemote(remoteName)
                 .setDarkTheme(isDarkTheme);
-        if (remoteType.equals("crypt")) { // TODO check if remote has crypt
+        if (remote.isCrypt()) {
             filePropertiesDialog.withHashCalculations(false);
         }
         if (getFragmentManager() != null) {
@@ -992,11 +990,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (fileItem.isDir()) {
             popupMenu.getMenu().findItem(R.id.action_open_as).setVisible(false);
         }
-        // TODO check if remote has crypt
         if (remote.hasRemote() && remote.getRemote().equals("crypt")) {
             popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
         }
-        if (remote.getType().equals("crypt")) {
+        if (remote.isCrypt()) {
             popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
         }
     }

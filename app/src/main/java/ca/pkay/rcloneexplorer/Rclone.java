@@ -176,6 +176,9 @@ public class Rclone {
                     } else {
                         remoteItem = new RemoteItem(key, type, remote.getType());
                     }
+                    if (remote.isCrypt()) {
+                        remoteItem.setIsCrypt(true);
+                    }
                 } else {
                     remoteItem = new RemoteItem(key, type);
                 }
@@ -207,6 +210,9 @@ public class Rclone {
                     int index = remotePath.indexOf(":");
                     RemoteItem remote = getRemote(remotesJSON, remotePath.substring(0, index));
                     remoteItem = new RemoteItem(key, type, remote.getType());
+                    if (remote.isCrypt()) {
+                        remoteItem.setIsCrypt(true);
+                    }
                 } else {
                     remoteItem = new RemoteItem(key, type);
                 }
