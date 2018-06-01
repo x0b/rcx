@@ -1,3 +1,16 @@
+### 1.3.2
+* **New:** File options for individual files
+* **New:** Generate public link to file/folder (rclone link)
+* **New:** Support cache remotes
+* **New:** Support cache remote creation
+* **New:** Make anonymous crash reporting optional
+* **Fix:** Sort remotes
+* **Fix:** Refreshing while in search mode
+* **Fix:** Detect remote type of alias/crypt remotes to show/hide specific options
+* **Update:** Hint and helper text for salt in crypt config
+
+***
+
 ### 1.3.1
 * **New:** Option to delete remotes
 * **New:** Option to export rclone config file
