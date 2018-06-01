@@ -45,6 +45,11 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
+    <style name="NumberPicker" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">?attr/textColorPrimary</item>
+        <item name="android:colorControlNormal">?attr/textColorSecondary</item>
+    </style>
+
     <style name="LightTheme">
         <item name="backgroundColor">#FAFAFA</item>
         <item name="cardColor">#FFFFFF</item>

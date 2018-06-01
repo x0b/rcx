@@ -22,7 +22,7 @@ public class RemotesConfigList extends Fragment {
         void onProviderSelected(int provider);
     }
 
-    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX"));
+    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("CACHE", "AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX"));
     private int[] selected = {-1};
     private RadioButton lastSelected;
     private ProviderSelectedListener listener;
@@ -239,9 +239,21 @@ public class RemotesConfigList extends Fragment {
             }
         });
 
+        View providerCache = View.inflate(context, R.layout.config_list_item_template, null);
+        ((TextView)providerCache.findViewById(R.id.provider_tv)).setText(R.string.provider_cache);
+        providerCache.findViewById(R.id.provider).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RadioButton rb = v.findViewById(R.id.provider_rb);
+                setSelected(rb, "CACHE");
+            }
+        });
+
+
         listContent.addView(providerAlias);
         listContent.addView(providerB2);
         listContent.addView(providerBox);
+        listContent.addView(providerCache);
         listContent.addView(providerCrypt);
         listContent.addView(providerDropbox);
         listContent.addView(providerFTP);

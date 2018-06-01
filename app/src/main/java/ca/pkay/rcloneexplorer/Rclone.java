@@ -56,6 +56,26 @@ public class Rclone {
         return command;
     }
 
+    private String[] createCommandWithOptions(String ...args) {
+        int arraySize = args.length + 7;
+        String[] command = new String[arraySize];
+        String cachePath = context.getCacheDir().getAbsolutePath();
+
+        command[0] = rclone;
+        command[1] = "--cache-chunk-path";
+        command[2] = cachePath;
+        command[3] = "--cache-db-path";
+        command[4] = cachePath;
+        command[5] = "--config";
+        command[6] = rcloneConf;
+
+        int i = 7;
+        for (String arg : args) {
+            command[i++] = arg;
+        }
+        return command;
+    }
+
     private void logErrorOutput(Process process) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean isLoggingEnable = sharedPreferences.getBoolean(context.getString(R.string.pref_key_logs), false);
@@ -85,7 +105,7 @@ public class Rclone {
             remoteAndPath += path;
         }
 
-        String[] command = createCommand("lsjson", remoteAndPath);
+        String[] command = createCommandWithOptions("lsjson", remoteAndPath);
 
         JSONArray results;
         Process process;
@@ -244,7 +264,7 @@ public class Rclone {
     }
 
     public void deleteRemote(String remoteName) {
-        String[] command = createCommand("config", "delete", remoteName);
+        String[] command = createCommandWithOptions("config", "delete", remoteName);
         Process process;
 
         try {
@@ -276,7 +296,7 @@ public class Rclone {
 
     public Process serveHttp(String remote, String servePath) {
         String path = (servePath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + servePath;
-        String[] command = createCommand("serve", "http", path);
+        String[] command = createCommandWithOptions("serve", "http", path);
 
         try {
             return Runtime.getRuntime().exec(command);
@@ -297,7 +317,7 @@ public class Rclone {
         } else {
             localFilePath = downloadPath;
         }
-        command = createCommand("copy", remoteFilePath, localFilePath);
+        command = createCommandWithOptions("copy", remoteFilePath, localFilePath);
 
         try {
             return Runtime.getRuntime().exec(command);
@@ -320,7 +340,7 @@ public class Rclone {
             path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
         }
 
-        command = createCommand("copy", uploadFile, path);
+        command = createCommandWithOptions("copy", uploadFile, path);
 
         try {
             return Runtime.getRuntime().exec(command);
@@ -338,9 +358,9 @@ public class Rclone {
 
         filePath = remote + ":" + deleteItem.getPath();
         if (deleteItem.isDir()) {
-            command = createCommand("purge", filePath);
+            command = createCommandWithOptions("purge", filePath);
         } else {
-            command = createCommand("delete", filePath);
+            command = createCommandWithOptions("delete", filePath);
         }
 
         try {
@@ -358,7 +378,7 @@ public class Rclone {
 
     public Boolean makeDirectory(String remote, String path) {
         String newDir = remote + ":" + path;
-        String[] command = createCommand("mkdir", newDir);
+        String[] command = createCommandWithOptions("mkdir", newDir);
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
@@ -381,7 +401,7 @@ public class Rclone {
 
         oldFilePath = remote + ":" + moveItem.getPath();
         newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + moveItem.getName() : remote + ":" + newLocation + "/" + moveItem.getName();
-        command = createCommand("moveto", oldFilePath, newFilePath);
+        command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
@@ -399,7 +419,7 @@ public class Rclone {
     public Boolean moveTo(String remote, String oldFile, String newFile) {
         String oldFilePath = remote + ":" + oldFile;
         String newFilePath = remote + ":" + newFile;
-        String[] command = createCommand("moveto", oldFilePath, newFilePath);
+        String[] command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         try {
             Process process = Runtime.getRuntime().exec(command);
             process.waitFor();
@@ -415,7 +435,7 @@ public class Rclone {
     }
 
     public boolean emptyTrashCan(String remote) {
-        String[] command = createCommand("cleanup", remote + ":");
+        String[] command = createCommandWithOptions("cleanup", remote + ":");
         Process process = null;
 
         try {
@@ -433,7 +453,7 @@ public class Rclone {
         if (!filePath.equals("//" + remote)) {
             linkPath += filePath;
         }
-        String[] command = createCommand("link", linkPath);
+        String[] command = createCommandWithOptions("link", linkPath);
         Process process = null;
 
         try {
@@ -458,7 +478,7 @@ public class Rclone {
 
     public String calculateMD5(String remote, FileItem fileItem) {
         String remoteAndPath = remote + ":" + fileItem.getName();
-        String[] command = createCommand("md5sum", remoteAndPath);
+        String[] command = createCommandWithOptions("md5sum", remoteAndPath);
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -483,7 +503,7 @@ public class Rclone {
 
     public String calculateSHA1(String remote, FileItem fileItem) {
         String remoteAndPath = remote + ":" + fileItem.getName();
-        String[] command = createCommand("sha1sum", remoteAndPath);
+        String[] command = createCommandWithOptions("sha1sum", remoteAndPath);
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);

@@ -95,11 +95,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@null"
             android:paddingStart="16dp"
             android:paddingTop="26dp"
             android:paddingBottom="26dp"
             android:paddingEnd="16dp"
+            android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_more_vert"
             android:tint="?attr/iconTint"
             android:contentDescription="@string/file_options_content_description" />
