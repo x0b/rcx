@@ -1,0 +1,442 @@
+package ca.pkay.rcloneexplorer.RemoteConfig;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import ca.pkay.rcloneexplorer.Dialogs.NumberPickerDialog;
+import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
+import es.dmoral.toasty.Toasty;
+
+public class CacheConfig extends Fragment {
+
+    private final String OUTSTATE_REMOTE_PATH = "ca.pkay.rcexplorer.CacheConfig.REMOTE_PATH";
+    private final String OUTSTATE_CHUNK_SIZE = "ca.pkay.rcexplorer.CacheConfig.CHUNK_SIZE";
+    private final String OUTSTATE_CACHE_EXPIRY = "ca.pkay.rcexplorer.CacheConfig.CACHE_EXPIRY";
+    private final String OUTSTATE_CACHE_SIZE = "ca.pkay.rcexplorer.CacheConfig.CACHE_SIZE";
+    private Context context;
+    private Rclone rclone;
+    private TextInputLayout remoteNameInputLayout;
+    private EditText remoteName;
+    private TextView remote;
+    private TextView chunkSize;
+    private TextView infoAge;
+    private TextView chunkTotalSize;
+    private View remoteSelectorLine;
+    private RemoteItem selectedRemote;
+    private String remotePath;
+    private String chunkSizeString;
+    private String infoAgeString;
+    private String chunkTotalSizeString;
+    private int defaultValueChunkSize;
+    private int defaultValueCacheAge;
+    private int defaultValueCacheSize;
+    private boolean isDarkTheme;
+
+    public CacheConfig() {
+        defaultValueChunkSize = 1;
+        defaultValueCacheAge = 1;
+        defaultValueCacheSize = 1;
+    }
+
+    public static CacheConfig newInstance() { return new CacheConfig(); }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getContext() == null) {
+            return;
+        }
+        context = getContext();
+        rclone = new Rclone(context);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.remote_config_form, container, false);
+        setUpForm(view);
+        return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (remotePath != null) {
+            outState.putString(OUTSTATE_REMOTE_PATH, remotePath);
+        }
+        if (chunkSizeString != null) {
+            outState.putString(OUTSTATE_CHUNK_SIZE, chunkSizeString);
+        }
+        if (infoAgeString != null) {
+            outState.putString(OUTSTATE_CACHE_EXPIRY, infoAgeString);
+        }
+        if (chunkTotalSizeString != null) {
+            outState.putString(OUTSTATE_CACHE_SIZE, chunkTotalSizeString);
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState == null) {
+            return;
+        }
+
+        String savedRemotePath = savedInstanceState.getString(OUTSTATE_REMOTE_PATH);
+        if (savedRemotePath != null) {
+            remotePath = savedRemotePath;
+            remote.setText(remotePath);
+        }
+
+        String savedChunkSize = savedInstanceState.getString(OUTSTATE_CHUNK_SIZE);
+        if (savedChunkSize != null) {
+            chunkSizeString = savedChunkSize;
+            chunkSize.setText(getString(R.string.selected_chunk_size, chunkSizeString));
+        }
+
+        String savedInfoAge = savedInstanceState.getString(OUTSTATE_CACHE_EXPIRY);
+        if (savedInfoAge != null) {
+            infoAgeString = savedInfoAge;
+            infoAge.setText(getString(R.string.selected_cache_expiry, infoAgeString));
+        }
+
+        String savedChunkTotalSize = savedInstanceState.getString(OUTSTATE_CACHE_SIZE);
+        if (savedChunkTotalSize != null) {
+            chunkTotalSizeString = savedChunkTotalSize;
+            chunkTotalSize.setText(getString(R.string.selected_cache_size, chunkTotalSizeString));
+        }
+    }
+
+    private void setUpForm(View view) {
+        View content = view.findViewById(R.id.form_content);
+        int padding = getResources().getDimensionPixelOffset(R.dimen.config_form_template);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, padding);
+
+        remoteNameInputLayout = view.findViewById(R.id.remote_name_layout);
+        remoteNameInputLayout.setVisibility(View.VISIBLE);
+        remoteName = view.findViewById(R.id.remote_name);
+
+        View remoteSelectorTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
+        remoteSelectorTemplate.setLayoutParams(params);
+        ((ViewGroup) content).addView(remoteSelectorTemplate);
+
+        remoteSelectorLine = view.findViewById(R.id.text_view_line);
+        remote = remoteSelectorTemplate.findViewById(R.id.text_view);
+        remote.setText(R.string.alias_remote_hint);
+        remoteSelectorTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setRemote();
+            }
+        });
+
+        View chunkSizeTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
+        chunkSizeTemplate.setLayoutParams(params);
+        ((ViewGroup) content).addView(chunkSizeTemplate);
+
+        chunkSize = chunkSizeTemplate.findViewById(R.id.text_view);
+        chunkSize.setText(R.string.chunk_size_hint);
+        chunkSizeTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChunkSizeDialog();
+            }
+        });
+
+        View infoAgeTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
+        infoAgeTemplate.setLayoutParams(params);
+        ((ViewGroup) content).addView(infoAgeTemplate);
+
+        infoAge = infoAgeTemplate.findViewById(R.id.text_view);
+        infoAge.setText(R.string.info_age_hint);
+        infoAgeTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCacheExpiryDialog();
+            }
+        });
+
+        View chunkTotalSizeTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
+        chunkTotalSizeTemplate.setLayoutParams(params);
+        ((ViewGroup) content).addView(chunkTotalSizeTemplate);
+
+        chunkTotalSize = chunkTotalSizeTemplate.findViewById(R.id.text_view);
+        chunkTotalSize.setText(R.string.chunk_total_size_hint);
+        chunkTotalSizeTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCacheSizeDialog();
+            }
+        });
+
+        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setUpRemote();
+            }
+        });
+
+        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
+            }
+        });
+    }
+
+    private void showChunkSizeDialog() {
+        NumberPickerDialog numberPickerDialog = new NumberPickerDialog()
+                .withContext(context)
+                .setDarkTheme(isDarkTheme)
+                .setNumberUnits(NumberPickerDialog.UNITS_STORAGE)
+                .setTitle(R.string.chunk_size)
+                .setDefaultValue(defaultValueChunkSize)
+                .setListener(new NumberPickerDialog.OnValueSelected() {
+                    @Override
+                    public void onValueSelected(int number, int units) {
+                        setChunkSize(number, units);
+                    }
+                });
+        if (getFragmentManager() != null) {
+            numberPickerDialog.show(getFragmentManager(), "number picker");
+        }
+    }
+
+    private void setChunkSize(int size, int units) {
+        defaultValueChunkSize = size;
+        chunkSizeString = String.valueOf(size);
+
+        switch (units) {
+            case NumberPickerDialog.UNITS_MB:
+                chunkSizeString += "M";
+                break;
+            case NumberPickerDialog.UNITS_GB:
+                chunkSizeString += "G";
+                break;
+        }
+
+        chunkSize.setText(getString(R.string.selected_chunk_size, chunkSizeString));
+    }
+
+    private void showCacheExpiryDialog() {
+        NumberPickerDialog numberPickerDialog = new NumberPickerDialog()
+                .withContext(context)
+                .setDarkTheme(isDarkTheme)
+                .setNumberUnits(NumberPickerDialog.UNITS_TIME)
+                .setTitle(R.string.cache_expiry)
+                .setDefaultValue(defaultValueCacheAge)
+                .setListener(new NumberPickerDialog.OnValueSelected() {
+                    @Override
+                    public void onValueSelected(int number, int units) {
+                        setCacheExpiry(number, units);
+                    }
+                });
+        if (getFragmentManager() != null) {
+            numberPickerDialog.show(getFragmentManager(), "number picker");
+        }
+    }
+
+    private void setCacheExpiry(int time, int units) {
+        defaultValueCacheAge = time;
+        infoAgeString = String.valueOf(time);
+
+        switch (units) {
+            case NumberPickerDialog.UNITS_S:
+                infoAgeString += "s";
+                break;
+            case NumberPickerDialog.UNITS_M:
+                infoAgeString += "m";
+                break;
+            case NumberPickerDialog.UNITS_H:
+                infoAgeString += "h";
+                break;
+        }
+
+        infoAge.setText(getString(R.string.selected_cache_expiry, infoAgeString));
+    }
+
+    private void showCacheSizeDialog() {
+        NumberPickerDialog numberPickerDialog = new NumberPickerDialog()
+                .withContext(context)
+                .setDarkTheme(isDarkTheme)
+                .setNumberUnits(NumberPickerDialog.UNITS_STORAGE)
+                .setTitle(R.string.cache_size)
+                .setDefaultValue(defaultValueCacheSize)
+                .setListener(new NumberPickerDialog.OnValueSelected() {
+                    @Override
+                    public void onValueSelected(int number, int units) {
+                        setCacheSize(number, units);
+                    }
+                });
+        if (getFragmentManager() != null) {
+            numberPickerDialog.show(getFragmentManager(), "number picker");
+        }
+    }
+
+    private void setCacheSize(int size, int units) {
+        defaultValueCacheSize = size;
+        chunkTotalSizeString = String.valueOf(size);
+
+        switch (units) {
+            case NumberPickerDialog.UNITS_MB:
+                chunkTotalSizeString += "M";
+                break;
+            case NumberPickerDialog.UNITS_GB:
+                chunkTotalSizeString += "G";
+                break;
+        }
+
+        chunkTotalSize.setText(getString(R.string.selected_cache_size, chunkTotalSizeString));
+    }
+
+    private void setRemote() {
+        final List<RemoteItem> remotes = rclone.getRemotes();
+        if (remotes.isEmpty()) {
+            Toasty.info(context, getString(R.string.no_remotes), Toast.LENGTH_SHORT, true).show();
+            return;
+        }
+
+        String[] options = new String[remotes.size()];
+        int i = 0;
+        for (RemoteItem remote : remotes) {
+            options[i++] = remote.getName();
+        }
+        Arrays.sort(options);
+
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder.setTitle(R.string.select_remote)
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedRemote = null;
+                    }
+                })
+                .setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (selectedRemote == null) {
+                            Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
+                            setRemote();
+                        } else {
+                            setPath();
+                        }
+                    }
+                })
+                .setSingleChoiceItems(options, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedRemote = remotes.get(which);
+                    }
+                })
+                .show();
+    }
+
+    private void setPath() {
+        RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
+                .withContext(context)
+                .setDarkTheme(isDarkTheme)
+                .setRemote(selectedRemote.getName())
+                .setTitle(R.string.select_path_to_alias)
+                .setPositiveButtonListener(new RemoteDestinationDialog.OnDestinationSelectedListener() {
+                    @Override
+                    public void onDestinationSelected(String path) {
+                        if (path.equals("//" + selectedRemote.getName())) {
+                            remotePath = selectedRemote.getName() + ":";
+                        } else {
+                            remotePath = selectedRemote.getName() + ":" + path;
+                        }
+                        remote.setText(remotePath);
+                    }
+                });
+        remoteDestinationDialog.setTargetFragment(this, 0);
+        if (getFragmentManager() != null) {
+            remoteDestinationDialog.show(getFragmentManager(), "remote destination dialog");
+        }
+    }
+
+    private void setUpRemote() {
+        String name = remoteName.getText().toString();
+        boolean error = false;
+
+        if (name.trim().isEmpty()) {
+            remoteNameInputLayout.setErrorEnabled(true);
+            remoteNameInputLayout.setError(getString(R.string.remote_name_cannot_be_empty));
+            error = true;
+        } else {
+            remoteNameInputLayout.setErrorEnabled(false);
+        }
+        if (remotePath == null) {
+            remoteSelectorLine.setBackgroundColor(Color.parseColor("#B14525"));
+            error = true;
+        }
+        if (error) {
+            return;
+        }
+
+        ArrayList<String> options = new ArrayList<>();
+        options.add(name);
+        options.add("cache");
+        options.add("remote");
+        options.add(remotePath);
+        if (chunkSizeString != null && !chunkSizeString.trim().isEmpty()) {
+            options.add("chunk_size");
+            options.add(chunkSizeString);
+        }
+        if (infoAgeString != null && !infoAgeString.trim().isEmpty()) {
+            options.add("info_age");
+            options.add(infoAgeString);
+        }
+        if (chunkTotalSizeString != null && !chunkTotalSizeString.trim().isEmpty()) {
+            options.add("chunk_total_size");
+            options.add(chunkTotalSizeString);
+        }
+
+        Process process = rclone.configCreate(options);
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (process.exitValue() != 0) {
+            Toasty.error(context, getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
+        } else {
+            Toasty.success(context, getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
+        }
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
+    }
+}

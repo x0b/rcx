@@ -194,6 +194,10 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
                 fragment = Azureblob.newInstance();
                 title = "Microsoft Azure Blob Storage";
                 break;
+            case "CACHE":
+                fragment = CacheConfig.newInstance();
+                title = "Cache";
+                break;
             default:
                 return;
         }

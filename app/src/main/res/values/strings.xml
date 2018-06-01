@@ -283,4 +283,14 @@
     <string name="generating_public_link">Generating public link</string>
     <string name="public_link">Public link</string>
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
+    <string name="provider_cache">Cache</string>
+    <string name="chunk_size_hint">Click to set chunk size (default 5 MB)</string>
+    <string name="info_age_hint">Click to set cache expiry time (default 6 h)</string>
+    <string name="chunk_total_size_hint">Click to select cache size (default 10 GB)</string>
+    <string name="chunk_size">Chunk size</string>
+    <string name="selected_chunk_size">Chunk size: %1$s</string>
+    <string name="cache_expiry">Cache expiry time</string>
+    <string name="selected_cache_expiry">Cache expiry time: %1$s</string>
+    <string name="cache_size">Cache size</string>
+    <string name="selected_cache_size">Cache size: %1$s</string>
 </resources>
