@@ -128,7 +128,7 @@
     <string name="pref_primary_color_title">Primary Color</string>
     <string name="pref_accent_color_title">Accent Color</string>
     <string name="pref_header_look_and_feel">Look and Feel</string>
-    <string name="restart_required">App restart may be required</string>
+    <string name="restart_required">App restart is required</string>
     <string name="select_primary_color">Select a primary color</string>
     <string name="select_accent_color">Select an accent color</string>
     <string name="title_activity_about_libs">AboutLibsActivity</string>
@@ -142,6 +142,7 @@
     <string name="pref_key_color_accent">pref_key_color_accent</string>
     <string name="pref_key_dark_theme">pref_key_dark_theme</string>
     <string name="pref_key_app_updates">pref_key_app_updates</string>
+    <string name="pref_key_crash_reports">pref_key_crash_reports</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color_content_desc">Primary color</string>
@@ -293,4 +294,6 @@
     <string name="selected_cache_expiry">Cache expiry time: %1$s</string>
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
+    <string name="crash_reporting_icon_content_description">Crash reporting icon</string>
+    <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
 </resources>
