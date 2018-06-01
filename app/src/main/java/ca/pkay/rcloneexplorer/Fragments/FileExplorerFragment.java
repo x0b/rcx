@@ -2,6 +2,8 @@ package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,6 +56,7 @@ import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
+import ca.pkay.rcloneexplorer.Dialogs.LinkDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
@@ -394,6 +397,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
+        if (remote.hasRemote() && remote.getRemote().equals("crypt")) {
+            menu.findItem(R.id.action_link).setVisible(false);
+        }
+        if (remote.isCrypt()) {
+            menu.findItem(R.id.action_link).setVisible(false);
+        }
     }
 
     @Override
@@ -423,6 +432,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_empty_trash:
                 new EmptyTrashTask().execute();
                 return true;
+            case R.id.action_link:
+                new LinkTask().execute(directoryObject.getCurrentPath());
             default:
                     return super.onOptionsItemSelected(item);
         }
@@ -500,7 +511,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setRclone(rclone)
                 .setRemote(remoteName)
                 .setDarkTheme(isDarkTheme);
-        if (remoteType.equals("crypt")) {
+        if (remote.isCrypt()) {
             filePropertiesDialog.withHashCalculations(false);
         }
         if (getFragmentManager() != null) {
@@ -966,6 +977,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     case R.id.action_delete:
                         deleteFiles(Collections.singletonList(fileItem));
                         break;
+                    case R.id.action_link:
+                        new LinkTask().execute(fileItem.getPath());
+                        break;
                     default:
                         return false;
                 }
@@ -975,6 +989,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         popupMenu.show();
         if (fileItem.isDir()) {
             popupMenu.getMenu().findItem(R.id.action_open_as).setVisible(false);
+        }
+        if (remote.hasRemote() && remote.getRemote().equals("crypt")) {
+            popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
+        }
+        if (remote.isCrypt()) {
+            popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
         }
     }
 
@@ -1547,6 +1567,90 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Toasty.success(context, getString(R.string.trash_emptied), Toast.LENGTH_SHORT, true).show();
             } else {
                 Toasty.error(context, getString(R.string.error_emptying_trash), Toast.LENGTH_SHORT, true).show();
+            }
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class LinkTask extends AsyncTask<String, Void, String> {
+
+        private LoadingDialog loadingDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            loadingDialog = new LoadingDialog()
+                    .setContext(context)
+                    .setTitle(R.string.generating_public_link)
+                    .setDarkTheme(isDarkTheme)
+                    .setNegativeButton(R.string.cancel)
+                    .setOnNegativeListener(new LoadingDialog.OnNegative() {
+                        @Override
+                        public void onNegative() {
+                            cancel(true);
+                        }
+                    });
+            if (getFragmentManager() != null) {
+                loadingDialog.show(getFragmentManager(), "loading dialog");
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String linkPath = strings[0];
+            return rclone.link(remoteName, linkPath);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
+            }
+
+            if (s == null) {
+                Toasty.error(context, getString(R.string.error_generating_link), Toast.LENGTH_SHORT, true).show();
+                return;
+            }
+
+            LinkDialog linkDialog = new LinkDialog()
+                    .withContext(context)
+                    .isDarkTheme(isDarkTheme)
+                    .setLinkUrl(s)
+                    .setListener(new LinkDialog.Callback() {
+                        @Override
+                        public void onLinkClick(String url) {
+                            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData clipData = ClipData.newPlainText("Copied link", url);
+                            if (clipboardManager == null) {
+                                return;
+                            }
+                            clipboardManager.setPrimaryClip(clipData);
+                            Toasty.info(context, getString(R.string.link_copied_to_clipboard), Toast.LENGTH_SHORT, true).show();
+                        }
+                    });
+            if (getFragmentManager() != null) {
+                linkDialog.show(getFragmentManager(), "link dialog");
+            }
+
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("Copied link", s);
+            if (clipboardManager == null) {
+                return;
+            }
+            clipboardManager.setPrimaryClip(clipData);
+            Toasty.info(context, getString(R.string.link_copied_to_clipboard), Toast.LENGTH_SHORT, true).show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                loadingDialog.dismiss();
             }
         }
     }

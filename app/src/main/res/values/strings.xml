@@ -278,4 +278,9 @@
     <string name="trash_emptied">Trash emptied</string>
     <string name="error_emptying_trash">Error emptying trash</string>
     <string name="file_options_content_description">File options</string>
+    <string name="link">Link</string>
+    <string name="error_generating_link">Error generating a link</string>
+    <string name="generating_public_link">Generating public link</string>
+    <string name="public_link">Public link</string>
+    <string name="link_copied_to_clipboard">Link copied to clipboard</string>
 </resources>
