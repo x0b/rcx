@@ -111,17 +111,18 @@ public class Rclone {
         Process process;
         try {
             process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-            if (process.exitValue() != 0) {
-                logErrorOutput(process);
-                return null;
-            }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             StringBuilder output = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 output.append(line);
+            }
+
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                logErrorOutput(process);
+                return null;
             }
 
             results = new JSONArray(output.toString());
@@ -159,17 +160,18 @@ public class Rclone {
         JSONObject remotesJSON;
         try {
             process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-            if (process.exitValue() != 0) {
-                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
-                logErrorOutput(process);
-                return new ArrayList<>();
-            }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line);
+            }
+
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
+                logErrorOutput(process);
+                return new ArrayList<>();
             }
 
             remotesJSON = new JSONObject(output.toString());
@@ -574,12 +576,8 @@ public class Rclone {
 
         try {
             process = Runtime.getRuntime().exec(command, environmentalVars);
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            return false;
-        }
-        if (process.exitValue() != 0) {
             return false;
         }
 
@@ -592,6 +590,17 @@ public class Rclone {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        }
+
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (process.exitValue() != 0) {
             return false;
         }
 

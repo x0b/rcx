@@ -1,3 +1,11 @@
+### 1.3.3
+* **Fix:** Infinite loading for directories with large number of files
+* **Fix:** Open as not working
+* **Fix:** App launching behaviour
+* **Fix:** Theme of password dialog
+
+***
+
 ### 1.3.2
 * **New:** File options for individual files
 * **New:** Generate public link to file/folder (rclone link)
