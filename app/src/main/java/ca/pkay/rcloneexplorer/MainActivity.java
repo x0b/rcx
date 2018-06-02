@@ -567,6 +567,12 @@ public class MainActivity extends AppCompatActivity
             if (!success) {
                 return;
             }
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(getString(R.string.shared_preferences_pinned_remotes));
+            editor.apply();
+
             if (rclone.isConfigEncrypted()) {
                 askForConfigPassword();
             } else {
