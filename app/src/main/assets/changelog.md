@@ -1,3 +1,10 @@
+### 1.3.4
+* **New:** Add option to pin remotes to the top
+* **Fix:** Possible crash when loading remotes
+* **Fix:** Remove dynamic shortcut when a remote is deleted
+
+***
+
 ### 1.3.3
 * **Fix:** Infinite loading for directories with large number of files
 * **Fix:** Open as not working
