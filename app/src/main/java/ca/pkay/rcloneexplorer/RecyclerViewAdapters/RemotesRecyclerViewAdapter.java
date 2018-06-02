@@ -47,6 +47,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         String remoteName = remotes.get(position).getName();
         String remoteType = remotes.get(position).getType();
+        boolean isPinned = remotes.get(position).isPinned();
         holder.remoteName = remoteName;
         holder.tvName.setText(remoteName);
 
@@ -83,6 +84,12 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                     break;
         }
 
+        if (isPinned) {
+            holder.pinIcon.setVisibility(View.VISIBLE);
+        } else {
+            holder.pinIcon.setVisibility(View.INVISIBLE);
+        }
+
         holder.options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +112,20 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         notifyDataSetChanged();
     }
 
+    public void removeItem(RemoteItem remoteItem) {
+        int index = remotes.indexOf(remoteItem);
+        if (index >= 0) {
+            remotes.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
+    public void moveDataItem(List<RemoteItem> data, int from, int to) {
+        remotes = new ArrayList<>(data);
+        notifyItemRemoved(from);
+        notifyItemInserted(to);
+    }
+
     @Override
     public int getItemCount() {
         if (remotes == null) {
@@ -115,10 +136,11 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final View view;
-        public final ImageView ivIcon;
-        public final TextView tvName;
-        public final ImageButton options;
+        final View view;
+        final ImageView ivIcon;
+        final TextView tvName;
+        final ImageButton options;
+        final ImageView pinIcon;
         public String remoteName;
 
         ViewHolder(View itemView) {
@@ -127,6 +149,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
             this.ivIcon = view.findViewById(R.id.remoteIcon);
             this.tvName = view.findViewById(R.id.remoteName);
             this.options = view.findViewById(R.id.remote_options);
+            this.pinIcon = view.findViewById(R.id.pin_icon);
         }
     }
 

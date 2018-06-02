@@ -10,10 +10,12 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private String type;
     private String remote;
     private boolean isCrypt;
+    private boolean isPinned;
 
     public RemoteItem(String name, String type) {
         this.name = name;
         this.type = type;
+        this.isPinned = false;
         this.isCrypt = type.equals("crypt");
     }
 
@@ -81,8 +83,21 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         this.isCrypt = isCrypt;
     }
 
+    public void pin(boolean isPinned) {
+        this.isPinned = isPinned;
+    }
+
+    public boolean isPinned() {
+        return this.isPinned;
+    }
+
     @Override
     public int compareTo(@NonNull RemoteItem remoteItem) {
+        if (this.isPinned && !remoteItem.isPinned()) {
+            return -1;
+        } else if (!this.isPinned && remoteItem.isPinned) {
+            return 1;
+        }
         return name.toLowerCase().compareTo(remoteItem.getName().toLowerCase());
     }
 

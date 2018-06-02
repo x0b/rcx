@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +25,9 @@ import android.view.ViewGroup;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -32,6 +35,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdapter.OnRemoteOptionsClick {
 
@@ -101,6 +105,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
         final Context context = view.getContext();
         RecyclerView recyclerView =  view.findViewById(R.id.remotes_list);
+        recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -122,8 +127,9 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case CONFIG_REQ_CODE:
-                List<RemoteItem> remoteItemList = rclone.getRemotes();
-                recyclerViewAdapter.newData(remoteItemList);
+                remotes = rclone.getRemotes();
+                Collections.sort(remotes);
+                recyclerViewAdapter.newData(remotes);
                 break;
             case CONFIG_RECREATE_REQ_CODE:
                 Intent intent = new Intent(context, MainActivity.class);
@@ -167,13 +173,66 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                     case R.id.action_delete:
                         deleteRemote(remoteItem);
                         break;
+                    case R.id.action_pin:
+                        if (remoteItem.isPinned()) {
+                            unPinRemote(remoteItem);
+                        } else {
+                            pinRemote(remoteItem);
+                        }
+                        break;
                     default:
+                        pinRemote(remoteItem);
                         return false;
                 }
                 return true;
             }
         });
         popupMenu.show();
+
+        MenuItem pinAction = popupMenu.getMenu().findItem(R.id.action_pin);
+        if (remoteItem.isPinned()) {
+            pinAction.setTitle(R.string.unpin_from_the_top);
+        } else {
+            pinAction.setTitle(R.string.pin_to_the_top);
+        }
+    }
+
+    private void pinRemote(RemoteItem remoteItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<String>());
+        Set<String> pinnedRemotes = new HashSet<>(stringSet); // bug in android means that we have to create a copy
+        pinnedRemotes.add(remoteItem.getName());
+        remoteItem.pin(true);
+
+        editor.putStringSet(getString(R.string.shared_preferences_pinned_remotes), pinnedRemotes);
+        editor.apply();
+
+        int from = remotes.indexOf(remoteItem);
+        Collections.sort(remotes);
+        int to = remotes.indexOf(remoteItem);
+        recyclerViewAdapter.moveDataItem(remotes, from, to);
+    }
+
+    private void unPinRemote(RemoteItem remoteItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<String>());
+        Set<String> pinnedRemotes = new HashSet<>(stringSet);
+        if (pinnedRemotes.contains(remoteItem.getName())) {
+            pinnedRemotes.remove(remoteItem.getName());
+        }
+        remoteItem.pin(false);
+
+        editor.putStringSet(getString(R.string.shared_preferences_pinned_remotes), pinnedRemotes);
+        editor.apply();
+
+        int from = remotes.indexOf(remoteItem);
+        Collections.sort(remotes);
+        int to = remotes.indexOf(remoteItem);
+        recyclerViewAdapter.moveDataItem(remotes, from, to);
     }
 
     private void deleteRemote(final RemoteItem remoteItem) {
@@ -189,7 +248,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                new DeleteRemote().execute(remoteItem.getName());
+                new DeleteRemote(remoteItem).execute();
             }
         });
         builder.show();
@@ -200,19 +259,34 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class DeleteRemote extends AsyncTask<String, Void, Void> {
+    private class DeleteRemote extends AsyncTask<Void, Void, Void> {
+
+        private RemoteItem remoteItem;
+
+        DeleteRemote(RemoteItem remoteItem) {
+            this.remoteItem = remoteItem;
+        }
 
         @Override
-        protected Void doInBackground(String... strings) {
-            String remoteName = strings[0];
-            rclone.deleteRemote(remoteName);
+        protected Void doInBackground(Void... voids) {
+            rclone.deleteRemote(remoteItem.getName());
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            recyclerViewAdapter.newData(rclone.getRemotes());
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            Set<String> pinnedRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<String>());
+            if (pinnedRemotes.contains(remoteItem.getName())) {
+                pinnedRemotes.remove(remoteItem.getName());
+                editor.putStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<>(pinnedRemotes));
+                editor.apply();
+            }
+
+            recyclerViewAdapter.removeItem(remoteItem);
         }
     }
 }
