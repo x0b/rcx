@@ -194,7 +194,7 @@ public class Rclone {
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
                 String type = remoteJSON.getString("type");
-                if (remoteJSON.has("remote")) {
+                if (remoteJSON.has("remote") && !remoteJSON.getString("remote").isEmpty()) {
                     String remotePath = remoteJSON.getString("remote");
                     int index = remotePath.indexOf(":");
                     RemoteItem remote = getRemote(remotesJSON, remotePath.substring(0, index));
