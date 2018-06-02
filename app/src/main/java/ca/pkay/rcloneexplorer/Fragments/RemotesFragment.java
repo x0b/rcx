@@ -286,6 +286,10 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                 editor.apply();
             }
 
+            if (context instanceof MainActivity) {
+                ((MainActivity)context).removeRemoteFromShortcutList(remoteItem);
+            }
+
             recyclerViewAdapter.removeItem(remoteItem);
         }
     }

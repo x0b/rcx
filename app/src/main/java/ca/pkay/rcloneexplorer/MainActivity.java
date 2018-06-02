@@ -436,6 +436,27 @@ public class MainActivity extends AppCompatActivity
         shortcutManager.reportShortcutUsed(id);
     }
 
+    public void removeRemoteFromShortcutList(RemoteItem remoteItem) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
+            return;
+        }
+        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+        if (shortcutManager == null) {
+            return;
+        }
+
+        String id = remoteItem.getName().replaceAll(" ", "_");
+
+        List<ShortcutInfo> shortcutInfoList = shortcutManager.getDynamicShortcuts();
+        for (ShortcutInfo shortcutInfo : shortcutInfoList) {
+            if (shortcutInfo.getId().equals(id)) {
+                shortcutManager.removeDynamicShortcuts(Collections.singletonList(shortcutInfo.getId()));
+                shortcutManager.reportShortcutUsed(id);
+                return;
+            }
+        }
+    }
+
     private int getRemoteIcon(String remoteType) {
         switch (remoteType) {
             case "crypt":
