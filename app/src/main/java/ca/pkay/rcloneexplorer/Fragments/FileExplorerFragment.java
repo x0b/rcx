@@ -478,21 +478,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setOnClickListener(new OpenAsDialog.OnClickListener() {
                     @Override
                     public void onClickText() {
-                        if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
-                            new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
-                        }
+                        new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
                     }
                     @Override
                     public void onClickAudio() {
-                        if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
-                            new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(fileItem);
-                        }
+                        new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(fileItem);
                     }
                     @Override
                     public void onClickVideo() {
-                        if (recyclerViewAdapter.getNumberOfSelectedItems() == 1) {
-                            new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(fileItem);
-                        }
+                        new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(fileItem);
                     }
                     @Override
                     public void onClickImage() {
