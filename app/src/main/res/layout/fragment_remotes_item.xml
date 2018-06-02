@@ -39,6 +39,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="Google Drive"/>
 
+        <ImageView
+            android:id="@+id/pin_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="0dp"
+            android:src="@drawable/ic_pin"
+            android:tint="?attr/iconTint"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@id/remote_options"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <ImageButton
             android:id="@+id/remote_options"
             android:layout_width="wrap_content"

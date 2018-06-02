@@ -20,8 +20,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -158,6 +160,9 @@ public class Rclone {
         StringBuilder output = new StringBuilder();
         Process process;
         JSONObject remotesJSON;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<String>());
+
         try {
             process = Runtime.getRuntime().exec(command);
 
@@ -204,6 +209,11 @@ public class Rclone {
                 } else {
                     remoteItem = new RemoteItem(key, type);
                 }
+
+                if (pinnedRemotes.contains(remoteItem.getName())) {
+                    remoteItem.pin(true);
+                }
+
                 remoteItemList.add(remoteItem);
             } catch (JSONException e) {
                 e.printStackTrace();

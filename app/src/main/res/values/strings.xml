@@ -296,4 +296,7 @@
     <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="crash_reporting_icon_content_description">Crash reporting icon</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
+    <string name="pin_to_the_top">Pin</string>
+    <string name="unpin_from_the_top">Unpin</string>
+    <string name="shared_preferences_pinned_remotes">shared_preferences_pinned_remotes</string>
 </resources>
