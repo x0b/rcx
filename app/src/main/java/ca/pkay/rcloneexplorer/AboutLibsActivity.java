@@ -117,6 +117,12 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryLicences.put(rclone, "Licensed under MIT");
         libraryLicenceUrls.put(rclone, "https://github.com/ncw/rclone/blob/master/COPYING");
 
+        String recyclerViewAnimators = "Recyclerview Animators";
+        libraryNames.add(recyclerViewAnimators);
+        libraryUrls.put(recyclerViewAnimators, "https://github.com/wasabeef/recyclerview-animators");
+        libraryLicences.put(recyclerViewAnimators, "Licensed under Apache 2.0");
+        libraryLicenceUrls.put(recyclerViewAnimators, "https://github.com/wasabeef/recyclerview-animators/blob/master/LICENSE");
+
         String toasty = "Toasty";
         libraryNames.add(toasty);
         libraryUrls.put(toasty, "https://github.com/GrenderG/Toasty");
