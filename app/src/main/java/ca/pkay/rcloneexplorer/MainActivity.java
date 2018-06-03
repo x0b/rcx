@@ -7,7 +7,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
@@ -15,7 +14,6 @@ import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ca.pkay.rcloneexplorer.BroadcastReceivers.NetworkStateReceiver;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
@@ -74,11 +71,15 @@ public class MainActivity extends AppCompatActivity
     private Fragment fragment;
     private Context context;
     private Boolean isDarkTheme;
-    private NetworkStateReceiver networkStateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent().hasExtra(getString(R.string.firebase_msg_app_updates_topic))) {
+            openAppUpdate();
+            finish();
+            return;
+        }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), true);
         if (enableCrashReports) {
@@ -103,11 +104,6 @@ public class MainActivity extends AppCompatActivity
         requestPermissions();
 
         rclone = new Rclone(this);
-
-        networkStateReceiver = new NetworkStateReceiver();
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStateReceiver, intentFilter);
 
         findViewById(R.id.locked_config_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,7 +216,6 @@ public class MainActivity extends AppCompatActivity
                 new File(dir, aChildren).delete();
             }
         }
-        unregisterReceiver(networkStateReceiver);
     }
 
     @Override
@@ -271,10 +266,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public NetworkStateReceiver getNetworkStateReceiver() {
-        return networkStateReceiver;
     }
 
     private void startRemotesFragment() {
@@ -480,6 +471,12 @@ public class MainActivity extends AppCompatActivity
             default:
                 return R.mipmap.ic_shortcut_cloud;
         }
+    }
+
+    private void openAppUpdate() {
+        Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
     @Override
