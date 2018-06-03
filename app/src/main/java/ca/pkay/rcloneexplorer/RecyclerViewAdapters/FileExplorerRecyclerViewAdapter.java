@@ -265,7 +265,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     public List<FileItem> getSelectedItems() {
-        return selectedItems;
+        return new ArrayList<>(selectedItems);
     }
 
     public int getNumberOfSelectedItems() {
