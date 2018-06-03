@@ -2,7 +2,10 @@ package ca.pkay.rcloneexplorer.Services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -21,10 +24,16 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         super.onMessageReceived(remoteMessage);
         setNotificationChannel();
 
+        Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_update_notification_title))
-                .setPriority(NotificationCompat.PRIORITY_LOW);
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(33, builder.build());
