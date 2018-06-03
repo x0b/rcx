@@ -73,6 +73,7 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapt
 import ca.pkay.rcloneexplorer.Services.BackgroundService;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
+import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
@@ -104,16 +105,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private SwipeRefreshLayout swipeRefreshLayout;
     private View searchBar;
     private AsyncTask fetchDirectoryTask;
-    private Boolean isRunning;
+    private boolean isRunning;
     private int sortOrder;
-    private Boolean isInMoveMode;
+    private boolean isInMoveMode;
     private SpeedDialView fab;
     private MenuItem menuSelectAll;
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
     private String searchString;
-    private Boolean is720dp;
-    //private NetworkStateReceiver networkStateReceiver;
+    private boolean is720dp;
+    private boolean showThumbnails;
     private Context context;
 
     /**
@@ -168,10 +169,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         ((FragmentActivity) context).setTitle(remoteType);
         setHasOptionsMenu(true);
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
+        showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
+        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
-        //networkStateReceiver = ((MainActivity)context).getNetworkStateReceiver();
         rclone = new Rclone(getContext());
 
         isSearchMode = false;
@@ -184,6 +186,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
 
+        if (showThumbnails) {
+            startThumbnailService();
+        }
+
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
         if (directoryObject.isDirectoryContentEmpty()) {
@@ -193,8 +199,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         Context context = view.getContext();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
@@ -202,6 +206,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         View emptyFolderView = view.findViewById(R.id.empty_folder_view);
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
+        recyclerViewAdapter.showThumbnails(showThumbnails);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         fab = view.findViewById(R.id.fab);
@@ -261,7 +266,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onStart() {
         super.onStart();
-        registerReceivers();
+        if (showThumbnails) {
+            startThumbnailService();
+        }
+
         if (directoryObject.isContentValid()) {
             return;
         }
@@ -448,6 +456,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+    }
+
+    private void startThumbnailService() {
+        Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
+        serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remoteName);
+        context.startService(serveIntent);
     }
 
     private void searchClicked() {
@@ -746,7 +760,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             recyclerViewAdapter.updateSortedData(directoryContent);
         }
         if (sortOrder > 0) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();
         }
     }
@@ -799,6 +813,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onStop() {
         super.onStop();
+        if (showThumbnails) {
+            Intent intent = new Intent(context, ThumbnailsLoadingService.class);
+            context.stopService(intent);
+        }
         LocalBroadcastManager.getInstance(context).unregisterReceiver(backgroundTaskBroadcastReceiver);
     }
 

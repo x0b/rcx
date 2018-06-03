@@ -143,6 +143,7 @@
     <string name="pref_key_dark_theme">pref_key_dark_theme</string>
     <string name="pref_key_app_updates">pref_key_app_updates</string>
     <string name="pref_key_crash_reports">pref_key_crash_reports</string>
+    <string name="pref_key_show_thumbnails">pref_key_show_thumbnails</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color_content_desc">Primary color</string>
@@ -300,4 +301,6 @@
     <string name="unpin_from_the_top">Unpin</string>
     <string name="shared_preferences_pinned_remotes">shared_preferences_pinned_remotes</string>
     <string name="app_latest_release_url">https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest</string>
+    <string name="experimental_features">Experimental Features</string>
+    <string name="show_thumbnails">Show thumbnails</string>
 </resources>

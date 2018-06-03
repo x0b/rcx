@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     RemotesFragment.OnRemoteClickListener {
 
-    public static final String SHARED_PREFS_TAG = "ca.pkay.rcexplorer";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings

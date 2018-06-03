@@ -362,5 +362,59 @@
             android:layout_height="1dp"
             android:background="?attr/dividerColor"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
+            android:text="@string/experimental_features"/>
+
+        <RelativeLayout
+            android:id="@+id/show_thumbnails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <ImageView
+                android:id="@+id/show_thumbnails_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_view_list"
+                android:tint="?attr/iconTint"
+                android:contentDescription="@string/dark_theme_content_desc" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/show_thumbnails_icon"
+                android:paddingStart="32dp"
+                android:paddingEnd="0dp"
+                android:textColor="?attr/textColorPrimary"
+                android:textStyle="bold"
+                android:text="@string/show_thumbnails"/>
+
+            <Switch
+                android:id="@+id/show_thumbnails_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/dividerColor"/>
+
     </LinearLayout>
 </ScrollView>

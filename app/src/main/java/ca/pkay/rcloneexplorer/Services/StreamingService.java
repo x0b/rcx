@@ -74,7 +74,7 @@ public class StreamingService extends IntentService {
 
         startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
 
-        runningProcess = rclone.serveHttp(remote, servePath);
+        runningProcess = rclone.serveHttp(remote, servePath, 8080);
          try {
              runningProcess.waitFor();
          } catch (InterruptedException e) {
