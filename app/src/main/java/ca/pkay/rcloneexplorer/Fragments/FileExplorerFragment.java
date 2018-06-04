@@ -1425,16 +1425,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             process = rclone.downloadFile(remoteName, fileItem, saveLocation);
 
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                return false;
+            if (process != null) {
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return false;
+                }
             }
 
-            if (process.exitValue() == 0) {
+            if (process != null && process.exitValue() == 0) {
                 File savedFile = new File(fileLocation);
                 savedFile.setReadOnly();
+            }
+
+            if (process != null && process.exitValue() != 0) {
+                rclone.logErrorOutput(process);
             }
 
             return process.exitValue() == 0;

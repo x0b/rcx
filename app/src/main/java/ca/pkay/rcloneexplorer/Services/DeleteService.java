@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
+import ca.pkay.rcloneexplorer.BroadcastReceivers.DeleteCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -27,7 +29,7 @@ public class DeleteService extends IntentService {
     private final int PERSISTENT_NOTIFICATION_ID_FOR_DELETE = 124;
     private final int OPERATION_FAILED_NOTIFICATION_ID = 31;
     private Rclone rclone;
-
+    private Process currentProcess;
 
     public DeleteService() {
         super("ca.pkay.rcexplorer.DELETE_SERVICE");
@@ -56,22 +58,49 @@ public class DeleteService extends IntentService {
 
         String content = deleteItem.getName();
 
+        Intent foregroundIntent = new Intent(this, DeleteService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+
+        Intent cancelIntent = new Intent(this, DeleteCancelAction.class);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.delete_service))
                 .setContentText(content)
+                .setContentIntent(pendingIntent)
+                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_DELETE, builder.build());
 
-        Boolean success = rclone.deleteItems(remote, deleteItem);
+        currentProcess = rclone.deleteItems(remote, deleteItem);
+        if (currentProcess != null) {
+            try {
+                currentProcess.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         sendUploadFinishedBroadcast(remote, path, null);
 
-        if (!success) {
+        if (currentProcess == null || currentProcess.exitValue() != 0) {
+            rclone.logErrorOutput(currentProcess);
             String errorTitle = "Delete operation failed";
             String errorContent = deleteItem.getName();
             int notificationId = (int)System.currentTimeMillis();
             showFailedNotification(errorTitle, errorContent, notificationId);
+        }
+
+        stopForeground(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (currentProcess != null) {
+            currentProcess.destroy();
         }
     }
 

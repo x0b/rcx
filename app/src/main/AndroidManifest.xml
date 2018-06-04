@@ -45,6 +45,8 @@
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
         <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
+        <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
+        <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

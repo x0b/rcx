@@ -73,17 +73,21 @@ public class DownloadService extends IntentService {
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
         currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
-        try {
-            currentProcess.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        if (currentProcess != null) {
+            try {
+                currentProcess.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         int notificationId = (int)System.currentTimeMillis();
 
-        if (currentProcess.exitValue() == 0) {
+        if (currentProcess != null && currentProcess.exitValue() == 0) {
             showDownloadFinishedNotification(notificationId, downloadItem.getName());
         } else {
+            rclone.logErrorOutput(currentProcess);
             showDownloadFailedNotification(notificationId, downloadItem.getName());
         }
 
