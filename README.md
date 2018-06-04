@@ -4,7 +4,6 @@ rclone explorer for Android
 Features
 --------
 - Allows to browse rclone remotes, including encrypted ones
-- Support for ARM and x86 devices
 - Import configuration file from rclone
 - Create new remotes from the app
 - Download and upload files
@@ -14,11 +13,13 @@ Features
 - Serving directories over HTTP
 - Dark theme
 - Customizable primary and accent colors
+- Supports ARM and x86 devices
 - Supports SDK 21+ (Lollipop 5.0)
 
 TODO
 ------------
 - [X] Creating new remotes
+  - [ ] Creating Google Drive/Team Drive remotes
 - [X] Deleting existing remotes
 
 Screenshots
