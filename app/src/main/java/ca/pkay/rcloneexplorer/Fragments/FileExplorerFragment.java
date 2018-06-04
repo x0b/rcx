@@ -65,7 +65,6 @@ import ca.pkay.rcloneexplorer.FilePicker;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -115,6 +114,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private String searchString;
     private boolean is720dp;
     private boolean showThumbnails;
+    private boolean isThumbnailsServiceRunning;
     private Context context;
 
     /**
@@ -266,6 +266,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onStart() {
         super.onStart();
+        registerReceivers();
         if (showThumbnails) {
             startThumbnailService();
         }
@@ -462,6 +463,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remoteName);
         context.startService(serveIntent);
+        isThumbnailsServiceRunning = true;
     }
 
     private void searchClicked() {
@@ -813,10 +815,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onStop() {
         super.onStop();
-        if (showThumbnails) {
+        if (isThumbnailsServiceRunning) {
             Intent intent = new Intent(context, ThumbnailsLoadingService.class);
             context.stopService(intent);
+            isThumbnailsServiceRunning = false;
         }
+
         LocalBroadcastManager.getInstance(context).unregisterReceiver(backgroundTaskBroadcastReceiver);
     }
 
