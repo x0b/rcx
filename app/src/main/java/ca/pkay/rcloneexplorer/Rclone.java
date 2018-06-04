@@ -78,7 +78,11 @@ public class Rclone {
         return command;
     }
 
-    private void logErrorOutput(Process process) {
+    public void logErrorOutput(Process process) {
+        if (process == null) {
+            return;
+        }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean isLoggingEnable = sharedPreferences.getBoolean(context.getString(R.string.pref_key_logs), false);
         if (!isLoggingEnable) {
@@ -363,10 +367,10 @@ public class Rclone {
 
     }
 
-    public Boolean deleteItems(String remote, FileItem deleteItem) {
+    public Process deleteItems(String remote, FileItem deleteItem) {
         String[] command;
         String filePath;
-        Boolean result = true;
+        Process process = null;
 
         filePath = remote + ":" + deleteItem.getPath();
         if (deleteItem.isDir()) {
@@ -376,16 +380,11 @@ public class Rclone {
         }
 
         try {
-            Process process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-            if (process.exitValue() != 0) {
-                result = false;
-            }
-        } catch (IOException | InterruptedException e) {
+            process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
             e.printStackTrace();
-            result = false;
         }
-        return result;
+        return process;
     }
 
     public Boolean makeDirectory(String remote, String path) {
@@ -405,27 +404,22 @@ public class Rclone {
         return true;
     }
 
-    public Boolean moveTo(String remote, FileItem moveItem, String newLocation) {
+    public Process moveTo(String remote, FileItem moveItem, String newLocation) {
         String[] command;
         String oldFilePath;
         String newFilePath;
-        Boolean result = true;
+        Process process = null;
 
         oldFilePath = remote + ":" + moveItem.getPath();
         newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + moveItem.getName() : remote + ":" + newLocation + "/" + moveItem.getName();
         command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         try {
-            Process process = Runtime.getRuntime().exec(command);
-            process.waitFor();
-            if (process.exitValue() != 0) {
-                logErrorOutput(process);
-                result = false;
-            }
-        } catch (IOException | InterruptedException e) {
+            process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
             e.printStackTrace();
-            result = false;
         }
-        return result;
+
+        return process;
     }
 
     public Boolean moveTo(String remote, String oldFile, String newFile) {

@@ -30,10 +30,16 @@ public class ThumbnailsLoadingService extends IntentService {
 
         String remote = intent.getStringExtra(REMOTE_ARG);
         process = rclone.serveHttp(remote, "", 29170);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (process != null) {
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (process != null && process.exitValue() != 0) {
+            rclone.logErrorOutput(process);
         }
     }
 

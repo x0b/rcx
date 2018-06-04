@@ -28,7 +28,6 @@
         <service android:name=".Services.DownloadService" />
         <service android:name=".Services.UploadService" />
         <service android:name=".Services.StreamingService" />
-        <service android:name=".Services.BackgroundService" />
         <service android:name=".Services.FirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
@@ -40,10 +39,14 @@
             </intent-filter>
         </service>
         <service android:name=".Services.ThumbnailsLoadingService" />
+        <service android:name=".Services.DeleteService" />
+        <service android:name=".Services.MoveService" />
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
         <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
+        <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
+        <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

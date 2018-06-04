@@ -1,6 +1,5 @@
 package ca.pkay.rcloneexplorer.Services;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,16 +7,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
 import ca.pkay.rcloneexplorer.R;
@@ -78,13 +72,21 @@ public class UploadService extends IntentService {
         final String remote = intent.getStringExtra(REMOTE_ARG);
 
         currentProcess = rclone.uploadFile(remote, uploadPath, uploadFile);
-        try {
-            currentProcess.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        if (currentProcess != null) {
+            try {
+                currentProcess.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-        onUploadFinished(remote, uploadPath, uploadFile, currentProcess.exitValue() == 0);
+        if (currentProcess != null && currentProcess.exitValue() != 0) {
+            rclone.logErrorOutput(currentProcess);
+        }
+
+        boolean result = currentProcess != null && currentProcess.exitValue() == 0;
+        onUploadFinished(remote, uploadPath, uploadFile, result);
 
         stopForeground(true);
     }
