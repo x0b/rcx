@@ -69,8 +69,9 @@ import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.Services.BackgroundService;
+import ca.pkay.rcloneexplorer.Services.DeleteService;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
+import ca.pkay.rcloneexplorer.Services.MoveService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
@@ -681,12 +682,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             path2 = "//" + remoteName;
         }
         for (FileItem moveItem : moveList) {
-            Intent intent = new Intent(context, BackgroundService.class);
-            intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_MOVE);
-            intent.putExtra(BackgroundService.REMOTE_ARG, remoteName);
-            intent.putExtra(BackgroundService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
-            intent.putExtra(BackgroundService.MOVE_ITEM, moveItem);
-            intent.putExtra(BackgroundService.PATH2, path2);
+            Intent intent = new Intent(context, MoveService.class);
+            intent.putExtra(MoveService.REMOTE_ARG, remoteName);
+            intent.putExtra(MoveService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
+            intent.putExtra(MoveService.MOVE_ITEM, moveItem);
+            intent.putExtra(MoveService.PATH, path2);
             context.startService(intent);
         }
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
@@ -1097,11 +1097,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     public void onClick(DialogInterface dialog, int which) {
                         recyclerViewAdapter.cancelSelection();
                         for (FileItem deleteItem : deleteList) {
-                            Intent intent = new Intent(context, BackgroundService.class);
-                            intent.putExtra(BackgroundService.TASK_TYPE, BackgroundService.TASK_TYPE_DELETE);
-                            intent.putExtra(BackgroundService.REMOTE_ARG, remoteName);
-                            intent.putExtra(BackgroundService.DELETE_ITEM, deleteItem);
-                            intent.putExtra(BackgroundService.PATH, directoryObject.getCurrentPath());
+                            Intent intent = new Intent(context, DeleteService.class);
+                            intent.putExtra(DeleteService.REMOTE_ARG, remoteName);
+                            intent.putExtra(DeleteService.DELETE_ITEM, deleteItem);
+                            intent.putExtra(DeleteService.PATH, directoryObject.getCurrentPath());
                             context.startService(intent);
                         }
                         Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
