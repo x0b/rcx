@@ -17,15 +17,16 @@
         <FrameLayout
             android:id="@+id/icons"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:layout_height="76dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_centerVertical="true">
             <ImageView
                 android:id="@+id/file_icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_file"
+                android:layout_gravity="center_vertical"
                 android:contentDescription="@string/file_icon" />
             <ImageView
                 android:id="@+id/dir_icon"
@@ -33,6 +34,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_folder"
                 android:tint="?attr/iconTint"
+                android:layout_gravity="center_vertical"
                 android:contentDescription="@string/file_icon" />
         </FrameLayout>
 
