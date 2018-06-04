@@ -12,6 +12,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +28,15 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private View emptyView;
     private View noSearchResultsView;
     private OnClickListener listener;
-    private Boolean isInSelectMode;
+    private boolean isInSelectMode;
     private List<FileItem> selectedItems;
-    private Boolean isInMoveMode;
-    private Boolean isInSearchMode;
-    private Boolean canSelect;
+    private boolean isInMoveMode;
+    private boolean isInSearchMode;
+    private boolean canSelect;
+    private boolean showThumbnails;
     private int cardColor;
     private Boolean optionsDisabled;
+    private Context context;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -43,6 +48,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public FileExplorerRecyclerViewAdapter(Context context, View emptyView, View noSearchResultsView, OnClickListener listener) {
         files = new ArrayList<>();
+        this.context = context;
         this.emptyView = emptyView;
         this.noSearchResultsView = noSearchResultsView;
         this.listener = listener;
@@ -86,6 +92,18 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileSize.setVisibility(View.VISIBLE);
             holder.interpunct.setVisibility(View.VISIBLE);
         }
+
+        if (showThumbnails && !item.isDir()) {
+            RequestOptions glideOption = new RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_file);
+            Glide
+                    .with(context)
+                    .load("http:127.0.0.1:29170/" + item.getPath())
+                    .apply(glideOption)
+                    .into(holder.fileIcon);
+        }
+
         holder.fileName.setText(item.getName());
         holder.fileModTime.setText(item.getHumanReadableModTime());
 
@@ -165,6 +183,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public void disableFileOptions() {
         optionsDisabled = true;
+    }
+
+    public void showThumbnails(boolean showThumbnails) {
+        this.showThumbnails = showThumbnails;
     }
 
     public List<FileItem> getCurrentContent() {

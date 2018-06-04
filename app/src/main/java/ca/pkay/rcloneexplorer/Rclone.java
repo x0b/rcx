@@ -306,9 +306,9 @@ public class Rclone {
         }
     }
 
-    public Process serveHttp(String remote, String servePath) {
+    public Process serveHttp(String remote, String servePath, int port) {
         String path = (servePath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + servePath;
-        String[] command = createCommandWithOptions("serve", "http", path);
+        String[] command = createCommandWithOptions("serve", "http", "--addr", ":" + String.valueOf(port), path);
 
         try {
             return Runtime.getRuntime().exec(command);

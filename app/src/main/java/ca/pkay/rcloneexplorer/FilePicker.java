@@ -66,7 +66,7 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
 
         pathStack = new Stack<>();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
         current = Environment.getExternalStorageDirectory();
@@ -307,7 +307,7 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
         filePickerAdapter.updateData(fileList);
 
         if (sortOrder > 0) {
-            SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();
         }
     }

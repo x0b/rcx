@@ -40,6 +40,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch appUpdatesSwitch;
     private View crashReportsElement;
     private Switch crashReportsSwitch;
+    private View showThumbnailsElement;
+    private Switch showThumbnailsSwitch;
     private boolean isDarkTheme;
     private boolean themeHasChanged;
 
@@ -111,6 +113,8 @@ public class SettingsActivity extends AppCompatActivity {
         useLogsElement = findViewById(R.id.use_logs);
         crashReportsElement = findViewById(R.id.crash_reporting);
         crashReportsSwitch = findViewById(R.id.crash_reporting_switch);
+        showThumbnailsElement = findViewById(R.id.show_thumbnails);
+        showThumbnailsSwitch = findViewById(R.id.show_thumbnails_switch);
     }
 
     private void setDefaultStates() {
@@ -119,11 +123,13 @@ public class SettingsActivity extends AppCompatActivity {
         boolean useLogs = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
         boolean crashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), true);
+        boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
 
         darkThemeSwitch.setChecked(isDarkTheme);
         useLogsSwitch.setChecked(useLogs);
         appUpdatesSwitch.setChecked(appUpdates);
         crashReportsSwitch.setChecked(crashReports);
+        showThumbnailsSwitch.setChecked(showThumbnails);
     }
 
     private void setClickListeners() {
@@ -207,6 +213,22 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 crashReportsClicked(isChecked);
+            }
+        });
+        showThumbnailsElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (showThumbnailsSwitch.isChecked()) {
+                    showThumbnailsSwitch.setChecked(false);
+                } else {
+                    showThumbnailsSwitch.setChecked(true);
+                }
+            }
+        });
+        showThumbnailsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                showThumbnails(isChecked);
             }
         });
     }
@@ -326,5 +348,12 @@ public class SettingsActivity extends AppCompatActivity {
         editor.apply();
 
         Toasty.info(this, getString(R.string.restart_required), Toast.LENGTH_SHORT, true).show();
+    }
+
+    private void showThumbnails(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_show_thumbnails), isChecked);
+        editor.apply();
     }
 }

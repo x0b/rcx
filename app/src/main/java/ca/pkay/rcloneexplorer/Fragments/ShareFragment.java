@@ -102,7 +102,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         ((FragmentActivity) context).setTitle("Select destination");
         setHasOptionsMenu(true);
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
         rclone = new Rclone(getContext());
@@ -346,7 +346,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         directoryObject.setContent(directoryContent);
         recyclerViewAdapter.updateSortedData(directoryContent);
         if (sortOrder > 0) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS_TAG, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();
         }
     }
