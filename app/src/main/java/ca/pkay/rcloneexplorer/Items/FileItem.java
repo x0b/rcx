@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import io.github.x0b.rfc3339parser.Rfc3339;
+
 public class FileItem implements Parcelable {
 
     private String remote;
@@ -117,9 +119,8 @@ public class FileItem implements Parcelable {
         long now = System.currentTimeMillis();
         long dateInMillis;
         Date date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            date = simpleDateFormat.parse(formattedDate);
+            date = Rfc3339.parse(modTime);
             dateInMillis = date.getTime();
         } catch (ParseException e) {
             e.printStackTrace();
