@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.RemoteConfig;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,10 +12,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Dialogs.PasswordGeneratorDialog;
 import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
@@ -106,7 +112,8 @@ public class CryptConfig extends Fragment {
         }
     }
 
-    private void setUpForm(View view) {
+    @SuppressLint("ClickableViewAccessibility")
+    private void setUpForm(final View view) {
         ViewGroup formContent = view.findViewById(R.id.form_content);
         int padding = getResources().getDimensionPixelOffset(R.dimen.config_form_template);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -136,6 +143,20 @@ public class CryptConfig extends Fragment {
         passwordInputLayout.setHintEnabled(true);
         passwordInputLayout.setHint(getString(R.string.crypt_pass_hint));
         password = passwordTemplate.findViewById(R.id.pass);
+        password.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        showPasswordGenerator(0);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         View password2Template = View.inflate(context, R.layout.config_form_template_password, null);
         password2Template.setPadding(0, 0, 0, padding);
@@ -147,6 +168,44 @@ public class CryptConfig extends Fragment {
         pass2HelperText.setVisibility(View.VISIBLE);
         pass2HelperText.setText(R.string.crypt_pass2_helper_text);
         password2 = password2Template.findViewById(R.id.pass);
+        password2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        showPasswordGenerator(1);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        View showPasswordsTemplate = View.inflate(context, R.layout.config_form_show_password, null);
+        showPasswordsTemplate.setPadding(0, 0, 0, padding);
+        formContent.addView(showPasswordsTemplate);
+        final CheckBox showPasswordsSwitch = showPasswordsTemplate.findViewById(R.id.show_password_checkbox);
+        TextView showPasswords = showPasswordsTemplate.findViewById(R.id.show_password);
+        showPasswordsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    password2.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    password2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+            }
+        });
+        showPasswords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPasswordsSwitch.setChecked(!showPasswordsSwitch.isChecked());
+            }
+        });
 
         View spinnerTemplate = View.inflate(context, R.layout.config_form_template_spinner, null);
         spinnerTemplate.setPadding(0, 0, 0, padding);
@@ -202,6 +261,28 @@ public class CryptConfig extends Fragment {
                 }
             }
         });
+    }
+
+    private void showPasswordGenerator(final int editTextField) {
+        PasswordGeneratorDialog passwordGeneratorDialog = new PasswordGeneratorDialog()
+                .withContext(context)
+                .setDarkTheme(isDarkTheme)
+                .setCallback(new PasswordGeneratorDialog.Callbacks() {
+                    @Override
+                    public void onPasswordSelected(String generatedPassword) {
+                        if (generatedPassword.trim().isEmpty()) {
+                            return;
+                        }
+                        if (editTextField == 0) {
+                            password.setText(generatedPassword);
+                        } else if (editTextField == 1) {
+                            password2.setText(generatedPassword);
+                        }
+                    }
+                });
+        if (getFragmentManager() != null) {
+            passwordGeneratorDialog.show(getFragmentManager(), "password generator");
+        }
     }
 
     private void setRemote() {

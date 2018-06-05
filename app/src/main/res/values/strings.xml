@@ -303,4 +303,14 @@
     <string name="app_latest_release_url">https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest</string>
     <string name="experimental_features">Experimental Features</string>
     <string name="show_thumbnails">Show thumbnails</string>
+    <string name="generate_password_title">Generate Password</string>
+    <string name="set_password_button">Set Password</string>
+    <string name="generate_password">Generate</string>
+    <string name="password_length_label">Length</string>
+    <string name="password_lower_case_checkbox">Lower case</string>
+    <string name="password_upper_case_checkbox">Upper case</string>
+    <string name="password_numbers_checkbox">Numbers</string>
+    <string name="password_special_chars_checkbox">Special characters</string>
+    <string name="password_refresh_content_description">Refresh button</string>
+    <string name="show_passwords">Show passwords</string>
 </resources>
