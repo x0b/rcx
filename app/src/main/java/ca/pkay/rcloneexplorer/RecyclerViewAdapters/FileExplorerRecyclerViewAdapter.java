@@ -99,8 +99,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                     .placeholder(R.drawable.ic_file);
             Glide
                     .with(context)
-                    .load("http:127.0.0.1:29170/" + item.getPath())
+                    .load("http://127.0.0.1:29170/" + item.getPath())
                     .apply(glideOption)
+                    .thumbnail(0.1f)
                     .into(holder.fileIcon);
         }
 
