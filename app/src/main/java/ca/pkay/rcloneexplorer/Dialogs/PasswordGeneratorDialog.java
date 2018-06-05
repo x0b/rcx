@@ -165,6 +165,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
 
         generatePassword();
         builder.setView(view);
+        setRetainInstance(true);
         return builder.create();
     }
 
