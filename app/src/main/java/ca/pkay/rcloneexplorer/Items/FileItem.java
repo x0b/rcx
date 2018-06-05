@@ -122,7 +122,7 @@ public class FileItem implements Parcelable {
         long dateInMillis = modTimeToMilis(modTime);
 
         CharSequence humanReadable = DateUtils.getRelativeTimeSpanString(dateInMillis, now, DateUtils.MINUTE_IN_MILLIS);
-        if (humanReadable.toString().startsWith("In")) {
+        if (humanReadable.toString().startsWith("In") || humanReadable.toString().startsWith("0")) {
             humanReadable = "Now";
         }
         return humanReadable.toString();
