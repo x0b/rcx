@@ -105,8 +105,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                     .into(holder.fileIcon);
         }
 
+        if ((item.getRemote().equals("dropbox") || item.getRemote().equals("dropbox")) && item.isDir()) {
+            holder.fileModTime.setVisibility(View.GONE);
+        } else {
+            holder.fileModTime.setVisibility(View.VISIBLE);
+            holder.fileModTime.setText(item.getHumanReadableModTime());
+        }
+        
         holder.fileName.setText(item.getName());
-        holder.fileModTime.setText(item.getHumanReadableModTime());
 
         if (isInSelectMode) {
             if (selectedItems.contains(item)) {
