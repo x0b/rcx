@@ -191,6 +191,12 @@ public class PasswordGeneratorDialog extends DialogFragment {
         Random random = new SecureRandom();
         int length = Integer.parseInt(passwordLength.getText().toString());
 
+        if (!checkBoxLowerCase.isChecked() && !checkBoxUpperCase.isChecked() && !checkBoxNumbers.isChecked() && !checkBoxSpecialChars.isChecked()) {
+            generatedPassword = "";
+            passwordDisplay.setText("");
+            return;
+        }
+
         while (password.size() < length) {
             if (checkBoxLowerCase.isChecked()) {
                 arraySize = lowerCase.length;
