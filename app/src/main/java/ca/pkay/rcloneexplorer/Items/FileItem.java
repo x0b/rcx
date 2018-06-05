@@ -95,11 +95,17 @@ public class FileItem implements Parcelable {
 
     private long modTimeToMilis(String modTime) {
         String[] dateTime = modTime.split("T");
-        String formattedDate = dateTime[0] + " " + dateTime[1].substring(0, dateTime[1].length());
-        long now = System.currentTimeMillis();
+        String yearMonthDay = dateTime[0];
+        String hourMinuteSecond = dateTime[1].substring(0, dateTime[1].length() - 1);
+        if (hourMinuteSecond.contains(".")) {
+            int index = hourMinuteSecond.indexOf(".");
+            hourMinuteSecond = hourMinuteSecond.substring(0, index);
+        }
+
+        String formattedDate = yearMonthDay + " " + hourMinuteSecond + " UTC";
         long dateInMillis;
         Date date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         try {
             date = simpleDateFormat.parse(formattedDate);
             dateInMillis = date.getTime();
@@ -112,19 +118,8 @@ public class FileItem implements Parcelable {
     }
 
     private String modTimeToHumanReadable(String modTime) {
-        String[] dateTime = modTime.split("T");
-        String formattedDate = dateTime[0] + " " + dateTime[1].substring(0, dateTime[1].length());
         long now = System.currentTimeMillis();
-        long dateInMillis;
-        Date date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = simpleDateFormat.parse(formattedDate);
-            dateInMillis = date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            dateInMillis = 0;
-        }
+        long dateInMillis = modTimeToMilis(modTime);
 
         CharSequence humanReadable = DateUtils.getRelativeTimeSpanString(dateInMillis, now, DateUtils.MINUTE_IN_MILLIS);
         if (humanReadable.toString().startsWith("In")) {
