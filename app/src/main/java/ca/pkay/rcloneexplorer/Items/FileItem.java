@@ -97,9 +97,7 @@ public class FileItem implements Parcelable {
         String[] dateTime = modTime.split("T");
         String yearMonthDay = dateTime[0];
         String hourMinuteSecond = dateTime[1].substring(0, dateTime[1].length() - 1);
-
-        if (hourMinuteSecond.contains("."))
-        {
+        if (hourMinuteSecond.contains(".")) {
             int index = hourMinuteSecond.indexOf(".");
             hourMinuteSecond = hourMinuteSecond.substring(0, index);
         }
