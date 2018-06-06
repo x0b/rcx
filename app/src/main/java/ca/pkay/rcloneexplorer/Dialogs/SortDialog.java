@@ -55,6 +55,10 @@ public class SortDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if(savedInstanceState != null){
             isDarkTheme = savedInstanceState.getBoolean("isDarkTheme");
+            title = savedInstanceState.getInt("title");
+            positiveText = savedInstanceState.getInt("positiveText");
+            negativeText = savedInstanceState.getInt("negativeText");
+            sortOrder = savedInstanceState.getInt("sortOrder");
         }
 
         AlertDialog.Builder builder;
@@ -93,6 +97,10 @@ public class SortDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("isDarkTheme", isDarkTheme);
+        outState.putInt("title", title);
+        outState.putInt("positiveText", positiveText);
+        outState.putInt("negativeText", negativeText);
+        outState.putInt("sortOrder", sortOrder);
     }
 
     public SortDialog setListener(OnClickListener l) {
