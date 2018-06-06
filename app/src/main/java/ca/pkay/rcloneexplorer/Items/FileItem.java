@@ -94,7 +94,7 @@ public class FileItem implements Parcelable {
     }
 
     private long modTimeToMilis(String modTime) {
-        if(modTime.lastIndexOf("+") > 19 || modTime.lastIndexOf("-") > 19){
+        if(modTime.lastIndexOf("+") > 18 || modTime.lastIndexOf("-") > 18){
             return modTimeZonedToMillis(modTime);
         }
 
