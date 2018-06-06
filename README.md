@@ -1,4 +1,6 @@
 # RcloneExplorer
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.png?v=103)](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/kaczmarkiewiczp/rcloneExplorer/total.svg)](https://github.com/kaczmarkiewiczp/rcloneExplorer/edit/master/releases) [![GitHub release](https://img.shields.io/github/release/kaczmarkiewiczp/rcloneExplorer.svg)](https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest)
+
 rclone explorer for Android
 
 Features
