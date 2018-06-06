@@ -46,6 +46,8 @@ public class ThumbnailsLoadingService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        process.destroy();
+        if (process != null) {
+            process.destroy();
+        }
     }
 }

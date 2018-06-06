@@ -1,3 +1,16 @@
+### 1.3.5
+* **New:** Show file thumbnails (experimental feature, enable in settings)
+* **New:** App updates notification updates
+    * Open the GitHub releases page on notification click
+    * Show app icon
+* **New:** Option to cancel delete and move operations
+* **New:** Password generator for crypt remote creation
+* **Fix:** Delete button now working
+* **Fix:** Displayed modification time
+* **Fix:** Possible crash when loading remotes
+
+***
+
 ### 1.3.4
 * **New:** Add option to pin remotes to the top
 * **Fix:** Possible crash when loading remotes
