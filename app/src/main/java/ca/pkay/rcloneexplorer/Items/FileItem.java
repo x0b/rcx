@@ -94,7 +94,7 @@ public class FileItem implements Parcelable {
     }
 
     private long modTimeToMilis(String modTime) {
-        if(modTime.lastIndexOf("+") > 18 || modTime.lastIndexOf("-") > 18){
+        if (modTime.lastIndexOf("+") > 18 || modTime.lastIndexOf("-") > 18) {
             return modTimeZonedToMillis(modTime);
         }
 
@@ -121,10 +121,10 @@ public class FileItem implements Parcelable {
         return dateInMillis;
     }
 
-    private long modTimeZonedToMillis(String modTime){
+    private long modTimeZonedToMillis(String modTime) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         int index = modTime.lastIndexOf("+");
-        if(index == -1){
+        if (index == -1) {
             index = modTime.lastIndexOf("-");
         }
         int fractionIndex = modTime.indexOf('.');
