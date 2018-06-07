@@ -45,7 +45,7 @@ public class SortDialog extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         // reacquire FragmentActivity when recreated implicitly
-        if(this.context == null && context instanceof FragmentActivity){
+        if (this.context == null && context instanceof FragmentActivity) {
             this.context = context;
         }
     }
@@ -53,7 +53,7 @@ public class SortDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             isDarkTheme = savedInstanceState.getBoolean("isDarkTheme");
             title = savedInstanceState.getInt("title");
             positiveText = savedInstanceState.getInt("positiveText");

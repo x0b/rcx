@@ -269,8 +269,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         super.onStart();
         registerReceivers();
         Fragment sortDialog;
-        if(getFragmentManager() != null
-                && (sortDialog = getFragmentManager().findFragmentByTag("sort dialog")) instanceof SortDialog){
+        if (getFragmentManager() != null
+                && (sortDialog = getFragmentManager().findFragmentByTag("sort dialog")) instanceof SortDialog) {
             ((SortDialog) sortDialog).setListener(new SortDialog.OnClickListener() {
                 @Override
                 public void onPositiveButtonClick(int sortById, int sortOrderId) {
