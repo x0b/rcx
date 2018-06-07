@@ -235,13 +235,20 @@ public class CryptConfig extends Fragment {
         View switchTemplate = View.inflate(context, R.layout.config_form_template_switch, null);
         switchTemplate.setLayoutParams(params);
         formContent.addView(switchTemplate);
+        directoryEncryption = "false";
         ((Switch)switchTemplate.findViewById(R.id.flip_switch)).setChecked(false);
         switchTemplate.findViewById(R.id.switch_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Switch s = v.findViewById(R.id.flip_switch);
-                directoryEncryption = (s.isChecked()) ? "false" : "true";
                 s.setChecked(!s.isChecked());
+            }
+        });
+        ((Switch)switchTemplate.findViewById(R.id.flip_switch)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Switch s = buttonView.findViewById(R.id.flip_switch);
+                directoryEncryption = (s.isChecked()) ? "true" : "false";
             }
         });
         ((TextView)switchTemplate.findViewById(R.id.switch_text)).setText(R.string.directory_name_encryption_hint);
