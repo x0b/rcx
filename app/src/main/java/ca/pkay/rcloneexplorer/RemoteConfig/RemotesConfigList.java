@@ -175,7 +175,7 @@ public class RemotesConfigList extends Fragment {
             @Override
             public void onClick(View v) {
                 RadioButton rb = v.findViewById(R.id.provider_rb);
-                setSelected(rb, "BOX");
+                setSelected(rb, "YANDEX");
             }
         });
 
@@ -269,3 +269,4 @@ public class RemotesConfigList extends Fragment {
 
     }
 }
+
