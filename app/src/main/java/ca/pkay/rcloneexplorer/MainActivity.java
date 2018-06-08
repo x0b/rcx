@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity
                 if (rclone.isConfigFileCreated()) {
                     exportConfigFile();
                 } else {
-                    Toasty.info(this,  getString(R.string.no_config_file), Toast.LENGTH_SHORT, true).show();
+                    Toasty.info(this,  getString(R.string.no_config_found), Toast.LENGTH_SHORT, true).show();
                 }
                 break;
             case R.id.nav_settings:

@@ -35,7 +35,7 @@
     <string name="follow_on_github">Follow on GitHub</string>
     <string name="empty_folder">The folder is empty</string>
     <string name="ooops">Ooops!</string>
-    <string name="no_config_file">No configuration file found</string>
+    <string name="no_config_found">No configuration found, please import or add remote</string>
     <string name="import_configuration">Import configuration</string>
     <string name="empty_state_icon">Empty state icon</string>
     <string name="file_icon">File icon</string>

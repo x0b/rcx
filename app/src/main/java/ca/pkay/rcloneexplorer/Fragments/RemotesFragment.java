@@ -77,7 +77,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view;
-        if (!rclone.isConfigFileCreated()) {
+        if (!rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
             view = inflater.inflate(R.layout.empty_state_config_file, container, false);
             view.findViewById(R.id.empty_state_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
