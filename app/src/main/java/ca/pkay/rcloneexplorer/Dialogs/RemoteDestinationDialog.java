@@ -32,6 +32,7 @@ import java.util.Stack;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -49,7 +50,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private Context context;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private String remote;
+    private RemoteItem remote;
     private boolean isDarkTheme;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private Rclone rclone;
@@ -73,7 +74,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         rclone = new Rclone(context);
-        String path = "//" + remote;
+        String path = "//" + remote.getName();
         directoryObject.setPath(path);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
@@ -163,7 +164,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         return this;
     }
 
-    public RemoteDestinationDialog setRemote(String remote) {
+    public RemoteDestinationDialog setRemote(RemoteItem remote) {
         this.remote = remote;
         return this;
     }
@@ -249,7 +250,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
                                 return;
                             }
                             String newDir;
-                            if (directoryObject.getCurrentPath().equals("//" + remote)) {
+                            if (directoryObject.getCurrentPath().equals("//" + remote.getName())) {
                                 newDir = input;
                             } else {
                                 newDir = directoryObject.getCurrentPath() + "/" + input;
@@ -401,7 +402,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         @Override
         protected Boolean doInBackground(String... strings) {
             String newDir = strings[0];
-            return rclone.makeDirectory(remote, newDir);
+            return rclone.makeDirectory(remote.getRemote(), newDir);
         }
 
         @Override

@@ -107,11 +107,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
 
         List<String> remotesWithoutDirModTime = Arrays.asList(
-                "Dropbox",
-                "B2"
+                "dropbox",
+                "b2",
+                "hubic"
         );
 
-        if ((remotesWithoutDirModTime.contains(item.getRemote()) || remotesWithoutDirModTime.contains(item.getRemote())) && item.isDir()) {
+        if ((remotesWithoutDirModTime.contains(item.getRemote().getType()) || remotesWithoutDirModTime.contains(item.getRemote().getType())) && item.isDir()) {
             holder.fileModTime.setVisibility(View.GONE);
         } else {
             holder.fileModTime.setVisibility(View.VISIBLE);

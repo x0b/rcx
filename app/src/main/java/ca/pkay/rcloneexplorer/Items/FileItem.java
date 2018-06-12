@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class FileItem implements Parcelable {
 
-    private String remote;
+    private RemoteItem remote;
     private String path;
     private String name;
     private long size;
@@ -20,7 +20,7 @@ public class FileItem implements Parcelable {
     private String humanReadableModTime;
     private boolean isDir;
 
-    public FileItem(String remote, String path, String name, long size, String modTime, boolean isDir) {
+    public FileItem(RemoteItem remote, String path, String name, long size, String modTime, boolean isDir) {
         this.remote = remote;
         this.path = path;
         this.name = name;
@@ -32,7 +32,7 @@ public class FileItem implements Parcelable {
     }
 
     protected FileItem(Parcel in) {
-        remote = in.readString();
+        remote = in.readParcelable(RemoteItem.class.getClassLoader());
         path = in.readString();
         name = in.readString();
         size = in.readLong();
@@ -54,7 +54,7 @@ public class FileItem implements Parcelable {
         }
     };
 
-    public String getRemote() {
+    public RemoteItem getRemote() {
         return remote;
     }
     public String getPath() {
@@ -159,7 +159,7 @@ public class FileItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(remote);
+        dest.writeParcelable(remote, 0);
         dest.writeString(path);
         dest.writeString(name);
         dest.writeLong(size);
