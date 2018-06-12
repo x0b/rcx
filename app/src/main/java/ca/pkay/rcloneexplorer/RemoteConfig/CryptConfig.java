@@ -336,7 +336,7 @@ public class CryptConfig extends Fragment {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
                 .withContext(context)
                 .setDarkTheme(isDarkTheme)
-                .setRemote(selectedRemote.getName())
+                .setRemote(selectedRemote)
                 .setTitle(R.string.select_path_to_crypt)
                 .setPositiveButtonListener(new RemoteDestinationDialog.OnDestinationSelectedListener() {
             @Override

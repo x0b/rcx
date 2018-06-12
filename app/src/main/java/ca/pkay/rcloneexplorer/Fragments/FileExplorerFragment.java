@@ -1237,7 +1237,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remoteName, directoryObject.getCurrentPath());
+            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
             return fileItemList;
         }
 

@@ -368,7 +368,7 @@ public class CacheConfig extends Fragment {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
                 .withContext(context)
                 .setDarkTheme(isDarkTheme)
-                .setRemote(selectedRemote.getName())
+                .setRemote(selectedRemote)
                 .setTitle(R.string.select_path_to_alias)
                 .setPositiveButtonListener(new RemoteDestinationDialog.OnDestinationSelectedListener() {
                     @Override
