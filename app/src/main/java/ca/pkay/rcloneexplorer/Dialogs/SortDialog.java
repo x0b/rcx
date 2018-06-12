@@ -41,10 +41,26 @@ public class SortDialog extends DialogFragment {
         isDarkTheme = false;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // reacquire FragmentActivity when recreated implicitly
+        if (this.context == null && context instanceof FragmentActivity) {
+            this.context = context;
+        }
+    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            isDarkTheme = savedInstanceState.getBoolean("isDarkTheme");
+            title = savedInstanceState.getInt("title");
+            positiveText = savedInstanceState.getInt("positiveText");
+            negativeText = savedInstanceState.getInt("negativeText");
+            sortOrder = savedInstanceState.getInt("sortOrder");
+        }
+
         AlertDialog.Builder builder;
         if (isDarkTheme) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
@@ -75,6 +91,16 @@ public class SortDialog extends DialogFragment {
 
         builder.setView(view);
         return builder.create();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("isDarkTheme", isDarkTheme);
+        outState.putInt("title", title);
+        outState.putInt("positiveText", positiveText);
+        outState.putInt("negativeText", negativeText);
+        outState.putInt("sortOrder", sortOrder);
     }
 
     public SortDialog setListener(OnClickListener l) {

@@ -105,9 +105,9 @@ public class Rclone {
         log2File.log(stringBuilder.toString());
     }
 
-    public List<FileItem> getDirectoryContent(String remote, String path) {
-        String remoteAndPath = remote + ":";
-        if (path.compareTo("//" + remote) != 0) {
+    public List<FileItem> getDirectoryContent(RemoteItem remote, String path) {
+        String remoteAndPath = remote.getName() + ":";
+        if (path.compareTo("//" + remote.getName()) != 0) {
             remoteAndPath += path;
         }
 
@@ -142,7 +142,7 @@ public class Rclone {
         for (int i = 0; i < results.length(); i++) {
             try {
                 JSONObject jsonObject = results.getJSONObject(i);
-                String filePath = (path.compareTo("//" + remote) == 0) ? "" : path + "/";
+                String filePath = (path.compareTo("//" + remote.getName()) == 0) ? "" : path + "/";
                 filePath += jsonObject.getString("Path");
                 String fileName = jsonObject.getString("Name");
                 long fileSize = jsonObject.getLong("Size");

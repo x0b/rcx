@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class FileItem implements Parcelable {
 
-    private String remote;
+    private RemoteItem remote;
     private String path;
     private String name;
     private long size;
@@ -20,7 +20,7 @@ public class FileItem implements Parcelable {
     private String humanReadableModTime;
     private boolean isDir;
 
-    public FileItem(String remote, String path, String name, long size, String modTime, boolean isDir) {
+    public FileItem(RemoteItem remote, String path, String name, long size, String modTime, boolean isDir) {
         this.remote = remote;
         this.path = path;
         this.name = name;
@@ -32,7 +32,7 @@ public class FileItem implements Parcelable {
     }
 
     protected FileItem(Parcel in) {
-        remote = in.readString();
+        remote = in.readParcelable(RemoteItem.class.getClassLoader());
         path = in.readString();
         name = in.readString();
         size = in.readLong();
@@ -54,7 +54,7 @@ public class FileItem implements Parcelable {
         }
     };
 
-    public String getRemote() {
+    public RemoteItem getRemote() {
         return remote;
     }
     public String getPath() {
@@ -94,6 +94,10 @@ public class FileItem implements Parcelable {
     }
 
     private long modTimeToMilis(String modTime) {
+        if (modTime.lastIndexOf("+") > 18 || modTime.lastIndexOf("-") > 18) {
+            return modTimeZonedToMillis(modTime);
+        }
+
         String[] dateTime = modTime.split("T");
         String yearMonthDay = dateTime[0];
         String hourMinuteSecond = dateTime[1].substring(0, dateTime[1].length() - 1);
@@ -115,6 +119,21 @@ public class FileItem implements Parcelable {
         }
 
         return dateInMillis;
+    }
+
+    private long modTimeZonedToMillis(String modTime) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+        int index = modTime.lastIndexOf("+");
+        if (index == -1) {
+            index = modTime.lastIndexOf("-");
+        }
+        int fractionIndex = modTime.indexOf('.');
+        String reducedString = fractionIndex == -1 ? modTime : modTime.substring(0, fractionIndex) + modTime.substring(index);
+        try {
+            return format.parse(reducedString).getTime();
+        } catch (ParseException e) {
+            return 0L;
+        }
     }
 
     private String modTimeToHumanReadable(String modTime) {
@@ -140,7 +159,7 @@ public class FileItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(remote);
+        dest.writeParcelable(remote, 0);
         dest.writeString(path);
         dest.writeString(name);
         dest.writeLong(size);
