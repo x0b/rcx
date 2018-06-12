@@ -59,6 +59,21 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         }
     }
 
+    public boolean isDirectoryModifiedTimeSupported() {
+        String remoteType = type;
+        if (remote != null && !remote.trim().isEmpty()) {
+            remoteType = remote;
+        }
+        switch (remoteType) {
+            case "dropbox":
+            case "b2":
+            case "hubic":
+                return false;
+            default:
+                return true;
+        }
+    }
+
     public String getName() {
         return name;
     }

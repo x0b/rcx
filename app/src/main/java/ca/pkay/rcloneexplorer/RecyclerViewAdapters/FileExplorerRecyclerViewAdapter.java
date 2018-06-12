@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
@@ -106,13 +107,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                     .into(holder.fileIcon);
         }
 
-        List<String> remotesWithoutDirModTime = Arrays.asList(
-                "dropbox",
-                "b2",
-                "hubic"
-        );
-
-        if ((remotesWithoutDirModTime.contains(item.getRemote().getType()) || remotesWithoutDirModTime.contains(item.getRemote().getType())) && item.isDir()) {
+        RemoteItem itemRemote = item.getRemote();
+        if (!itemRemote.isDirectoryModifiedTimeSupported() && item.isDir()) {
             holder.fileModTime.setVisibility(View.GONE);
         } else {
             holder.fileModTime.setVisibility(View.VISIBLE);
