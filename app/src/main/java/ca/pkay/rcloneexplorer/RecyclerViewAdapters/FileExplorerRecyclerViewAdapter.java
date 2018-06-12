@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -105,7 +106,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                     .into(holder.fileIcon);
         }
 
-        if ((item.getRemote().equals("dropbox") || item.getRemote().equals("dropbox")) && item.isDir()) {
+        List<String> remotesWithoutDirModTime = Arrays.asList(
+                "Dropbox",
+                "B2"
+        );
+
+        if ((remotesWithoutDirModTime.contains(item.getRemote()) || remotesWithoutDirModTime.contains(item.getRemote())) && item.isDir()) {
             holder.fileModTime.setVisibility(View.GONE);
         } else {
             holder.fileModTime.setVisibility(View.VISIBLE);
@@ -402,3 +408,4 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 }
+
