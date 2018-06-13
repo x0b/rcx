@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -132,12 +133,23 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                 recyclerViewAdapter.newData(remotes);
                 break;
             case CONFIG_RECREATE_REQ_CODE:
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                remotes = rclone.getRemotes();
+                Collections.sort(remotes);
+                recyclerViewAdapter.newData(remotes);
+                refreshFragment();
                 break;
         }
+    }
+
+    private void refreshFragment() {
+        if (getFragmentManager() == null) {
+            return;
+        }
+
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.detach(this);
+        fragmentTransaction.attach(this);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -291,6 +303,10 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
 
             recyclerViewAdapter.removeItem(remoteItem);
+
+            if (rclone.getRemotes().isEmpty()) {
+                refreshFragment();
+            }
         }
     }
 }
