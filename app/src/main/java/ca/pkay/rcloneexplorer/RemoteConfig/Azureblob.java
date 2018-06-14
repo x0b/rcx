@@ -132,7 +132,7 @@ public class Azureblob extends Fragment {
 
         ArrayList<String> options = new ArrayList<>();
         options.add(name);
-        options.add("Azureblob");
+        options.add("azureblob");
         options.add("account");
         options.add(accountString);
         options.add("key");
