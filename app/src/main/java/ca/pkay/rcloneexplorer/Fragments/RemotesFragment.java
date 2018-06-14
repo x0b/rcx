@@ -135,7 +135,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             case CONFIG_RECREATE_REQ_CODE:
                 remotes = rclone.getRemotes();
                 Collections.sort(remotes);
-                recyclerViewAdapter.newData(remotes);
+                recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
                 refreshFragment();
                 break;
         }
