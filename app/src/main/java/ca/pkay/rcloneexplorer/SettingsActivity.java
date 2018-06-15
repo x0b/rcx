@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -72,6 +71,23 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(OUTSTATE_THEME_CHANGE, themeHasChanged);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (getFragmentManager() != null) {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("primary color picker");
+            if (fragment != null && fragment instanceof ColorPickerDialog) {
+                ((ColorPickerDialog)fragment).setListener(primaryColorPickerListener);
+                return;
+            }
+
+            fragment = getSupportFragmentManager().findFragmentByTag("accent color picker");
+            if (fragment != null && fragment instanceof ColorPickerDialog) {
+                ((ColorPickerDialog)fragment).setListener(accentColorPickerListener);
+            }
+        }
     }
 
     private void applyTheme() {
@@ -238,40 +254,42 @@ public class SettingsActivity extends AppCompatActivity {
         int defaultColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), R.color.colorPrimary);
 
         ColorPickerDialog colorPickerDialog = new ColorPickerDialog()
-                .withContext(this)
                 .setTitle(R.string.primary_color_picker_title)
                 .setColorChoices(R.array.primary_color_choices)
                 .setDefaultColor(defaultColor)
                 .setDarkTheme(isDarkTheme)
-                .setListener(new ColorPickerDialog.OnClickListener() {
-                    @Override
-                    public void onColorSelected(int color) {
-                        onPrimaryColorSelected(color);
-                    }
-                });
+                .setListener(primaryColorPickerListener);
 
-        colorPickerDialog.show(getSupportFragmentManager(), "Primary color picker");
+        colorPickerDialog.show(getSupportFragmentManager(), "primary color picker");
     }
+
+    private ColorPickerDialog.OnClickListener primaryColorPickerListener = new ColorPickerDialog.OnClickListener() {
+        @Override
+        public void onColorSelected(int color) {
+            onPrimaryColorSelected(color);
+        }
+    };
 
     private void showAccentColorPicker() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int defaultColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), R.color.colorAccent);
 
         ColorPickerDialog colorPickerDialog = new ColorPickerDialog()
-                .withContext(this)
                 .setTitle(R.string.accent_color_picker_title)
                 .setColorChoices(R.array.accent_color_choices)
                 .setDefaultColor(defaultColor)
                 .setDarkTheme(isDarkTheme)
-                .setListener(new ColorPickerDialog.OnClickListener() {
-                    @Override
-                    public void onColorSelected(int color) {
-                        onAccentColorSelected(color);
-                    }
-                });
+                .setListener(accentColorPickerListener);
 
-        colorPickerDialog.show(getSupportFragmentManager(), "Accent color picker");
+        colorPickerDialog.show(getSupportFragmentManager(), "accent color picker");
     }
+
+    private ColorPickerDialog.OnClickListener accentColorPickerListener = new ColorPickerDialog.OnClickListener() {
+        @Override
+        public void onColorSelected(int color) {
+            onAccentColorSelected(color);
+        }
+    };
 
     private void onPrimaryColorSelected(int color) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
