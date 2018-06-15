@@ -24,6 +24,12 @@ import es.dmoral.toasty.Toasty;
 
 public class FilePropertiesDialog extends DialogFragment {
 
+    private final String SAVED_FILEITEM = "ca.pkay.rcexplorer.FilePropertiesDialog.FILE_ITEM";
+    private final String SAVED_REMOTE = "ca.pkay.rcexplorer.FilePropertiesDialog.REMOTE";
+    private final String SAVED_MD5 = "ca.pkay.rcexplorer.FilePropertiesDialog.MD5";
+    private final String SAVED_SHA1 = "ca.pkay.rcexplorer.FilePropertiesDialog.SHA1";
+    private final String SAVED_SHOW_HASH = "ca.pkay.rcexplorer.FilePropertiesDialog.SHOW_HASH";
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.FilePropertiesDialog.IS_DARK_THEME";
     private FileItem fileItem;
     private String remote;
     private View view;
@@ -43,6 +49,16 @@ public class FilePropertiesDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            fileItem = savedInstanceState.getParcelable(SAVED_FILEITEM);
+            remote = savedInstanceState.getString(SAVED_REMOTE);
+            md5String = savedInstanceState.getString(SAVED_MD5);
+            sha1String = savedInstanceState.getString(SAVED_SHA1);
+            showHash = savedInstanceState.getBoolean(SAVED_SHOW_HASH);
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
+        }
+
+        rclone = new Rclone(context);
         asyncTasks = new AsyncTask[2];
         AlertDialog.Builder builder;
         if (isDarkTheme) {
@@ -64,27 +80,37 @@ public class FilePropertiesDialog extends DialogFragment {
             ((TextView)view.findViewById(R.id.file_size)).setText(fileItem.getHumanReadableSize());
         }
 
+        View md5Container = view.findViewById(R.id.file_md5_container);
+        View sha1Container = view.findViewById(R.id.file_sha1_container);
+        View hashSeparator = view.findViewById(R.id.hash_separator);
         if (showHash && !fileItem.isDir()) {
-            view.findViewById(R.id.file_md5_container).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.file_sha1_container).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.hash_separator).setVisibility(View.VISIBLE);
+            md5Container.setVisibility(View.VISIBLE);
+            sha1Container.setVisibility(View.VISIBLE);
+            hashSeparator.setVisibility(View.VISIBLE);
 
-            view.findViewById(R.id.file_md5_container).setOnClickListener(new View.OnClickListener() {
+            md5Container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     calculateMD5();
                 }
             });
-            view.findViewById(R.id.file_sha1_container).setOnClickListener(new View.OnClickListener() {
+            sha1Container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     calculateSHA1();
                 }
             });
+
+            if (md5String != null) {
+                ((TextView)view.findViewById(R.id.file_md5)).setText(md5String);
+            }
+            if (sha1String != null) {
+                ((TextView)view.findViewById(R.id.file_sha1)).setText(sha1String);
+            }
         } else {
-            view.findViewById(R.id.file_md5_container).setVisibility(View.GONE);
-            view.findViewById(R.id.file_sha1_container).setVisibility(View.GONE);
-            view.findViewById(R.id.hash_separator).setVisibility(View.GONE);
+            md5Container.setVisibility(View.GONE);
+            sha1Container.setVisibility(View.GONE);
+            hashSeparator.setVisibility(View.GONE);
         }
 
         builder.setView(view)
@@ -92,9 +118,31 @@ public class FilePropertiesDialog extends DialogFragment {
         return builder.create();
     }
 
-    public FilePropertiesDialog withContext(Context context) {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.context = context;
-        return this;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVED_FILEITEM, fileItem);
+        outState.putString(SAVED_REMOTE, remote);
+        outState.putBoolean(SAVED_SHOW_HASH, showHash);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+        if (md5String != null) {
+            outState.putString(SAVED_MD5, md5String);
+        }
+        if (sha1String != null) {
+            outState.putString(SAVED_SHA1, sha1String);
+        }
+
+        for (AsyncTask asyncTask : asyncTasks) {
+            if (asyncTask != null) {
+                asyncTask.cancel(true);
+            }
+        }
     }
 
     public FilePropertiesDialog setFile(FileItem fileItem) {
@@ -104,11 +152,6 @@ public class FilePropertiesDialog extends DialogFragment {
 
     public FilePropertiesDialog setRemote(String remote) {
         this.remote = remote;
-        return this;
-    }
-
-    public FilePropertiesDialog setRclone(Rclone rclone) {
-        this.rclone = rclone;
         return this;
     }
 

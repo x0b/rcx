@@ -22,6 +22,11 @@ public class ColorPickerDialog extends DialogFragment {
         void onColorSelected(int color);
     }
 
+    private final String SAVED_IS_DARK_MODE = "ca.pkay.rcexplorer.ColorPickerDialog.IS_DARK_MODE";
+    private final String SAVED_SELECTED_COLOR = "ca.pkay.rcexplorer.ColorPickerDialog.SELECTED_COLOR";
+    private final String SAVED_DEFAULT_COLOR = "ca.pkay.rcexplorer.ColorPickerDialog.DEFAULT_COLOR";
+    private final String SAVED_TITLE = "ca.pkay.rcexplorer.ColorPickerDialog.TITLE";
+    private final String SAVED_COLOR_CHOICES = "ca.pkay.rcexplorer.ColorPickerDialog.COLOR_CHOICES";
     private Context context;
     private boolean isDarkMode;
     private int[] colorChoices;
@@ -29,6 +34,7 @@ public class ColorPickerDialog extends DialogFragment {
     private int selectedColor;
     private int defaultColor;
     private int title;
+    private int colorChoicesArrayId;
     private OnClickListener listener;
 
     public ColorPickerDialog() {
@@ -38,6 +44,16 @@ public class ColorPickerDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            isDarkMode = savedInstanceState.getBoolean(SAVED_IS_DARK_MODE);
+            selectedColor = savedInstanceState.getInt(SAVED_SELECTED_COLOR);
+            defaultColor = savedInstanceState.getInt(SAVED_DEFAULT_COLOR);
+            title = savedInstanceState.getInt(SAVED_TITLE);
+            colorChoicesArrayId = savedInstanceState.getInt(SAVED_COLOR_CHOICES);
+        }
+
+        colorChoices = context.getResources().getIntArray(colorChoicesArrayId);
+
         AlertDialog.Builder builder;
         if (isDarkMode) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
@@ -90,6 +106,7 @@ public class ColorPickerDialog extends DialogFragment {
                     (v.findViewById(R.id.checkmark)).setVisibility(View.VISIBLE);
                     visibleCheckmark = v.findViewById(R.id.checkmark);
                     selectedColor = color;
+                    defaultColor = selectedColor;
                 }
             });
 
@@ -116,14 +133,20 @@ public class ColorPickerDialog extends DialogFragment {
         dialogLayout.addView(row);
     }
 
-    public ColorPickerDialog withContext(Context context) {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.context = context;
-        return this;
     }
 
-    public ColorPickerDialog setListener(OnClickListener l) {
-        listener = l;
-        return this;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_IS_DARK_MODE, isDarkMode);
+        outState.putInt(SAVED_SELECTED_COLOR, selectedColor);
+        outState.putInt(SAVED_DEFAULT_COLOR, defaultColor);
+        outState.putInt(SAVED_TITLE, title);
+        outState.putInt(SAVED_COLOR_CHOICES, colorChoicesArrayId);
     }
 
     public ColorPickerDialog setTitle(int title) {
@@ -137,12 +160,17 @@ public class ColorPickerDialog extends DialogFragment {
     }
 
     public ColorPickerDialog setColorChoices(int arrayId) {
-        colorChoices = context.getResources().getIntArray(arrayId);
+        colorChoicesArrayId = arrayId;
         return this;
     }
 
     public ColorPickerDialog setDarkTheme(boolean darkTheme) {
         isDarkMode = darkTheme;
+        return this;
+    }
+
+    public ColorPickerDialog setListener(OnClickListener listener) {
+        this.listener = listener;
         return this;
     }
 

@@ -530,9 +530,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void showFileProperties(FileItem fileItem) {
         FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog()
-                .withContext(context)
                 .setFile(fileItem)
-                .setRclone(rclone)
                 .setRemote(remoteName)
                 .setDarkTheme(isDarkTheme);
         if (remote.isCrypt()) {
