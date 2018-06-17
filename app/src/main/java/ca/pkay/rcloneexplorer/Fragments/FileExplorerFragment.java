@@ -1648,21 +1648,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
 
             LinkDialog linkDialog = new LinkDialog()
-                    .withContext(context)
                     .isDarkTheme(isDarkTheme)
-                    .setLinkUrl(s)
-                    .setListener(new LinkDialog.Callback() {
-                        @Override
-                        public void onLinkClick(String url) {
-                            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clipData = ClipData.newPlainText("Copied link", url);
-                            if (clipboardManager == null) {
-                                return;
-                            }
-                            clipboardManager.setPrimaryClip(clipData);
-                            Toasty.info(context, getString(R.string.link_copied_to_clipboard), Toast.LENGTH_SHORT, true).show();
-                        }
-                    });
+                    .setLinkUrl(s);
             if (getFragmentManager() != null) {
                 linkDialog.show(getFragmentManager(), "link dialog");
             }
