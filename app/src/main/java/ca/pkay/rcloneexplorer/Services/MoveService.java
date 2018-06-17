@@ -86,7 +86,7 @@ public class MoveService extends IntentService {
         }
         sendUploadFinishedBroadcast(remote, moveDestPath, path);
 
-        if (currentProcess != null || currentProcess.exitValue() != 0) {
+        if (currentProcess == null || currentProcess.exitValue() != 0) {
             rclone.logErrorOutput(currentProcess);
             String errorTitle = "Move operation failed";
             String errorContent = moveItem.getName();
