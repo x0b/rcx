@@ -80,7 +80,8 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
-                                                                BreadcrumbView.OnClickListener {
+                                                                BreadcrumbView.OnClickListener,
+                                                                OpenAsDialog.OnClickListener {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
@@ -500,32 +501,37 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
-    private void showOpenAsDialog(final FileItem fileItem) {
+    private void showOpenAsDialog(FileItem fileItem) {
         OpenAsDialog openAsDialog = new OpenAsDialog();
         openAsDialog
-                .setContext(context)
-                .setDarkTheme(isDarkTheme)
-                .setOnClickListener(new OpenAsDialog.OnClickListener() {
-                    @Override
-                    public void onClickText() {
-                        new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
-                    }
-                    @Override
-                    public void onClickAudio() {
-                        new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(fileItem);
-                    }
-                    @Override
-                    public void onClickVideo() {
-                        new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(fileItem);
-                    }
-                    @Override
-                    public void onClickImage() {
-                        new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
-                    }
-                });
+                .setFileItem(fileItem)
+                .setDarkTheme(isDarkTheme);
         if (getFragmentManager() != null) {
-            openAsDialog.show(getFragmentManager(), "open as");
+            openAsDialog.show(getChildFragmentManager(), "open as");
         }
+    }
+
+    /*
+     * Open As dialog callbacks
+     */
+    @Override
+    public void onClickText(FileItem fileItem) {
+        new DownloadAndOpen(DownloadAndOpen.OPEN_AS_TEXT).execute(fileItem);
+    }
+
+    @Override
+    public void onClickAudio(FileItem fileItem) {
+        new StreamTask(StreamTask.OPEN_AS_AUDIO).execute(fileItem);
+    }
+
+    @Override
+    public void onClickVideo(FileItem fileItem) {
+        new StreamTask(StreamTask.OPEN_AS_VIDEO).execute(fileItem);
+    }
+
+    @Override
+    public void onClickImage(FileItem fileItem) {
+        new DownloadAndOpen(DownloadAndOpen.OPEN_AS_IMAGE).execute(fileItem);
     }
 
     private void showFileProperties(FileItem fileItem) {
