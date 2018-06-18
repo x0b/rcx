@@ -38,10 +38,12 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
 
-public class CryptConfig extends Fragment {
+public class CryptConfig extends Fragment implements PasswordGeneratorDialog.Callbacks {
 
     private final String OUTSTATE_DIR_ENCRYPT = "ca.pkay.rcexplorer.CryptConfig.OUTSTATE_DIR_ENCRYPT";
     private final String OUTSTATE_REMOTE_PATH = "ca.pkay.rcexplorer.CryptConfig.REMOTE_PATH";
+    private final String OUTSTATE_PASSWORD = "ca.pkay.rcexplorer.CryptConfig.PASSWORD";
+    private final String OUTSTATE_PASSWORD2 = "ca.pkay.rcexplorer.CryptConfig.PASSWORD2";
     private Context context;
     private Rclone rclone;
     private TextInputLayout remoteNameInputLayout;
@@ -92,6 +94,8 @@ public class CryptConfig extends Fragment {
         if (remotePath != null) {
             outState.putString(OUTSTATE_REMOTE_PATH, remotePath);
         }
+        outState.putString(OUTSTATE_PASSWORD, password.getText().toString());
+        outState.putString(OUTSTATE_PASSWORD2, password2.getText().toString());
     }
 
     @Override
@@ -109,6 +113,14 @@ public class CryptConfig extends Fragment {
         if (savedRemotePath != null) {
             remotePath = savedRemotePath;
             remote.setText(remotePath);
+        }
+        String savedPassword = savedInstanceState.getString(OUTSTATE_PASSWORD);
+        if (savedPassword != null) {
+            password.setText(savedPassword);
+        }
+        String savedPassword2 = savedInstanceState.getString(OUTSTATE_PASSWORD2);
+        if (savedPassword2 != null) {
+            password2.setText(savedPassword2);
         }
     }
 
@@ -270,25 +282,27 @@ public class CryptConfig extends Fragment {
         });
     }
 
-    private void showPasswordGenerator(final int editTextField) {
+    private void showPasswordGenerator(int editTextField) {
         PasswordGeneratorDialog passwordGeneratorDialog = new PasswordGeneratorDialog()
-                .withContext(context)
-                .setDarkTheme(isDarkTheme)
-                .setCallback(new PasswordGeneratorDialog.Callbacks() {
-                    @Override
-                    public void onPasswordSelected(String generatedPassword) {
-                        if (generatedPassword.trim().isEmpty()) {
-                            return;
-                        }
-                        if (editTextField == 0) {
-                            password.setText(generatedPassword);
-                        } else if (editTextField == 1) {
-                            password2.setText(generatedPassword);
-                        }
-                    }
-                });
+                .setDarkTheme(isDarkTheme);
+        String tag = (editTextField == 0) ? "password" : "password2";
         if (getFragmentManager() != null) {
-            passwordGeneratorDialog.show(getFragmentManager(), "password generator");
+            passwordGeneratorDialog.show(getChildFragmentManager(), tag);
+        }
+    }
+
+    @Override
+    public void onPasswordSelected(String tag, String generatedPassword) {
+        if (generatedPassword.trim().isEmpty()) {
+            return;
+        }
+        switch (tag) {
+            case "password":
+                password.setText(generatedPassword);
+                break;
+            case "password2":
+                password2.setText(generatedPassword);
+                break;
         }
     }
 
