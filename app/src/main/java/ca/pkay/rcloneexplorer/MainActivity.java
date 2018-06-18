@@ -512,7 +512,6 @@ public class MainActivity extends AppCompatActivity
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setTitle(R.string.creating_rclone_binary)
                     .setCanCancel(false);
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");
@@ -556,7 +555,6 @@ public class MainActivity extends AppCompatActivity
             super.onPreExecute();
             findViewById(R.id.locked_config).setVisibility(View.GONE);
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setTitle(R.string.copying_rclone_config)
                     .setCanCancel(false);
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");
@@ -608,7 +606,6 @@ public class MainActivity extends AppCompatActivity
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setTitle(R.string.working)
                     .setCanCancel(false);
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");

@@ -1410,7 +1410,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             super.onPreExecute();
 
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setCanCancel(false)
                     .setDarkTheme(isDarkTheme)
                     .setTitle(getString(R.string.loading_file))
@@ -1515,7 +1514,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setCanCancel(false)
                     .setDarkTheme(isDarkTheme)
                     .setTitle(R.string.loading);
@@ -1618,16 +1616,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setTitle(R.string.generating_public_link)
-                    .setDarkTheme(isDarkTheme)
-                    .setNegativeButton(R.string.cancel)
-                    .setOnNegativeListener(new LoadingDialog.OnNegative() {
-                        @Override
-                        public void onNegative() {
-                            cancel(true);
-                        }
-                    });
+                    .setDarkTheme(isDarkTheme);
             if (getFragmentManager() != null) {
                 loadingDialog.show(getFragmentManager(), "loading dialog");
             }

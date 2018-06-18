@@ -19,6 +19,12 @@ public class LoadingDialog extends DialogFragment {
         void onNegative();
     }
 
+    private final String SAVED_CANCELABLE = "ca.pkay.rcexplorer.LoadingDialog.CANCELABLE";
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.LoadingDialog.IS_DARK_THEME";
+    private final String SAVED_TITLE = "ca.pkay.rcexplorer.LoadingDialog.TITLE";
+    private final String SAVED_TITLE_ID = "ca.pkay.rcexplorer.LoadingDialog.TITLE_ID";
+    private final String SAVED_NEGATIVE_TEXT = "ca.pkay.rcexplorer.NEGATIVE_TEXT";
+    private final String SAVED_NEGATIVE_TEXT_ID = "ca.pkay.rcexplorer.NEGATIVE_TEXT_ID";
     private Context context;
     private OnNegative onNegativeListener;
     private Boolean cancelable;
@@ -36,6 +42,15 @@ public class LoadingDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            cancelable = savedInstanceState.getBoolean(SAVED_CANCELABLE);
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
+            title = savedInstanceState.getString(SAVED_TITLE);
+            titleId = savedInstanceState.getInt(SAVED_TITLE_ID);
+            negativeText = savedInstanceState.getString(SAVED_NEGATIVE_TEXT);
+            negativeTextId = savedInstanceState.getInt(SAVED_NEGATIVE_TEXT_ID);
+        }
+
         AlertDialog.Builder builder;
 
         if (isDarkTheme) {
@@ -68,11 +83,23 @@ public class LoadingDialog extends DialogFragment {
         }
         builder.setView(view);
         return builder.create();
-        }
+    }
 
-    public LoadingDialog setContext(Context context) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_CANCELABLE, cancelable);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+        outState.putString(SAVED_TITLE, title);
+        outState.putInt(SAVED_TITLE_ID, titleId);
+        outState.putString(SAVED_NEGATIVE_TEXT, negativeText);
+        outState.putInt(SAVED_NEGATIVE_TEXT_ID, negativeTextId);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.context = context;
-        return this;
     }
 
     public LoadingDialog setTitle(String title) {
