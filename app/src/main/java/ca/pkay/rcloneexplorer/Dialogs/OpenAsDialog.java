@@ -10,25 +10,36 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
 
 public class OpenAsDialog extends DialogFragment {
 
     public interface OnClickListener {
-        void onClickText();
-        void onClickAudio();
-        void onClickVideo();
-        void onClickImage();
+        void onClickText(FileItem fileItem);
+        void onClickAudio(FileItem fileItem);
+        void onClickVideo(FileItem fileItem);
+        void onClickImage(FileItem fileItem);
     }
 
+    private final String SAVED_FILE_ITEM = "ca.pkay.rcexplorer.OpenAsDialog.FILE_ITEM";
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.OpenAsDialog.IS_DARK_THEME";
     private Context context;
     private View view;
     private Boolean isDarkTheme;
+    private FileItem fileItem;
     private OnClickListener listener;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
+            fileItem = savedInstanceState.getParcelable(SAVED_FILE_ITEM);
+        }
+
+        listener = (OnClickListener) getParentFragment();
+
         AlertDialog.Builder builder;
 
         if (isDarkTheme) {
@@ -43,11 +54,24 @@ public class OpenAsDialog extends DialogFragment {
         return builder.create();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+        outState.putParcelable(SAVED_FILE_ITEM, fileItem);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
     private void setListeners() {
         view.findViewById(R.id.open_as_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClickText();
+                listener.onClickText(fileItem);
                 dismiss();
             }
         });
@@ -55,7 +79,7 @@ public class OpenAsDialog extends DialogFragment {
         view.findViewById(R.id.open_as_audio).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClickAudio();
+                listener.onClickAudio(fileItem);
                 dismiss();
             }
         });
@@ -63,7 +87,7 @@ public class OpenAsDialog extends DialogFragment {
         view.findViewById(R.id.open_as_video).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClickVideo();
+                listener.onClickVideo(fileItem);
                 dismiss();
             }
         });
@@ -71,7 +95,7 @@ public class OpenAsDialog extends DialogFragment {
         view.findViewById(R.id.open_as_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClickImage();
+                listener.onClickImage(fileItem);
                 dismiss();
             }
         });
@@ -82,13 +106,8 @@ public class OpenAsDialog extends DialogFragment {
         return this;
     }
 
-    public OpenAsDialog setOnClickListener(OnClickListener l) {
-        listener = l;
+    public OpenAsDialog setFileItem(FileItem fileItem) {
+        this.fileItem = fileItem;
         return this;
-    }
-
-    public OpenAsDialog setContext(Context context) {
-        this.context = context;
-        return  this;
     }
 }
