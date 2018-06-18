@@ -27,14 +27,20 @@ public class PasswordGeneratorDialog extends DialogFragment {
 
     private final int MIN_PASSWORD_LENGTH = 4;
     private final int MAX_PASSWORD_LENGTH = 128;
-
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.PasswordGeneratorDialog.IS_DARK_THEME";
+    private final String SAVED_GENERATED_PASSWORD = "ca.pkay.rcexplorer.PasswordGeneratorDialog.GENERATED_PASSWORD";
+    private final String SAVED_PASSWORD_LENGTH = "ca.pkay.rcexplorer.PasswordGeneratorDialog.PASSWORD_LENGTH";
+    private final String SAVED_CHECKBOX_LOWERCASE = "ca.pkay.rcexplorer.PasswordGeneratorDialog.CHECKBOX_LOWERCASE";
+    private final String SAVED_CHECKBOX_UPPERCASE = "ca.pkay.rcexplorer.PasswordGeneratorDialog.CHECKBOX_UPPERCASE";
+    private final String SAVED_CHECKBOX_NUMBERS = "ca.pkay.rcexplorer.PasswordGeneratorDialog.CHECKBOX_NUMBERS";
+    private final String SAVED_CHECKBOX_SPECIAL_CHARS = "ca.pkay.rcexplorer.PasswordGeneratorDialog.CHECKBOX_SPECIAL_CHARS";
     private Context context;
     private Callbacks callback;
     private String generatedPassword;
     private boolean isDarkTheme;
     private TextView passwordDisplay;
-    private SeekBar seekBar;
     private TextView passwordLength;
+    private SeekBar seekBar;
     private CheckBox checkBoxLowerCase;
     private CheckBox checkBoxUpperCase;
     private CheckBox checkBoxNumbers;
@@ -46,12 +52,19 @@ public class PasswordGeneratorDialog extends DialogFragment {
     private String[] specialChars = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "-", "+", "{", "[", "}", "]", ":", ";", ",", ".", "?", "<", ">"};
 
     public interface Callbacks {
-        void onPasswordSelected(String password);
+        void onPasswordSelected(String tag, String password);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
+            generatedPassword = savedInstanceState.getString(SAVED_GENERATED_PASSWORD);
+        }
+
+        callback = (Callbacks) getParentFragment();
+
         AlertDialog.Builder builder;
         if (isDarkTheme) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
@@ -62,7 +75,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
         builder.setPositiveButton(R.string.set_password_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                callback.onPasswordSelected(generatedPassword);
+                callback.onPasswordSelected(getTag(), generatedPassword);
             }
         });
         builder.setNegativeButton(R.string.cancel, null);
@@ -163,24 +176,41 @@ public class PasswordGeneratorDialog extends DialogFragment {
             }
         });
 
-        generatePassword();
+        if (savedInstanceState != null) {
+            checkBoxLowerCase.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_LOWERCASE));
+            checkBoxUpperCase.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_UPPERCASE));
+            checkBoxNumbers.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_NUMBERS));
+            checkBoxSpecialChars.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_SPECIAL_CHARS));
+            seekBar.setProgress(savedInstanceState.getInt(SAVED_PASSWORD_LENGTH));
+            passwordDisplay.setText(savedInstanceState.getString(SAVED_GENERATED_PASSWORD));
+        } else {
+            generatePassword();
+        }
+
         builder.setView(view);
-        setRetainInstance(true);
         return builder.create();
     }
 
-    public PasswordGeneratorDialog withContext(Context content) {
-        this.context = content;
-        return this;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+        outState.putString(SAVED_GENERATED_PASSWORD, generatedPassword);
+        outState.putBoolean(SAVED_CHECKBOX_LOWERCASE, checkBoxLowerCase.isChecked());
+        outState.putBoolean(SAVED_CHECKBOX_UPPERCASE, checkBoxUpperCase.isChecked());
+        outState.putBoolean(SAVED_CHECKBOX_NUMBERS, checkBoxNumbers.isChecked());
+        outState.putBoolean(SAVED_CHECKBOX_SPECIAL_CHARS, checkBoxSpecialChars.isChecked());
+        outState.putInt(SAVED_PASSWORD_LENGTH, seekBar.getProgress());
     }
 
     public PasswordGeneratorDialog setDarkTheme(boolean isDarkTheme) {
         this.isDarkTheme = isDarkTheme;
-        return this;
-    }
-
-    public PasswordGeneratorDialog setCallback(Callbacks callback) {
-        this.callback = callback;
         return this;
     }
 
