@@ -111,6 +111,7 @@ public class NumberPickerDialog extends DialogFragment {
     }
 
     private void valueSelected() {
+        numberPicker.clearFocus();
         int number = numberPicker.getValue();
         String unitString = spinner.getSelectedItem().toString();
         int unit;
