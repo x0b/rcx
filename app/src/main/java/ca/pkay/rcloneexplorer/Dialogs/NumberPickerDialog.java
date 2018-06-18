@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -25,22 +26,35 @@ public class NumberPickerDialog extends DialogFragment {
     public static final int UNITS_S = 20;
     public static final int UNITS_M = 21;
     public static final int UNITS_H = 22;
+    private final String SAVED_TITLE = "ca.pkay.rcexplorer.NumberPickerDialog.TITLE";
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.NumberPickerDialog.IS_DARK_THEME";
+    private final String SAVED_OPTION_UNITS = "ca.pkay.rcexplorer.NumberPickerDialog.OPTION_UNITS";
+    private final String SAVED_SET_VALUE = "ca.pkay.rcexplorer.NumberPickerDialog.SET_VALUE";
     private Context context;
     private Spinner spinner;
     private NumberPicker numberPicker;
     private int title;
     private boolean isDarkTheme;
-    private String[] options;
+    private int optionUnits;
     private int defaultValue;
     private OnValueSelected listener;
 
     public interface OnValueSelected {
-        void onValueSelected(int number, int units);
+        void onValueSelected(String tag, int number, int units);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            title = savedInstanceState.getInt(SAVED_TITLE);
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
+            optionUnits = savedInstanceState.getInt(SAVED_OPTION_UNITS);
+            defaultValue = savedInstanceState.getInt(SAVED_SET_VALUE);
+        }
+
+        listener = (OnValueSelected) getParentFragment();
+
         AlertDialog.Builder builder;
         if (isDarkTheme) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
@@ -57,6 +71,15 @@ public class NumberPickerDialog extends DialogFragment {
         numberPicker.setValue(defaultValue);
 
         spinner = view.findViewById(R.id.spinner);
+
+        String[] options;
+        if (optionUnits == UNITS_STORAGE) {
+            options = new String[] {"MB", "GB"};
+        } else if (optionUnits == UNITS_TIME) {
+            options = new String[] {"seconds", "minutes", "hours"};
+        } else {
+            options = new String[1];
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_dropdown_item, options);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -70,6 +93,21 @@ public class NumberPickerDialog extends DialogFragment {
         builder.setTitle(title);
         builder.setView(view);
         return builder.create();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SAVED_TITLE, title);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+        outState.putInt(SAVED_OPTION_UNITS, optionUnits);
+        outState.putInt(SAVED_SET_VALUE, numberPicker.getValue());
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     private void valueSelected() {
@@ -97,12 +135,7 @@ public class NumberPickerDialog extends DialogFragment {
                 unit = -1;
         }
 
-        listener.onValueSelected(number, unit);
-    }
-
-    public NumberPickerDialog withContext(Context context) {
-        this.context = context;
-        return this;
+        listener.onValueSelected(getTag(), number, unit);
     }
 
     public NumberPickerDialog setDarkTheme(boolean isDarkTheme) {
@@ -116,21 +149,12 @@ public class NumberPickerDialog extends DialogFragment {
     }
 
     public NumberPickerDialog setNumberUnits(int units) {
-        if (units == UNITS_STORAGE) {
-            options = new String[] {"MB", "GB"};
-        } else if (units == UNITS_TIME) {
-            options = new String[] {"seconds", "minutes", "hours"};
-        }
+        optionUnits = units;
         return this;
     }
 
     public NumberPickerDialog setDefaultValue(int defaultValue) {
         this.defaultValue = defaultValue;
-        return this;
-    }
-
-    public NumberPickerDialog setListener(OnValueSelected listener) {
-        this.listener = listener;
         return this;
     }
 }

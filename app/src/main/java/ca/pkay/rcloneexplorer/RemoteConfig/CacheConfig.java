@@ -30,12 +30,15 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
 
-public class CacheConfig extends Fragment {
+public class CacheConfig extends Fragment implements NumberPickerDialog.OnValueSelected {
 
     private final String OUTSTATE_REMOTE_PATH = "ca.pkay.rcexplorer.CacheConfig.REMOTE_PATH";
     private final String OUTSTATE_CHUNK_SIZE = "ca.pkay.rcexplorer.CacheConfig.CHUNK_SIZE";
     private final String OUTSTATE_CACHE_EXPIRY = "ca.pkay.rcexplorer.CacheConfig.CACHE_EXPIRY";
     private final String OUTSTATE_CACHE_SIZE = "ca.pkay.rcexplorer.CacheConfig.CACHE_SIZE";
+    private final String CHUNK_SIZE_TAG = "chunk size";
+    private final String CACHE_EXPIRY_TAG = "cache expiry";
+    private final String CACHE_SIZE_TAG = "cache size";
     private Context context;
     private Rclone rclone;
     private TextInputLayout remoteNameInputLayout;
@@ -214,19 +217,12 @@ public class CacheConfig extends Fragment {
 
     private void showChunkSizeDialog() {
         NumberPickerDialog numberPickerDialog = new NumberPickerDialog()
-                .withContext(context)
                 .setDarkTheme(isDarkTheme)
                 .setNumberUnits(NumberPickerDialog.UNITS_STORAGE)
                 .setTitle(R.string.chunk_size)
-                .setDefaultValue(defaultValueChunkSize)
-                .setListener(new NumberPickerDialog.OnValueSelected() {
-                    @Override
-                    public void onValueSelected(int number, int units) {
-                        setChunkSize(number, units);
-                    }
-                });
+                .setDefaultValue(defaultValueChunkSize);
         if (getFragmentManager() != null) {
-            numberPickerDialog.show(getFragmentManager(), "number picker");
+            numberPickerDialog.show(getChildFragmentManager(), CHUNK_SIZE_TAG);
         }
     }
 
@@ -248,19 +244,12 @@ public class CacheConfig extends Fragment {
 
     private void showCacheExpiryDialog() {
         NumberPickerDialog numberPickerDialog = new NumberPickerDialog()
-                .withContext(context)
                 .setDarkTheme(isDarkTheme)
                 .setNumberUnits(NumberPickerDialog.UNITS_TIME)
                 .setTitle(R.string.cache_expiry)
-                .setDefaultValue(defaultValueCacheAge)
-                .setListener(new NumberPickerDialog.OnValueSelected() {
-                    @Override
-                    public void onValueSelected(int number, int units) {
-                        setCacheExpiry(number, units);
-                    }
-                });
+                .setDefaultValue(defaultValueCacheAge);
         if (getFragmentManager() != null) {
-            numberPickerDialog.show(getFragmentManager(), "number picker");
+            numberPickerDialog.show(getChildFragmentManager(), CACHE_EXPIRY_TAG);
         }
     }
 
@@ -285,19 +274,12 @@ public class CacheConfig extends Fragment {
 
     private void showCacheSizeDialog() {
         NumberPickerDialog numberPickerDialog = new NumberPickerDialog()
-                .withContext(context)
                 .setDarkTheme(isDarkTheme)
                 .setNumberUnits(NumberPickerDialog.UNITS_STORAGE)
                 .setTitle(R.string.cache_size)
-                .setDefaultValue(defaultValueCacheSize)
-                .setListener(new NumberPickerDialog.OnValueSelected() {
-                    @Override
-                    public void onValueSelected(int number, int units) {
-                        setCacheSize(number, units);
-                    }
-                });
+                .setDefaultValue(defaultValueCacheSize);
         if (getFragmentManager() != null) {
-            numberPickerDialog.show(getFragmentManager(), "number picker");
+            numberPickerDialog.show(getChildFragmentManager(), CACHE_SIZE_TAG);
         }
     }
 
@@ -437,6 +419,21 @@ public class CacheConfig extends Fragment {
         }
         if (getActivity() != null) {
             getActivity().finish();
+        }
+    }
+
+    @Override
+    public void onValueSelected(String tag, int number, int units) {
+        switch (tag) {
+            case CHUNK_SIZE_TAG:
+                setChunkSize(number, units);
+                break;
+            case CACHE_EXPIRY_TAG:
+                setCacheExpiry(number, units);
+                break;
+            case CACHE_SIZE_TAG:
+                setCacheSize(number, units);
+                break;
         }
     }
 }
