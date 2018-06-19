@@ -188,7 +188,6 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
             loadingDialog = new LoadingDialog()
                     .setTitle(R.string.loading)
                     .setDarkTheme(isDarkTheme)
-                    .setContext(context)
                     .setNegativeButton(R.string.cancel)
                     .setOnNegativeListener(new LoadingDialog.OnNegative() {
                         @Override

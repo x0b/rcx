@@ -81,7 +81,8 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
                                                                 BreadcrumbView.OnClickListener,
-                                                                OpenAsDialog.OnClickListener {
+                                                                OpenAsDialog.OnClickListener,
+                                                                InputDialog.OnPositive {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
@@ -92,11 +93,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
     private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
     private final String SAVED_SEARCH_STRING = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_STRING";
+    private final String SAVED_RENAME_ITEM = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_RENAME_ITEM";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private DirectoryObject directoryObject;
     private List<FileItem> moveList;
     private List<FileItem> downloadList;
+    private FileItem renameItem;
     private BreadcrumbView breadcrumbView;
     private Rclone rclone;
     private RemoteItem remote;
@@ -162,6 +165,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             directoryObject.setPath(path);
             directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
             buildStackFromPath(remoteName, path);
+            renameItem = savedInstanceState.getParcelable(SAVED_RENAME_ITEM);
         }
 
         if (getContext() == null) {
@@ -303,6 +307,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
         outState.putParcelableArrayList(SAVED_CONTENT, content);
         outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
+        outState.putParcelable(SAVED_RENAME_ITEM, renameItem);
         if (isSearchMode) {
             outState.putString(SAVED_SEARCH_STRING, searchString);
         }
@@ -583,7 +588,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                renameFiles(recyclerViewAdapter.getSelectedItems());
+                renameItem = recyclerViewAdapter.getSelectedItems().get(0);
+                renameFiles();
             }
         });
 
@@ -1005,7 +1011,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         moveFiles(Collections.singletonList(fileItem));
                         break;
                     case R.id.action_rename:
-                        renameFiles(Collections.singletonList(fileItem));
+                        renameItem = fileItem;
+                        renameFiles();
                         break;
                     case R.id.action_delete:
                         deleteFiles(Collections.singletonList(fileItem));
@@ -1129,34 +1136,17 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         builder.create().show();
     }
 
-    private void renameFiles(List<FileItem> list) {
-        final FileItem renameItem = list.get(0);
+    private void renameFiles() {
         if (getFragmentManager() != null) {
             new InputDialog()
-                    .setContext(context)
                     .setTitle(R.string.rename_file)
                     .setMessage(R.string.type_new_file_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setFilledText(renameItem.getName())
                     .setDarkTheme(isDarkTheme)
-                    .setOnPositiveListener(new InputDialog.OnPositive() {
-                        @Override
-                        public void onPositive(String input) {
-                            if (renameItem.getName().equals(input)) {
-                                return;
-                            }
-                            recyclerViewAdapter.cancelSelection();
-                            String newFilePath;
-                            if (directoryObject.getCurrentPath().equals("//" + remoteName)) {
-                                newFilePath = input;
-                            } else {
-                                newFilePath = directoryObject.getCurrentPath() + "/" + input;
-                            }
-                            new RenameFileTask().execute(renameItem.getPath(), newFilePath);
-                        }
-                    })
-                    .show(getFragmentManager(), "input dialog");
+                    .setTag("rename file")
+                    .show(getChildFragmentManager(), "input dialog");
         }
     }
 
@@ -1182,28 +1172,48 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void onCreateNewDirectory() {
         if (getFragmentManager() != null) {
             new InputDialog()
-                    .setContext(context)
                     .setTitle(R.string.create_new_folder)
                     .setMessage(R.string.type_new_folder_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setDarkTheme(isDarkTheme)
-                    .setOnPositiveListener(new InputDialog.OnPositive() {
-                        @Override
-                        public void onPositive(String input) {
-                            if (input.trim().length() == 0) {
-                                return;
-                            }
-                            String newDir;
-                            if (directoryObject.getCurrentPath().equals("//" + remoteName)) {
-                                newDir = input;
-                            } else {
-                                newDir = directoryObject.getCurrentPath() + "/" + input;
-                            }
-                            new MakeDirectoryTask().execute(newDir);
-                        }
-                    })
-                    .show(getFragmentManager(), "input dialog");
+                    .setTag("new dir")
+                    .show(getChildFragmentManager(), "input dialog");
+        }
+    }
+
+    /*
+     * Input Dialog callback
+     */
+    @Override
+    public void onPositive(String tag, String input) {
+        switch (tag) {
+            case "new dir":
+                if (input.trim().length() == 0) {
+                    return;
+                }
+                String newDir;
+                if (directoryObject.getCurrentPath().equals("//" + remoteName)) {
+                    newDir = input;
+                } else {
+                    newDir = directoryObject.getCurrentPath() + "/" + input;
+                }
+                new MakeDirectoryTask().execute(newDir);
+                break;
+            case "rename file":
+                if (renameItem.getName().equals(input)) {
+                    return;
+                }
+                recyclerViewAdapter.cancelSelection();
+                String newFilePath;
+                if (directoryObject.getCurrentPath().equals("//" + remoteName)) {
+                    newFilePath = input;
+                } else {
+                    newFilePath = directoryObject.getCurrentPath() + "/" + input;
+                }
+                new RenameFileTask().execute(renameItem.getPath(), newFilePath);
+                renameItem = null;
+                break;
         }
     }
 
@@ -1410,7 +1420,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             super.onPreExecute();
 
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setCanCancel(false)
                     .setDarkTheme(isDarkTheme)
                     .setTitle(getString(R.string.loading_file))
@@ -1515,7 +1524,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setCanCancel(false)
                     .setDarkTheme(isDarkTheme)
                     .setTitle(R.string.loading);
@@ -1618,16 +1626,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setContext(context)
                     .setTitle(R.string.generating_public_link)
-                    .setDarkTheme(isDarkTheme)
-                    .setNegativeButton(R.string.cancel)
-                    .setOnNegativeListener(new LoadingDialog.OnNegative() {
-                        @Override
-                        public void onNegative() {
-                            cancel(true);
-                        }
-                    });
+                    .setDarkTheme(isDarkTheme);
             if (getFragmentManager() != null) {
                 loadingDialog.show(getFragmentManager(), "loading dialog");
             }
