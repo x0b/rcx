@@ -54,9 +54,10 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends AppCompatActivity
-        implements  NavigationView.OnNavigationItemSelectedListener,
-                    RemotesFragment.OnRemoteClickListener {
+public class MainActivity   extends AppCompatActivity
+                            implements  NavigationView.OnNavigationItemSelectedListener,
+                                        RemotesFragment.OnRemoteClickListener,
+                                        InputDialog.OnPositive {
 
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
@@ -316,20 +317,21 @@ public class MainActivity extends AppCompatActivity
     private void askForConfigPassword() {
         findViewById(R.id.locked_config).setVisibility(View.VISIBLE);
         new InputDialog()
-                .setContext(context)
                 .setTitle(R.string.config_password_protected)
                 .setMessage(R.string.please_enter_password)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.okay_confirmation)
                 .setDarkTheme(isDarkTheme)
                 .setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                .setOnPositiveListener(new InputDialog.OnPositive() {
-                    @Override
-                    public void onPositive(String input) {
-                        new DecryptConfig().execute(input);
-                    }
-                })
                 .show(getSupportFragmentManager(), "input dialog");
+    }
+
+    /*
+     * Input Dialog callback
+     */
+    @Override
+    public void onPositive(String tag, String input) {
+        new DecryptConfig().execute(input);
     }
 
     public void importConfigFile() {

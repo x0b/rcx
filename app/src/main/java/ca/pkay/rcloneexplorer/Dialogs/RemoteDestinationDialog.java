@@ -33,7 +33,6 @@ import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
@@ -41,7 +40,8 @@ import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class RemoteDestinationDialog extends DialogFragment implements  SwipeRefreshLayout.OnRefreshListener,
-                                                                        FileExplorerRecyclerViewAdapter.OnClickListener {
+                                                                        FileExplorerRecyclerViewAdapter.OnClickListener,
+                                                                        InputDialog.OnPositive {
 
     public interface OnDestinationSelectedListener {
         void onDestinationSelected(String path);
@@ -237,29 +237,30 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     private void onCreateNewDirectory() {
         if (getFragmentManager() != null) {
             new InputDialog()
-                    .setContext(context)
                     .setTitle(R.string.create_new_folder)
                     .setMessage(R.string.type_new_folder_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setDarkTheme(isDarkTheme)
-                    .setOnPositiveListener(new InputDialog.OnPositive() {
-                        @Override
-                        public void onPositive(String input) {
-                            if (input.trim().length() == 0) {
-                                return;
-                            }
-                            String newDir;
-                            if (directoryObject.getCurrentPath().equals("//" + remote.getName())) {
-                                newDir = input;
-                            } else {
-                                newDir = directoryObject.getCurrentPath() + "/" + input;
-                            }
-                            newDirTask = new MakeDirectoryTask().execute(newDir);
-                        }
-                    })
-                    .show(getFragmentManager(), "input dialog");
+                    .show(getChildFragmentManager(), "input dialog");
         }
+    }
+
+    /*
+     * Input Dialog callback
+     */
+    @Override
+    public void onPositive(String tag, String input) {
+        if (input.trim().length() == 0) {
+            return;
+        }
+        String newDir;
+        if (directoryObject.getCurrentPath().equals("//" + remote.getName())) {
+            newDir = input;
+        } else {
+            newDir = directoryObject.getCurrentPath() + "/" + input;
+        }
+        newDirTask = new MakeDirectoryTask().execute(newDir);
     }
 
     private void goUp() {

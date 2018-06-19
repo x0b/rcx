@@ -18,9 +18,19 @@ import ca.pkay.rcloneexplorer.R;
 public class InputDialog extends DialogFragment {
 
     public interface OnPositive {
-        void onPositive(String input);
+        void onPositive(String tag, String input);
     }
 
+    private final String SAVED_TITLE = "ca.pkay.rcexplorer.InputDialog.TITLE";
+    private final String SAVED_TITLE_ID = "ca.pkay.rcexplorer.InputDialog.TITLE_ID";
+    private final String SAVED_MESSAGE = "ca.pkay.rcexplorer.InputDialog.MESSAGE";
+    private final String SAVED_MESSAGE_ID = "ca.pkay.rcexplorer.InputDialog.MESSAGE_ID";
+    private final String SAVED_POSITIVE_TEXT_ID = "ca.pkay.rcexplorer.InputDialog.POSITIVE_TEXT_ID";
+    private final String SAVED_NEGATIVE_TEXT_ID = "ca.pkay.rcexplorer.InputDialog.NEGATIVE_TEXT_ID";
+    private final String SAVED_FILLED_TEXT = "ca.pkay.rcexplorer.InputDialog.FILLED_TEXT";
+    private final String SAVED_INPUT_TYPE = "ca.pkay.rcexplorer.InputDialog.INPUT_TYPE";
+    private final String SAVED_TAG = "ca.pkay.rcexplorer.InputDialog.TAG";
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.InputDialog.IS_DARK_THEME";
     private Context context;
     private EditText editText;
     private String title;
@@ -32,6 +42,7 @@ public class InputDialog extends DialogFragment {
     private String filledText;
     private int inputType;
     private Boolean isDarkTheme;
+    private String tag;
     private OnPositive onPositiveListener;
 
     public InputDialog() {
@@ -41,6 +52,23 @@ public class InputDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            title = savedInstanceState.getString(SAVED_TITLE);
+            titleId = savedInstanceState.getInt(SAVED_TITLE_ID);
+            message = savedInstanceState.getString(SAVED_MESSAGE);
+            messageId = savedInstanceState.getInt(SAVED_MESSAGE_ID);
+            positiveTextId = savedInstanceState.getInt(SAVED_POSITIVE_TEXT_ID);
+            negativeTextId = savedInstanceState.getInt(SAVED_NEGATIVE_TEXT_ID);
+            filledText = savedInstanceState.getString(SAVED_FILLED_TEXT);
+            inputType = savedInstanceState.getInt(SAVED_INPUT_TYPE);
+            tag = savedInstanceState.getString(SAVED_TAG);
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
+        }
+
+        if (getParentFragment() != null) {
+            onPositiveListener = (OnPositive) getParentFragment();
+        }
+
         AlertDialog.Builder builder;
 
         if (isDarkTheme) {
@@ -67,7 +95,7 @@ public class InputDialog extends DialogFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String input = editText.getText().toString();
-                    onPositiveListener.onPositive(input);
+                    onPositiveListener.onPositive(tag, input);
                 }
             });
         }
@@ -90,9 +118,29 @@ public class InputDialog extends DialogFragment {
         return builder.create();
     }
 
-    public InputDialog setContext(Context context) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_TITLE, title);
+        outState.putInt(SAVED_TITLE_ID, titleId);
+        outState.putString(SAVED_MESSAGE, message);
+        outState.putInt(SAVED_MESSAGE_ID, messageId);
+        outState.putInt(SAVED_POSITIVE_TEXT_ID, positiveTextId);
+        outState.putInt(SAVED_NEGATIVE_TEXT_ID, negativeTextId);
+        outState.putString(SAVED_FILLED_TEXT, filledText);
+        outState.putInt(SAVED_INPUT_TYPE, inputType);
+        outState.putString(SAVED_TAG, tag);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.context = context;
-        return this;
+
+        if (context instanceof OnPositive) {
+            onPositiveListener = (OnPositive) context;
+        }
     }
 
     public InputDialog setFilledText(String text) {
@@ -141,9 +189,8 @@ public class InputDialog extends DialogFragment {
         return this;
     }
 
-    public InputDialog setOnPositiveListener(OnPositive l) {
-        onPositiveListener = l;
+    public InputDialog setTag(String tag) {
+        this.tag = tag;
         return this;
     }
-
 }
