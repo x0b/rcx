@@ -1,3 +1,14 @@
+### 1.3.6
+* This update contains mostly bug fixes
+* **Fix:** Crash in dialogs on screen orientation change
+* **Fix:** Displayed mod time
+* **Fix:** Yandex remote creation
+* **Fix:** Azure remote creation
+* **Fix:** Hide directory mod time for remotes that don't support it
+* **Fix:** Error notification after successful move
+
+***
+
 ### 1.3.5
 * **New:** Show file thumbnails (experimental feature, enable in settings)
 * **New:** App updates notification updates
