@@ -313,4 +313,5 @@
     <string name="password_special_chars_checkbox">Special characters</string>
     <string name="password_refresh_content_description">Refresh button</string>
     <string name="show_passwords">Show passwords</string>
+    <string name="wrap_filenames">Wrap filenames</string>
 </resources>

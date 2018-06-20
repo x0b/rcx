@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private boolean canSelect;
     private boolean showThumbnails;
     private int cardColor;
-    private Boolean optionsDisabled;
+    private boolean optionsDisabled;
+    private boolean wrapFileNames;
     private Context context;
 
     public interface OnClickListener {
@@ -59,6 +61,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         isInMoveMode = false;
         isInSearchMode = false;
         canSelect = true;
+        wrapFileNames = true;
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
@@ -149,6 +152,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                     listener.onFileOptionsClicked(v, item);
                 }
             });
+        }
+
+        if (wrapFileNames) {
+            holder.fileName.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+            holder.fileName.setSingleLine(true);
+        } else {
+            holder.fileName.setEllipsize(null);
+            holder.fileName.setSingleLine(false);
         }
 
         holder.view.setOnClickListener(new View.OnClickListener() {
@@ -306,6 +317,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public Boolean isInMoveMode() {
         return isInMoveMode;
+    }
+
+    public void setWrapFileNames(boolean wrapFileNames) {
+        this.wrapFileNames = wrapFileNames;
+        refreshData();
     }
 
     private void showEmptyState(Boolean show) {
