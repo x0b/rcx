@@ -60,7 +60,6 @@ public class PasswordGeneratorDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
-            generatedPassword = savedInstanceState.getString(SAVED_GENERATED_PASSWORD);
         }
 
         callback = (Callbacks) getParentFragment();
@@ -183,6 +182,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
             checkBoxSpecialChars.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_SPECIAL_CHARS));
             seekBar.setProgress(savedInstanceState.getInt(SAVED_PASSWORD_LENGTH));
             passwordDisplay.setText(savedInstanceState.getString(SAVED_GENERATED_PASSWORD));
+            generatedPassword = savedInstanceState.getString(SAVED_GENERATED_PASSWORD);
         } else {
             generatePassword();
         }
