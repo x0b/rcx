@@ -39,6 +39,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -432,6 +433,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (remote.isCrypt()) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
+        menu.findItem(R.id.action_wrap_filenames).setChecked(true);
     }
 
     @Override
@@ -455,14 +457,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
                 context.startService(intent);
                 return true;
-            case R.id.action_file_properties:
-                //showFileProperties(); TODO
-                return true;
             case R.id.action_empty_trash:
                 new EmptyTrashTask().execute();
                 return true;
             case R.id.action_link:
                 new LinkTask().execute(directoryObject.getCurrentPath());
+            case R.id.action_wrap_filenames:
+                wrapFilenames(item);
+                return true;
             default:
                     return super.onOptionsItemSelected(item);
         }
@@ -477,6 +479,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+    }
+
+    private void wrapFilenames(MenuItem menuItem) {
+        if (menuItem.isChecked()) {
+            menuItem.setChecked(false);
+            recyclerViewAdapter.setWrapFileNames(false);
+        } else {
+            menuItem.setChecked(true);
+            recyclerViewAdapter.setWrapFileNames(true);
+        }
     }
 
     private void startThumbnailService() {
