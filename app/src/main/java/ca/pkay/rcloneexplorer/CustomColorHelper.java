@@ -23,7 +23,7 @@ public class CustomColorHelper {
         if (context.getResources().getColor(R.color.colorPrimary_Blue) == color) {
             return R.style.CustomPrimaryBlue;
         }
-        if (context.getResources().getColor(R.color.colorPrimaryLight_Blue) == color) {
+        if (context.getResources().getColor(R.color.colorPrimary_LightBlue) == color) {
             return R.style.CustomPrimaryLightBlue;
         }
         if (context.getResources().getColor(R.color.colorPrimary_Cyan) == color) {
