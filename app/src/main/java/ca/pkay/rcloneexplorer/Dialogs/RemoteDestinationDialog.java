@@ -403,7 +403,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         @Override
         protected Boolean doInBackground(String... strings) {
             String newDir = strings[0];
-            return rclone.makeDirectory(remote.getRemote(), newDir);
+            return rclone.makeDirectory(remote.getName(), newDir);
         }
 
         @Override
