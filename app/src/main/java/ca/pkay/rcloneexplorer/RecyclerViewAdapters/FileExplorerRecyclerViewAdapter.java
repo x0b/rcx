@@ -303,6 +303,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         isInSearchMode = mode;
     }
 
+    public void setSelectedItems(List<FileItem> selectedItems) {
+        this.selectedItems = new ArrayList<>(selectedItems);
+        this.isInSelectMode = true;
+        notifyDataSetChanged();
+    }
+
     public Boolean isInSelectMode() {
         return isInSelectMode;
     }
