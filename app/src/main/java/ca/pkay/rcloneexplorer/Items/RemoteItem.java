@@ -203,8 +203,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(typeReadable);
         dest.writeInt(type);
+        dest.writeString(typeReadable);
         dest.writeByte((byte) (isCrypt ? 1 : 0));
         dest.writeByte((byte) (isAlias ? 1 : 0));
         dest.writeByte((byte) (isCache ? 1 : 0));
