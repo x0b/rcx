@@ -29,11 +29,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Stack;
 
+import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
 import es.dmoral.toasty.Toasty;
 
-public class FilePicker extends AppCompatActivity implements FilePickerAdapter.OnClickListener {
+public class FilePicker extends AppCompatActivity implements    FilePickerAdapter.OnClickListener,
+                                                                InputDialog.OnPositive {
 
     public static final String FILE_PICKER_PICK_DESTINATION_TYPE = "ca.pkay.rcexplorer.FILE_PICKER_PICK_DEST_TYPE";
     public static final String FILE_PICKER_RESULT = "ca.pkay.rcexplorer.FILE_PICKER_RESULT";
@@ -143,6 +145,8 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
         menuInflater.inflate(R.menu.file_picker_menu, menu);
         if (destinationPickerType) {
             menu.removeItem(R.id.action_select_all);
+        } else {
+            menu.removeItem(R.id.action_new_folder);
         }
         return true;
     }
@@ -155,6 +159,9 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
                 return true;
             case R.id.action_sort:
                 showSortMenu();
+                return true;
+            case R.id.action_new_folder:
+                newFolderDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -223,6 +230,34 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
         } else if (!isSelected && speedDialView.getVisibility() == View.VISIBLE) {
             speedDialView.hide();
             speedDialView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void newFolderDialog() {
+        new InputDialog()
+                .setTitle(R.string.create_new_folder)
+                .setMessage(R.string.type_new_folder_name)
+                .setNegativeButton(R.string.cancel)
+                .setPositiveButton(R.string.okay_confirmation)
+                .setDarkTheme(isDarkTheme)
+                .show(getSupportFragmentManager(), "input dialog");
+    }
+
+    /*
+     * Input Dialog callback
+     */
+    @Override
+    public void onPositive(String tag, String input) {
+        if (input.trim().isEmpty()) {
+            return;
+        }
+        
+        File newDir = new File(current.getAbsolutePath() + "/" + input);
+        if (newDir.mkdir()) {
+            fileList.clear();
+            fileList.addAll(Arrays.asList(current.listFiles()));
+            sortDirectory();
+            filePickerAdapter.setNewData(fileList);
         }
     }
 
