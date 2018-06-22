@@ -28,6 +28,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -95,6 +96,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
     private final String SAVED_SEARCH_STRING = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_STRING";
     private final String SAVED_RENAME_ITEM = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_RENAME_ITEM";
+    private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SELECTED_ITEMS";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private DirectoryObject directoryObject;
@@ -197,13 +199,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
         swipeRefreshLayout.setOnRefreshListener(this);
-        if (directoryObject.isDirectoryContentEmpty()) {
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
-            swipeRefreshLayout.setRefreshing(true);
-        }
 
         Context context = view.getContext();
-
 
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
@@ -213,6 +210,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.showThumbnails(showThumbnails);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        if (directoryObject.isDirectoryContentEmpty()) {
+            fetchDirectoryTask = new FetchDirectoryContent().execute();
+            swipeRefreshLayout.setRefreshing(true);
+        } else {
+            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+        }
 
         fab = view.findViewById(R.id.fab);
         fab.setSpeedDialOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
@@ -309,6 +313,21 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         outState.putParcelable(SAVED_RENAME_ITEM, renameItem);
         if (isSearchMode) {
             outState.putString(SAVED_SEARCH_STRING, searchString);
+        }
+        if (recyclerViewAdapter.isInSelectMode()) {
+            outState.putParcelableArrayList(SAVED_SELECTED_ITEMS, new ArrayList<>(recyclerViewAdapter.getSelectedItems()));
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            List<FileItem> selectedItems = savedInstanceState.getParcelableArrayList(SAVED_SELECTED_ITEMS);
+            if (selectedItems != null && !selectedItems.isEmpty()) {
+                recyclerViewAdapter.setSelectedItems(selectedItems);
+                handleFilesSelected();
+            }
         }
     }
 
@@ -968,6 +987,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public void onFilesSelected() {
+        handleFilesSelected();
+    }
+
+    private void handleFilesSelected() {
         int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
 
         if (numOfSelected > 0) { // something is selected
@@ -982,7 +1005,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(1f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(true);
             }
-            lockOrientation();
         }
     }
 
@@ -993,7 +1015,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
-            unlockOrientation();
         }
     }
 
