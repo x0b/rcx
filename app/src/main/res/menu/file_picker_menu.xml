@@ -4,16 +4,20 @@
 
     <item
         android:id="@+id/action_sort"
-        android:orderInCategory="2"
         android:title="@string/sort"
         android:icon="@drawable/ic_sort"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_new_folder"
+        android:title="@string/new_folder"
+        android:icon="@drawable/ic_create_new_folder"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_select_all"
         android:title="@string/select_all"
         android:icon="@drawable/ic_select_all"
-        android:orderInCategory="3"
         app:showAsAction="ifRoom" />
 
 </menu>
