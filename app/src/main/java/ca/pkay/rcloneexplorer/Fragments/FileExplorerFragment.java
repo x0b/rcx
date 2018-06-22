@@ -680,8 +680,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         searchBar.findViewById(R.id.search_clear).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchDirContent("");
-                ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
+                EditText searchField = searchBar.findViewById(R.id.search_field);
+                if (searchField.getText().toString().isEmpty()) {
+                    searchClicked();
+                } else {
+                    searchDirContent("");
+                    searchField.setText("");
+                }
             }
         });
     }
