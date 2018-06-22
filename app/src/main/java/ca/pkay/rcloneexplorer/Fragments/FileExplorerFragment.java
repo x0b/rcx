@@ -105,7 +105,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Rclone rclone;
     private RemoteItem remote;
     private String remoteName;
-    private String remoteType;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View searchBar;
@@ -150,7 +149,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             return;
         }
         remoteName = remote.getName();
-        remoteType = remote.getType();
         pathStack = new Stack<>();
         directoryObject = new DirectoryObject();
 
@@ -173,7 +171,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             return;
         }
         originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
-        ((FragmentActivity) context).setTitle(remoteType);
+        setTitle();
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -314,6 +312,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
+    private void setTitle() {
+        String title;
+        if (remote.isCrypt()) {
+            title = "crypt" + " " + "(" + remote.getTypeReadable() + ")";
+        } else {
+            title = remote.getTypeReadable();
+        }
+        ((FragmentActivity) context).setTitle(title);
+    }
+
     private void buildStackFromPath(String remote, String path) {
         String root = "//" + remote;
         if (root.equals(path)) {
@@ -427,7 +435,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
-        if (remote.hasRemote() && remote.getRemote().equals("crypt")) {
+        if (remote.isCrypt()) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
         if (remote.isCrypt()) {
@@ -688,7 +696,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void cancelMoveClicked() {
-        ((FragmentActivity) context).setTitle(remoteType);
+        setTitle();
         recyclerViewAdapter.setMoveMode(false);
         isInMoveMode = false;
         hideMoveBar();
@@ -700,7 +708,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void moveLocationSelected() {
-        ((FragmentActivity) context).setTitle(remoteType);
+        setTitle();
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
@@ -981,7 +989,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onFileDeselected() {
         if (!isInMoveMode) {
-            ((FragmentActivity) context).setTitle(remoteType);
+            setTitle();
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
@@ -1042,7 +1050,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (fileItem.isDir()) {
             popupMenu.getMenu().findItem(R.id.action_open_as).setVisible(false);
         }
-        if (remote.hasRemote() && remote.getRemote().equals("crypt")) {
+        if (remote.isCrypt()) {
             popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
         }
         if (remote.isCrypt()) {

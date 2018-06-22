@@ -3,33 +3,52 @@ package ca.pkay.rcloneexplorer.Items;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.util.SizeF;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
+    public final static int AMAZON_DRIVE = 10;
+    public final static int S3 = 11;
+    public final static int B2 = 12;
+    public final static int BOX = 13;
+    public final static int CACHE = 14;
+    public final static int DROPBOX = 15;
+    public final static int FTP = 16;
+    public final static int GOOGLE_CLOUD_STORAGE = 17;
+    public final static int GOOGLE_DRIVE = 18;
+    public final static int HUBIC = 19;
+    public final static int LOCAL = 20;
+    public final static int MEGA = 21;
+    public final static int AZUREBLOB = 22;
+    public final static int ONEDRIVE = 23;
+    public final static int SWIFT = 24;
+    public final static int PCLOUD = 25;
+    public final static int QINGSTOR = 26;
+    public final static int SFTP = 27;
+    public final static int WEBDAV = 28;
+    public final static int YANDEX = 29;
+    public final static int HTTP = 30;
     private String name;
-    private String type;
-    private String remote;
+    private int type;
+    private String typeReadable;
     private boolean isCrypt;
+    private boolean isAlias;
+    private boolean isCache;
     private boolean isPinned;
 
     public RemoteItem(String name, String type) {
         this.name = name;
-        this.type = type;
-        this.isPinned = false;
-        this.isCrypt = type.equals("crypt");
-    }
-
-    public RemoteItem(String name, String type, String remote) {
-        this(name, type);
-        this.remote = remote;
-        this.isCrypt = remote.equals("crypt") || type.equals("crypt");
+        this.typeReadable = type;
+        this.type = getTypeFromString(type);
     }
 
     private RemoteItem(Parcel in) {
         name = in.readString();
-        type = in.readString();
-        remote = in.readString();
+        type = in.readInt();
+        typeReadable = in.readString();
         isCrypt = in.readByte() != 0;
+        isAlias = in.readByte() != 0;
+        isCache = in.readByte() != 0;
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -45,14 +64,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     };
 
     public boolean hasTrashCan() {
-        String remoteType = type;
-        if (remote != null && !remote.trim().isEmpty()) {
-            remoteType = remote;
-        }
-        switch (remoteType) {
-            case "drive":
-            case "pcloud":
-            case "yandex":
+        switch (type) {
+            case GOOGLE_DRIVE:
+            case PCLOUD:
+            case YANDEX:
                 return true;
             default:
                 return false;
@@ -60,14 +75,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     }
 
     public boolean isDirectoryModifiedTimeSupported() {
-        String remoteType = type;
-        if (remote != null && !remote.trim().isEmpty()) {
-            remoteType = remote;
-        }
-        switch (remoteType) {
-            case "dropbox":
-            case "b2":
-            case "hubic":
+        switch (type) {
+            case DROPBOX:
+            case B2:
+            case HUBIC:
                 return false;
             default:
                 return true;
@@ -78,32 +89,100 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return name;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public boolean hasRemote() {
-        return remote != null && !remote.trim().isEmpty();
+    public void setType(String type) {
+        this.typeReadable = type;
+        this.type = getTypeFromString(type);
     }
 
-    public String getRemote() {
-        return remote;
+    public String getTypeReadable() {
+        return this.typeReadable;
     }
 
     public boolean isCrypt() {
         return this.isCrypt;
     }
 
-    public void setIsCrypt(boolean isCrypt) {
+    public RemoteItem setIsCrypt(boolean isCrypt) {
         this.isCrypt = isCrypt;
+        return this;
     }
 
-    public void pin(boolean isPinned) {
+    public boolean isAlias() {
+        return this.isAlias;
+    }
+
+    public RemoteItem setIsAlias(boolean isAlias) {
+        this.isAlias = isAlias;
+        return this;
+    }
+
+    public boolean isCache() {
+        return this.isCache;
+    }
+
+    public RemoteItem setIsCache(boolean isCache) {
+        this.isCache = isCache;
+        return this;
+    }
+
+    public RemoteItem pin(boolean isPinned) {
         this.isPinned = isPinned;
+        return this;
     }
 
     public boolean isPinned() {
         return this.isPinned;
+    }
+
+    private int getTypeFromString(String type) {
+        switch (type) {
+            case "amazon cloud drive":
+                return AMAZON_DRIVE;
+            case "s3":
+                return S3;
+            case "box":
+                return BOX;
+            case "cache":
+                return CACHE;
+            case "dropbox":
+                return DROPBOX;
+            case "ftp":
+                return FTP;
+            case "google cloud storage":
+                return GOOGLE_CLOUD_STORAGE;
+            case "drive":
+                return GOOGLE_DRIVE;
+            case "hubic":
+                return HUBIC;
+            case "local":
+                return LOCAL;
+            case "mega":
+                return MEGA;
+            case "azureblob":
+                return AZUREBLOB;
+            case "onedrive":
+                return ONEDRIVE;
+            case "swift":
+                return SWIFT;
+            case "pcloud":
+                return PCLOUD;
+            case "qingstor":
+                return QINGSTOR;
+            case "sftp":
+                return SFTP;
+            case "webdav":
+                return WEBDAV;
+            case "yandex":
+                return YANDEX;
+            case "http":
+                return HTTP;
+            default:
+                return -1;
+        }
     }
 
     @Override
@@ -124,8 +203,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(type);
-        dest.writeString(remote);
+        dest.writeString(typeReadable);
+        dest.writeInt(type);
         dest.writeByte((byte) (isCrypt ? 1 : 0));
+        dest.writeByte((byte) (isAlias ? 1 : 0));
+        dest.writeByte((byte) (isCache ? 1 : 0));
     }
 }

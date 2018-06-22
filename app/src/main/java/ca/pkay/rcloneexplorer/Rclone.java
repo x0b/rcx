@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.util.Pair;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -193,32 +194,29 @@ public class Rclone {
         List<RemoteItem> remoteItemList = new ArrayList<>();
         Iterator<String> iterator = remotesJSON.keys();
         while (iterator.hasNext()) {
-            RemoteItem remoteItem;
             String key = iterator.next();
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
                 String type = remoteJSON.getString("type");
-                if (remoteJSON.has("remote") && !remoteJSON.getString("remote").isEmpty() && remoteJSON.getString("remote").contains(":")) {
-                    String remotePath = remoteJSON.getString("remote");
-                    int index = remotePath.indexOf(":");
-                    RemoteItem remote = getRemote(remotesJSON, remotePath.substring(0, index));
-                    if (remote.hasRemote()) {
-                        remoteItem = new RemoteItem(key, type, remote.getRemote());
-                    } else {
-                        remoteItem = new RemoteItem(key, type, remote.getType());
-                    }
-                    if (remote.isCrypt()) {
-                        remoteItem.setIsCrypt(true);
-                    }
-                } else {
-                    remoteItem = new RemoteItem(key, type);
+                if (type == null || type.trim().isEmpty()) {
+                    Toasty.error(context, context.getResources().getString(R.string.error_retrieving_remote, key), Toast.LENGTH_SHORT, true).show();
+                    continue;
                 }
 
-                if (pinnedRemotes.contains(remoteItem.getName())) {
-                    remoteItem.pin(true);
+                RemoteItem newRemote = new RemoteItem(key, type);
+                if (type.equals("crypt") || type.equals("alias") || type.equals("cache")) {
+                    newRemote = getRemoteType(remotesJSON, newRemote, key);
+                    if (newRemote == null) {
+                        Toasty.error(context, context.getResources().getString(R.string.error_retrieving_remote, key), Toast.LENGTH_SHORT, true).show();
+                        continue;
+                    }
                 }
 
-                remoteItemList.add(remoteItem);
+                if (pinnedRemotes.contains(newRemote.getName())) {
+                    newRemote.pin(true);
+                }
+
+                remoteItemList.add(newRemote);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -227,11 +225,10 @@ public class Rclone {
         return remoteItemList;
     }
 
-    private RemoteItem getRemote(JSONObject remotesJSON, String remoteName) {
-        RemoteItem nullRemoteItem = new RemoteItem("", "", "");
+    private RemoteItem getRemoteType(JSONObject remotesJSON, RemoteItem remoteItem, String remoteName) {
         Iterator<String> iterator = remotesJSON.keys();
+
         while (iterator.hasNext()) {
-            RemoteItem remoteItem;
             String key = iterator.next();
 
             if (!key.equals(remoteName)) {
@@ -241,24 +238,42 @@ public class Rclone {
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
                 String type = remoteJSON.getString("type");
-                if (remoteJSON.has("remote")) {
-                    String remotePath = remoteJSON.getString("remote");
-                    int index = remotePath.indexOf(":");
-                    RemoteItem remote = getRemote(remotesJSON, remotePath.substring(0, index));
-                    remoteItem = new RemoteItem(key, type, remote.getType());
-                    if (remote.isCrypt()) {
-                        remoteItem.setIsCrypt(true);
-                    }
-                } else {
-                    remoteItem = new RemoteItem(key, type);
+                if (type == null || type.trim().isEmpty()) {
+                    return null;
                 }
+
+                boolean recurse = true;
+                switch (type) {
+                    case "crypt":
+                        remoteItem.setIsCrypt(true);
+                        break;
+                    case "alias":
+                        remoteItem.setIsAlias(true);
+                        break;
+                    case "cache":
+                        remoteItem.setIsCache(true);
+                        break;
+                    default:
+                        recurse = false;
+                }
+
+                if (recurse) {
+                    String remote = remoteJSON.getString("remote");
+                    if (remote == null || !remote.contains(":")) {
+                        return null;
+                    }
+                    int index = remote.indexOf(":");
+                    remote = remote.substring(0, index);
+                    return getRemoteType(remotesJSON, remoteItem, remote);
+                }
+                remoteItem.setType(type);
                 return remoteItem;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        return nullRemoteItem;
+        return null;
     }
 
     public Process configCreate(List<String> options) {
