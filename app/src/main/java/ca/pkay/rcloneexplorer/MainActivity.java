@@ -143,7 +143,7 @@ public class MainActivity   extends AppCompatActivity
             }
         } else if (bundle != null && bundle.containsKey(APP_SHORTCUT_REMOTE_NAME) && bundle.containsKey(APP_SHORTCUT_REMOTE_TYPE)) {
             String remoteName = bundle.getString(APP_SHORTCUT_REMOTE_NAME);
-            String remoteType = bundle.getString(APP_SHORTCUT_REMOTE_TYPE);
+            int remoteType = bundle.getInt(APP_SHORTCUT_REMOTE_TYPE);
             RemoteItem remoteItem = getRemoteItemFromName(remoteName, remoteType);
             if (remoteItem != null) {
                 restoreRemote(remoteItem);
@@ -279,10 +279,10 @@ public class MainActivity   extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
     }
 
-    private RemoteItem getRemoteItemFromName(String remoteName, String remoteType) {
+    private RemoteItem getRemoteItemFromName(String remoteName, int remoteType) {
         List<RemoteItem> remoteItemList = rclone.getRemotes();
         for (RemoteItem remoteItem : remoteItemList) {
-            if (remoteItem.getName().equals(remoteName) && remoteItem.getType().equals(remoteType)) {
+            if (remoteItem.getName().equals(remoteName) && remoteItem.getType() == remoteType) {
                 return remoteItem;
             }
         }
@@ -379,7 +379,7 @@ public class MainActivity   extends AppCompatActivity
 
             ShortcutInfo shortcut = new ShortcutInfo.Builder(this, id)
                     .setShortLabel(remoteItem.getName())
-                    .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType())))
+                    .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
                     .setIntent(intent)
                     .build();
             shortcutInfoList.add(shortcut);
@@ -416,7 +416,7 @@ public class MainActivity   extends AppCompatActivity
 
         ShortcutInfo shortcut = new ShortcutInfo.Builder(this, id)
                 .setShortLabel(remoteItem.getName())
-                .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType())))
+                .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
                 .setIntent(intent)
                 .build();
 
@@ -449,25 +449,26 @@ public class MainActivity   extends AppCompatActivity
         }
     }
 
-    private int getRemoteIcon(String remoteType) {
+    private int getRemoteIcon(int remoteType, boolean isCrypt) {
+        if (isCrypt) {
+            return R.mipmap.ic_shortcut_lock;
+        }
         switch (remoteType) {
-            case "crypt":
-                return R.mipmap.ic_shortcut_lock;
-            case "amazon cloud drive":
+            case RemoteItem.AMAZON_DRIVE:
                 return R.mipmap.ic_shortcut_amazon;
-            case "drive":
+            case RemoteItem.GOOGLE_DRIVE:
                 return R.mipmap.ic_shortcut_drive;
-            case "dropbox":
+            case RemoteItem.DROPBOX:
                 return R.mipmap.ic_shortcut_dropbox;
-            case "google cloud storage":
+            case RemoteItem.GOOGLE_CLOUD_STORAGE:
                 return R.mipmap.ic_shortcut_google;
-            case "onedrive":
+            case RemoteItem.ONEDRIVE:
                 return R.mipmap.ic_shortcut_onedrive;
-            case "s3":
+            case RemoteItem.S3:
                 return R.mipmap.ic_shortcut_amazon;
-            case "box":
+            case RemoteItem.BOX:
                 return R.mipmap.ic_shortcut_box;
-            case "sftp":
+            case RemoteItem.SFTP:
                 return R.mipmap.ic_shortcut_terminal;
             default:
                 return R.mipmap.ic_shortcut_cloud;
