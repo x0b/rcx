@@ -193,7 +193,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     }
 
     @Override
-    public void onDirectoryClicked(FileItem fileItem) {
+    public void onDirectoryClicked(FileItem fileItem, int position) {
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());
         String prev = directoryObject.getCurrentPath();

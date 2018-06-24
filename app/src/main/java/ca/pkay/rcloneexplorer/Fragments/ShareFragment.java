@@ -229,7 +229,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     @Override
-    public void onDirectoryClicked(FileItem fileItem) {
+    public void onDirectoryClicked(FileItem fileItem, int position) {
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());

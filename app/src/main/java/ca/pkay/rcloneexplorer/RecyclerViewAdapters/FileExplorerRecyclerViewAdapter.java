@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -44,7 +43,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
-        void onDirectoryClicked(FileItem fileItem);
+        void onDirectoryClicked(FileItem fileItem, int position);
         void onFilesSelected();
         void onFileDeselected();
         void onFileOptionsClicked(View view, FileItem fileItem);
@@ -168,7 +167,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 if (isInSelectMode) {
                     onLongClickAction(item, holder);
                 } else {
-                    onClickAction(item);
+                    onClickAction(item, holder.getAdapterPosition());
                 }
             }
         });
@@ -346,9 +345,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
-    private void onClickAction(FileItem item) {
+    private void onClickAction(FileItem item, int position) {
         if (item.isDir() && null != listener) {
-            listener.onDirectoryClicked(item);
+            listener.onDirectoryClicked(item, position);
         } else if (!item.isDir() && !isInMoveMode && null != listener) {
             listener.onFileClicked(item);
         }
