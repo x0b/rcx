@@ -28,7 +28,6 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,7 +39,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leinardi.android.speeddial.SpeedDialActionItem;
@@ -53,7 +51,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
@@ -99,6 +99,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SELECTED_ITEMS";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
+    private Map<String, Integer> directoryPosition;
     private DirectoryObject directoryObject;
     private List<FileItem> moveList;
     private List<FileItem> downloadList;
@@ -108,6 +109,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private RemoteItem remote;
     private String remoteName;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
+    private LinearLayoutManager recyclerViewLinearLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View searchBar;
     private AsyncTask fetchDirectoryTask;
@@ -152,6 +154,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         remoteName = remote.getName();
         pathStack = new Stack<>();
+        directoryPosition = new HashMap<>();
         directoryObject = new DirectoryObject();
 
         String path;
@@ -203,8 +206,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         Context context = view.getContext();
 
         RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
+        recyclerViewLinearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setItemAnimator(new LandingAnimator());
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
         View emptyFolderView = view.findViewById(R.id.empty_folder_view);
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
@@ -933,11 +937,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             directoryObject.restoreFromCache(path);
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
+                int position = directoryPosition.get(directoryObject.getCurrentPath());
+                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+            }
             fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         } else if (directoryObject.isPathInCache(path)) {
             directoryObject.restoreFromCache(path);
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
+                int position = directoryPosition.get(directoryObject.getCurrentPath());
+                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+            }
         } else {
             directoryObject.setPath(path);
             fetchDirectoryTask = new FetchDirectoryContent().execute();
@@ -959,7 +971,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     @Override
-    public void onDirectoryClicked(FileItem fileItem) {
+    public void onDirectoryClicked(FileItem fileItem, int position) {
+        directoryPosition.put(directoryObject.getCurrentPath(), position);
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());
@@ -1112,11 +1125,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             directoryObject.restoreFromCache(path);
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
+                int position = directoryPosition.get(directoryObject.getCurrentPath());
+                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+            }
             fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         } else if (directoryObject.isPathInCache(path)) {
             directoryObject.restoreFromCache(path);
             sortDirectory();
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
+                int position = directoryPosition.get(directoryObject.getCurrentPath());
+                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+            }
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
