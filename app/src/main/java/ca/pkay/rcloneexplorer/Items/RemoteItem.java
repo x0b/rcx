@@ -138,6 +138,17 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return this.isPinned;
     }
 
+    public boolean isRemoteType(int ...remotes) {
+        boolean isSameType = false;
+
+        for (int remote : remotes) {
+            if (this.type == remote) {
+                isSameType = true;
+            }
+        }
+        return isSameType;
+    }
+
     private int getTypeFromString(String type) {
         switch (type) {
             case "amazon cloud drive":

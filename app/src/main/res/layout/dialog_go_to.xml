@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:background="?attr/cardColor"
+        android:elevation="4dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:paddingEnd="48dp"
+        android:paddingStart="48dp"
+        android:paddingTop="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout_checkbox"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout_home"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_pound"
+            android:tint="?attr/iconTint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/sftp_root"
+            android:textColor="?attr/textColorPrimary" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:background="?attr/cardColor"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:paddingEnd="48dp"
+        android:paddingStart="48dp"
+        android:paddingTop="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout_root"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_home"
+            android:tint="?attr/iconTint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/sftp_home"
+            android:textColor="?attr/textColorPrimary" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout_root">
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/checkbox_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set_default_for_all_sftp_ssh_remotes"
+            android:textColor="?attr/textColorPrimary" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

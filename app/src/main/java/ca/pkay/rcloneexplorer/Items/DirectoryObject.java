@@ -44,6 +44,13 @@ public class DirectoryObject {
         directoryContent = new ArrayList<>(directoryCache.get(path));
     }
 
+    public void clear() {
+        currentDir = "";
+        directoryContent.clear();
+        directoryCache.clear();
+        directoryValidity.clear();
+    }
+
     public boolean isDirectoryContentEmpty() {
         return directoryContent.isEmpty();
     }

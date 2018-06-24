@@ -21,6 +21,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_go_to"
+        android:title="@string/go_to"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_link"
         android:title="@string/link"
         app:showAsAction="never" />

@@ -41,7 +41,8 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class RemoteDestinationDialog extends DialogFragment implements  SwipeRefreshLayout.OnRefreshListener,
                                                                         FileExplorerRecyclerViewAdapter.OnClickListener,
-                                                                        InputDialog.OnPositive {
+                                                                        InputDialog.OnPositive,
+                                                                        GoToDialog.Callbacks {
 
     public interface OnDestinationSelectedListener {
         void onDestinationSelected(String path);
@@ -62,6 +63,8 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     private View previousDirView;
     private TextView previousDirLabel;
     private int title;
+    private boolean startAtRoot;
+    private boolean goToDefaultSet;
     private OnDestinationSelectedListener listener;
 
     public RemoteDestinationDialog() {
@@ -78,14 +81,28 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         directoryObject.setPath(path);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
+        goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+
+        if (goToDefaultSet) {
+            startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
+        }
 
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_remote_dest, null);
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setRefreshing(true);
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
+            showSFTPgoToDialog();
+        } else {
+            if (directoryObject.isDirectoryContentEmpty()) {
+                fetchDirectoryTask = new FetchDirectoryContent().execute();
+                swipeRefreshLayout.setRefreshing(true);
+            } else {
+                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            }
+        }
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new LandingAnimator());
@@ -263,6 +280,58 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         newDirTask = new MakeDirectoryTask().execute(newDir);
     }
 
+    /*
+     * Go To Dialog Callback
+     */
+    @Override
+    public void onRootClicked(boolean isSetAsDefault) {
+        startAtRoot = true;
+        directoryObject.clear();
+        String path = "//" + remote.getName();
+        directoryObject.setPath(path);
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (isSetAsDefault) {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), true);
+            editor.putBoolean(getString(R.string.pref_key_start_at_root), true);
+        } else {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        }
+        editor.apply();
+    }
+
+    /*
+     * Go To Dialog Callback
+     */
+    @Override
+    public void onHomeClicked(boolean isSetAsDefault) {
+        startAtRoot = false;
+        directoryObject.clear();
+        String path = "//" + remote.getName();
+        directoryObject.setPath(path);
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (isSetAsDefault) {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), true);
+            editor.putBoolean(getString(R.string.pref_key_start_at_root), false);
+        } else {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        }
+        editor.apply();
+    }
+
+    private void showSFTPgoToDialog() {
+        GoToDialog goToDialog = new GoToDialog()
+                .isDarkTheme(isDarkTheme);
+        goToDialog.show(getChildFragmentManager(), "go to dialog");
+    }
+
     private void goUp() {
         if (pathStack.isEmpty()) {
             dismiss();
@@ -364,7 +433,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
+            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath(), startAtRoot);
             return fileItemList;
         }
 

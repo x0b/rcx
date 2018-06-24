@@ -106,8 +106,11 @@ public class Rclone {
         log2File.log(stringBuilder.toString());
     }
 
-    public List<FileItem> getDirectoryContent(RemoteItem remote, String path) {
+    public List<FileItem> getDirectoryContent(RemoteItem remote, String path, boolean startAtRoot) {
         String remoteAndPath = remote.getName() + ":";
+        if (startAtRoot) {
+            remoteAndPath += "/";
+        }
         if (path.compareTo("//" + remote.getName()) != 0) {
             remoteAndPath += path;
         }
@@ -158,6 +161,10 @@ public class Rclone {
             }
         }
         return fileItemList;
+    }
+
+    public List<FileItem> getDirectoryContent(RemoteItem remote, String path) {
+        return getDirectoryContent(remote, path, false);
     }
 
     public List<RemoteItem> getRemotes() {
