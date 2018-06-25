@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
@@ -45,15 +46,16 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRefreshListener,
                                                         FileExplorerRecyclerViewAdapter.OnClickListener,
                                                         BreadcrumbView.OnClickListener,
-                                                        InputDialog.OnPositive {
+                                                        InputDialog.OnPositive,
+                                                        GoToDialog.Callbacks {
 
-    public interface onShareDestincationSelected {
+    public interface OnShareDestinationSelected {
         void onShareDestinationSelected(String remote, String path);
     }
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
-    private onShareDestincationSelected listener;
+    private OnShareDestinationSelected listener;
     private Context context;
     private RemoteItem remote;
     private String originalToolbarTitle;
@@ -66,7 +68,9 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     private boolean isDarkTheme;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private BreadcrumbView breadcrumbView;
-    private Boolean isRunning;
+    private boolean isRunning;
+    private boolean startAtRoot;
+    private boolean goToDefaultSet;
 
     public ShareFragment() {
     }
@@ -103,6 +107,11 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
+        goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+
+        if (goToDefaultSet) {
+            startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
+        }
 
         rclone = new Rclone(getContext());
         pathStack = new Stack<>();
@@ -117,8 +126,18 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setRefreshing(true);
-        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
+            showSFTPgoToDialog();
+        } else {
+            if (directoryObject.isDirectoryContentEmpty()) {
+                swipeRefreshLayout.setRefreshing(true);
+                fetchDirectoryTask = new FetchDirectoryContent().execute();
+                swipeRefreshLayout.setRefreshing(true);
+            } else {
+                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            }
+        }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
@@ -197,8 +216,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        if (context instanceof onShareDestincationSelected) {
-            listener = (onShareDestincationSelected) context;
+        if (context instanceof OnShareDestinationSelected) {
+            listener = (OnShareDestinationSelected) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnShareDestinationSelected");
         }
@@ -288,6 +307,58 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
+    }
+
+    /*
+     * Go To Dialog Callback
+     */
+    @Override
+    public void onRootClicked(boolean isSetAsDefault) {
+        startAtRoot = true;
+        directoryObject.clear();
+        String path = "//" + remote.getName();
+        directoryObject.setPath(path);
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (isSetAsDefault) {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), true);
+            editor.putBoolean(getString(R.string.pref_key_start_at_root), true);
+        } else {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        }
+        editor.apply();
+    }
+
+    /*
+     * Go To Dialog Callback
+     */
+    @Override
+    public void onHomeClicked(boolean isSetAsDefault) {
+        startAtRoot = false;
+        directoryObject.clear();
+        String path = "//" + remote.getName();
+        directoryObject.setPath(path);
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (isSetAsDefault) {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), true);
+            editor.putBoolean(getString(R.string.pref_key_start_at_root), false);
+        } else {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        }
+        editor.apply();
+    }
+
+    private void showSFTPgoToDialog() {
+        GoToDialog goToDialog = new GoToDialog()
+                .isDarkTheme(isDarkTheme);
+        goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 
     private void showSortMenu() {
@@ -450,7 +521,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
+            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath(), startAtRoot);
             return fileItemList;
         }
 

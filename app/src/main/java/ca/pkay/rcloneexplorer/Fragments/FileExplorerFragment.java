@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LinkDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
@@ -84,7 +85,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                                                 SwipeRefreshLayout.OnRefreshListener,
                                                                 BreadcrumbView.OnClickListener,
                                                                 OpenAsDialog.OnClickListener,
-                                                                InputDialog.OnPositive {
+                                                                InputDialog.OnPositive,
+                                                                GoToDialog.Callbacks {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
@@ -97,6 +99,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_SEARCH_STRING = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_STRING";
     private final String SAVED_RENAME_ITEM = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_RENAME_ITEM";
     private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SELECTED_ITEMS";
+    private final String SAVED_START_AT_BOOT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_START_AT_BOOT";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private Map<String, Integer> directoryPosition;
@@ -124,6 +127,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private boolean is720dp;
     private boolean showThumbnails;
     private boolean isThumbnailsServiceRunning;
+    private boolean startAtRoot;
+    private boolean goToDefaultSet;
     private Context context;
 
     /**
@@ -183,6 +188,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+
+        if (goToDefaultSet) {
+            startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
+        }
 
         rclone = new Rclone(getContext());
 
@@ -195,6 +205,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
+        if (savedInstanceState != null) {
+            startAtRoot = savedInstanceState.getBoolean(SAVED_START_AT_BOOT);
+        }
 
         if (showThumbnails) {
             startThumbnailService();
@@ -215,11 +228,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.showThumbnails(showThumbnails);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        if (directoryObject.isDirectoryContentEmpty()) {
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
-            swipeRefreshLayout.setRefreshing(true);
+        if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
+            showSFTPgoToDialog();
         } else {
-            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            if (directoryObject.isDirectoryContentEmpty()) {
+                fetchDirectoryTask = new FetchDirectoryContent().execute();
+                swipeRefreshLayout.setRefreshing(true);
+            } else {
+                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            }
         }
 
         fab = view.findViewById(R.id.fab);
@@ -315,6 +332,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         outState.putParcelableArrayList(SAVED_CONTENT, content);
         outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
         outState.putParcelable(SAVED_RENAME_ITEM, renameItem);
+        outState.putBoolean(SAVED_START_AT_BOOT, startAtRoot);
         if (isSearchMode) {
             outState.putString(SAVED_SEARCH_STRING, searchString);
         }
@@ -461,8 +479,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (remote.isCrypt()) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
-        if (remote.isCrypt()) {
-            menu.findItem(R.id.action_link).setVisible(false);
+        if (!remote.isRemoteType(RemoteItem.SFTP)) {
+            menu.findItem(R.id.action_go_to).setVisible(false);
         }
         menu.findItem(R.id.action_wrap_filenames).setChecked(true);
     }
@@ -496,9 +514,18 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_wrap_filenames:
                 wrapFilenames(item);
                 return true;
+            case R.id.action_go_to:
+                showSFTPgoToDialog();
+                return true;
             default:
                     return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showSFTPgoToDialog() {
+        GoToDialog goToDialog = new GoToDialog()
+                .isDarkTheme(isDarkTheme);
+        goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 
     /*
@@ -1303,6 +1330,52 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
+    /*
+     * Go To Dialog Callback
+     */
+    @Override
+    public void onRootClicked(boolean isSetAsDefault) {
+        startAtRoot = true;
+        directoryObject.clear();
+        String path = "//" + remoteName;
+        directoryObject.setPath(path);
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (isSetAsDefault) {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), true);
+            editor.putBoolean(getString(R.string.pref_key_start_at_root), true);
+        } else {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        }
+        editor.apply();
+    }
+
+    /*
+     * Go To Dialog Callback
+     */
+    @Override
+    public void onHomeClicked(boolean isSetAsDefault) {
+        startAtRoot = false;
+        directoryObject.clear();
+        String path = "//" + remoteName;
+        directoryObject.setPath(path);
+        swipeRefreshLayout.setRefreshing(true);
+        fetchDirectoryTask = new FetchDirectoryContent().execute();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (isSetAsDefault) {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), true);
+            editor.putBoolean(getString(R.string.pref_key_start_at_root), false);
+        } else {
+            editor.putBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        }
+        editor.apply();
+    }
+
     /***********************************************************************************************
      * AsyncTask classes
      ***********************************************************************************************/
@@ -1331,7 +1404,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath());
+            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath(), startAtRoot);
             return fileItemList;
         }
 

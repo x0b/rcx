@@ -315,4 +315,11 @@
     <string name="show_passwords">Show passwords</string>
     <string name="wrap_filenames">Wrap filenames</string>
     <string name="error_retrieving_remote">Error retrieving remote %1$s</string>
+    <string name="dialog_go_to_title">Go to</string>
+    <string name="go_to">Go to</string>
+    <string name="set_default_for_all_sftp_ssh_remotes">Set default for all SFTP/SSH remotes</string>
+    <string name="sftp_home">home</string>
+    <string name="sftp_root">root</string>
+    <string name="pref_key_go_to_default_set">pref_key_go_to_default_set</string>
+    <string name="pref_key_start_at_root">pref_key_start_at_root</string>
 </resources>
