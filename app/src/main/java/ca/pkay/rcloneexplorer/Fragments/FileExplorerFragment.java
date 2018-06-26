@@ -9,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -99,6 +97,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_SEARCH_STRING = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_STRING";
     private final String SAVED_RENAME_ITEM = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_RENAME_ITEM";
     private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SELECTED_ITEMS";
+    private final String SAVED_IS_IN_MOVE_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_IS_IN_MOVE_MODE";
     private final String SAVED_START_AT_BOOT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_START_AT_BOOT";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
@@ -339,18 +338,36 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (recyclerViewAdapter.isInSelectMode()) {
             outState.putParcelableArrayList(SAVED_SELECTED_ITEMS, new ArrayList<>(recyclerViewAdapter.getSelectedItems()));
         }
+        if (isInMoveMode) {
+            outState.putBoolean(SAVED_IS_IN_MOVE_MODE, true);
+            outState.putParcelableArrayList(SAVED_SELECTED_ITEMS, new ArrayList<>(moveList));
+        }
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            List<FileItem> selectedItems = savedInstanceState.getParcelableArrayList(SAVED_SELECTED_ITEMS);
-            if (selectedItems != null && !selectedItems.isEmpty()) {
-                recyclerViewAdapter.setSelectedItems(selectedItems);
-                handleFilesSelected();
-            }
+        if (savedInstanceState == null) {
+            return;
         }
+
+        List<FileItem> selectedItems = savedInstanceState.getParcelableArrayList(SAVED_SELECTED_ITEMS);
+        boolean moveMode = savedInstanceState.getBoolean(SAVED_IS_IN_MOVE_MODE, false);
+        if (selectedItems != null && !selectedItems.isEmpty() && !moveMode) {
+            recyclerViewAdapter.setSelectedItems(selectedItems);
+            handleFilesSelected();
+        }
+
+        if (moveMode) {
+            isInMoveMode = true;
+            moveList = savedInstanceState.getParcelableArrayList(SAVED_SELECTED_ITEMS);
+            recyclerViewAdapter.setMoveMode(true);
+            ((FragmentActivity) context).setTitle(getString(R.string.select_destination));
+            ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
+            fab.hide();
+            fab.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     private void setTitle() {
@@ -473,6 +490,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         inflater.inflate(R.menu.file_explorer_folder_menu, menu);
         menuSelectAll = menu.findItem(R.id.action_select_all);
 
+        if (isInMoveMode) {
+            menuSelectAll.setVisible(false);
+        }
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
@@ -759,7 +779,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fab.setVisibility(View.VISIBLE);
         menuSelectAll.setVisible(true);
         recyclerViewAdapter.refreshData();
-        unlockOrientation();
     }
 
     private void moveLocationSelected() {
@@ -789,7 +808,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
-        unlockOrientation();
     }
 
     private void showSortMenu() {
@@ -1260,7 +1278,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         menuSelectAll.setVisible(false);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
-        lockOrientation();
     }
 
     private void onCreateNewDirectory() {
@@ -1314,20 +1331,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void onUploadFiles() {
         Intent intent = new Intent(context, FilePicker.class);
         startActivityForResult(intent, FILE_PICKER_UPLOAD_RESULT);
-    }
-
-    private void lockOrientation() {
-        int currentOrientation = getResources().getConfiguration().orientation;
-        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
-        }
-        else {
-            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
-        }
-    }
-
-    private void unlockOrientation() {
-        ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
     }
 
     /*
