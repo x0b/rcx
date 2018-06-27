@@ -102,11 +102,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_IS_IN_MOVE_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_IS_IN_MOVE_MODE";
     private final String SAVED_START_AT_BOOT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_START_AT_BOOT";
     private final String SAVED_DOWNLOAD_LIST = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_DOWNLOAD_LIST";
+    private final String SAVED_MOVE_START_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_MOVE_START_PATH";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private Map<String, Integer> directoryPosition;
     private DirectoryObject directoryObject;
     private List<FileItem> moveList;
+    private String moveStartPath;
     private List<FileItem> downloadList;
     private FileItem renameItem;
     private BreadcrumbView breadcrumbView;
@@ -336,6 +338,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (downloadList != null && !downloadList.isEmpty()) {
             outState.putParcelableArrayList(SAVED_DOWNLOAD_LIST, new ArrayList<>(downloadList));
         }
+        if (moveStartPath != null) {
+            outState.putString(SAVED_MOVE_START_PATH, moveStartPath);
+        }
     }
 
     @Override
@@ -362,6 +367,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fab.setVisibility(View.INVISIBLE);
         }
         downloadList = savedInstanceState.getParcelableArrayList(SAVED_DOWNLOAD_LIST);
+        moveStartPath = savedInstanceState.getString(SAVED_MOVE_START_PATH);
     }
 
     private void setTitle() {
@@ -379,6 +385,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (root.equals(path)) {
             return;
         }
+        pathStack.clear();
         pathStack.push(root);
 
         int index = 0;
@@ -773,6 +780,27 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         fab.setVisibility(View.VISIBLE);
         menuSelectAll.setVisible(true);
         recyclerViewAdapter.refreshData();
+
+        if (moveStartPath != null && !moveStartPath.equals(directoryObject.getCurrentPath())) {
+            if (fetchDirectoryTask != null) {
+                fetchDirectoryTask.cancel(true);
+            }
+            if (directoryObject.isPathInCache(moveStartPath)) {
+                directoryObject.restoreFromCache(moveStartPath);
+                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            } else {
+                directoryObject.setPath(moveStartPath);
+                recyclerViewAdapter.clear();
+                fetchDirectoryTask = new FetchDirectoryContent(true).execute();
+            }
+            buildStackFromPath(remoteName, moveStartPath);
+            breadcrumbView.clearCrumbs();
+            if (!moveStartPath.equals("//" + remoteName)) {
+                breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
+            }
+            breadcrumbView.addCrumb(remoteName, "//" + remoteName);
+            moveStartPath = null;
+        }
     }
 
     private void moveLocationSelected() {
@@ -802,6 +830,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
+        moveStartPath = null;
     }
 
     private void showSortMenu() {
@@ -1263,6 +1292,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void moveFiles(List<FileItem> moveItems) {
+        moveStartPath = directoryObject.getCurrentPath();
         moveList = new ArrayList<>(moveItems);
         recyclerViewAdapter.cancelSelection();
         recyclerViewAdapter.setMoveMode(true);
