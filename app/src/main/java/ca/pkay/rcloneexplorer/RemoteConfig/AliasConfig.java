@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +29,10 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
 
-public class AliasConfig extends Fragment {
+public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnDestinationSelectedListener {
 
-    private final String OUTSTATE_REMOTE_PATH = "ca.pkay.rcexplorer.AliasConfig.REMOTE_PATH";
+    private final String SAVED_REMOTE_PATH = "ca.pkay.rcexplorer.AliasConfig.REMOTE_PATH";
+    private final String SAVED_SELECTED_REMOTE = "ca.pkay.rcexplorer.AliasConfig.SELECTED_REMOTE";
     private Context context;
     private Rclone rclone;
     private TextInputLayout remoteNameInputLayout;
@@ -70,8 +70,11 @@ public class AliasConfig extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (selectedRemote != null) {
+            outState.putParcelable(SAVED_SELECTED_REMOTE, selectedRemote);
+        }
         if (remotePath != null) {
-            outState.putString(OUTSTATE_REMOTE_PATH, remotePath);
+            outState.putString(SAVED_REMOTE_PATH, remotePath);
         }
     }
 
@@ -82,11 +85,12 @@ public class AliasConfig extends Fragment {
             return;
         }
 
-        String savedRemotePath = savedInstanceState.getString(OUTSTATE_REMOTE_PATH);
+        String savedRemotePath = savedInstanceState.getString(SAVED_REMOTE_PATH);
         if (savedRemotePath != null) {
             remotePath = savedRemotePath;
             remote.setText(remotePath);
         }
+        selectedRemote = savedInstanceState.getParcelable(SAVED_SELECTED_REMOTE);
     }
 
     private void setUpForm(View view) {
@@ -178,25 +182,23 @@ public class AliasConfig extends Fragment {
 
     private void setPath() {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
-                .withContext(context)
                 .setDarkTheme(isDarkTheme)
                 .setRemote(selectedRemote)
-                .setTitle(R.string.select_path_to_alias)
-                .setPositiveButtonListener(new RemoteDestinationDialog.OnDestinationSelectedListener() {
-                    @Override
-                    public void onDestinationSelected(String path) {
-                        if (path.equals("//" + selectedRemote.getName())) {
-                            remotePath = selectedRemote.getName() + ":";
-                        } else {
-                            remotePath = selectedRemote.getName() + ":" + path;
-                        }
-                        remote.setText(remotePath);
-                    }
-                });
-        remoteDestinationDialog.setTargetFragment(this, 0);
-        if (getFragmentManager() != null) {
-            remoteDestinationDialog.show(getFragmentManager(), "remote destination dialog");
+                .setTitle(R.string.select_path_to_alias);
+        remoteDestinationDialog.show(getChildFragmentManager(), "remote destination dialog");
+    }
+
+    /*
+     * RemoteDestinationDialog callback
+     */
+    @Override
+    public void onDestinationSelected(String path) {
+        if (path.equals("//" + selectedRemote.getName())) {
+            remotePath = selectedRemote.getName() + ":";
+        } else {
+            remotePath = selectedRemote.getName() + ":" + path;
         }
+        remote.setText(remotePath);
     }
 
     private void setUpRemote() {
