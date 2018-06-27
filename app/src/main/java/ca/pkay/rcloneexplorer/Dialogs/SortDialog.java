@@ -41,18 +41,13 @@ public class SortDialog extends DialogFragment {
         isDarkTheme = false;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        // reacquire FragmentActivity when recreated implicitly
-        if (this.context == null && context instanceof FragmentActivity) {
-            this.context = context;
-        }
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (getParentFragment() != null) {
+            listener = (OnClickListener) getParentFragment();
+        }
+
         if (savedInstanceState != null) {
             isDarkTheme = savedInstanceState.getBoolean("isDarkTheme");
             title = savedInstanceState.getInt("title");
@@ -94,6 +89,16 @@ public class SortDialog extends DialogFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+
+        if (context instanceof OnClickListener) {
+            listener = (OnClickListener) context;
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("isDarkTheme", isDarkTheme);
@@ -101,16 +106,6 @@ public class SortDialog extends DialogFragment {
         outState.putInt("positiveText", positiveText);
         outState.putInt("negativeText", negativeText);
         outState.putInt("sortOrder", sortOrder);
-    }
-
-    public SortDialog setListener(OnClickListener l) {
-        listener = l;
-        return this;
-    }
-
-    public SortDialog withContext(Context context) {
-        this.context = context;
-        return this;
     }
 
     public SortDialog setTitle(int title) {

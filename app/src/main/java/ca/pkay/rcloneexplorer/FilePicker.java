@@ -35,7 +35,8 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
 import es.dmoral.toasty.Toasty;
 
 public class FilePicker extends AppCompatActivity implements    FilePickerAdapter.OnClickListener,
-                                                                InputDialog.OnPositive {
+                                                                InputDialog.OnPositive,
+                                                                SortDialog.OnClickListener {
 
     public static final String FILE_PICKER_PICK_DESTINATION_TYPE = "ca.pkay.rcexplorer.FILE_PICKER_PICK_DEST_TYPE";
     public static final String FILE_PICKER_RESULT = "ca.pkay.rcexplorer.FILE_PICKER_RESULT";
@@ -74,7 +75,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         current = Environment.getExternalStorageDirectory();
         root = current;
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
-        Collections.sort(fileList, new FileComparators.SortFileAlphaAscending());
+        sortDirectory();
 
         RecyclerView recyclerView = findViewById(R.id.file_picker_list);
         recyclerView.setHasFixedSize(true);
@@ -263,21 +264,23 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
     private void showSortMenu() {
         SortDialog sortDialog = new SortDialog();
-        sortDialog.withContext(this)
+        sortDialog
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setListener(new SortDialog.OnClickListener() {
-                    @Override
-                    public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                        sortSelected(sortById, sortOrderId);
-                    }
-                })
                 .setSortOrder(sortOrder)
                 .setDarkTheme(isDarkTheme);
         if (getFragmentManager() != null) {
             sortDialog.show(getSupportFragmentManager(), "sort dialog");
         }
+    }
+
+    /*
+     * Sort Dialog callback
+     */
+    @Override
+    public void onPositiveButtonClick(int sortById, int sortOrderId) {
+        sortSelected(sortById, sortOrderId);
     }
 
     private void sortDirectory() {

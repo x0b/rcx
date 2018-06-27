@@ -47,7 +47,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                                                         FileExplorerRecyclerViewAdapter.OnClickListener,
                                                         BreadcrumbView.OnClickListener,
                                                         InputDialog.OnPositive,
-                                                        GoToDialog.Callbacks {
+                                                        GoToDialog.Callbacks,
+                                                        SortDialog.OnClickListener {
 
     public interface OnShareDestinationSelected {
         void onShareDestinationSelected(String remote, String path);
@@ -363,22 +364,22 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
     private void showSortMenu() {
         SortDialog sortDialog = new SortDialog();
-        sortDialog.withContext(context)
+        sortDialog
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setListener(new SortDialog.OnClickListener() {
-                    @Override
-                    public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                        if (!directoryObject.isDirectoryContentEmpty()) {
-                            sortSelected(sortById, sortOrderId);
-                        }
-                    }
-                })
                 .setSortOrder(sortOrder)
                 .setDarkTheme(isDarkTheme);
-        if (getFragmentManager() != null) {
-            sortDialog.show(getFragmentManager(), "sort dialog");
+        sortDialog.show(getChildFragmentManager(), "sort dialog");
+    }
+
+    /*
+     * Sort Dialog callback
+     */
+    @Override
+    public void onPositiveButtonClick(int sortById, int sortOrderId) {
+        if (!directoryObject.isDirectoryContentEmpty()) {
+            sortSelected(sortById, sortOrderId);
         }
     }
 
