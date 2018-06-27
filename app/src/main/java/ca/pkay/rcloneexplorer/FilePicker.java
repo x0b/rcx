@@ -41,12 +41,13 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     public static final String FILE_PICKER_PICK_DESTINATION_TYPE = "ca.pkay.rcexplorer.FILE_PICKER_PICK_DEST_TYPE";
     public static final String FILE_PICKER_RESULT = "ca.pkay.rcexplorer.FILE_PICKER_RESULT";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
+    private final String SAVED_PATH = "ca.pkay.rcexplorer.FilePicker.PATH";
+    private final String SAVED_DESTINATION_PICKER_TYPE = "ca.pkay.rcexplorer.FilePicker.DESTINATION_PICKER_TYPE";
     private FilePickerAdapter filePickerAdapter;
     private ActionBar actionBar;
     private File root;
     private File current;
     private ArrayList<File> fileList;
-    private Stack<File> pathStack;
     private boolean isDarkTheme;
     private int sortOrder;
     private SpeedDialView speedDialView;
@@ -56,7 +57,6 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyTheme();
-        destinationPickerType = getIntent().getBooleanExtra(FILE_PICKER_PICK_DESTINATION_TYPE, false);
         setContentView(R.layout.activity_file_picker);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -67,13 +67,24 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             actionBar.setTitle(R.string.file_picker_root_title);
         }
 
-        pathStack = new Stack<>();
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
-        current = Environment.getExternalStorageDirectory();
-        root = current;
+        if (savedInstanceState != null) {
+            destinationPickerType = savedInstanceState.getBoolean(SAVED_DESTINATION_PICKER_TYPE);
+            String path = savedInstanceState.getString(SAVED_PATH);
+            if (path == null) {
+                current = Environment.getExternalStorageDirectory();
+            } else {
+                current = new File(path);
+                actionBar.setTitle(current.getName());
+            }
+        } else {
+            destinationPickerType = getIntent().getBooleanExtra(FILE_PICKER_PICK_DESTINATION_TYPE, false);
+            current = Environment.getExternalStorageDirectory();
+        }
+
+        root = Environment.getExternalStorageDirectory();
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
         sortDirectory();
 
@@ -94,6 +105,13 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 fabClicked();
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_PATH, current.getPath());
+        outState.putBoolean(SAVED_DESTINATION_PICKER_TYPE, destinationPickerType);
     }
 
     private void applyTheme() {
@@ -178,7 +196,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
     @Override
     public void onBackPressed() {
-        if (pathStack.isEmpty()) {
+        if (current.equals(root)) {
             super.onBackPressed();
             if (filePickerAdapter.isDataSelected()) {
                 setResultData(filePickerAdapter.getSelectedFiles());
@@ -186,7 +204,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 finish();
             }
         } else {
-            current = pathStack.pop();
+            current = current.getParentFile();
             if (current.equals(root)) {
                 actionBar.setTitle(R.string.file_picker_root_title);
             } else {
@@ -206,7 +224,6 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     @Override
     public void onDirectoryClicked(File file) {
         actionBar.setTitle(file.getName());
-        pathStack.push(current);
         current = file;
         fileList.clear();
         fileList.addAll(Arrays.asList(file.listFiles()));
