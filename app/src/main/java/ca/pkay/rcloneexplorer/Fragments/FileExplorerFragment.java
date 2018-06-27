@@ -84,7 +84,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                                                 BreadcrumbView.OnClickListener,
                                                                 OpenAsDialog.OnClickListener,
                                                                 InputDialog.OnPositive,
-                                                                GoToDialog.Callbacks {
+                                                                GoToDialog.Callbacks,
+                                                                SortDialog.OnClickListener {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
@@ -296,18 +297,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onStart() {
         super.onStart();
         registerReceivers();
-        Fragment sortDialog;
-        if (getFragmentManager() != null
-                && (sortDialog = getFragmentManager().findFragmentByTag("sort dialog")) instanceof SortDialog) {
-            ((SortDialog) sortDialog).setListener(new SortDialog.OnClickListener() {
-                @Override
-                public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                    if (!directoryObject.isDirectoryContentEmpty()) {
-                        sortSelected(sortById, sortOrderId);
-                    }
-                }
-            });
-        }
 
         if (showThumbnails) {
             startThumbnailService();
@@ -812,22 +801,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void showSortMenu() {
         SortDialog sortDialog = new SortDialog();
-        sortDialog.withContext(context)
+        sortDialog
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setListener(new SortDialog.OnClickListener() {
-                    @Override
-                    public void onPositiveButtonClick(int sortById, int sortOrderId) {
-                        if (!directoryObject.isDirectoryContentEmpty()) {
-                            sortSelected(sortById, sortOrderId);
-                        }
-                    }
-                })
                 .setSortOrder(sortOrder)
                 .setDarkTheme(isDarkTheme);
-        if (getFragmentManager() != null) {
-                sortDialog.show(getFragmentManager(), "sort dialog");
+        sortDialog.show(getChildFragmentManager(), "sort dialog");
+    }
+
+    /*
+     * Sort Dialog callback
+     */
+    @Override
+    public void onPositiveButtonClick(int sortById, int sortOrderId) {
+        if (!directoryObject.isDirectoryContentEmpty()) {
+            sortSelected(sortById, sortOrderId);
         }
     }
 
@@ -1618,10 +1607,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            if(loadingDialog.isStateSaved()){
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
+            if (loadingDialog != null) {
+                if (loadingDialog.isStateSaved()) {
+                    loadingDialog.dismissAllowingStateLoss();
+                } else {
+                    loadingDialog.dismiss();
+                }
             }
             if (!status) {
                 return;
@@ -1785,10 +1776,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
+            if (loadingDialog != null) {
+                if (loadingDialog.isStateSaved()) {
+                    loadingDialog.dismissAllowingStateLoss();
+                } else {
+                    loadingDialog.dismiss();
+                }
             }
 
             if (s == null) {
