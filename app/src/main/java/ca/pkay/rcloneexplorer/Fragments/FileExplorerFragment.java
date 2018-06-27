@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -100,6 +101,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SELECTED_ITEMS";
     private final String SAVED_IS_IN_MOVE_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_IS_IN_MOVE_MODE";
     private final String SAVED_START_AT_BOOT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_START_AT_BOOT";
+    private final String SAVED_DOWNLOAD_LIST = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_DOWNLOAD_LIST";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private Map<String, Integer> directoryPosition;
@@ -331,6 +333,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             outState.putBoolean(SAVED_IS_IN_MOVE_MODE, true);
             outState.putParcelableArrayList(SAVED_SELECTED_ITEMS, new ArrayList<>(moveList));
         }
+        if (downloadList != null && !downloadList.isEmpty()) {
+            outState.putParcelableArrayList(SAVED_DOWNLOAD_LIST, new ArrayList<>(downloadList));
+        }
     }
 
     @Override
@@ -356,7 +361,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
         }
-
+        downloadList = savedInstanceState.getParcelableArrayList(SAVED_DOWNLOAD_LIST);
     }
 
     private void setTitle() {
