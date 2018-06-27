@@ -75,7 +75,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         current = Environment.getExternalStorageDirectory();
         root = current;
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
-        Collections.sort(fileList, new FileComparators.SortFileAlphaAscending());
+        sortDirectory();
 
         RecyclerView recyclerView = findViewById(R.id.file_picker_list);
         recyclerView.setHasFixedSize(true);
