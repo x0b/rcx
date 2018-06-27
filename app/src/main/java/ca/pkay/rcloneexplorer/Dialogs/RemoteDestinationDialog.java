@@ -49,6 +49,12 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     }
 
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
+    private final String SAVED_REMOTE = "ca.pkay.rcexplorer.RemoteDestinationDialog.REMOTE";
+    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.RemoteDestinationDialog.IS_DARK_THEME";
+    private final String SAVED_PATH = "ca.pkay.rcexplorer.RemoteDestinationDialog.PATH";
+    private final String SAVED_CONTENT = "ca.pkay.rcexplorer.RemoteDestinationDialog.CONTENT";
+    private final String SAVED_PREVIOUS_DIR_TEXT = "ca.pkay.rcexplorer.RemoteDestinationDialog.PREVIOUS_DIR_TEXT";
+    private final String SAVED_TITLE = "ca.pkay.rcexplorer.RemoteDestinationDialog.TITLE";
     private Context context;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RemoteItem remote;
@@ -64,7 +70,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     private TextView previousDirLabel;
     private int title;
     private boolean startAtRoot;
-    private boolean goToDefaultSet;
     private OnDestinationSelectedListener listener;
 
     public RemoteDestinationDialog() {
@@ -76,12 +81,27 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (getParentFragment() != null) {
+            listener = (OnDestinationSelectedListener) getParentFragment();
+        }
+
+        if (savedInstanceState != null) {
+            remote = savedInstanceState.getParcelable(SAVED_REMOTE);
+            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME, false);
+            directoryObject.setPath(savedInstanceState.getString(SAVED_PATH));
+            directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
+            buildStackFromPath(remote.getName(), directoryObject.getCurrentPath());
+            title = savedInstanceState.getInt(SAVED_TITLE);
+        } else {
+            String path = "//" + remote.getName();
+            directoryObject.setPath(path);
+        }
+
         rclone = new Rclone(context);
-        String path = "//" + remote.getName();
-        directoryObject.setPath(path);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
-        goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        boolean goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
 
         if (goToDefaultSet) {
             startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
@@ -93,17 +113,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
-            showSFTPgoToDialog();
-        } else {
-            if (directoryObject.isDirectoryContentEmpty()) {
-                fetchDirectoryTask = new FetchDirectoryContent().execute();
-                swipeRefreshLayout.setRefreshing(true);
-            } else {
-                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
-            }
-        }
-
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -114,6 +123,17 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);
         recyclerViewAdapter.setCanSelect(false);
+
+        if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
+            showSFTPgoToDialog();
+        } else {
+            if (directoryObject.isDirectoryContentEmpty()) {
+                fetchDirectoryTask = new FetchDirectoryContent().execute();
+                swipeRefreshLayout.setRefreshing(true);
+            } else {
+                recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
+            }
+        }
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
@@ -148,6 +168,14 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         previousDirView.setVisibility(View.GONE);
         previousDirLabel = view.findViewById(R.id.previous_dir_label);
 
+        if (savedInstanceState != null) {
+            String restoredPreviousDirLabel = savedInstanceState.getString(SAVED_PREVIOUS_DIR_TEXT);
+            if (restoredPreviousDirLabel != null && !restoredPreviousDirLabel.trim().isEmpty()) {
+                previousDirLabel.setText(restoredPreviousDirLabel);
+                previousDirView.setVisibility(View.VISIBLE);
+            }
+        }
+
         ((TextView)view.findViewById(R.id.dialog_title)).setText(title);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogThemeFullScreen);
@@ -166,14 +194,41 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        lockOrientation();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVED_REMOTE, remote);
+        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
+        outState.putString(SAVED_PATH, directoryObject.getCurrentPath());
+        ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
+        outState.putParcelableArrayList(SAVED_CONTENT, content);
+        outState.putString(SAVED_PREVIOUS_DIR_TEXT, previousDirLabel.getText().toString());
+        outState.putInt(SAVED_TITLE, title);
     }
 
-    public RemoteDestinationDialog withContext(Context context) {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.context = context;
-        return this;
+
+        if (context instanceof OnDestinationSelectedListener) {
+            listener = (OnDestinationSelectedListener) context;
+        }
+    }
+
+    private void buildStackFromPath(String remote, String path) {
+        String root = "//" + remote;
+        if (root.equals(path)) {
+            return;
+        }
+        pathStack.push(root);
+
+        int index = 0;
+
+        while ((index = path.indexOf("/", index)) > 0) {
+            String p = path.substring(0, index);
+            pathStack.push(p);
+            index++;
+        }
     }
 
     public RemoteDestinationDialog setTitle(int title) {
@@ -188,11 +243,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
     public RemoteDestinationDialog setDarkTheme(boolean isDarkTheme) {
         this.isDarkTheme = isDarkTheme;
-        return this;
-    }
-
-    public RemoteDestinationDialog setPositiveButtonListener(OnDestinationSelectedListener listener) {
-        this.listener = listener;
         return this;
     }
 
@@ -338,7 +388,9 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
             return;
         }
         swipeRefreshLayout.setRefreshing(false);
-        fetchDirectoryTask.cancel(true);
+        if (fetchDirectoryTask != null) {
+            fetchDirectoryTask.cancel(true);
+        }
         String path = pathStack.pop();
         recyclerViewAdapter.clear();
 
@@ -392,24 +444,9 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         directoryObject.setContent(directoryContent);
     }
 
-    private void lockOrientation() {
-        int currentOrientation = getResources().getConfiguration().orientation;
-        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
-        }
-        else {
-            ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
-        }
-    }
-
-    private void unlockOrientation() {
-        ((FragmentActivity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-    }
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        unlockOrientation();
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }

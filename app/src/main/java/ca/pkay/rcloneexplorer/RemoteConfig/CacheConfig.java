@@ -30,12 +30,14 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
 
-public class CacheConfig extends Fragment implements NumberPickerDialog.OnValueSelected {
+public class CacheConfig extends Fragment implements    NumberPickerDialog.OnValueSelected,
+                                                        RemoteDestinationDialog.OnDestinationSelectedListener {
 
-    private final String OUTSTATE_REMOTE_PATH = "ca.pkay.rcexplorer.CacheConfig.REMOTE_PATH";
-    private final String OUTSTATE_CHUNK_SIZE = "ca.pkay.rcexplorer.CacheConfig.CHUNK_SIZE";
-    private final String OUTSTATE_CACHE_EXPIRY = "ca.pkay.rcexplorer.CacheConfig.CACHE_EXPIRY";
-    private final String OUTSTATE_CACHE_SIZE = "ca.pkay.rcexplorer.CacheConfig.CACHE_SIZE";
+    private final String SAVED_REMOTE_PATH = "ca.pkay.rcexplorer.CacheConfig.REMOTE_PATH";
+    private final String SAVED_CHUNK_SIZE = "ca.pkay.rcexplorer.CacheConfig.CHUNK_SIZE";
+    private final String SAVED_CACHE_EXPIRY = "ca.pkay.rcexplorer.CacheConfig.CACHE_EXPIRY";
+    private final String SAVED_CACHE_SIZE = "ca.pkay.rcexplorer.CacheConfig.CACHE_SIZE";
+    private final String SAVED_SELECTED_REMOTE = "ca.pkay.rcexplorer.CacheConfig.SELECTED_REMOTE";
     private final String CHUNK_SIZE_TAG = "chunk size";
     private final String CACHE_EXPIRY_TAG = "cache expiry";
     private final String CACHE_SIZE_TAG = "cache size";
@@ -89,17 +91,20 @@ public class CacheConfig extends Fragment implements NumberPickerDialog.OnValueS
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (selectedRemote != null) {
+            outState.putParcelable(SAVED_SELECTED_REMOTE, selectedRemote);
+        }
         if (remotePath != null) {
-            outState.putString(OUTSTATE_REMOTE_PATH, remotePath);
+            outState.putString(SAVED_REMOTE_PATH, remotePath);
         }
         if (chunkSizeString != null) {
-            outState.putString(OUTSTATE_CHUNK_SIZE, chunkSizeString);
+            outState.putString(SAVED_CHUNK_SIZE, chunkSizeString);
         }
         if (infoAgeString != null) {
-            outState.putString(OUTSTATE_CACHE_EXPIRY, infoAgeString);
+            outState.putString(SAVED_CACHE_EXPIRY, infoAgeString);
         }
         if (chunkTotalSizeString != null) {
-            outState.putString(OUTSTATE_CACHE_SIZE, chunkTotalSizeString);
+            outState.putString(SAVED_CACHE_SIZE, chunkTotalSizeString);
         }
     }
 
@@ -110,25 +115,27 @@ public class CacheConfig extends Fragment implements NumberPickerDialog.OnValueS
             return;
         }
 
-        String savedRemotePath = savedInstanceState.getString(OUTSTATE_REMOTE_PATH);
+        selectedRemote = savedInstanceState.getParcelable(SAVED_SELECTED_REMOTE);
+
+        String savedRemotePath = savedInstanceState.getString(SAVED_REMOTE_PATH);
         if (savedRemotePath != null) {
             remotePath = savedRemotePath;
             remote.setText(remotePath);
         }
 
-        String savedChunkSize = savedInstanceState.getString(OUTSTATE_CHUNK_SIZE);
+        String savedChunkSize = savedInstanceState.getString(SAVED_CHUNK_SIZE);
         if (savedChunkSize != null) {
             chunkSizeString = savedChunkSize;
             chunkSize.setText(getString(R.string.selected_chunk_size, chunkSizeString));
         }
 
-        String savedInfoAge = savedInstanceState.getString(OUTSTATE_CACHE_EXPIRY);
+        String savedInfoAge = savedInstanceState.getString(SAVED_CACHE_EXPIRY);
         if (savedInfoAge != null) {
             infoAgeString = savedInfoAge;
             infoAge.setText(getString(R.string.selected_cache_expiry, infoAgeString));
         }
 
-        String savedChunkTotalSize = savedInstanceState.getString(OUTSTATE_CACHE_SIZE);
+        String savedChunkTotalSize = savedInstanceState.getString(SAVED_CACHE_SIZE);
         if (savedChunkTotalSize != null) {
             chunkTotalSizeString = savedChunkTotalSize;
             chunkTotalSize.setText(getString(R.string.selected_cache_size, chunkTotalSizeString));
@@ -348,25 +355,23 @@ public class CacheConfig extends Fragment implements NumberPickerDialog.OnValueS
 
     private void setPath() {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
-                .withContext(context)
                 .setDarkTheme(isDarkTheme)
                 .setRemote(selectedRemote)
-                .setTitle(R.string.select_path_to_alias)
-                .setPositiveButtonListener(new RemoteDestinationDialog.OnDestinationSelectedListener() {
-                    @Override
-                    public void onDestinationSelected(String path) {
-                        if (path.equals("//" + selectedRemote.getName())) {
-                            remotePath = selectedRemote.getName() + ":";
-                        } else {
-                            remotePath = selectedRemote.getName() + ":" + path;
-                        }
-                        remote.setText(remotePath);
-                    }
-                });
-        remoteDestinationDialog.setTargetFragment(this, 0);
-        if (getFragmentManager() != null) {
-            remoteDestinationDialog.show(getFragmentManager(), "remote destination dialog");
+                .setTitle(R.string.select_path_to_alias);
+        remoteDestinationDialog.show(getChildFragmentManager(), "remote destination dialog");
+    }
+
+    /*
+     * RemoteDestinationDialog callback
+     */
+    @Override
+    public void onDestinationSelected(String path) {
+        if (path.equals("//" + selectedRemote.getName())) {
+            remotePath = selectedRemote.getName() + ":";
+        } else {
+            remotePath = selectedRemote.getName() + ":" + path;
         }
+        remote.setText(remotePath);
     }
 
     private void setUpRemote() {

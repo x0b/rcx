@@ -38,12 +38,14 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
 
-public class CryptConfig extends Fragment implements PasswordGeneratorDialog.Callbacks {
+public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.Callbacks,
+                                                        RemoteDestinationDialog.OnDestinationSelectedListener {
 
-    private final String OUTSTATE_DIR_ENCRYPT = "ca.pkay.rcexplorer.CryptConfig.OUTSTATE_DIR_ENCRYPT";
-    private final String OUTSTATE_REMOTE_PATH = "ca.pkay.rcexplorer.CryptConfig.REMOTE_PATH";
-    private final String OUTSTATE_PASSWORD = "ca.pkay.rcexplorer.CryptConfig.PASSWORD";
-    private final String OUTSTATE_PASSWORD2 = "ca.pkay.rcexplorer.CryptConfig.PASSWORD2";
+    private final String SAVED_DIR_ENCRYPT = "ca.pkay.rcexplorer.CryptConfig.DIR_ENCRYPT";
+    private final String SAVED_REMOTE_PATH = "ca.pkay.rcexplorer.CryptConfig.REMOTE_PATH";
+    private final String SAVED_PASSWORD = "ca.pkay.rcexplorer.CryptConfig.PASSWORD";
+    private final String SAVED_PASSWORD2 = "ca.pkay.rcexplorer.CryptConfig.PASSWORD2";
+    private final String SAVED_SELECTED_REMOTE = "ca.pkay.rcexplorer.CryptConfig.SELECTED_REMOTE";
     private Context context;
     private Rclone rclone;
     private TextInputLayout remoteNameInputLayout;
@@ -88,14 +90,17 @@ public class CryptConfig extends Fragment implements PasswordGeneratorDialog.Cal
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        if (selectedRemote != null) {
+            outState.putParcelable(SAVED_SELECTED_REMOTE, selectedRemote);
+        }
         if (directoryEncryption != null) {
-            outState.putString(OUTSTATE_DIR_ENCRYPT, directoryEncryption);
+            outState.putString(SAVED_DIR_ENCRYPT, directoryEncryption);
         }
         if (remotePath != null) {
-            outState.putString(OUTSTATE_REMOTE_PATH, remotePath);
+            outState.putString(SAVED_REMOTE_PATH, remotePath);
         }
-        outState.putString(OUTSTATE_PASSWORD, password.getText().toString());
-        outState.putString(OUTSTATE_PASSWORD2, password2.getText().toString());
+        outState.putString(SAVED_PASSWORD, password.getText().toString());
+        outState.putString(SAVED_PASSWORD2, password2.getText().toString());
     }
 
     @Override
@@ -105,20 +110,22 @@ public class CryptConfig extends Fragment implements PasswordGeneratorDialog.Cal
             return;
         }
 
-        String savedDirEncryption = savedInstanceState.getString(OUTSTATE_DIR_ENCRYPT);
+        selectedRemote = savedInstanceState.getParcelable(SAVED_SELECTED_REMOTE);
+
+        String savedDirEncryption = savedInstanceState.getString(SAVED_DIR_ENCRYPT);
         if (savedDirEncryption != null) {
             directoryEncryption = savedDirEncryption;
         }
-        String savedRemotePath = savedInstanceState.getString(OUTSTATE_REMOTE_PATH);
+        String savedRemotePath = savedInstanceState.getString(SAVED_REMOTE_PATH);
         if (savedRemotePath != null) {
             remotePath = savedRemotePath;
             remote.setText(remotePath);
         }
-        String savedPassword = savedInstanceState.getString(OUTSTATE_PASSWORD);
+        String savedPassword = savedInstanceState.getString(SAVED_PASSWORD);
         if (savedPassword != null) {
             password.setText(savedPassword);
         }
-        String savedPassword2 = savedInstanceState.getString(OUTSTATE_PASSWORD2);
+        String savedPassword2 = savedInstanceState.getString(SAVED_PASSWORD2);
         if (savedPassword2 != null) {
             password2.setText(savedPassword2);
         }
@@ -355,25 +362,24 @@ public class CryptConfig extends Fragment implements PasswordGeneratorDialog.Cal
 
     private void setPath() {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
-                .withContext(context)
                 .setDarkTheme(isDarkTheme)
                 .setRemote(selectedRemote)
-                .setTitle(R.string.select_path_to_crypt)
-                .setPositiveButtonListener(new RemoteDestinationDialog.OnDestinationSelectedListener() {
-            @Override
-            public void onDestinationSelected(String path) {
-                if (path.equals("//" + selectedRemote.getName())) {
-                    remotePath = selectedRemote.getName() + ":";
-                } else {
-                    remotePath = selectedRemote.getName() + ":" + path;
-                }
-                remote.setText(remotePath);
-            }
-        });
-           remoteDestinationDialog.setTargetFragment(this, 0);
-        if (getFragmentManager() != null) {
-            remoteDestinationDialog.show(getFragmentManager(), "remote destination dialog");
+                .setTitle(R.string.select_path_to_crypt);
+        remoteDestinationDialog.show(getChildFragmentManager(), "remote destination dialog");
+
+    }
+
+    /*
+     * RemoteDestinationDialog callback
+     */
+    @Override
+    public void onDestinationSelected(String path) {
+        if (path.equals("//" + selectedRemote.getName())) {
+            remotePath = selectedRemote.getName() + ":";
+        } else {
+            remotePath = selectedRemote.getName() + ":" + path;
         }
+        remote.setText(remotePath);
     }
 
     private void setUpRemote() {
