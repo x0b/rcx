@@ -98,15 +98,18 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
 
         if (showThumbnails && !item.isDir()) {
-            RequestOptions glideOption = new RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_file);
-            Glide
-                    .with(context)
-                    .load("http://127.0.0.1:29170/" + item.getPath())
-                    .apply(glideOption)
-                    .thumbnail(0.1f)
-                    .into(holder.fileIcon);
+            String mimeType = item.getMimeType();
+            if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= 20970000) {
+                RequestOptions glideOption = new RequestOptions()
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_file);
+                Glide
+                        .with(context)
+                        .load("http://127.0.0.1:29170/" + item.getPath())
+                        .apply(glideOption)
+                        .thumbnail(0.1f)
+                        .into(holder.fileIcon);
+            }
         }
 
         RemoteItem itemRemote = item.getRemote();
