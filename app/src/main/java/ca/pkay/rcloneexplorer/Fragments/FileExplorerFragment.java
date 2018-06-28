@@ -125,6 +125,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private boolean isInMoveMode;
     private SpeedDialView fab;
     private MenuItem menuSelectAll;
+    private MenuItem menuGoTo;
+    private MenuItem menuLink;
+    private MenuItem menuHttpServe;
+    private MenuItem menuEmptyTrash;
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
     private String searchString;
@@ -490,10 +494,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_explorer_folder_menu, menu);
         menuSelectAll = menu.findItem(R.id.action_select_all);
+        menuGoTo = menu.findItem(R.id.action_go_to);
+        menuLink = menu.findItem(R.id.action_link);
+        menuHttpServe = menu.findItem(R.id.action_http_serve);
+        menuEmptyTrash = menu.findItem(R.id.action_empty_trash);
 
-        if (isInMoveMode) {
-            menuSelectAll.setVisible(false);
-        }
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
@@ -504,6 +509,32 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             menu.findItem(R.id.action_go_to).setVisible(false);
         }
         menu.findItem(R.id.action_wrap_filenames).setChecked(true);
+
+        if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
+            setOptionsMenuVisibility(false);
+        }
+    }
+
+    private void setOptionsMenuVisibility(boolean setVisible) {
+        if (menuSelectAll == null || menuGoTo == null || menuLink == null || menuHttpServe == null || menuEmptyTrash == null) {
+            return;
+        }
+
+        menuHttpServe.setVisible(setVisible);
+        if (!setVisible && isInMoveMode) {
+            menuSelectAll.setVisible(false);
+        } else {
+            menuSelectAll.setVisible(true);
+        }
+        if (!remote.isCrypt()) {
+            menuLink.setVisible(setVisible);
+        }
+        if (remote.hasTrashCan()) {
+            menuEmptyTrash.setVisible(setVisible);
+        }
+        if (remote.isRemoteType(RemoteItem.SFTP)) {
+            menuGoTo.setVisible(setVisible);
+        }
     }
 
     @Override
@@ -778,7 +809,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
-        menuSelectAll.setVisible(true);
+        setOptionsMenuVisibility(true);
         recyclerViewAdapter.refreshData();
 
         if (moveStartPath != null && !moveStartPath.equals(directoryObject.getCurrentPath())) {
@@ -808,7 +839,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
-        menuSelectAll.setVisible(true);
+        setOptionsMenuVisibility(true);
         recyclerViewAdapter.setMoveMode(false);
         recyclerViewAdapter.refreshData();
         isInMoveMode = false;
@@ -990,6 +1021,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else if (pathStack.isEmpty()) {
             return false;
         }
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
+            fab.show();
+        }
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
@@ -1043,6 +1077,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
+            fab.show();
+        }
 
         if (isSearchMode) {
             searchClicked();
@@ -1083,6 +1120,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             showBottomBar();
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
+            setOptionsMenuVisibility(false);
             if (numOfSelected > 1) {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
@@ -1100,6 +1138,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
+            setOptionsMenuVisibility(true);
         }
     }
 
@@ -1171,6 +1210,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         if (isSearchMode) {
             searchClicked();
+        }
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
+            fab.show();
         }
         if (directoryObject.getCurrentPath().equals(path)) {
             return;
@@ -1298,7 +1340,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         isInMoveMode = true;
         ((FragmentActivity) context).setTitle(getString(R.string.select_destination));
         ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        menuSelectAll.setVisible(false);
+        setOptionsMenuVisibility(false);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
     }

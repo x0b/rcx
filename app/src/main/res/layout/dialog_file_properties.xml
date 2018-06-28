@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="?attr/colorAccent"
         android:textStyle="bold"
         android:text="@string/filename"/>
     <TextView
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="?attr/colorAccent"
         android:textStyle="bold"
         android:text="@string/modified_time"/>
     <TextView
@@ -41,7 +41,7 @@
         android:id="@+id/file_size_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="?attr/colorAccent"
         android:paddingTop="16dp"
         android:textStyle="bold"
         android:text="@string/size"/>
@@ -71,7 +71,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="?attr/colorAccent"
             android:textStyle="bold"
             android:text="@string/md5"/>
         <TextView
@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="?attr/colorAccent"
             android:paddingTop="16dp"
             android:textStyle="bold"
             android:text="@string/sha1"/>
