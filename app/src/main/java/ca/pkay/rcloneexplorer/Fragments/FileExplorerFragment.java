@@ -990,6 +990,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else if (pathStack.isEmpty()) {
             return false;
         }
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
+            fab.show();
+        }
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
@@ -1043,6 +1046,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
+            fab.show();
+        }
 
         if (isSearchMode) {
             searchClicked();
@@ -1171,6 +1177,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         if (isSearchMode) {
             searchClicked();
+        }
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
+            fab.show();
         }
         if (directoryObject.getCurrentPath().equals(path)) {
             return;
