@@ -1027,9 +1027,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public void onFileClicked(FileItem fileItem) {
-        String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
-        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        if (type != null && (type.startsWith("video/") || type.startsWith("audio/"))) {
+        String type = fileItem.getMimeType();
+        if (type.startsWith("video/") || type.startsWith("audio/")) {
             // stream video or audio
             new StreamTask().execute(fileItem);
         } else {
@@ -1721,11 +1720,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             } else if (openAs == OPEN_AS_AUDIO) {
                 intent.setDataAndType(Uri.parse(url), "audio/*");
             } else {
-                String extension = fileItem.getName().substring(fileItem.getName().lastIndexOf(".") + 1);
-                String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                if (type != null && type.startsWith("audio/")) {
+                String type = fileItem.getMimeType();
+                if (type.startsWith("audio/")) {
                     intent.setDataAndType(Uri.parse(url), "audio/*");
-                } else if (type != null && type.startsWith("video/")) {
+                } else if (type.startsWith("video/")) {
                     intent.setDataAndType(Uri.parse(url), "video/*");
                 } else {
                     intent.setData(Uri.parse(url));
