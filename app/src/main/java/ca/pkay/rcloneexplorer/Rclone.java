@@ -151,9 +151,10 @@ public class Rclone {
                 String fileName = jsonObject.getString("Name");
                 long fileSize = jsonObject.getLong("Size");
                 String fileModTime = jsonObject.getString("ModTime");
+                String mimeType = jsonObject.getString("MimeType");
                 boolean fileIsDir = jsonObject.getBoolean("IsDir");
 
-                FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, fileIsDir);
+                FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, mimeType, fileIsDir);
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -161,10 +162,6 @@ public class Rclone {
             }
         }
         return fileItemList;
-    }
-
-    public List<FileItem> getDirectoryContent(RemoteItem remote, String path) {
-        return getDirectoryContent(remote, path, false);
     }
 
     public List<RemoteItem> getRemotes() {

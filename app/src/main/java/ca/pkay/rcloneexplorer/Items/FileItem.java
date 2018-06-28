@@ -14,13 +14,14 @@ public class FileItem implements Parcelable {
     private RemoteItem remote;
     private String path;
     private String name;
+    private String mimeType;
     private long size;
     private String humanReadableSize;
     private long modTime;
     private String humanReadableModTime;
     private boolean isDir;
 
-    public FileItem(RemoteItem remote, String path, String name, long size, String modTime, boolean isDir) {
+    public FileItem(RemoteItem remote, String path, String name, long size, String modTime, String mimeType, boolean isDir) {
         this.remote = remote;
         this.path = path;
         this.name = name;
@@ -28,6 +29,7 @@ public class FileItem implements Parcelable {
         this.humanReadableSize = sizeToHumanReadable(size);
         this.modTime = modTimeToMilis(modTime);
         this.humanReadableModTime = modTimeToHumanReadable(modTime);
+        this.mimeType = mimeType;
         this.isDir = isDir;
     }
 
@@ -39,6 +41,7 @@ public class FileItem implements Parcelable {
         humanReadableSize = in.readString();
         modTime = in.readLong();
         humanReadableModTime = in.readString();
+        mimeType = in.readString();
         isDir = in.readByte() != 0;
     }
 
@@ -80,6 +83,8 @@ public class FileItem implements Parcelable {
     public long getModTime() {
         return modTime;
     }
+
+    public String getMimeType() { return mimeType; }
 
     public boolean isDir() {
         return isDir;
@@ -166,6 +171,7 @@ public class FileItem implements Parcelable {
         dest.writeString(humanReadableSize);
         dest.writeLong(modTime);
         dest.writeString(humanReadableModTime);
+        dest.writeString(mimeType);
         dest.writeByte((byte) (isDir ? 1 : 0));
     }
 }
