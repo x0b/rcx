@@ -1,3 +1,25 @@
+### 1.4.0
+* **New:** Update to Rclone v1.42
+* **New:** Use MimeType supplied by Rclone v1.42
+* **New:** Option to show full file names
+* **New:** Allow screen rotation with files selected
+* **New:** Allow screen rotation when moving files
+* **New:** Option to create new folders when downloading files
+* **New:** Scroll to previous directory when going back
+* **New:** Option to specify Root or Home as starting point for SFTP/SSH
+* **New:** Go to starting directory when cancelling file move
+* **Fix:** Light Blue not getting selected as primary color
+* **Fix:** Wrong password getting set from password generator
+* **Fix:** New folders not getting created from Remote Destination Dialog
+* **Fix:** Crash reporting
+* **Fix:** Files not getting sorted in local file picker
+* **Fix:** Crash when downloading files
+* **Fix:** Load thumbnails for pictures and videos only (reduces app data usage)
+* **Fix:** FAB getting stuck in hidden position
+* **Fix:** Hide some menu options when files are selected
+
+***
+
 ### 1.3.6
 * This update contains mostly bug fixes
 * **Fix:** Crash in dialogs on screen orientation change
