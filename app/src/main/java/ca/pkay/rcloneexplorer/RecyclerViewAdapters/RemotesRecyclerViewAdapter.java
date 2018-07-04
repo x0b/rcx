@@ -79,6 +79,9 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
                 case RemoteItem.SFTP:
                     holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_terminal));
                     break;
+                case RemoteItem.LOCAL:
+                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_tablet_cellphone));
+                    break;
                 default:
                     holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_cloud));
                     break;

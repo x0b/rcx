@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.util.Pair;
 import android.widget.Toast;
@@ -110,6 +111,9 @@ public class Rclone {
         String remoteAndPath = remote.getName() + ":";
         if (startAtRoot) {
             remoteAndPath += "/";
+        }
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isCrypt() && !remote.isAlias() && !remote.isCache())) {
+            remoteAndPath += Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
         }
         if (path.compareTo("//" + remote.getName()) != 0) {
             remoteAndPath += path;
@@ -263,12 +267,18 @@ public class Rclone {
 
                 if (recurse) {
                     String remote = remoteJSON.getString("remote");
-                    if (remote == null || !remote.contains(":")) {
+                    if (remote == null || (!remote.contains(":") && !remote.startsWith("/"))) {
                         return null;
                     }
-                    int index = remote.indexOf(":");
-                    remote = remote.substring(0, index);
-                    return getRemoteType(remotesJSON, remoteItem, remote);
+
+                    if (remote.startsWith("/")) { // local remote
+                        remoteItem.setType("local");
+                        return remoteItem;
+                    } else {
+                        int index = remote.indexOf(":");
+                        remote = remote.substring(0, index);
+                        return getRemoteType(remotesJSON, remoteItem, remote);
+                    }
                 }
                 remoteItem.setType(type);
                 return remoteItem;
@@ -329,8 +339,10 @@ public class Rclone {
         }
     }
 
-    public Process serveHttp(String remote, String servePath, int port) {
-        String path = (servePath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + servePath;
+    public Process serveHttp(RemoteItem remote, String servePath, int port) {
+        String remoteName = remote.getName();
+        String localRemotePath = (remote.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
+        String path = (servePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + servePath;
         String[] command = createCommandWithOptions("serve", "http", "--addr", ":" + String.valueOf(port), path);
 
         try {
@@ -341,12 +353,17 @@ public class Rclone {
         }
     }
 
-    public Process downloadFile(String remote, FileItem downloadItem, String downloadPath) {
+    public Process downloadFile(RemoteItem remote, FileItem downloadItem, String downloadPath) {
         String[] command;
         String remoteFilePath;
         String localFilePath;
 
-        remoteFilePath = remote + ":" + downloadItem.getPath();
+        remoteFilePath = remote.getName() + ":";
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            remoteFilePath += Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        }
+        remoteFilePath += downloadItem.getPath();
+
         if (downloadItem.isDir()) {
             localFilePath = downloadPath + "/" + downloadItem.getName();
         } else {
@@ -362,17 +379,25 @@ public class Rclone {
         }
     }
 
-    public Process uploadFile(String remote, String uploadPath, String uploadFile) {
+    public Process uploadFile(RemoteItem remote, String uploadPath, String uploadFile) {
+        String remoteName = remote.getName();
         String path;
         String[] command;
+        String localRemotePath;
+
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
 
         File file = new File(uploadFile);
         if (file.isDirectory()) {
             int index = uploadFile.lastIndexOf('/');
             String dirName = uploadFile.substring(index + 1);
-            path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" + dirName: remote + ":" + uploadPath + "/" + dirName;
+            path = (uploadPath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath + dirName : remoteName + ":" + localRemotePath + uploadPath + "/" + dirName;
         } else {
-            path = (uploadPath.compareTo("//" + remote) == 0) ? remote + ":" : remote + ":" + uploadPath;
+            path = (uploadPath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + uploadPath;
         }
 
         command = createCommandWithOptions("copy", uploadFile, path);
@@ -386,12 +411,19 @@ public class Rclone {
 
     }
 
-    public Process deleteItems(String remote, FileItem deleteItem) {
+    public Process deleteItems(RemoteItem remote, FileItem deleteItem) {
         String[] command;
         String filePath;
         Process process = null;
+        String localRemotePath;
 
-        filePath = remote + ":" + deleteItem.getPath();
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
+
+        filePath = remote.getName() + ":" + localRemotePath + deleteItem.getPath();
         if (deleteItem.isDir()) {
             command = createCommandWithOptions("purge", filePath);
         } else {
@@ -406,8 +438,16 @@ public class Rclone {
         return process;
     }
 
-    public Boolean makeDirectory(String remote, String path) {
-        String newDir = remote + ":" + path;
+    public Boolean makeDirectory(RemoteItem remote, String path) {
+        String localRemotePath;
+
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
+
+        String newDir = remote.getName() + ":" + localRemotePath + path;
         String[] command = createCommandWithOptions("mkdir", newDir);
         try {
             Process process = Runtime.getRuntime().exec(command);
@@ -423,14 +463,22 @@ public class Rclone {
         return true;
     }
 
-    public Process moveTo(String remote, FileItem moveItem, String newLocation) {
+    public Process moveTo(RemoteItem remote, FileItem moveItem, String newLocation) {
+        String remoteName = remote.getName();
         String[] command;
         String oldFilePath;
         String newFilePath;
         Process process = null;
+        String localRemotePath;
 
-        oldFilePath = remote + ":" + moveItem.getPath();
-        newFilePath = (newLocation.compareTo("//" + remote) == 0) ? remote + ":" + moveItem.getName() : remote + ":" + newLocation + "/" + moveItem.getName();
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
+
+        oldFilePath = remoteName + ":" + localRemotePath + moveItem.getPath();
+        newFilePath = (newLocation.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath + moveItem.getName() : remoteName + ":" + localRemotePath + newLocation + "/" + moveItem.getName();
         command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         try {
             process = Runtime.getRuntime().exec(command);
@@ -441,9 +489,18 @@ public class Rclone {
         return process;
     }
 
-    public Boolean moveTo(String remote, String oldFile, String newFile) {
-        String oldFilePath = remote + ":" + oldFile;
-        String newFilePath = remote + ":" + newFile;
+    public Boolean moveTo(RemoteItem remote, String oldFile, String newFile) {
+        String remoteName = remote.getName();
+        String localRemotePath;
+
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
+
+        String oldFilePath = remoteName + ":" + localRemotePath + oldFile;
+        String newFilePath = remoteName + ":" + localRemotePath + newFile;
         String[] command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         try {
             Process process = Runtime.getRuntime().exec(command);
@@ -473,9 +530,10 @@ public class Rclone {
         return process != null && process.exitValue() == 0;
     }
 
-    public String link(String remote, String filePath) {
-        String linkPath = remote + ":";
-        if (!filePath.equals("//" + remote)) {
+    public String link(RemoteItem remote, String filePath) {
+        String linkPath = remote.getName() + ":";
+        linkPath += (remote.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
+        if (!filePath.equals("//" + remote.getName())) {
             linkPath += filePath;
         }
         String[] command = createCommandWithOptions("link", linkPath);
@@ -501,8 +559,16 @@ public class Rclone {
         return null;
     }
 
-    public String calculateMD5(String remote, FileItem fileItem) {
-        String remoteAndPath = remote + ":" + fileItem.getName();
+    public String calculateMD5(RemoteItem remote, FileItem fileItem) {
+        String localRemotePath;
+
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
+
+        String remoteAndPath = remote.getName() + ":" + localRemotePath + fileItem.getName();
         String[] command = createCommandWithOptions("md5sum", remoteAndPath);
         Process process;
         try {
@@ -526,8 +592,16 @@ public class Rclone {
         }
     }
 
-    public String calculateSHA1(String remote, FileItem fileItem) {
-        String remoteAndPath = remote + ":" + fileItem.getName();
+    public String calculateSHA1(RemoteItem remote, FileItem fileItem) {
+        String localRemotePath;
+
+        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
+            localRemotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+        } else {
+            localRemotePath = "";
+        }
+
+        String remoteAndPath = remote.getName() + ":" + localRemotePath + fileItem.getName();
         String[] command = createCommandWithOptions("sha1sum", remoteAndPath);
         Process process;
         try {

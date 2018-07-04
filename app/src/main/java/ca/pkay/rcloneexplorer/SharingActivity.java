@@ -145,7 +145,7 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
     }
 
     @Override
-    public void onShareDestinationSelected(String remote, String path) {
+    public void onShareDestinationSelected(RemoteItem remote, String path) {
         new UploadTask(this, remote, path).execute();
     }
 
@@ -171,12 +171,12 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
     @SuppressLint("StaticFieldLeak")
     private class UploadTask extends AsyncTask<Void, Void, Void> {
 
-        String remote;
+        RemoteItem remote;
         String path;
         Context context;
         LoadingDialog loadingDialog;
 
-        UploadTask(Context context, String remote, String path) {
+        UploadTask(Context context, RemoteItem remote, String path) {
             this.context = context;
             this.remote = remote;
             this.path = path;

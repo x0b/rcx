@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Rclone;
 
 public class ThumbnailsLoadingService extends IntentService {
@@ -28,7 +29,7 @@ public class ThumbnailsLoadingService extends IntentService {
             return;
         }
 
-        String remote = intent.getStringExtra(REMOTE_ARG);
+        RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
         process = rclone.serveHttp(remote, "", 29170);
         if (process != null) {
             try {

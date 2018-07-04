@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
@@ -31,7 +32,7 @@ public class FilePropertiesDialog extends DialogFragment {
     private final String SAVED_SHOW_HASH = "ca.pkay.rcexplorer.FilePropertiesDialog.SHOW_HASH";
     private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.FilePropertiesDialog.IS_DARK_THEME";
     private FileItem fileItem;
-    private String remote;
+    private RemoteItem remote;
     private View view;
     private Rclone rclone;
     private AsyncTask[] asyncTasks;
@@ -51,7 +52,7 @@ public class FilePropertiesDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             fileItem = savedInstanceState.getParcelable(SAVED_FILEITEM);
-            remote = savedInstanceState.getString(SAVED_REMOTE);
+            remote = savedInstanceState.getParcelable(SAVED_REMOTE);
             md5String = savedInstanceState.getString(SAVED_MD5);
             sha1String = savedInstanceState.getString(SAVED_SHA1);
             showHash = savedInstanceState.getBoolean(SAVED_SHOW_HASH);
@@ -128,7 +129,7 @@ public class FilePropertiesDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVED_FILEITEM, fileItem);
-        outState.putString(SAVED_REMOTE, remote);
+        outState.putParcelable(SAVED_REMOTE, remote);
         outState.putBoolean(SAVED_SHOW_HASH, showHash);
         outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         if (md5String != null) {
@@ -150,7 +151,7 @@ public class FilePropertiesDialog extends DialogFragment {
         return this;
     }
 
-    public FilePropertiesDialog setRemote(String remote) {
+    public FilePropertiesDialog setRemote(RemoteItem remote) {
         this.remote = remote;
         return this;
     }

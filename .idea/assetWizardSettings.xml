@@ -3,6 +3,58 @@
   <component name="WizardSettings">
     <option name="children">
       <map>
+        <entry key="imageWizard">
+          <value>
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="imageAssetPanel">
+                    <value>
+                      <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="launcher">
+                              <value>
+                                <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="36" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="f5f5f5" />
+                                      <entry key="backgroundLayerName" value="ic_shortcut_background" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Desktop/tablet-cellphone.svg" />
+                                      <entry key="foregroundLayerName" value="ic_local_foreground" />
+                                      <entry key="generateWebIcon" value="false" />
+                                      <entry key="outputName" value="ic_shortcut_local" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
+          </value>
+        </entry>
         <entry key="vectorWizard">
           <value>
             <PersistentState>
@@ -29,8 +81,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_pound" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/pound.svg" />
+                            <entry key="outputName" value="ic_tablet_cellphone" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/tablet-cellphone.svg" />
                           </map>
                         </option>
                       </PersistentState>

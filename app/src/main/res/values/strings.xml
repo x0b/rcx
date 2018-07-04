@@ -268,6 +268,7 @@
     <string name="azureblob_account_hint">Storage Account Name</string>
     <string name="azureblob_key_hint">Storage Account Key</string>
     <string name="provider_azureblob">Microsoft Azure Blob Storage</string>
+    <string name="provider_local">Local</string>
     <string name="no_remotes">There are no remotes</string>
     <string name="choose_dir">Choose directory</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
