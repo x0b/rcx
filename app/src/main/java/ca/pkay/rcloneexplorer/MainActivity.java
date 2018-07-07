@@ -75,11 +75,15 @@ public class MainActivity   extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent().hasExtra(getString(R.string.firebase_msg_app_updates_topic))) {
-            openAppUpdate();
-            finish();
-            return;
+        if (getIntent() != null) {
+            String s = getIntent().getStringExtra(getString(R.string.firebase_msg_app_updates_topic));
+            if (s != null && s.equals("true")) {
+                openAppUpdate();
+                finish();
+                return;
+            }
         }
+        
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), true);
         if (enableCrashReports) {
