@@ -155,6 +155,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                 return AMAZON_DRIVE;
             case "s3":
                 return S3;
+            case "b2":
+                return B2;
             case "box":
                 return BOX;
             case "cache":
