@@ -22,7 +22,7 @@ public class RemotesConfigList extends Fragment {
         void onProviderSelected(int provider);
     }
 
-    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("CACHE", "AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX"));
+    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("LOCAL", "CACHE", "AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX"));
     private int[] selected = {-1};
     private RadioButton lastSelected;
     private ProviderSelectedListener listener;
@@ -249,6 +249,16 @@ public class RemotesConfigList extends Fragment {
             }
         });
 
+        View providerLocal = View.inflate(context, R.layout.config_list_item_template, null);
+        ((TextView)providerLocal.findViewById(R.id.provider_tv)).setText(R.string.provider_local);
+        providerLocal.findViewById(R.id.provider).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RadioButton rb = v.findViewById(R.id.provider_rb);
+                setSelected(rb, "LOCAL");
+            }
+        });
+
 
         listContent.addView(providerAlias);
         listContent.addView(providerB2);
@@ -259,6 +269,7 @@ public class RemotesConfigList extends Fragment {
         listContent.addView(providerFTP);
         listContent.addView(providerHubic);
         listContent.addView(providerHTTP);
+        listContent.addView(providerLocal);
         listContent.addView(providerAzureblob);
         listContent.addView(providerOneDrive);
         listContent.addView(providerPcloud);

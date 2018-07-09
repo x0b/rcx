@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DeleteCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -48,7 +49,7 @@ public class DeleteService extends IntentService {
             return;
         }
 
-        final String remote = intent.getStringExtra(REMOTE_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
         final String path = intent.getStringExtra(PATH);
         final FileItem deleteItem = intent.getParcelableExtra(DELETE_ITEM);
 
@@ -83,7 +84,7 @@ public class DeleteService extends IntentService {
             }
         }
 
-        sendUploadFinishedBroadcast(remote, path, null);
+        sendUploadFinishedBroadcast(remote.getName(), path, null);
 
         if (currentProcess == null || currentProcess.exitValue() != 0) {
             rclone.logErrorOutput(currentProcess);

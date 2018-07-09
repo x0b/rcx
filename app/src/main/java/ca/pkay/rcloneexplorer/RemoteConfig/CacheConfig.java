@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -366,10 +367,18 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
      */
     @Override
     public void onDestinationSelected(String path) {
-        if (path.equals("//" + selectedRemote.getName())) {
-            remotePath = selectedRemote.getName() + ":";
+        if (selectedRemote.isRemoteType(RemoteItem.LOCAL)) {
+            if (path.equals("//" + selectedRemote.getName())) {
+                remotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+            } else {
+                remotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + path;
+            }
         } else {
-            remotePath = selectedRemote.getName() + ":" + path;
+            if (path.equals("//" + selectedRemote.getName())) {
+                remotePath = selectedRemote.getName() + ":";
+            } else {
+                remotePath = selectedRemote.getName() + ":" + path;
+            }
         }
         remote.setText(remotePath);
     }

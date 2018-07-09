@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.MoveCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -52,7 +53,7 @@ public class MoveService extends IntentService {
         final FileItem moveItem = intent.getParcelableExtra(MOVE_ITEM);
         final String moveDestPath = intent.getStringExtra(MOVE_DEST_PATH);
         final String path = intent.getStringExtra(PATH);
-        final String remote = intent.getStringExtra(REMOTE_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
         if (moveItem == null || moveDestPath == null || remote == null || path == null) {
             return;
@@ -84,7 +85,7 @@ public class MoveService extends IntentService {
                 e.printStackTrace();
             }
         }
-        sendUploadFinishedBroadcast(remote, moveDestPath, path);
+        sendUploadFinishedBroadcast(remote.getName(), moveDestPath, path);
 
         if (currentProcess == null || currentProcess.exitValue() != 0) {
             rclone.logErrorOutput(currentProcess);

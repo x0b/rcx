@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -70,7 +71,7 @@ public class DownloadService extends IntentService {
 
         final FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
         final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
-        final String remote = intent.getStringExtra(REMOTE_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
         currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
 

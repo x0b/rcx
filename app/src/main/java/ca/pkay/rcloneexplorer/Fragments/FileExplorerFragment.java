@@ -464,7 +464,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Intent intent = new Intent(getContext(), UploadService.class);
                 intent.putExtra(UploadService.LOCAL_PATH_ARG, uploadFile);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
-                intent.putExtra(UploadService.REMOTE_ARG, remoteName);
+                intent.putExtra(UploadService.REMOTE_ARG, remote);
                 context.startService(intent);
             }
         } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT) {
@@ -479,7 +479,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 Intent intent = new Intent(getContext(), DownloadService.class);
                 intent.putExtra(DownloadService.DOWNLOAD_ITEM_ARG, downloadItem);
                 intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
-                intent.putExtra(DownloadService.REMOTE_ARG, remoteName);
+                intent.putExtra(DownloadService.REMOTE_ARG, remote);
                 context.startService(intent);
             }
             downloadList.clear();
@@ -554,7 +554,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_http_serve:
                 Intent intent = new Intent(getContext(), StreamingService.class);
                 intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
-                intent.putExtra(StreamingService.REMOTE_ARG, remoteName);
+                intent.putExtra(StreamingService.REMOTE_ARG, remote);
                 intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
                 context.startService(intent);
                 return true;
@@ -603,7 +603,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void startThumbnailService() {
         Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
-        serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remoteName);
+        serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
         context.startService(serveIntent);
         isThumbnailsServiceRunning = true;
     }
@@ -664,7 +664,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void showFileProperties(FileItem fileItem) {
         FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog()
                 .setFile(fileItem)
-                .setRemote(remoteName)
+                .setRemote(remote)
                 .setDarkTheme(isDarkTheme);
         if (remote.isCrypt()) {
             filePropertiesDialog.withHashCalculations(false);
@@ -853,7 +853,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         for (FileItem moveItem : moveList) {
             Intent intent = new Intent(context, MoveService.class);
-            intent.putExtra(MoveService.REMOTE_ARG, remoteName);
+            intent.putExtra(MoveService.REMOTE_ARG, remote);
             intent.putExtra(MoveService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
             intent.putExtra(MoveService.MOVE_ITEM, moveItem);
             intent.putExtra(MoveService.PATH, path2);
@@ -1163,7 +1163,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     case R.id.action_http_serve:
                         Intent intent = new Intent(getContext(), StreamingService.class);
                         intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
-                        intent.putExtra(StreamingService.REMOTE_ARG, remoteName);
+                        intent.putExtra(StreamingService.REMOTE_ARG, remote);
                         intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
                         context.startService(intent);
                         break;
@@ -1298,7 +1298,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         recyclerViewAdapter.cancelSelection();
                         for (FileItem deleteItem : deleteList) {
                             Intent intent = new Intent(context, DeleteService.class);
-                            intent.putExtra(DeleteService.REMOTE_ARG, remoteName);
+                            intent.putExtra(DeleteService.REMOTE_ARG, remote);
                             intent.putExtra(DeleteService.DELETE_ITEM, deleteItem);
                             intent.putExtra(DeleteService.PATH, directoryObject.getCurrentPath());
                             context.startService(intent);
@@ -1532,7 +1532,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             String oldFileName = strings[0];
             String newFileName = strings[1];
 
-            return rclone.moveTo(remoteName, oldFileName, newFileName);
+            return rclone.moveTo(remote, oldFileName, newFileName);
         }
 
         @Override
@@ -1575,7 +1575,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(String... strings) {
             String newDir = strings[0];
-            return rclone.makeDirectory(remoteName, newDir);
+            return rclone.makeDirectory(remote, newDir);
         }
 
         @Override
@@ -1657,7 +1657,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             fileLocation = saveLocation + "/" + fileItem.getName();
 
-            process = rclone.downloadFile(remoteName, fileItem, saveLocation);
+            process = rclone.downloadFile(remote, fileItem, saveLocation);
 
             if (process != null) {
                 try {
@@ -1749,7 +1749,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
-            serveIntent.putExtra(StreamingService.REMOTE_ARG, remoteName);
+            serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
             context.startService(serveIntent);
 
@@ -1845,7 +1845,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected String doInBackground(String... strings) {
             String linkPath = strings[0];
-            return rclone.link(remoteName, linkPath);
+            return rclone.link(remote, linkPath);
         }
 
         @Override

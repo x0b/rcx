@@ -51,7 +51,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                                                         SortDialog.OnClickListener {
 
     public interface OnShareDestinationSelected {
-        void onShareDestinationSelected(String remote, String path);
+        void onShareDestinationSelected(RemoteItem remote, String path);
     }
 
     private static final String ARG_REMOTE = "remote_param";
@@ -172,7 +172,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onShareDestinationSelected(remote.getName(), directoryObject.getCurrentPath());
+                listener.onShareDestinationSelected(remote, directoryObject.getCurrentPath());
             }
         });
         view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
@@ -569,7 +569,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected Boolean doInBackground(String... strings) {
             String newDir = strings[0];
-            return rclone.makeDirectory(remote.getName(), newDir);
+            return rclone.makeDirectory(remote, newDir);
         }
 
         @Override

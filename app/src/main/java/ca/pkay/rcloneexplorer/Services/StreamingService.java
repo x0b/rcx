@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.ServeCancelAction;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -47,7 +48,7 @@ public class StreamingService extends IntentService {
             return;
         }
         final String servePath = intent.getStringExtra(SERVE_PATH_ARG);
-        final String remote = intent.getStringExtra(REMOTE_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
         final Boolean showNotificationText = intent.getBooleanExtra(SHOW_NOTIFICATION_TEXT, false);
 
         Intent foregroundIntent = new Intent(this, StreamingService.class);

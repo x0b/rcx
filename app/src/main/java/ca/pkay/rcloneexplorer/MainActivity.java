@@ -474,6 +474,8 @@ public class MainActivity   extends AppCompatActivity
                 return R.mipmap.ic_shortcut_box;
             case RemoteItem.SFTP:
                 return R.mipmap.ic_shortcut_terminal;
+            case RemoteItem.LOCAL:
+                return R.mipmap.ic_shortcut_local;
             default:
                 return R.mipmap.ic_shortcut_cloud;
         }

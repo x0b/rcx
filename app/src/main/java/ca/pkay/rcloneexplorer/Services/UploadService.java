@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -69,7 +70,7 @@ public class UploadService extends IntentService {
         }
         final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
         final String uploadFile = intent.getStringExtra(LOCAL_PATH_ARG);
-        final String remote = intent.getStringExtra(REMOTE_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
         currentProcess = rclone.uploadFile(remote, uploadPath, uploadFile);
 
@@ -86,7 +87,7 @@ public class UploadService extends IntentService {
         }
 
         boolean result = currentProcess != null && currentProcess.exitValue() == 0;
-        onUploadFinished(remote, uploadPath, uploadFile, result);
+        onUploadFinished(remote.getName(), uploadPath, uploadFile, result);
 
         stopForeground(true);
     }

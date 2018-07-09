@@ -198,6 +198,10 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
                 fragment = CacheConfig.newInstance();
                 title = "Cache";
                 break;
+            case "LOCAL":
+                fragment = LocalConfig.newInstance();
+                title = "Local";
+                break;
             default:
                 return;
         }
