@@ -125,14 +125,17 @@ public class MainActivity   extends AppCompatActivity
         Bundle bundle = intent.getExtras();
 
         int lastVersionCode = sharedPreferences.getInt(getString(R.string.pref_key_version_code), -1);
+        String lastVersionName = sharedPreferences.getString(getString(R.string.pref_key_version_name), "");
         int currentVersionCode = BuildConfig.VERSION_CODE;
+        String currentVersionName = BuildConfig.VERSION_NAME;
 
         if (!rclone.isRcloneBinaryCreated()) {
             new CreateRcloneBinary().execute();
-        } else if (lastVersionCode < currentVersionCode) {
+        } else if (lastVersionCode < currentVersionCode || !lastVersionName.equals(currentVersionName)) {
             new CreateRcloneBinary().execute();
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(getString(R.string.pref_key_version_code), currentVersionCode);
+            editor.putString(getString(R.string.pref_key_version_name), currentVersionName);
             editor.apply();
         } else if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
