@@ -71,7 +71,17 @@ public class FilePropertiesDialog extends DialogFragment {
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 
         ((TextView)view.findViewById(R.id.filename)).setText(fileItem.getName());
-        ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getFormattedModTime());
+
+        RemoteItem itemRemote = fileItem.getRemote();
+        if (!itemRemote.isDirectoryModifiedTimeSupported() && fileItem.isDir()) {
+            view.findViewById(R.id.file_modtime_label).setVisibility(View.GONE);
+            view.findViewById(R.id.file_modtime).setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.file_modtime_label).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.file_modtime).setVisibility(View.VISIBLE);
+            ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getFormattedModTime());
+        }
+
         if (fileItem.isDir()) {
             view.findViewById(R.id.file_size).setVisibility(View.GONE);
             view.findViewById(R.id.file_size_label).setVisibility(View.GONE);
