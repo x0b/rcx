@@ -70,7 +70,7 @@ public class FilePropertiesDialog extends DialogFragment {
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 
         ((TextView)view.findViewById(R.id.filename)).setText(fileItem.getName());
-        ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getHumanReadableModTime());
+        ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getFormattedModTime());
         if (fileItem.isDir()) {
             view.findViewById(R.id.file_size).setVisibility(View.GONE);
             view.findViewById(R.id.file_size_label).setVisibility(View.GONE);
