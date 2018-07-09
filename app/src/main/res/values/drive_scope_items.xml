@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="drive_scopes">
+        <item>Full access to all files, excluding Application Data Folder</item>
+        <item>Read-only access to file metadata and file contents</item>
+        <item>Access to files created by rclone only (visible from drive website)</item>
+        <item>Allows read and write access to the Application Data Folder</item>
+        <item>Allows read-only access to file metadata but does not allow any access to read or download file content</item>
+    </array>
+</resources>
