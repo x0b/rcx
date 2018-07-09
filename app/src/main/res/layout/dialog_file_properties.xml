@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:textColor="?attr/textColorSecondary"
         android:textIsSelectable="true"
-        tools:text="May 30, 2018"/>
+        tools:text="May 30, 2018 1:23:45 PM"/>
 
     <TextView
         android:id="@+id/file_size_label"

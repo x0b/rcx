@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +20,7 @@ public class FileItem implements Parcelable {
     private String humanReadableSize;
     private long modTime;
     private String humanReadableModTime;
+    private String formattedModTime;
     private boolean isDir;
 
     public FileItem(RemoteItem remote, String path, String name, long size, String modTime, String mimeType, boolean isDir) {
@@ -29,6 +31,7 @@ public class FileItem implements Parcelable {
         this.humanReadableSize = sizeToHumanReadable(size);
         this.modTime = modTimeToMilis(modTime);
         this.humanReadableModTime = modTimeToHumanReadable(modTime);
+        this.formattedModTime = modTimeToFormattedTime(modTime);
         this.mimeType = mimeType;
         this.isDir = isDir;
     }
@@ -41,6 +44,7 @@ public class FileItem implements Parcelable {
         humanReadableSize = in.readString();
         modTime = in.readLong();
         humanReadableModTime = in.readString();
+        formattedModTime = in.readString();
         mimeType = in.readString();
         isDir = in.readByte() != 0;
     }
@@ -78,6 +82,10 @@ public class FileItem implements Parcelable {
 
     public String getHumanReadableModTime() {
         return humanReadableModTime;
+    }
+
+    public String getFormattedModTime() {
+        return formattedModTime;
     }
 
     public long getModTime() {
@@ -152,6 +160,12 @@ public class FileItem implements Parcelable {
         return humanReadable.toString();
     }
 
+    private String modTimeToFormattedTime(String modTime) {
+        long modTimeInMillis = modTimeToMilis(modTime);
+        formattedModTime = DateFormat.getDateTimeInstance().format(modTimeInMillis);
+        return formattedModTime;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof FileItem && ((FileItem) obj).getRemote().equals(this.remote) && ((FileItem) obj).getPath().equals(this.path) && ((FileItem) obj).getName().equals(this.name);
@@ -171,6 +185,7 @@ public class FileItem implements Parcelable {
         dest.writeString(humanReadableSize);
         dest.writeLong(modTime);
         dest.writeString(humanReadableModTime);
+        dest.writeString(formattedModTime);
         dest.writeString(mimeType);
         dest.writeByte((byte) (isDir ? 1 : 0));
     }
