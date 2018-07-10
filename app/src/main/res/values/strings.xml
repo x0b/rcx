@@ -190,6 +190,8 @@
     <string name="box_client_secret_hint">Box App Client Secret</string>
     <string name="dropbox_client_id_hint">DropBox App Client ID</string>
     <string name="dropbox_client_secret_hint">DropBox App Client Secret</string>
+    <string name="drive_client_id_hint">Google App Client ID</string>
+    <string name="drive_client_secret_hint">Google App Client Secret</string>
     <string name="next_capital">NEXT</string>
     <string name="remote_name_cannot_be_empty">Remote name can\'t be empty</string>
     <string name="waiting_for_code">Waiting for code</string>
@@ -206,6 +208,7 @@
     <string name="account_id_hint">Account ID</string>
     <string name="application_key_hint">Application key</string>
     <string name="endpoint_hint">Endpoint for the service</string>
+    <string name="drive_root_folder_id">Root folder ID - fill in to access Computers folders</string>
     <string name="ftp_host_hint">FTP host to connect to</string>
     <string name="ftp_user_hint">FTP username</string>
     <string name="ftp_port_hint">FTP port</string>
@@ -245,6 +248,7 @@
     <string name="business_account_type">Business account</string>
     <string name="alias_remote_hint">Click to select remote or path to alias</string>
     <string name="encrypt_remote_hint">Click to select remote or path to encrypt</string>
+    <string name="drive_scope__hint">Click to select scope</string>
     <string name="remote_cannot_be_empty">Remote can\'t be empty</string>
     <string name="provider_alias">Alias</string>
     <string name="select_remote">Select a remote</string>
@@ -270,6 +274,7 @@
     <string name="azureblob_key_hint">Storage Account Key</string>
     <string name="provider_azureblob">Microsoft Azure Blob Storage</string>
     <string name="provider_local">Local</string>
+    <string name="provider_drive">Drive</string>
     <string name="no_remotes">There are no remotes</string>
     <string name="choose_dir">Choose directory</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
@@ -324,4 +329,5 @@
     <string name="sftp_root">root</string>
     <string name="pref_key_go_to_default_set">pref_key_go_to_default_set</string>
     <string name="pref_key_start_at_root">pref_key_start_at_root</string>
+    <string name="drive_scope_title">Google Drive Scope</string>
 </resources>
