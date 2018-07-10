@@ -83,6 +83,8 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
                         .load(file)
                         .apply(glideOption)
                         .into(holder.fileIcon);
+            } else {
+                holder.fileIcon.setImageResource(R.drawable.ic_file);
             }
         }
 

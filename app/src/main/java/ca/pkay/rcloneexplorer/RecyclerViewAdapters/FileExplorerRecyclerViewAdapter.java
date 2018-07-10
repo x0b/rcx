@@ -109,6 +109,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                         .apply(glideOption)
                         .thumbnail(0.1f)
                         .into(holder.fileIcon);
+            } else {
+                holder.fileIcon.setImageResource(R.drawable.ic_file);
             }
         }
 
