@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.util.Pair;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -155,8 +156,16 @@ public class Rclone {
                 String fileName = jsonObject.getString("Name");
                 long fileSize = jsonObject.getLong("Size");
                 String fileModTime = jsonObject.getString("ModTime");
-                String mimeType = jsonObject.getString("MimeType");
                 boolean fileIsDir = jsonObject.getBoolean("IsDir");
+                String mimeType = jsonObject.getString("MimeType");
+
+                if (remote.isCrypt()) {
+                    String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                    String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                    if (type != null) {
+                        mimeType = type;
+                    }
+                }
 
                 FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, mimeType, fileIsDir);
                 fileItemList.add(fileItem);
