@@ -1,3 +1,15 @@
+### 1.5.0
+* **New:** Add support for local remotes
+* **New:** Add option to create Google Drive remotes
+* **New:** Show detailed modified time in properties dialog
+* **Fix:** Hide directory modified time in propertied dialog for unsupported remotes
+* **Fix:** App update notification click action not working
+* **Fix:** Consider app version name when checking if app was updated
+* **Fix:** Videos and music files not streaming from crypt remote
+* **Fix:** Thumbnails being wrong in some circumstances
+
+***
+
 ### 1.4.0
 * **New:** Update to Rclone v1.42
 * **New:** Use MimeType supplied by Rclone v1.42
@@ -142,18 +154,3 @@
     * **New:** Custom primary and accent colors
 * **New:** Group notifications together
 * **New:** "Open as" option in the menu
-
-***
-
-### 1.1.1
-* **Fix:** Hide hash calculations for crypt remotes
-* **Fix:** Crash when rclone fails
-
-***
-
-### 1.1.0
-* **New:** Support password protected configurations
-* **New:** Calculate file MD5 & SHA1
-* **Fix:** Copy rclone and config file in the background
-* **Improve:** Notifications
-* **Update:** Libraries
