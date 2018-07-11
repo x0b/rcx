@@ -64,8 +64,6 @@ public class MainActivity   extends AppCompatActivity
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
-    private final String APP_SHORTCUT_REMOTE_NAME = "arg_remote_name";
-    private final String APP_SHORTCUT_REMOTE_TYPE = "arg_remote_type";
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -135,6 +133,14 @@ public class MainActivity   extends AppCompatActivity
             new CreateRcloneBinary().execute();
         } else if (lastVersionCode < currentVersionCode || !lastVersionName.equals(currentVersionName)) {
             new CreateRcloneBinary().execute();
+
+            // In version code 24 there were changes to app shortcuts
+            // Remove this in the long future
+            if (lastVersionCode <= 23) {
+                AppShortcutsHelper.removeAllAppShortcuts(this);
+                AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
+            }
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(getString(R.string.pref_key_version_code), currentVersionCode);
             editor.putString(getString(R.string.pref_key_version_name), currentVersionName);
@@ -150,12 +156,15 @@ public class MainActivity   extends AppCompatActivity
             } else {
                 startRemotesFragment();
             }
-        } else if (bundle != null && bundle.containsKey(APP_SHORTCUT_REMOTE_NAME) && bundle.containsKey(APP_SHORTCUT_REMOTE_TYPE)) {
-            String remoteName = bundle.getString(APP_SHORTCUT_REMOTE_NAME);
-            int remoteType = bundle.getInt(APP_SHORTCUT_REMOTE_TYPE);
-            RemoteItem remoteItem = getRemoteItemFromName(remoteName, remoteType);
+        } else if (bundle != null && bundle.containsKey(AppShortcutsHelper.APP_SHORTCUT_REMOTE_NAME)) {
+            String remoteName = bundle.getString(AppShortcutsHelper.APP_SHORTCUT_REMOTE_NAME);
+            RemoteItem remoteItem = getRemoteItemFromName(remoteName);
             if (remoteItem != null) {
+                AppShortcutsHelper.reportAppShortcutUsage(this, remoteItem.getName());
                 restoreRemote(remoteItem);
+            } else {
+                Toasty.error(this, getString(R.string.remote_not_found), Toast.LENGTH_SHORT, true).show();
+                finish();
             }
         } else {
             startRemotesFragment();
@@ -302,10 +311,10 @@ public class MainActivity   extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
     }
 
-    private RemoteItem getRemoteItemFromName(String remoteName, int remoteType) {
+    private RemoteItem getRemoteItemFromName(String remoteName) {
         List<RemoteItem> remoteItemList = rclone.getRemotes();
         for (RemoteItem remoteItem : remoteItemList) {
-            if (remoteItem.getName().equals(remoteName) && remoteItem.getType() == remoteType) {
+            if (remoteItem.getName().equals(remoteName)) {
                 return remoteItem;
             }
         }
@@ -379,127 +388,6 @@ public class MainActivity   extends AppCompatActivity
         }
     }
 
-    private void addRemotesToShortcutList() {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
-            return;
-        }
-        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-        if (shortcutManager == null) {
-            return;
-        }
-        shortcutManager.removeAllDynamicShortcuts();
-
-        List<RemoteItem> remoteItemList = rclone.getRemotes();
-        List<ShortcutInfo> shortcutInfoList = new ArrayList<>();
-
-        for (RemoteItem remoteItem : remoteItemList) {
-            String id = remoteItem.getName().replaceAll(" ", "_");
-
-            Intent intent = new Intent(Intent.ACTION_MAIN, Uri.EMPTY, this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
-            intent.putExtra(APP_SHORTCUT_REMOTE_TYPE, remoteItem.getType());
-
-            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, id)
-                    .setShortLabel(remoteItem.getName())
-                    .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
-                    .setIntent(intent)
-                    .build();
-            shortcutInfoList.add(shortcut);
-            if (shortcutInfoList.size() == 4) {
-                break;
-            }
-        }
-        shortcutManager.setDynamicShortcuts(shortcutInfoList);
-    }
-
-    private void addRemoteToShortcutList(RemoteItem remoteItem) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
-            return;
-        }
-        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-        if (shortcutManager == null) {
-            return;
-        }
-
-        String id = remoteItem.getName().replaceAll(" ", "_");
-
-        List<ShortcutInfo> shortcutInfoList = shortcutManager.getDynamicShortcuts();
-        for (ShortcutInfo shortcutInfo : shortcutInfoList) {
-            if (shortcutInfo.getId().equals(id)) {
-                shortcutManager.reportShortcutUsed(id);
-                return;
-            }
-        }
-
-        Intent intent = new Intent(Intent.ACTION_MAIN, Uri.EMPTY, this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
-        intent.putExtra(APP_SHORTCUT_REMOTE_TYPE, remoteItem.getType());
-
-        ShortcutInfo shortcut = new ShortcutInfo.Builder(this, id)
-                .setShortLabel(remoteItem.getName())
-                .setIcon(Icon.createWithResource(context, getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
-                .setIntent(intent)
-                .build();
-
-        if (shortcutInfoList.size() >= 4) {
-            ShortcutInfo removeId = shortcutInfoList.get(0);
-            shortcutManager.removeDynamicShortcuts(Collections.singletonList(removeId.getId()));
-        }
-        shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
-        shortcutManager.reportShortcutUsed(id);
-    }
-
-    public void removeRemoteFromShortcutList(RemoteItem remoteItem) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
-            return;
-        }
-        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-        if (shortcutManager == null) {
-            return;
-        }
-
-        String id = remoteItem.getName().replaceAll(" ", "_");
-
-        List<ShortcutInfo> shortcutInfoList = shortcutManager.getDynamicShortcuts();
-        for (ShortcutInfo shortcutInfo : shortcutInfoList) {
-            if (shortcutInfo.getId().equals(id)) {
-                shortcutManager.removeDynamicShortcuts(Collections.singletonList(shortcutInfo.getId()));
-                shortcutManager.reportShortcutUsed(id);
-                return;
-            }
-        }
-    }
-
-    private int getRemoteIcon(int remoteType, boolean isCrypt) {
-        if (isCrypt) {
-            return R.mipmap.ic_shortcut_lock;
-        }
-        switch (remoteType) {
-            case RemoteItem.AMAZON_DRIVE:
-                return R.mipmap.ic_shortcut_amazon;
-            case RemoteItem.GOOGLE_DRIVE:
-                return R.mipmap.ic_shortcut_drive;
-            case RemoteItem.DROPBOX:
-                return R.mipmap.ic_shortcut_dropbox;
-            case RemoteItem.GOOGLE_CLOUD_STORAGE:
-                return R.mipmap.ic_shortcut_google;
-            case RemoteItem.ONEDRIVE:
-                return R.mipmap.ic_shortcut_onedrive;
-            case RemoteItem.S3:
-                return R.mipmap.ic_shortcut_amazon;
-            case RemoteItem.BOX:
-                return R.mipmap.ic_shortcut_box;
-            case RemoteItem.SFTP:
-                return R.mipmap.ic_shortcut_terminal;
-            case RemoteItem.LOCAL:
-                return R.mipmap.ic_shortcut_local;
-            default:
-                return R.mipmap.ic_shortcut_cloud;
-        }
-    }
-
     private void openAppUpdate() {
         Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -518,7 +406,7 @@ public class MainActivity   extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
 
-        addRemoteToShortcutList(remote);
+        AppShortcutsHelper.reportAppShortcutUsage(this, remote.getName());
         navigationView.getMenu().getItem(0).setChecked(false);
     }
 
@@ -619,7 +507,8 @@ public class MainActivity   extends AppCompatActivity
             if (rclone.isConfigEncrypted()) {
                 askForConfigPassword();
             } else {
-                addRemotesToShortcutList();
+                AppShortcutsHelper.removeAllAppShortcuts(context);
+                AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
                 startRemotesFragment();
             }
         }
@@ -653,7 +542,8 @@ public class MainActivity   extends AppCompatActivity
                 askForConfigPassword();
             } else {
                 findViewById(R.id.locked_config).setVisibility(View.GONE);
-                addRemotesToShortcutList();
+                AppShortcutsHelper.removeAllAppShortcuts(context);
+                AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
                 startRemotesFragment();
             }
         }
