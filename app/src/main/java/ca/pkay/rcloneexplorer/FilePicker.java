@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -50,6 +51,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FilePicker.PATH";
     private final String SAVED_DESTINATION_PICKER_TYPE = "ca.pkay.rcexplorer.FilePicker.DESTINATION_PICKER_TYPE";
+    private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FilePicker.SELECTED_ITEMS";
     private FilePickerAdapter filePickerAdapter;
     private ActionBar actionBar;
     private ArrayList<String> availableStorage;
@@ -139,6 +141,28 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         super.onSaveInstanceState(outState);
         outState.putString(SAVED_PATH, current.getPath());
         outState.putBoolean(SAVED_DESTINATION_PICKER_TYPE, destinationPickerType);
+        if (filePickerAdapter.isDataSelected()) {
+            ArrayList<File> selectedItems = filePickerAdapter.getSelectedFiles();
+            ArrayList<String> savedSelectedPaths = new ArrayList<>();
+
+            for (File file : selectedItems) {
+                savedSelectedPaths.add(file.getAbsolutePath());
+            }
+            outState.putStringArrayList(SAVED_SELECTED_ITEMS, savedSelectedPaths);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        ArrayList<String> savedSelectedFilePaths = savedInstanceState.getStringArrayList(SAVED_SELECTED_ITEMS);
+        if (savedSelectedFilePaths != null && !savedSelectedFilePaths.isEmpty()) {
+            ArrayList<File> selectedFiles = new ArrayList<>();
+            for (String path : savedSelectedFilePaths) {
+                selectedFiles.add(new File(path));
+            }
+            filePickerAdapter.setSelectedFiles(selectedFiles);
+        }
     }
 
     private void applyTheme() {
