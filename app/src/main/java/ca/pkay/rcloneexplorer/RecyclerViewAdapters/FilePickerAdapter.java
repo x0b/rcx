@@ -186,6 +186,17 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
         }
     }
 
+    public void setSelectedFiles(ArrayList<File> data) {
+        selectedFiles = new ArrayList<>(data);
+        notifyDataSetChanged();
+
+        if (selectedFiles.isEmpty()) {
+            listener.onSelectionChanged(false);
+        } else {
+            listener.onSelectionChanged(true);
+        }
+    }
+
     public ArrayList<File> getSelectedFiles() {
         return selectedFiles;
     }
