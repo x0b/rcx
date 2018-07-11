@@ -264,6 +264,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         for (FileItem fileItem : diff) {
             int index = files.indexOf(fileItem);
             files.remove(index);
+            if (selectedItems.contains(fileItem)) {
+                selectedItems.remove(fileItem);
+                listener.onFilesSelected();
+            }
             notifyItemRemoved(index);
         }
 
