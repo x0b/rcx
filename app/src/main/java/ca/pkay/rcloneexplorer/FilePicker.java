@@ -2,19 +2,23 @@ package ca.pkay.rcloneexplorer;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,11 +32,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
 import es.dmoral.toasty.Toasty;
+
+import static android.os.Build.VERSION.SDK_INT;
 
 public class FilePicker extends AppCompatActivity implements    FilePickerAdapter.OnClickListener,
                                                                 InputDialog.OnPositive,
@@ -45,6 +52,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     private final String SAVED_DESTINATION_PICKER_TYPE = "ca.pkay.rcexplorer.FilePicker.DESTINATION_PICKER_TYPE";
     private FilePickerAdapter filePickerAdapter;
     private ActionBar actionBar;
+    private ArrayList<String> availableStorage;
     private File root;
     private File current;
     private ArrayList<File> fileList;
@@ -70,21 +78,40 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
+        availableStorage = new ArrayList<>(getStorageDirectories());
+
         if (savedInstanceState != null) {
             destinationPickerType = savedInstanceState.getBoolean(SAVED_DESTINATION_PICKER_TYPE);
             String path = savedInstanceState.getString(SAVED_PATH);
             if (path == null) {
-                current = Environment.getExternalStorageDirectory();
+                if (destinationPickerType) {
+                    root = current = Environment.getExternalStorageDirectory();
+                } else {
+                    root = current = new File(availableStorage.get(0));
+                }
             } else {
                 current = new File(path);
+                if (destinationPickerType) {
+                    root = Environment.getExternalStorageDirectory();
+                } else {
+                    for (String s : availableStorage) {
+                        if (path.startsWith(s) || path.equals(s)) {
+                            root = new File(s);
+                            break;
+                        }
+                    }
+                }
                 actionBar.setTitle(current.getName());
             }
         } else {
             destinationPickerType = getIntent().getBooleanExtra(FILE_PICKER_PICK_DESTINATION_TYPE, false);
-            current = Environment.getExternalStorageDirectory();
+            if (destinationPickerType) {
+                root = current = Environment.getExternalStorageDirectory();
+            } else {
+                root = current = new File(availableStorage.get(0));
+            }
         }
 
-        root = Environment.getExternalStorageDirectory();
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
         sortDirectory();
 
@@ -164,6 +191,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         menuInflater.inflate(R.menu.file_picker_menu, menu);
         if (destinationPickerType) {
             menu.removeItem(R.id.action_select_all);
+            menu.removeItem(R.id.action_storage);
         } else {
             menu.removeItem(R.id.action_new_folder);
         }
@@ -181,6 +209,9 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 return true;
             case R.id.action_new_folder:
                 newFolderDialog();
+                return true;
+            case R.id.action_storage:
+                showStorageMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -279,6 +310,44 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         }
     }
 
+    private void showStorageMenu() {
+        AlertDialog.Builder builder;
+        final int[] userSelected = new int[1];
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+
+        builder.setTitle(R.string.select_storage);
+
+        int selected = availableStorage.indexOf(root.getAbsolutePath());
+        CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
+        builder.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                userSelected[0] = which;
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switchStorage(userSelected[0]);
+            }
+        });
+
+        builder.show();
+    }
+
+    private void switchStorage(int which) {
+        File newStorage = new File(availableStorage.get(which));
+        root = current = newStorage;
+        fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
+        sortDirectory();
+        filePickerAdapter.setNewData(fileList);
+    }
+
     private void showSortMenu() {
         SortDialog sortDialog = new SortDialog();
         sortDialog
@@ -365,5 +434,64 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             sharedPreferences.edit().putInt(SHARED_PREFS_SORT_ORDER, sortOrder).apply();
         }
+    }
+
+
+    /*
+     * based on the answer from https://stackoverflow.com/questions/11281010/how-can-i-get-external-sd-card-path-for-android-4-0/18871043#18871043
+     */
+    private ArrayList<String> getStorageDirectories() {
+        // Final set of paths
+        final ArrayList<String> storageDirectories = new ArrayList<>();
+        // Primary physical SD-CARD (not emulated)
+        final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
+        // All Secondary SD-CARDs (all exclude primary) separated by ":"
+        final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
+        // Primary emulated SD-CARD
+        final String rawEmulatedStorageTarget = System.getenv("EMULATED_STORAGE_TARGET");
+        if (TextUtils.isEmpty(rawEmulatedStorageTarget)) {
+            // Device has physical external storage; use plain paths.
+            if (TextUtils.isEmpty(rawExternalStorage)) {
+                // EXTERNAL_STORAGE undefined; falling back to default.
+                // Check for actual existence of the directory before adding to list
+                if (new File("/storage/sdcard0").exists()) {
+                    storageDirectories.add("/storage/sdcard0");
+                } else {
+                    //We know nothing else, use Environment's fallback
+                    storageDirectories.add(Environment.getExternalStorageDirectory().getAbsolutePath());
+                }
+            } else {
+                storageDirectories.add(rawExternalStorage);
+            }
+        } else {
+            // Device has emulated storage; external storage paths should have
+            // userId burned into them.
+            final String rawUserId;
+            final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+            final Pattern dirSeparator = Pattern.compile("/");
+            final String[] folders = dirSeparator.split(path);
+            final String lastFolder = folders[folders.length - 1];
+            boolean isDigit = false;
+            try {
+                Integer.valueOf(lastFolder);
+                isDigit = true;
+            } catch (NumberFormatException ignored) {
+
+            }
+            rawUserId = isDigit ? lastFolder : "";
+            // /storage/emulated/0[1,2,...]
+            if (TextUtils.isEmpty(rawUserId)) {
+                storageDirectories.add(rawEmulatedStorageTarget);
+            } else {
+                storageDirectories.add(rawEmulatedStorageTarget + File.separator + rawUserId);
+            }
+        }
+        // Add all secondary storages
+        if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
+            // All Secondary SD-CARDs splited into array
+            final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
+            Collections.addAll(storageDirectories, rawSecondaryStorages);
+        }
+        return storageDirectories;
     }
 }

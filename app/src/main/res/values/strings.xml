@@ -330,4 +330,6 @@
     <string name="pref_key_go_to_default_set">pref_key_go_to_default_set</string>
     <string name="pref_key_start_at_root">pref_key_start_at_root</string>
     <string name="drive_scope_title">Google Drive Scope</string>
+    <string name="menu_select_storage">Storage</string>
+    <string name="select_storage">Select Storage</string>
 </resources>
