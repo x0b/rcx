@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_storage"
+        android:title="@string/menu_select_storage"
+        android:icon="@drawable/ic_sd_storage"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_sort"
         android:title="@string/sort"
         android:icon="@drawable/ic_sort"
