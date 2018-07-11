@@ -1133,12 +1133,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public void onFileDeselected() {
-        if (!isInMoveMode) {
+        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
             setTitle();
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
             setOptionsMenuVisibility(true);
+        } else {
+            handleFilesSelected();
         }
     }
 

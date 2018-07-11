@@ -266,7 +266,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             files.remove(index);
             if (selectedItems.contains(fileItem)) {
                 selectedItems.remove(fileItem);
-                listener.onFilesSelected();
+                listener.onFileDeselected();
             }
             notifyItemRemoved(index);
         }
@@ -398,7 +398,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 isInSelectMode = false;
                 listener.onFileDeselected();
             }
-            listener.onFilesSelected();
+            listener.onFileDeselected();
         } else {
             selectedItems.add(item);
             isInSelectMode = true;
