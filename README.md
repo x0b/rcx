@@ -21,7 +21,7 @@ Features
 TODO
 ------------
 - [X] Creating new remotes
-  - [ ] Creating Google Drive/Team Drive remotes
+  - [ ] Creating Team Drive remotes
 - [X] Deleting existing remotes
 
 Screenshots
