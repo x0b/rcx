@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_pin"
-        android:orderInCategory="1"
         android:title="@string/pin_to_the_top" />
 
     <item
         android:id="@+id/action_delete"
-        android:orderInCategory="2"
         android:title="@string/delete" />
+
+    <item
+        android:id="@+id/action_add_to_home_screen"
+        android:title="@string/add_to_home_screen" />
 </menu>

@@ -199,8 +199,10 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                             pinRemote(remoteItem);
                         }
                         break;
+                    case R.id.action_add_to_home_screen:
+                        AppShortcutsHelper.addRemoteToHomeScreen(context, remoteItem);
+                        break;
                     default:
-                        pinRemote(remoteItem);
                         return false;
                 }
                 return true;
@@ -213,6 +215,10 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             pinAction.setTitle(R.string.unpin_from_the_top);
         } else {
             pinAction.setTitle(R.string.pin_to_the_top);
+        }
+        if (!AppShortcutsHelper.isRequestPinShortcutSupported(context)) {
+            MenuItem addToHomeScreenAction = popupMenu.getMenu().findItem(R.id.action_add_to_home_screen);
+            addToHomeScreenAction.setVisible(false);
         }
     }
 

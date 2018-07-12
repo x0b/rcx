@@ -340,4 +340,5 @@
     <string name="shared_preferences_app_shortcuts">shared_preferences_app_shortcuts</string>
     <string name="app_shortcuts_max_toast">Maximum of 4 shortcuts allowed</string>
     <string name="remote_not_found">Remote not found</string>
+    <string name="add_to_home_screen">Add to home screen</string>
 </resources>

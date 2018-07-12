@@ -448,8 +448,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 if (userSelected.size() >= 4 && isChecked) {
                     Toasty.info(context, getString(R.string.app_shortcuts_max_toast), Toast.LENGTH_SHORT, true).show();
-                    ((AlertDialog)dialog).getListView().setItemChecked(which, false);
-                    return;
+                    //((AlertDialog)dialog).getListView().setItemChecked(which, false); This doesn't work
                 }
                 if (isChecked) {
                     userSelected.add(options[which].toString());
@@ -475,11 +474,29 @@ public class SettingsActivity extends AppCompatActivity {
             return;
         }
 
+        if (appShortcuts.size() > 4) {
+            appShortcuts = new ArrayList<>(appShortcuts.subList(0, 4));
+        }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Set<String> savedAppShortcutIds = sharedPreferences.getStringSet(getString(R.string.shared_preferences_app_shortcuts), new HashSet<String>());
         Set<String> updatedAppShortcutIDds = new HashSet<>(savedAppShortcutIds);
 
+        // Remove app shortcuts first
+        ArrayList<String> appShortcutIds= new ArrayList<>();
+        for (String s : appShortcuts) {
+            appShortcutIds.add(AppShortcutsHelper.getUniqueIdFromString(s));
+        }
+        List<String> removedIds = new ArrayList<>(savedAppShortcutIds);
+        removedIds.removeAll(appShortcutIds);
+        if (!removedIds.isEmpty()) {
+            AppShortcutsHelper.removeAppShortcutIds(context, removedIds);
+        }
+
+        updatedAppShortcutIDds.removeAll(removedIds);
+
+        // add new app shortcuts
         for (String appShortcut : appShortcuts) {
             String id = AppShortcutsHelper.getUniqueIdFromString(appShortcut);
             if (updatedAppShortcutIDds.contains(id)) {
@@ -500,18 +517,6 @@ public class SettingsActivity extends AppCompatActivity {
             AppShortcutsHelper.addRemoteToAppShortcuts(this, remoteItem, id);
             updatedAppShortcutIDds.add(id);
         }
-
-        ArrayList<String> appShortcutIds= new ArrayList<>();
-        for (String s : appShortcuts) {
-            appShortcutIds.add(AppShortcutsHelper.getUniqueIdFromString(s));
-        }
-        List<String> removedIds = new ArrayList<>(savedAppShortcutIds);
-        removedIds.removeAll(appShortcutIds);
-        if (!removedIds.isEmpty()) {
-            AppShortcutsHelper.removeAppShortcutIds(context, removedIds);
-        }
-
-        updatedAppShortcutIDds.removeAll(removedIds);
 
         editor.putStringSet(getString(R.string.shared_preferences_app_shortcuts), updatedAppShortcutIDds);
         editor.apply();

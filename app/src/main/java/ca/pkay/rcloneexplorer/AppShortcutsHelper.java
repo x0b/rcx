@@ -10,6 +10,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.pm.ShortcutInfoCompat;
+import android.support.v4.content.pm.ShortcutManagerCompat;
+import android.support.v4.graphics.drawable.IconCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,6 +170,26 @@ public class AppShortcutsHelper {
                 .build();
 
         shortcutManager.addDynamicShortcuts(Collections.singletonList(shortcut));
+    }
+
+    public static boolean isRequestPinShortcutSupported(Context context) {
+        return ShortcutManagerCompat.isRequestPinShortcutSupported(context);
+    }
+
+    public static void addRemoteToHomeScreen(Context context, RemoteItem remoteItem) {
+        String id = getUniqueIdFromString(remoteItem.getName());
+
+        Intent intent = new Intent(Intent.ACTION_MAIN, Uri.EMPTY, context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
+
+        ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(context, id)
+                .setShortLabel(remoteItem.getName())
+                .setIcon(IconCompat.createWithResource(context, AppShortcutsHelper.getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
+                .setIntent(intent)
+                .build();
+
+        ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null);
     }
 
     public static String getUniqueIdFromString(String s) {

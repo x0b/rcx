@@ -43,8 +43,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
@@ -132,14 +130,14 @@ public class MainActivity   extends AppCompatActivity
         if (!rclone.isRcloneBinaryCreated()) {
             new CreateRcloneBinary().execute();
         } else if (lastVersionCode < currentVersionCode || !lastVersionName.equals(currentVersionName)) {
-            new CreateRcloneBinary().execute();
-
             // In version code 24 there were changes to app shortcuts
             // Remove this in the long future
             if (lastVersionCode <= 23) {
                 AppShortcutsHelper.removeAllAppShortcuts(this);
                 AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
             }
+
+            new CreateRcloneBinary().execute();
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(getString(R.string.pref_key_version_code), currentVersionCode);
