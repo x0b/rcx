@@ -266,6 +266,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             files.remove(index);
             if (selectedItems.contains(fileItem)) {
                 selectedItems.remove(fileItem);
+                isInSelectMode = !selectedItems.isEmpty();
                 listener.onFileDeselected();
             }
             notifyItemRemoved(index);
