@@ -559,7 +559,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 context.startService(intent);
                 return true;
             case R.id.action_empty_trash:
-                new EmptyTrashTask().execute();
+                emptyTrash();
                 return true;
             case R.id.action_link:
                 new LinkTask().execute(directoryObject.getCurrentPath());
@@ -572,6 +572,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             default:
                     return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void emptyTrash() {
+        AlertDialog.Builder builder;
+
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        builder.setMessage(R.string.empty_trash_confirmation)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new EmptyTrashTask().execute();
+                    }
+                })
+                .show();
     }
 
     private void showSFTPgoToDialog() {

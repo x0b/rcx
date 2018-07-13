@@ -332,4 +332,5 @@
     <string name="drive_scope_title">Google Drive Scope</string>
     <string name="menu_select_storage">Storage</string>
     <string name="select_storage">Select Storage</string>
+    <string name="empty_trash_confirmation">Are you sure you want to empty the trash?</string>
 </resources>
