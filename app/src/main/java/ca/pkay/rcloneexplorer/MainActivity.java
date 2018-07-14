@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -67,6 +68,7 @@ public class MainActivity   extends AppCompatActivity
     private final String APP_SHORTCUT_REMOTE_TYPE = "arg_remote_type";
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
+    private DrawerLayout drawer;
     private Rclone rclone;
     private Fragment fragment;
     private Context context;
@@ -95,16 +97,16 @@ public class MainActivity   extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionbar = getSupportActionBar();
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        }
 
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
+        drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         requestPermissions();
 
         rclone = new Rclone(this);
@@ -181,6 +183,20 @@ public class MainActivity   extends AppCompatActivity
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
         ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
         setTaskDescription(taskDesc);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home && !(fragment instanceof FileExplorerFragment)) {
+            drawer.openDrawer(GravityCompat.START);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void openNavigationDrawer() {
+        drawer.openDrawer(GravityCompat.START);
     }
 
     @Override

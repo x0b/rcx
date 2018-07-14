@@ -21,7 +21,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -68,6 +70,7 @@ import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
+import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
@@ -569,6 +572,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_go_to:
                 showSFTPgoToDialog();
                 return true;
+            case android.R.id.home:
+                if (isInMoveMode) {
+                    cancelMoveClicked();
+                } else if (recyclerViewAdapter.isInSelectMode()) {
+                    recyclerViewAdapter.cancelSelection();
+                } else {
+                    ((MainActivity)context).openNavigationDrawer();
+                }
+                return true;
             default:
                     return super.onOptionsItemSelected(item);
         }
@@ -829,6 +841,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
+        showNavDrawerButtonInToolbar();
         setOptionsMenuVisibility(true);
         recyclerViewAdapter.refreshData();
 
@@ -863,6 +876,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.setMoveMode(false);
         recyclerViewAdapter.refreshData();
         isInMoveMode = false;
+        showNavDrawerButtonInToolbar();
         String oldPath = moveList.get(0).getPath();
         int index = oldPath.lastIndexOf(moveList.get(0).getName());
         String path2;
@@ -882,6 +896,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
         moveStartPath = null;
+    }
+
+    private void showCancelButtonInToolbar() {
+        ActionBar actionbar = ((AppCompatActivity) context).getSupportActionBar();
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_cancel_white);
+        }
+    }
+
+    private void showNavDrawerButtonInToolbar() {
+        ActionBar actionbar = ((AppCompatActivity)context).getSupportActionBar();
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        }
     }
 
     private void showSortMenu() {
@@ -1024,6 +1054,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView.setVisibility(View.GONE);
         searchBar.setVisibility(View.GONE);
         ((FragmentActivity) context).setTitle(originalToolbarTitle);
+        showNavDrawerButtonInToolbar();
         isRunning = false;
         context = null;
     }
@@ -1031,6 +1062,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public boolean onBackButtonPressed() {
         if (recyclerViewAdapter.isInSelectMode()) {
             recyclerViewAdapter.cancelSelection();
+            showNavDrawerButtonInToolbar();
             return true;
         } else if (isSearchMode) {
             searchClicked();
@@ -1141,6 +1173,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
             setOptionsMenuVisibility(false);
+            showCancelButtonInToolbar();
             if (numOfSelected > 1) {
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
                 ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
@@ -1159,6 +1192,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fab.show();
             fab.setVisibility(View.VISIBLE);
             setOptionsMenuVisibility(true);
+            showNavDrawerButtonInToolbar();
         } else {
             handleFilesSelected();
         }
@@ -1360,6 +1394,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.cancelSelection();
         recyclerViewAdapter.setMoveMode(true);
         isInMoveMode = true;
+        showCancelButtonInToolbar();
         ((FragmentActivity) context).setTitle(getString(R.string.select_destination));
         ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
         setOptionsMenuVisibility(false);
