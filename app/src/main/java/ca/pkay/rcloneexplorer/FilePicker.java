@@ -80,38 +80,26 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
 
-        availableStorage = new ArrayList<>(getStorageDirectories());
-
         if (savedInstanceState != null) {
             destinationPickerType = savedInstanceState.getBoolean(SAVED_DESTINATION_PICKER_TYPE);
+            availableStorage = new ArrayList<>(getStorageDirectories());
             String path = savedInstanceState.getString(SAVED_PATH);
             if (path == null) {
-                if (destinationPickerType) {
-                    root = current = Environment.getExternalStorageDirectory();
-                } else {
-                    root = current = new File(availableStorage.get(0));
-                }
+                root = current = new File(availableStorage.get(0));
             } else {
                 current = new File(path);
-                if (destinationPickerType) {
-                    root = Environment.getExternalStorageDirectory();
-                } else {
-                    for (String s : availableStorage) {
-                        if (path.startsWith(s) || path.equals(s)) {
-                            root = new File(s);
-                            break;
-                        }
+                for (String s : availableStorage) {
+                    if (path.startsWith(s) || path.equals(s)) {
+                        root = new File(s);
+                        break;
                     }
                 }
                 actionBar.setTitle(current.getName());
             }
         } else {
             destinationPickerType = getIntent().getBooleanExtra(FILE_PICKER_PICK_DESTINATION_TYPE, false);
-            if (destinationPickerType) {
-                root = current = Environment.getExternalStorageDirectory();
-            } else {
-                root = current = new File(availableStorage.get(0));
-            }
+            availableStorage = new ArrayList<>(getStorageDirectories());
+            root = current = new File(availableStorage.get(0));
         }
 
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
@@ -215,7 +203,6 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         menuInflater.inflate(R.menu.file_picker_menu, menu);
         if (destinationPickerType) {
             menu.removeItem(R.id.action_select_all);
-            menu.removeItem(R.id.action_storage);
         } else {
             menu.removeItem(R.id.action_new_folder);
         }
@@ -510,12 +497,26 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 storageDirectories.add(rawEmulatedStorageTarget + File.separator + rawUserId);
             }
         }
-        // Add all secondary storages
-        if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
-            // All Secondary SD-CARDs splited into array
-            final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
-            Collections.addAll(storageDirectories, rawSecondaryStorages);
+
+        if (destinationPickerType) {
+            File[] extFiles = getExternalMediaDirs();
+            String internalStorage = storageDirectories.get(0);
+            for (File f : extFiles) {
+                if (!f.getAbsolutePath().startsWith(internalStorage)) {
+                    storageDirectories.add(f.getAbsolutePath());
+                }
+            }
         }
+
+        // Add all secondary storages
+        if (!destinationPickerType) {
+            if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
+                // All Secondary SD-CARDs splited into array
+                final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
+                Collections.addAll(storageDirectories, rawSecondaryStorages);
+            }
+        }
+
         return storageDirectories;
     }
 }
