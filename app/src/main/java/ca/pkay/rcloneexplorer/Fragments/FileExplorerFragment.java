@@ -1854,10 +1854,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 retries--;
             }
 
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
+            if (loadingDialog != null) {
+                if (loadingDialog.isStateSaved()) {
+                    loadingDialog.dismissAllowingStateLoss();
+                } else {
+                    loadingDialog.dismiss();
+                }
             }
             startActivityForResult(intent, STREAMING_INTENT_RESULT);
             return null;
