@@ -702,7 +702,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             filePropertiesDialog.withHashCalculations(false);
         }
         if (getFragmentManager() != null) {
-            filePropertiesDialog.show(getFragmentManager(), "file properties");
+            filePropertiesDialog.show(getChildFragmentManager(), "file properties");
         }
     }
 
@@ -1697,7 +1697,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
             });
             if (getFragmentManager() != null) {
-                loadingDialog.show(getFragmentManager(), "loading dialog");
+                loadingDialog.show(getChildFragmentManager(), "loading dialog");
             }
         }
 
@@ -1796,7 +1796,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setTitle(R.string.loading);
 
             if (getFragmentManager() != null) {
-                loadingDialog.show(getFragmentManager(), "loading dialog");
+                loadingDialog.show(getChildFragmentManager(), "loading dialog");
             }
         }
 
@@ -1897,7 +1897,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setTitle(R.string.generating_public_link)
                     .setDarkTheme(isDarkTheme);
             if (getFragmentManager() != null) {
-                loadingDialog.show(getFragmentManager(), "loading dialog");
+                loadingDialog.show(getChildFragmentManager(), "loading dialog");
             }
         }
 
@@ -1927,7 +1927,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .isDarkTheme(isDarkTheme)
                     .setLinkUrl(s);
             if (getFragmentManager() != null) {
-                linkDialog.show(getFragmentManager(), "link dialog");
+                linkDialog.show(getChildFragmentManager(), "link dialog");
             }
 
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
