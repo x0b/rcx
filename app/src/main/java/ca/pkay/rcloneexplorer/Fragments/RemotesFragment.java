@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
@@ -131,12 +132,18 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                 remotes = rclone.getRemotes();
                 Collections.sort(remotes);
                 recyclerViewAdapter.newData(remotes);
+                if (remotes.size() == 1) {
+                    AppShortcutsHelper.populateAppShortcuts(context, remotes);
+                }
                 break;
             case CONFIG_RECREATE_REQ_CODE:
                 remotes = rclone.getRemotes();
                 Collections.sort(remotes);
                 recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
                 refreshFragment();
+                if (remotes.size() == 1) {
+                    AppShortcutsHelper.populateAppShortcuts(context, remotes);
+                }
                 break;
         }
     }
@@ -192,8 +199,10 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                             pinRemote(remoteItem);
                         }
                         break;
+                    case R.id.action_add_to_home_screen:
+                        AppShortcutsHelper.addRemoteToHomeScreen(context, remoteItem);
+                        break;
                     default:
-                        pinRemote(remoteItem);
                         return false;
                 }
                 return true;
@@ -206,6 +215,10 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             pinAction.setTitle(R.string.unpin_from_the_top);
         } else {
             pinAction.setTitle(R.string.pin_to_the_top);
+        }
+        if (!AppShortcutsHelper.isRequestPinShortcutSupported(context)) {
+            MenuItem addToHomeScreenAction = popupMenu.getMenu().findItem(R.id.action_add_to_home_screen);
+            addToHomeScreenAction.setVisible(false);
         }
     }
 
@@ -298,9 +311,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                 editor.apply();
             }
 
-            if (context instanceof MainActivity) {
-                ((MainActivity)context).removeRemoteFromShortcutList(remoteItem);
-            }
+            AppShortcutsHelper.removeAppShortcut(context, remoteItem.getName());
 
             recyclerViewAdapter.removeItem(remoteItem);
 

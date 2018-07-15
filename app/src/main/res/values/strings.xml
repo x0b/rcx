@@ -333,4 +333,12 @@
     <string name="menu_select_storage">Storage</string>
     <string name="select_storage">Select Storage</string>
     <string name="empty_trash_confirmation">Are you sure you want to empty the trash?</string>
+    <string name="app_shortcuts_settings_dialog_title">Application Shortcuts</string>
+    <string name="settings_header_general">General</string>
+    <string name="app_shortcuts_settings">Application Shortcuts</string>
+    <string name="app_shortcuts_icon_content_description">App Shortcuts Icon</string>
+    <string name="shared_preferences_app_shortcuts">shared_preferences_app_shortcuts</string>
+    <string name="app_shortcuts_max_toast">Maximum of 4 shortcuts allowed</string>
+    <string name="remote_not_found">Remote not found</string>
+    <string name="add_to_home_screen">Add to home screen</string>
 </resources>
