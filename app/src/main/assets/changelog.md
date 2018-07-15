@@ -1,3 +1,15 @@
+### 1.6.0
+* **New:** Allow setting which remotes are in app shortcuts (from settings)
+* **New:** Pin remotes on supported launchers (Android 8.0)
+    * From the remotes screen, press the options button for a remote and click 'Add to home screen'
+* **New:** Show cancel button in toolbar when items selected or in move mode
+* **New:** Download files to SD card
+* **New:** Upload files from SD card
+* **New:** Confirmation before emptying trash
+* **Fix:** Handle screen orientation change when selecting files for upload
+
+***
+
 ### 1.5.0
 * **New:** Add support for local remotes
 * **New:** Add option to create Google Drive remotes
