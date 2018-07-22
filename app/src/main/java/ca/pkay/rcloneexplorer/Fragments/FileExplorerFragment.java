@@ -1247,13 +1247,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                 Intent intent = new Intent(getContext(), StreamingService.class);
                                 switch (which) {
                                     case 0: // HTTP
-                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
+                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
                                         intent.putExtra(StreamingService.REMOTE_ARG, remote);
                                         intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
                                         intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
                                         break;
                                     case 1: // Webdav
-                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
+                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
                                         intent.putExtra(StreamingService.REMOTE_ARG, remote);
                                         intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
                                         intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
