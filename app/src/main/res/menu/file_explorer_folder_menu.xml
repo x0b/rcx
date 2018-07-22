@@ -31,8 +31,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_http_serve"
-        android:title="@string/http_serve"
+        android:id="@+id/action_serve"
+        android:title="@string/serve"
         app:showAsAction="never" />
 
     <item

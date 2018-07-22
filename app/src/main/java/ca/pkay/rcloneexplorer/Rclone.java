@@ -362,6 +362,22 @@ public class Rclone {
         }
     }
 
+    public Process serveWebdav(RemoteItem remote, String servePath, int port) {
+        String remoteName = remote.getName();
+        String localRemotePath = (remote.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
+        String path = (servePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + servePath;
+        String[] command = createCommandWithOptions("serve", "webdav", "--addr", ":" + String.valueOf(port), path);
+
+        try {
+            return Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
     public Process downloadFile(RemoteItem remote, FileItem downloadItem, String downloadPath) {
         String[] command;
         String remoteFilePath;

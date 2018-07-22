@@ -22,6 +22,9 @@ public class StreamingService extends IntentService {
     public static final String SERVE_PATH_ARG = "ca.pkay.rcexplorer.streaming_service.arg1";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.streaming_service.arg2";
     public static final String SHOW_NOTIFICATION_TEXT = "ca.pkay.rcexplorer.streaming_service.arg3";
+    public static final String SERVE_PROTOCOL = "ca.pkay.rcexplorer.serve_protocol";
+    public static final int SERVE_HTTP = 11;
+    public static final int SERVE_WEBDAV = 12;
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
     private final String CHANNEL_NAME = "Streaming service";
     private final int PERSISTENT_NOTIFICATION_ID = 179;
@@ -50,6 +53,7 @@ public class StreamingService extends IntentService {
         final String servePath = intent.getStringExtra(SERVE_PATH_ARG);
         final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
         final Boolean showNotificationText = intent.getBooleanExtra(SHOW_NOTIFICATION_TEXT, false);
+        final int protocol = intent.getIntExtra(SERVE_PROTOCOL, SERVE_HTTP);
 
         Intent foregroundIntent = new Intent(this, StreamingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
@@ -75,7 +79,16 @@ public class StreamingService extends IntentService {
 
         startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
 
-        runningProcess = rclone.serveHttp(remote, servePath, 8080);
+        switch (protocol) {
+            case SERVE_WEBDAV:
+                runningProcess = rclone.serveWebdav(remote, servePath, 8080);
+                break;
+            case SERVE_HTTP:
+            default:
+                runningProcess = rclone.serveHttp(remote, servePath, 8080);
+                break;
+        }
+
         if (runningProcess != null) {
             try {
                 runningProcess.waitFor();

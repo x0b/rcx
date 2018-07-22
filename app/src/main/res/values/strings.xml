@@ -16,7 +16,7 @@
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
-    <string name="http_serve">HTTP serve</string>
+    <string name="serve">Serve</string>
     <string name="action_sort_name">Name</string>
     <string name="action_sort_date">Date</string>
     <string name="action_sort_size">Size</string>
@@ -341,4 +341,5 @@
     <string name="app_shortcuts_max_toast">Maximum of 4 shortcuts allowed</string>
     <string name="remote_not_found">Remote not found</string>
     <string name="add_to_home_screen">Add to home screen</string>
+    <string name="pick_a_protocol">Pick a protocol</string>
 </resources>
