@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -499,7 +498,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         menuSelectAll = menu.findItem(R.id.action_select_all);
         menuGoTo = menu.findItem(R.id.action_go_to);
         menuLink = menu.findItem(R.id.action_link);
-        menuHttpServe = menu.findItem(R.id.action_http_serve);
+        menuHttpServe = menu.findItem(R.id.action_serve);
         menuEmptyTrash = menu.findItem(R.id.action_empty_trash);
 
         if (!remote.hasTrashCan()) {
@@ -554,12 +553,35 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_select_all:
                 recyclerViewAdapter.toggleSelectAll();
                 return true;
-            case R.id.action_http_serve:
-                Intent intent = new Intent(getContext(), StreamingService.class);
-                intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
-                intent.putExtra(StreamingService.REMOTE_ARG, remote);
-                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                context.startService(intent);
+            case R.id.action_serve:
+                String[] serveOptions = new String[] {"HTTP", "Webdav"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setItems(serveOptions, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(getContext(), StreamingService.class);
+                        switch (which) {
+                            case 0: // HTTP
+                                intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
+                                intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
+                                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                                break;
+                            case 1: // Webdav
+                                intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
+                                intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
+                                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                                break;
+                            default:
+                                return;
+                        }
+                        context.startService(intent);
+                    }
+                });
+                builder.setTitle(R.string.pick_a_protocol);
+                builder.show();
+
                 return true;
             case R.id.action_empty_trash:
                 emptyTrash();
@@ -1216,12 +1238,34 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     case R.id.action_open_as:
                         showOpenAsDialog(fileItem);
                         break;
-                    case R.id.action_http_serve:
-                        Intent intent = new Intent(getContext(), StreamingService.class);
-                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
-                        intent.putExtra(StreamingService.REMOTE_ARG, remote);
-                        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                        context.startService(intent);
+                    case R.id.action_serve:
+                        String[] serveOptions = new String[] {"HTTP", "Webdav"};
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setItems(serveOptions, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(getContext(), StreamingService.class);
+                                switch (which) {
+                                    case 0: // HTTP
+                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
+                                        intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                                        intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
+                                        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                                        break;
+                                    case 1: // Webdav
+                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
+                                        intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                                        intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
+                                        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                                        break;
+                                    default:
+                                        return;
+                                }
+                                context.startService(intent);
+                            }
+                        });
+                        builder.setTitle(R.string.pick_a_protocol);
+                        builder.show();
                         break;
                     case R.id.action_download:
                         downloadList = new ArrayList<>();
