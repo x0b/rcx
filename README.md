@@ -12,7 +12,7 @@ Features
 - Move, rename, and delete files and folders
 - Create new folders
 - Streaming media files
-- Serving directories over HTTP
+- Serving directories over HTTP or Webdav
 - Dark theme
 - Customizable primary and accent colors
 - Supports ARM and x86 devices
