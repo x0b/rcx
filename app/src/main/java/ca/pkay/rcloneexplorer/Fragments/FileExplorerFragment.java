@@ -1854,22 +1854,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
             context.startService(serveIntent);
 
-            String url = "http://127.0.0.1:8080/" + fileItem.getName();
+            Uri uri = Uri.parse("http://127.0.0.1:8080")
+                    .buildUpon()
+                    .appendPath(fileItem.getName())
+                    .build();
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
 
             // open as takes precedence
             if (openAs == OPEN_AS_VIDEO) {
-                intent.setDataAndType(Uri.parse(url), "video/*");
+                intent.setDataAndType(uri, "video/*");
             } else if (openAs == OPEN_AS_AUDIO) {
-                intent.setDataAndType(Uri.parse(url), "audio/*");
+                intent.setDataAndType(uri, "audio/*");
             } else {
                 String type = fileItem.getMimeType();
                 if (type.startsWith("audio/")) {
-                    intent.setDataAndType(Uri.parse(url), "audio/*");
+                    intent.setDataAndType(uri, "audio/*");
                 } else if (type.startsWith("video/")) {
-                    intent.setDataAndType(Uri.parse(url), "video/*");
+                    intent.setDataAndType(uri, "video/*");
                 } else {
-                    intent.setData(Uri.parse(url));
+                    intent.setData(uri);
                 }
             }
 
@@ -1879,7 +1883,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             int retries = 10;
             while (retries > 0) {
                 try {
-                    URL checkUrl = new URL(url);
+                    URL checkUrl = new URL(uri.toString());
                     connection = (HttpURLConnection) checkUrl.openConnection();
                     code = connection.getResponseCode();
                 } catch (IOException e) {
