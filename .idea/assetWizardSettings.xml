@@ -81,8 +81,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_android_head" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/android-head.svg" />
+                            <entry key="outputName" value="ic_streaming" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/access-point.svg" />
                           </map>
                         </option>
                       </PersistentState>
