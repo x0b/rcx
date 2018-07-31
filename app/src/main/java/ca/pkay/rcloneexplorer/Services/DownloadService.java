@@ -50,6 +50,14 @@ public class DownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        if (intent == null) {
+            return;
+        }
+
+        final FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
+        final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
+        
         Intent foregroundIntent = new Intent(this, DownloadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
@@ -59,19 +67,12 @@ public class DownloadService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentTitle(getString(R.string.download_service_notification_title))
+                .setContentText(downloadItem.getName())
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
-
-        if (intent == null) {
-            return;
-        }
-
-        final FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
-        final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
-        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
         currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
 
