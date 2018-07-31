@@ -48,6 +48,7 @@
             android:src="@drawable/ic_pin"
             android:tint="?attr/iconTint"
             android:visibility="invisible"
+            android:rotation="40"
             tools:visibility="visible"
             app:layout_constraintEnd_toStartOf="@id/remote_options"
             app:layout_constraintTop_toTopOf="parent"
