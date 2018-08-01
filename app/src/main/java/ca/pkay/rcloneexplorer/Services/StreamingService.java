@@ -62,7 +62,7 @@ public class StreamingService extends IntentService {
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_http)
+                .setSmallIcon(R.drawable.ic_streaming)
                 .setContentTitle(getString(R.string.streaming_service_notification_title))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
