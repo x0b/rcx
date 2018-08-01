@@ -50,6 +50,21 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        if (intent == null) {
+            return;
+        }
+        final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
+        final String uploadFilePath = intent.getStringExtra(LOCAL_PATH_ARG);
+        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
+
+        String uploadFileName;
+        int slashIndex = uploadFilePath.lastIndexOf("/");
+        if (slashIndex >= 0) {
+            uploadFileName = uploadFilePath.substring(slashIndex + 1);
+        } else {
+            uploadFileName = uploadFilePath;
+        }
+
         Intent foregroundIntent = new Intent(this, UploadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
@@ -59,20 +74,14 @@ public class UploadService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
                 .setContentTitle(getString(R.string.upload_service_notification_title))
+                .setContentText(uploadFileName)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
 
-        if (intent == null) {
-            return;
-        }
-        final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
-        final String uploadFile = intent.getStringExtra(LOCAL_PATH_ARG);
-        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
-
-        currentProcess = rclone.uploadFile(remote, uploadPath, uploadFile);
+        currentProcess = rclone.uploadFile(remote, uploadPath, uploadFilePath);
 
         if (currentProcess != null) {
             try {
@@ -87,7 +96,7 @@ public class UploadService extends IntentService {
         }
 
         boolean result = currentProcess != null && currentProcess.exitValue() == 0;
-        onUploadFinished(remote.getName(), uploadPath, uploadFile, result);
+        onUploadFinished(remote.getName(), uploadPath, uploadFilePath, result);
 
         stopForeground(true);
     }
