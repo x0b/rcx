@@ -394,7 +394,7 @@ public class Rclone {
         } else {
             localFilePath = downloadPath;
         }
-        command = createCommandWithOptions("copy", remoteFilePath, localFilePath);
+        command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--stats=1s", "--stats-log-level", "NOTICE");
 
         try {
             return Runtime.getRuntime().exec(command);
@@ -425,7 +425,7 @@ public class Rclone {
             path = (uploadPath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + uploadPath;
         }
 
-        command = createCommandWithOptions("copy", uploadFile, path);
+        command = createCommandWithOptions("copy", uploadFile, path, "--stats=1s", "--stats-log-level", "NOTICE");
 
         try {
             return Runtime.getRuntime().exec(command);
