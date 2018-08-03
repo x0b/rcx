@@ -13,6 +13,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
@@ -73,8 +77,7 @@ public class UploadService extends IntentService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setContentTitle(getString(R.string.upload_service_notification_title))
-                .setContentText(uploadFileName)
+                .setContentTitle(uploadFileName)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
@@ -84,6 +87,18 @@ public class UploadService extends IntentService {
         currentProcess = rclone.uploadFile(remote, uploadPath, uploadFilePath);
 
         if (currentProcess != null) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
+                        updateNotification(uploadFileName, line);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
@@ -99,6 +114,25 @@ public class UploadService extends IntentService {
         onUploadFinished(remote.getName(), uploadPath, uploadFilePath, result);
 
         stopForeground(true);
+    }
+
+    private void updateNotification(String uploadFileName, String transferred) {
+        Intent foregroundIntent = new Intent(this, UploadService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+
+        Intent cancelIntent = new Intent(this, UploadCancelAction.class);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_upload)
+                .setContentTitle(uploadFileName)
+                .setContentText(transferred)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(pendingIntent)
+                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID, builder.build());
     }
 
     private void onUploadFinished(String remote, String uploadPath, String file, boolean result) {
