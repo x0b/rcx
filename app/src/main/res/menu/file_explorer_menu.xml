@@ -42,4 +42,9 @@
         android:title="@string/serve"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_sync"
+        android:title="@string/sync"
+        app:showAsAction="never" />
+
 </menu>

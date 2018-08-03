@@ -34,6 +34,8 @@ import es.dmoral.toasty.Toasty;
 
 public class Rclone {
 
+    public static int SYNC_DIRECTION_LOCAL_TO_REMOTE = 1;
+    public static int SYNC_DIRECTION_REMOTE_TO_LOCAL = 2;
     private Context context;
     private String rclone;
     private String rcloneConf;
@@ -376,7 +378,27 @@ public class Rclone {
         }
     }
 
+    public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection) {
+        String[] command;
+        String remoteName = remoteItem.getName();
+        String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
+        String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
 
+        if (syncDirection == 1) {
+            command = createCommandWithOptions("sync", localPath, remotePath, "--stats=1s", "--stats-log-level", "NOTICE");
+        } else if (syncDirection == 2) {
+            command = createCommandWithOptions("sync", remotePath, localPath, "--stats=1s", "--stats-log-level", "NOTICE");
+        } else {
+            return null;
+        }
+
+        try {
+            return Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public Process downloadFile(RemoteItem remote, FileItem downloadItem, String downloadPath) {
         String[] command;

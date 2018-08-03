@@ -41,12 +41,14 @@
         <service android:name=".Services.ThumbnailsLoadingService" />
         <service android:name=".Services.DeleteService" />
         <service android:name=".Services.MoveService" />
+        <service android:name=".Services.SyncService" />
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
         <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
         <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
         <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
+        <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

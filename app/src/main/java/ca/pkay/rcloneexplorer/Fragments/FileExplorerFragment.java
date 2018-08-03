@@ -77,6 +77,7 @@ import ca.pkay.rcloneexplorer.Services.DeleteService;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.MoveService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
+import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
@@ -94,6 +95,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private static final int FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
+    private static final int FILE_PICKER_SYNC_RESULT = 45;
     private static final int STREAMING_INTENT_RESULT = 468;
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
@@ -105,6 +107,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private final String SAVED_START_AT_BOOT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_START_AT_BOOT";
     private final String SAVED_DOWNLOAD_LIST = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_DOWNLOAD_LIST";
     private final String SAVED_MOVE_START_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_MOVE_START_PATH";
+    private final String SAVED_SYNC_DIRECTION = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SYNC_DIRECTION";
+    private final String SAVED_SYNC_REMOTE_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SYNC_REMOTE_PATH";
     private String originalToolbarTitle;
     private Stack<String> pathStack;
     private Map<String, Integer> directoryPosition;
@@ -134,6 +138,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
     private String searchString;
+    private String syncRemotePath;
+    private int syncDirection;
     private boolean is720dp;
     private boolean showThumbnails;
     private boolean isThumbnailsServiceRunning;
@@ -331,6 +337,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
         outState.putParcelable(SAVED_RENAME_ITEM, renameItem);
         outState.putBoolean(SAVED_START_AT_BOOT, startAtRoot);
+        outState.putInt(SAVED_SYNC_DIRECTION, syncDirection);
         if (isSearchMode) {
             outState.putString(SAVED_SEARCH_STRING, searchString);
         }
@@ -346,6 +353,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         if (moveStartPath != null) {
             outState.putString(SAVED_MOVE_START_PATH, moveStartPath);
+        }
+        if (syncRemotePath != null) {
+            outState.putString(SAVED_SYNC_REMOTE_PATH, syncRemotePath);
         }
     }
 
@@ -374,6 +384,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         downloadList = savedInstanceState.getParcelableArrayList(SAVED_DOWNLOAD_LIST);
         moveStartPath = savedInstanceState.getString(SAVED_MOVE_START_PATH);
+        syncDirection = savedInstanceState.getInt(SAVED_SYNC_DIRECTION, -1);
+        syncRemotePath = savedInstanceState.getString(SAVED_SYNC_REMOTE_PATH);
     }
 
     private void setTitle() {
@@ -485,6 +497,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 context.startService(intent);
             }
             downloadList.clear();
+        } else if (requestCode == FILE_PICKER_SYNC_RESULT && resultCode == FragmentActivity.RESULT_OK) {
+            String path = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
+            Intent intent = new Intent(getContext(), SyncService.class);
+            intent.putExtra(SyncService.REMOTE_ARG, remote);
+            intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
+            intent.putExtra(SyncService.SYNC_DIRECTION_ARG, syncDirection);
+            intent.putExtra(SyncService.REMOTE_PATH_ARG, syncRemotePath);
+            context.startService(intent);
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);
@@ -590,6 +610,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 new LinkTask().execute(directoryObject.getCurrentPath());
             case R.id.action_wrap_filenames:
                 wrapFilenames(item);
+                return true;
+            case R.id.action_sync:
+                showSyncDialog(directoryObject.getCurrentPath());
                 return true;
             case R.id.action_go_to:
                 showSFTPgoToDialog();
@@ -1285,6 +1308,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     case R.id.action_link:
                         new LinkTask().execute(fileItem.getPath());
                         break;
+                    case R.id.action_sync:
+                        showSyncDialog(fileItem.getPath());
+                        break;
                     default:
                         return false;
                 }
@@ -1294,6 +1320,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         popupMenu.show();
         if (fileItem.isDir()) {
             popupMenu.getMenu().findItem(R.id.action_open_as).setVisible(false);
+        } else {
+            popupMenu.getMenu().findItem(R.id.action_sync).setVisible(false);
         }
         if (remote.isCrypt()) {
             popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
@@ -1350,6 +1378,33 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
+    }
+
+    private void showSyncDialog(String path) {
+        syncRemotePath = path;
+
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        String[] options = new String[] {"Sync local to remote", "Sync remote to local"};
+        builder.setTitle(R.string.select_sync_direction);
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    syncDirection = Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE;
+                } else {
+                    syncDirection = Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL;
+                }
+                Intent intent = new Intent(context, FilePicker.class);
+                intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
+                startActivityForResult(intent, FILE_PICKER_SYNC_RESULT);
+            }
+        });
+        builder.show();
     }
 
     private void showBottomBar() {

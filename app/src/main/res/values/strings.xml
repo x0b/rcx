@@ -172,11 +172,13 @@
     <string name="background_service_broadcast_data_path">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH</string>
     <string name="background_service_broadcast_data_path2">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH2</string>
     <string name="background_service_notification_channel_description">Background service for possibly long running tasks like Move and Delete</string>
+    <string name="sync_service_notification_channel_description">Background service for sync</string>
     <string name="moving_info">Moving…</string>
     <string name="deleting_info">Deleting…</string>
     <string name="operation_failed">Operation failed</string>
     <string name="moving_service">Moving Service</string>
     <string name="delete_service">Delete Service</string>
+    <string name="syncing_service">Syncing %1$s</string>
     <string name="and_X_other">and %1$d other</string>
     <string name="search">Search</string>
     <string name="search_clear_button">Search clear button</string>
@@ -342,4 +344,6 @@
     <string name="remote_not_found">Remote not found</string>
     <string name="add_to_home_screen">Add to home screen</string>
     <string name="pick_a_protocol">Pick a protocol</string>
+    <string name="sync">Sync</string>
+    <string name="select_sync_direction">Select sync direction</string>
 </resources>

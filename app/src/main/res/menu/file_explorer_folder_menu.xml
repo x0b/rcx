@@ -36,6 +36,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_sync"
+        android:title="@string/sync"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_empty_trash"
         android:title="@string/empty_trash"
         app:showAsAction="never" />
