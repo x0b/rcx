@@ -306,7 +306,9 @@ public class MainActivity   extends AppCompatActivity
             fragmentManager.popBackStack();
         }
 
-        fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit();
+        if (!isFinishing()) {
+            fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commitAllowingStateLoss();
+        }
     }
 
     private RemoteItem getRemoteItemFromName(String remoteName) {
