@@ -86,10 +86,28 @@ public class SyncService extends IntentService {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
+                String notificationContent = "";
+                String[] notificationBigText = new String[5];
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
-                        updateNotification(title, line);
+                        notificationBigText[0] = line;
+                        notificationContent = line;
                     }
+                    if (line.startsWith(" *")) {
+                        String s = line.substring(2).trim();
+                        notificationBigText[1] = s;
+                    }
+                    if (line.startsWith("Errors:")) {
+                        notificationBigText[2] = line;
+                    }
+                    if (line.startsWith("Checks:")) {
+                        notificationBigText[3] = line;
+                    }
+                    if (line.matches("Transferred:\\s+\\d+$")) {
+                        notificationBigText[4] = line;
+                    }
+
+                    updateNotification(title, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -114,7 +132,15 @@ public class SyncService extends IntentService {
         stopForeground(true);
     }
 
-    private void updateNotification(String title, String transferred) {
+    private void updateNotification(String title, String content, String[] bigTextArray) {
+        StringBuilder bigText = new StringBuilder();
+        for (int i = 0; i < bigTextArray.length; i++) {
+            bigText.append(bigTextArray[i]);
+            if (i < 4) {
+                bigText.append("\n");
+            }
+        }
+
         Intent foregroundIntent = new Intent(this, SyncService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
@@ -124,8 +150,9 @@ public class SyncService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.syncing_service, title))
-                .setContentText(transferred)
+                .setContentText(content)
                 .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 

@@ -387,7 +387,7 @@ public class Rclone {
         if (syncDirection == 1) {
             command = createCommandWithOptions("sync", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
         } else if (syncDirection == 2) {
-            command = createCommandWithOptions("sync", remotePath, localPath, "--stats=1s", "--stats-log-level", "NOTICE");
+            command = createCommandWithOptions("sync", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
         } else {
             return null;
         }
