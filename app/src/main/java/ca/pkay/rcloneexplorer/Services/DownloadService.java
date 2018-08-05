@@ -15,6 +15,8 @@ import android.support.v4.app.NotificationManagerCompat;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -83,10 +85,28 @@ public class DownloadService extends IntentService {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
+                String notificationContent = "";
+                String[] notificationBigText = new String[5];
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
-                        updateNotification(downloadItem, line);
+                        notificationBigText[0] = line;
+                        notificationContent = line;
                     }
+                    if (line.startsWith(" *")) {
+                        String s = line.substring(2).trim();
+                        notificationBigText[1] = s;
+                    }
+                    if (line.startsWith("Errors:")) {
+                        notificationBigText[2] = line;
+                    }
+                    if (line.startsWith("Checks:")) {
+                        notificationBigText[3] = line;
+                    }
+                    if (line.matches("Transferred:\\s+\\d+$")) {
+                        notificationBigText[4] = line;
+                    }
+
+                    updateNotification(downloadItem, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -111,7 +131,15 @@ public class DownloadService extends IntentService {
         stopForeground(true);
     }
 
-    private void updateNotification(FileItem downloadItem, String transferred) {
+    private void updateNotification(FileItem downloadItem, String content, String[] bigTextArray) {
+        StringBuilder bigText = new StringBuilder();
+        for (int i = 0; i < bigTextArray.length; i++) {
+            bigText.append(bigTextArray[i]);
+            if (i < 4) {
+                bigText.append("\n");
+            }
+        }
+
         Intent foregroundIntent = new Intent(this, DownloadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
@@ -120,12 +148,11 @@ public class DownloadService extends IntentService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                //.setContentTitle(getString(R.string.download_service_notification_title))
                 .setContentTitle(downloadItem.getName())
-                //.setContentText(downloadItem.getName())
-                .setContentText(transferred)
+                .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);

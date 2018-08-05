@@ -90,10 +90,28 @@ public class UploadService extends IntentService {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
+                String notificationContent = "";
+                String[] notificationBigText = new String[5];
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
-                        updateNotification(uploadFileName, line);
+                        notificationBigText[0] = line;
+                        notificationContent = line;
                     }
+                    if (line.startsWith(" *")) {
+                        String s = line.substring(2).trim();
+                        notificationBigText[1] = s;
+                    }
+                    if (line.startsWith("Errors:")) {
+                        notificationBigText[2] = line;
+                    }
+                    if (line.startsWith("Checks:")) {
+                        notificationBigText[3] = line;
+                    }
+                    if (line.matches("Transferred:\\s+\\d+$")) {
+                        notificationBigText[4] = line;
+                    }
+
+                    updateNotification(uploadFileName, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -116,7 +134,15 @@ public class UploadService extends IntentService {
         stopForeground(true);
     }
 
-    private void updateNotification(String uploadFileName, String transferred) {
+    private void updateNotification(String uploadFileName, String content, String[] bigTextArray) {
+        StringBuilder bigText = new StringBuilder();
+        for (int i = 0; i < bigTextArray.length; i++) {
+            bigText.append(bigTextArray[i]);
+            if (i < 4) {
+                bigText.append("\n");
+            }
+        }
+
         Intent foregroundIntent = new Intent(this, UploadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
 
@@ -126,9 +152,10 @@ public class UploadService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
                 .setContentTitle(uploadFileName)
-                .setContentText(transferred)
+                .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
