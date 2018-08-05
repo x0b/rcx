@@ -61,6 +61,7 @@ public class LoadingDialog extends DialogFragment {
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_loading_indicator, null);
         builder.setCancelable(cancelable);
+        setCancelable(cancelable);
         if (title != null) {
             builder.setTitle(title);
         } else if (titleId > 0) {
