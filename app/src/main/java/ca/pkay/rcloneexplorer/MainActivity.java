@@ -83,7 +83,7 @@ public class MainActivity   extends AppCompatActivity
         }
         
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), true);
+        boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
         if (enableCrashReports) {
             Fabric.with(this, new Crashlytics());
         }
@@ -114,7 +114,7 @@ public class MainActivity   extends AppCompatActivity
             }
         });
 
-        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
+        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
         if (appUpdates) {
             FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
         }
