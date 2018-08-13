@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
@@ -266,8 +265,11 @@ public class MainActivity   extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (fragment != null && fragment instanceof FileExplorerFragment) {
-            if (((FileExplorerFragment) fragment).onBackButtonPressed())
+            if (((FileExplorerFragment) fragment).onBackButtonPressed()) {
                 return;
+            } else {
+                fragment = null;
+            }
         }
         super.onBackPressed();
     }
