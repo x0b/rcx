@@ -70,8 +70,8 @@ public class MainActivity   extends AppCompatActivity
     private Fragment fragment;
     private Context context;
     private Boolean isDarkTheme;
-    private HashMap<Integer, RemoteItem> favoriteRemoteIds;
-    private int availableFavoriteRemoteId;
+    private HashMap<Integer, RemoteItem> drawerPinnedRemoteIds;
+    private int availableDrawerPinnedRemoteId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +93,8 @@ public class MainActivity   extends AppCompatActivity
 
         applyTheme();
         context = this;
-        favoriteRemoteIds = new HashMap<>();
-        availableFavoriteRemoteId = 2;
+        drawerPinnedRemoteIds = new HashMap<>();
+        availableDrawerPinnedRemoteId = 2;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -177,7 +177,7 @@ public class MainActivity   extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        addFavoriteRemotesToNavBar();
+        pinRemotesToDrawer();
     }
 
     private void applyTheme() {
@@ -279,8 +279,8 @@ public class MainActivity   extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (favoriteRemoteIds.containsKey(id)) {
-            startRemote(favoriteRemoteIds.get(id));
+        if (drawerPinnedRemoteIds.containsKey(id)) {
+            startRemote(drawerPinnedRemoteIds.get(id));
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
             return true;
@@ -319,22 +319,22 @@ public class MainActivity   extends AppCompatActivity
         return true;
     }
 
-    private void addFavoriteRemotesToNavBar() {
+    private void pinRemotesToDrawer() {
         Menu menu = navigationView.getMenu();
         MenuItem existingMenu = menu.findItem(1);
         if (existingMenu != null) {
             return;
         }
 
-        SubMenu subMenu = menu.addSubMenu(R.id.fav_header, 1, Menu.NONE, R.string.nav_drawer_favorites_header);
+        SubMenu subMenu = menu.addSubMenu(R.id.drawer_pinned_header, 1, Menu.NONE, R.string.nav_drawer_pinned_header);
 
         List<RemoteItem> remoteItems = rclone.getRemotes();
         Collections.sort(remoteItems);
         for (RemoteItem remoteItem : remoteItems) {
-            if (remoteItem.isFavorite()) {
-                MenuItem menuItem = subMenu.add(R.id.nav_favorites, availableFavoriteRemoteId, Menu.NONE, remoteItem.getName());
-                favoriteRemoteIds.put(availableFavoriteRemoteId, remoteItem);
-                availableFavoriteRemoteId++;
+            if (remoteItem.isDrawerPinned()) {
+                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getName());
+                drawerPinnedRemoteIds.put(availableDrawerPinnedRemoteId, remoteItem);
+                availableDrawerPinnedRemoteId++;
                 menuItem.setIcon(remoteItem.getRemoteIcon());
             }
         }
@@ -467,10 +467,10 @@ public class MainActivity   extends AppCompatActivity
 
         // remove all items and add them again so that it's in alpha order
         menu.removeItem(1);
-        favoriteRemoteIds.clear();
-        availableFavoriteRemoteId = 1;
+        drawerPinnedRemoteIds.clear();
+        availableDrawerPinnedRemoteId = 1;
 
-        addFavoriteRemotesToNavBar();
+        pinRemotesToDrawer();
     }
 
     @Override
@@ -479,10 +479,10 @@ public class MainActivity   extends AppCompatActivity
 
         // remove all items and add them again so that it's in alpha order
         menu.removeItem(1);
-        favoriteRemoteIds.clear();
-        availableFavoriteRemoteId = 1;
+        drawerPinnedRemoteIds.clear();
+        availableDrawerPinnedRemoteId = 1;
 
-        addFavoriteRemotesToNavBar();
+        pinRemotesToDrawer();
     }
 
     @SuppressLint("StaticFieldLeak")

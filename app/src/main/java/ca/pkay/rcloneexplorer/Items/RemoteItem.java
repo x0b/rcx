@@ -3,7 +3,6 @@ package ca.pkay.rcloneexplorer.Items;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.SizeF;
 
 import ca.pkay.rcloneexplorer.R;
 
@@ -37,7 +36,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private boolean isAlias;
     private boolean isCache;
     private boolean isPinned;
-    private boolean isFavorite;
+    private boolean isDrawerPinned;
 
     public RemoteItem(String name, String type) {
         this.name = name;
@@ -53,7 +52,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         isAlias = in.readByte() != 0;
         isCache = in.readByte() != 0;
         isPinned = in.readByte() != 0;
-        isFavorite = in.readByte() != 0;
+        isDrawerPinned = in.readByte() != 0;
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -143,13 +142,13 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return this.isPinned;
     }
 
-    public RemoteItem setIsFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
+    public RemoteItem setDrawerPinned(boolean isPinned) {
+        this.isDrawerPinned = isPinned;
         return this;
     }
 
-    public boolean isFavorite() {
-        return this.isFavorite;
+    public boolean isDrawerPinned() {
+        return this.isDrawerPinned;
     }
 
     public boolean isRemoteType(int ...remotes) {
@@ -270,6 +269,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         dest.writeByte((byte) (isAlias ? 1 : 0));
         dest.writeByte((byte) (isCache ? 1 : 0));
         dest.writeByte((byte) (isPinned ? 1 : 0));
-        dest.writeByte((byte) (isFavorite ? 1 : 0));
+        dest.writeByte((byte) (isDrawerPinned ? 1 : 0));
     }
 }

@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/action_favorite"
-        android:title="@string/add_to_favorites" />
+        android:title="@string/pin_to_drawer" />
 
     <item
         android:id="@+id/action_delete"

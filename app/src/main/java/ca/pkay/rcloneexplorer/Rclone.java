@@ -185,7 +185,7 @@ public class Rclone {
         JSONObject remotesJSON;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<String>());
-        Set<String> favoriteRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_favorite_remotes), new HashSet<String>());
+        Set<String> favoriteRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
 
         try {
             process = Runtime.getRuntime().exec(command);
@@ -236,7 +236,7 @@ public class Rclone {
                 }
 
                 if (favoriteRemotes.contains(newRemote.getName())) {
-                    newRemote.setIsFavorite(true);
+                    newRemote.setDrawerPinned(true);
                 }
 
                 remoteItemList.add(newRemote);

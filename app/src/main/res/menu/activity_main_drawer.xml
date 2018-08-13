@@ -14,12 +14,12 @@
     </group>
 
     <item
-        android:title="@string/nav_drawer_favorites_header"
-        android:id="@+id/fav_header"
+        android:title="@string/nav_drawer_pinned_header"
+        android:id="@+id/drawer_pinned_header"
         android:orderInCategory="1">
         <menu>
             <group
-                android:id="@+id/nav_favorites"
+                android:id="@+id/nav_pinned"
                 android:orderInCategory="1"
                 android:checkableBehavior="none">
             </group>
