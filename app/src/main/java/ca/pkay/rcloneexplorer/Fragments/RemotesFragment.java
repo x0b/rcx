@@ -17,7 +17,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,9 +45,19 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private Rclone rclone;
     private RemotesRecyclerViewAdapter recyclerViewAdapter;
     private List<RemoteItem> remotes;
-    private OnRemoteClickListener clickListener;
+    private OnRemoteClickListener remoteClickListener;
+    private AddRemoteToNavDrawer favoriteClickListener;
     private Context context;
     private boolean isDarkTheme;
+
+    public interface OnRemoteClickListener {
+        void onRemoteClick(RemoteItem remote);
+    }
+
+    public interface AddRemoteToNavDrawer {
+        void addRemoteToNavDrawer(RemoteItem remoteItem);
+        void removeRemoteFromNavDrawer(RemoteItem remoteItem);
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -109,7 +118,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         RecyclerView recyclerView =  view.findViewById(R.id.remotes_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
+        recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, remoteClickListener, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         SpeedDialView speedDialView = view.findViewById(R.id.fab);
@@ -139,7 +148,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             case CONFIG_RECREATE_REQ_CODE:
                 remotes = rclone.getRemotes();
                 Collections.sort(remotes);
-                recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
+                recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, remoteClickListener, this);
                 refreshFragment();
                 if (remotes.size() == 1) {
                     AppShortcutsHelper.populateAppShortcuts(context, remotes);
@@ -164,9 +173,14 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         super.onAttach(context);
         this.context = context;
         if (context instanceof OnRemoteClickListener) {
-            clickListener = (OnRemoteClickListener) context;
+            remoteClickListener = (OnRemoteClickListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnRemoteClickListener");
+        }
+        if (context instanceof AddRemoteToNavDrawer) {
+            favoriteClickListener = (AddRemoteToNavDrawer) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement AddRemoteToNavDrawer");
         }
     }
 
@@ -174,7 +188,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     public void onDetach() {
         super.onDetach();
         context = null;
-        clickListener = null;
+        remoteClickListener = null;
+        favoriteClickListener = null;
     }
 
     @Override
@@ -199,6 +214,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                             pinRemote(remoteItem);
                         }
                         break;
+                    case R.id.action_favorite:
+                        if (remoteItem.isFavorite()) {
+                            removeFromFavorites(remoteItem);
+                        } else {
+                            addToFavorites(remoteItem);
+                        }
+                        break;
                     case R.id.action_add_to_home_screen:
                         AppShortcutsHelper.addRemoteToHomeScreen(context, remoteItem);
                         break;
@@ -219,6 +241,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         if (!AppShortcutsHelper.isRequestPinShortcutSupported(context)) {
             MenuItem addToHomeScreenAction = popupMenu.getMenu().findItem(R.id.action_add_to_home_screen);
             addToHomeScreenAction.setVisible(false);
+        }
+
+        MenuItem favoriteAction = popupMenu.getMenu().findItem(R.id.action_favorite);
+        if (remoteItem.isFavorite()) {
+            favoriteAction.setTitle(R.string.remove_from_favorites);
+        } else {
+            favoriteAction.setTitle(R.string.add_to_favorites);
         }
     }
 
@@ -260,6 +289,38 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         recyclerViewAdapter.moveDataItem(remotes, from, to);
     }
 
+    private void addToFavorites(RemoteItem remoteItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_favorite_remotes), new HashSet<String>());
+        Set<String> favoriteRemotes = new HashSet<>(stringSet); // bug in android means that we have to create a copy
+        favoriteRemotes.add(remoteItem.getName());
+        remoteItem.setIsFavorite(true);
+
+        editor.putStringSet(getString(R.string.shared_preferences_favorite_remotes), favoriteRemotes);
+        editor.apply();
+
+        favoriteClickListener.addRemoteToNavDrawer(remoteItem);
+    }
+
+    private void removeFromFavorites(RemoteItem remoteItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_favorite_remotes), new HashSet<String>());
+        Set<String> favoriteRemotes = new HashSet<>(stringSet);
+        if (favoriteRemotes.contains(remoteItem.getName())) {
+            favoriteRemotes.remove(remoteItem.getName());
+        }
+        remoteItem.setIsFavorite(false);
+
+        editor.putStringSet(getString(R.string.shared_preferences_favorite_remotes), favoriteRemotes);
+        editor.apply();
+
+        favoriteClickListener.removeRemoteFromNavDrawer(remoteItem);
+    }
+
     private void deleteRemote(final RemoteItem remoteItem) {
         AlertDialog.Builder builder;
         if (isDarkTheme) {
@@ -277,10 +338,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
         });
         builder.show();
-    }
-
-    public interface OnRemoteClickListener {
-        void onRemoteClick(RemoteItem remote);
     }
 
     @SuppressLint("StaticFieldLeak")

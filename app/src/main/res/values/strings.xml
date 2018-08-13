@@ -306,9 +306,12 @@
     <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="crash_reporting_icon_content_description">Crash reporting icon</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
-    <string name="pin_to_the_top">Pin</string>
+    <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
     <string name="shared_preferences_pinned_remotes">shared_preferences_pinned_remotes</string>
+    <string name="shared_preferences_favorite_remotes">shared_preferences_favorite_remotes</string>
     <string name="app_latest_release_url">https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest</string>
     <string name="experimental_features">Experimental Features</string>
     <string name="show_thumbnails">Show thumbnails</string>
@@ -346,4 +349,6 @@
     <string name="pick_a_protocol">Pick a protocol</string>
     <string name="sync">Sync</string>
     <string name="select_sync_direction">Select sync direction</string>
+    <string name="nav_drawer_favorites_header">Favorites</string>
+    <string name="nav_header_options_header">Options</string>
 </resources>

@@ -9,11 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,12 +26,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -43,7 +41,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
@@ -56,6 +57,7 @@ import io.fabric.sdk.android.Fabric;
 public class MainActivity   extends AppCompatActivity
                             implements  NavigationView.OnNavigationItemSelectedListener,
                                         RemotesFragment.OnRemoteClickListener,
+                                        RemotesFragment.AddRemoteToNavDrawer,
                                         InputDialog.OnPositive {
 
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
@@ -69,6 +71,8 @@ public class MainActivity   extends AppCompatActivity
     private Fragment fragment;
     private Context context;
     private Boolean isDarkTheme;
+    private HashMap<Integer, RemoteItem> favoriteRemoteIds;
+    private int availableFavoriteRemoteId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +94,8 @@ public class MainActivity   extends AppCompatActivity
 
         applyTheme();
         context = this;
+        favoriteRemoteIds = new HashMap<>();
+        availableFavoriteRemoteId = 2;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -167,6 +173,12 @@ public class MainActivity   extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        addFavoriteRemotesToNavBar();
     }
 
     private void applyTheme() {
@@ -265,6 +277,13 @@ public class MainActivity   extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if (favoriteRemoteIds.containsKey(id)) {
+            startRemote(favoriteRemoteIds.get(id));
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
+
         switch (id) {
             case R.id.nav_remotes:
                 startRemotesFragment();
@@ -296,6 +315,22 @@ public class MainActivity   extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void addFavoriteRemotesToNavBar() {
+        Menu menu = navigationView.getMenu();
+        SubMenu subMenu = menu.addSubMenu(R.id.fav_header, 1, Menu.NONE, R.string.nav_drawer_favorites_header);
+
+        List<RemoteItem> remoteItems = rclone.getRemotes();
+        Collections.sort(remoteItems);
+        for (RemoteItem remoteItem : remoteItems) {
+            if (remoteItem.isFavorite()) {
+                MenuItem menuItem = subMenu.add(R.id.nav_favorites, availableFavoriteRemoteId, Menu.NONE, remoteItem.getName());
+                favoriteRemoteIds.put(availableFavoriteRemoteId, remoteItem);
+                availableFavoriteRemoteId++;
+                menuItem.setIcon(remoteItem.getRemoteIcon());
+            }
+        }
     }
 
     private void startRemotesFragment() {
@@ -417,6 +452,30 @@ public class MainActivity   extends AppCompatActivity
         transaction.commit();
 
         navigationView.getMenu().getItem(0).setChecked(false);
+    }
+
+    @Override
+    public void addRemoteToNavDrawer(RemoteItem remoteItem) {
+        Menu menu = navigationView.getMenu();
+
+        // remove all items and add them again so that it's in alpha order
+        menu.removeItem(1);
+        favoriteRemoteIds.clear();
+        availableFavoriteRemoteId = 1;
+
+        addFavoriteRemotesToNavBar();
+    }
+
+    @Override
+    public void removeRemoteFromNavDrawer(RemoteItem remoteItem) {
+        Menu menu = navigationView.getMenu();
+
+        // remove all items and add them again so that it's in alpha order
+        menu.removeItem(1);
+        favoriteRemoteIds.clear();
+        availableFavoriteRemoteId = 1;
+
+        addFavoriteRemotesToNavBar();
     }
 
     @SuppressLint("StaticFieldLeak")

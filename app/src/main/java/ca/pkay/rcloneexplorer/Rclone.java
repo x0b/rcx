@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.util.Pair;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -186,6 +185,7 @@ public class Rclone {
         JSONObject remotesJSON;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<String>());
+        Set<String> favoriteRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_favorite_remotes), new HashSet<String>());
 
         try {
             process = Runtime.getRuntime().exec(command);
@@ -233,6 +233,10 @@ public class Rclone {
 
                 if (pinnedRemotes.contains(newRemote.getName())) {
                     newRemote.pin(true);
+                }
+
+                if (favoriteRemotes.contains(newRemote.getName())) {
+                    newRemote.setIsFavorite(true);
                 }
 
                 remoteItemList.add(newRemote);
