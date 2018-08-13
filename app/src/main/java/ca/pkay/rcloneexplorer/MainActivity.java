@@ -321,6 +321,11 @@ public class MainActivity   extends AppCompatActivity
 
     private void addFavoriteRemotesToNavBar() {
         Menu menu = navigationView.getMenu();
+        MenuItem existingMenu = menu.findItem(1);
+        if (existingMenu != null) {
+            return;
+        }
+
         SubMenu subMenu = menu.addSubMenu(R.id.fav_header, 1, Menu.NONE, R.string.nav_drawer_favorites_header);
 
         List<RemoteItem> remoteItems = rclone.getRemotes();
