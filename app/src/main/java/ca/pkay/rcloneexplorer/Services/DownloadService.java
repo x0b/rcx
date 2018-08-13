@@ -7,7 +7,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -21,6 +23,7 @@ import java.util.regex.Pattern;
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -38,6 +41,7 @@ public class DownloadService extends IntentService {
     private final int FAILED_DOWNLOAD_NOTIFICATION_ID = 138;
     private final int DOWNLOAD_FINISHED_NOTIFICATION_ID = 80;
     private Rclone rclone;
+    private Log2File log2File;
     private Process currentProcess;
 
     /**
@@ -52,6 +56,7 @@ public class DownloadService extends IntentService {
         super.onCreate();
         setNotificationChannel();
         rclone = new Rclone(this);
+        log2File = new Log2File(this);
     }
 
     @Override
@@ -63,6 +68,9 @@ public class DownloadService extends IntentService {
         final FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
         final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
         final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
         
         Intent foregroundIntent = new Intent(this, DownloadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
@@ -91,19 +99,17 @@ public class DownloadService extends IntentService {
                     if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
                         notificationBigText[0] = line;
                         notificationContent = line;
-                    }
-                    if (line.startsWith(" *")) {
+                    } else if (line.startsWith(" *")) {
                         String s = line.substring(2).trim();
                         notificationBigText[1] = s;
-                    }
-                    if (line.startsWith("Errors:")) {
+                    } else if (line.startsWith("Errors:")) {
                         notificationBigText[2] = line;
-                    }
-                    if (line.startsWith("Checks:")) {
+                    } else if (line.startsWith("Checks:")) {
                         notificationBigText[3] = line;
-                    }
-                    if (line.matches("Transferred:\\s+\\d+$")) {
+                    } else if (line.matches("Transferred:\\s+\\d+$")) {
                         notificationBigText[4] = line;
+                    } else if (isLoggingEnable && line.startsWith("ERROR :")){
+                        log2File.log(line);
                     }
 
                     updateNotification(downloadItem, notificationContent, notificationBigText);

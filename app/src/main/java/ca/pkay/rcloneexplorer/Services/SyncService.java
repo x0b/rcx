@@ -7,11 +7,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +22,7 @@ import java.io.InputStreamReader;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -34,6 +38,7 @@ public class SyncService extends IntentService {
     private final int PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162;
     private final int OPERATION_FAILED_NOTIFICATION_ID = 89;
     private Rclone rclone;
+    private Log2File log2File;
     Process currentProcess;
 
     public SyncService() {
@@ -45,6 +50,7 @@ public class SyncService extends IntentService {
         super.onCreate();
         setNotificationChannel();
         rclone = new Rclone(this);
+        log2File = new Log2File(this);
     }
 
     @Override
@@ -57,6 +63,9 @@ public class SyncService extends IntentService {
         final String remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
         final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
         final int syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
         String title;
         int slashIndex = remotePath.lastIndexOf("/");
@@ -92,19 +101,17 @@ public class SyncService extends IntentService {
                     if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
                         notificationBigText[0] = line;
                         notificationContent = line;
-                    }
-                    if (line.startsWith(" *")) {
+                    } else if (line.startsWith(" *")) {
                         String s = line.substring(2).trim();
                         notificationBigText[1] = s;
-                    }
-                    if (line.startsWith("Errors:")) {
+                    } else if (line.startsWith("Errors:")) {
                         notificationBigText[2] = line;
-                    }
-                    if (line.startsWith("Checks:")) {
+                    } else if (line.startsWith("Checks:")) {
                         notificationBigText[3] = line;
-                    }
-                    if (line.matches("Transferred:\\s+\\d+$")) {
+                    } else if (line.matches("Transferred:\\s+\\d+$")) {
                         notificationBigText[4] = line;
+                    } else if (isLoggingEnable && line.startsWith("ERROR :")){
+                        log2File.log(line);
                     }
 
                     updateNotification(title, notificationContent, notificationBigText);
