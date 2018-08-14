@@ -73,8 +73,6 @@
     <string name="type_new_folder_name">Please type new folder name</string>
     <string name="loading_file">Loading file</string>
     <string name="please_wait">Please wait</string>
-    <string name="download_cancelled">Download cancelled</string>
-    <string name="upload_cancelled">Upload cancelled</string>
     <string name="ok">OK</string>
     <string name="file_renamed_success">File Renamed</string>
     <string name="files_moved_success">File(s) moved</string>
@@ -144,6 +142,7 @@
     <string name="pref_key_app_updates">pref_key_app_updates</string>
     <string name="pref_key_crash_reports">pref_key_crash_reports</string>
     <string name="pref_key_show_thumbnails">pref_key_show_thumbnails</string>
+    <string name="pref_key_wifi_only_transfers">pref_key_wifi_only_transfers</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="pref_key_version_name">pref_key_version_name</string>
     <string name="look_and_feel">Look and Feel</string>
@@ -153,6 +152,8 @@
     <string name="accent_color">Accent Color</string>
     <string name="dark_theme_content_desc">Dark theme</string>
     <string name="dark_theme">Dark theme</string>
+    <string name="transfer_only_on_wifi">Transfer files only over Wi-Fi</string>
+    <string name="transfer_only_on_wifi_summary">Uploading and downloading of files will be cancelled when not on Wi-Fi</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="use_logs_content_desc">Use logs</string>
     <string name="use_logs">Use logs</string>
@@ -161,6 +162,7 @@
     <string name="primary_color_picker_title">Select primary color</string>
     <string name="accent_color_picker_title">Select accent color</string>
     <string name="notifications_pref_title">Notifications</string>
+    <string name="connectivity_pref_title">Connectivity</string>
     <string name="open_system_settings">Open system settings</string>
     <string name="content_description_circle">circle</string>
     <string name="loading">Loading</string>
@@ -351,4 +353,8 @@
     <string name="select_sync_direction">Select sync direction</string>
     <string name="nav_drawer_pinned_header">Pinned</string>
     <string name="nav_header_options_header">Options</string>
+    <string name="download_cancelled">Download cancelled</string>
+    <string name="wifi_connections_isnt_available">Wi-Fi connection isn\'t available</string>
+    <string name="sync_cancelled">Sync operation cancelled</string>
+    <string name="upload_cancelled">Upload cancelled</string>
 </resources>

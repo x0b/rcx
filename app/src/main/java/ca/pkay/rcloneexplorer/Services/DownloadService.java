@@ -5,9 +5,13 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -40,6 +44,9 @@ public class DownloadService extends IntentService {
     private final int PERSISTENT_NOTIFICATION_ID = 167;
     private final int FAILED_DOWNLOAD_NOTIFICATION_ID = 138;
     private final int DOWNLOAD_FINISHED_NOTIFICATION_ID = 80;
+    private final int CONNECTIVITY_CHANGE_NOTIFICATION_ID = 235;
+    private boolean connectivityChanged;
+    private boolean transferOnWiFiOnly;
     private Rclone rclone;
     private Log2File log2File;
     private Process currentProcess;
@@ -57,11 +64,24 @@ public class DownloadService extends IntentService {
         setNotificationChannel();
         rclone = new Rclone(this);
         log2File = new Log2File(this);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
+
+        if (transferOnWiFiOnly) {
+            registerBroadcastReceivers();
+        }
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent == null) {
+            return;
+        }
+
+        if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
+            showConnectivityChangedNotification();
+            stopSelf();
             return;
         }
 
@@ -112,7 +132,9 @@ public class DownloadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    updateNotification(downloadItem, notificationContent, notificationBigText);
+                    if (transferOnWiFiOnly && !connectivityChanged) {
+                        updateNotification(downloadItem, notificationContent, notificationBigText);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -127,14 +149,47 @@ public class DownloadService extends IntentService {
 
         int notificationId = (int)System.currentTimeMillis();
 
-        if (currentProcess != null && currentProcess.exitValue() == 0) {
+        if (transferOnWiFiOnly && connectivityChanged) {
+            showConnectivityChangedNotification();
+        } else if (currentProcess != null && currentProcess.exitValue() == 0) {
             showDownloadFinishedNotification(notificationId, downloadItem.getName());
         } else {
-            rclone.logErrorOutput(currentProcess);
             showDownloadFailedNotification(notificationId, downloadItem.getName());
         }
 
         stopForeground(true);
+    }
+
+    private void registerBroadcastReceivers() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter);
+    }
+
+    private BroadcastReceiver connectivityChangeBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            connectivityChanged = true;
+            stopSelf();
+        }
+    };
+
+    private boolean checkWifiOnAndConnected() {
+        WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+
+        if (wifiMgr == null) {
+            return false;
+        }
+
+        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+
+            return wifiInfo.getNetworkId() != -1;
+        }
+        else {
+            return false; // Wi-Fi adapter is OFF
+        }
     }
 
     private void updateNotification(FileItem downloadItem, String content, String[] bigTextArray) {
@@ -163,6 +218,17 @@ public class DownloadService extends IntentService {
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID, builder.build());
+    }
+
+    private void showConnectivityChangedNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setContentTitle(getString(R.string.download_cancelled))
+                .setContentText(getString(R.string.wifi_connections_isnt_available))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(CONNECTIVITY_CHANGE_NOTIFICATION_ID, builder.build());
     }
 
     private void showDownloadFinishedNotification(int notificationID, String contentText) {
@@ -231,6 +297,10 @@ public class DownloadService extends IntentService {
         super.onDestroy();
         if (currentProcess != null) {
             currentProcess.destroy();
+        }
+
+        if (transferOnWiFiOnly) {
+            unregisterReceiver(connectivityChangeBroadcastReceiver);
         }
     }
 

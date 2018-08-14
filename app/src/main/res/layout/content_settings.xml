@@ -226,6 +226,74 @@
             android:paddingTop="24dp"
             android:textColor="?attr/colorPrimary"
             android:textStyle="bold"
+            android:text="@string/connectivity_pref_title"/>
+
+        <RelativeLayout
+            android:id="@+id/wifi_only"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <ImageView
+                android:id="@+id/wifi_only_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_wifi"
+                android:tint="?attr/iconTint" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/wifi_only_icon"
+                android:layout_toStartOf="@id/wifi_only_switch"
+                android:layout_centerVertical="true"
+                android:paddingStart="32dp"
+                android:paddingEnd="16dp"
+                android:orientation="vertical" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColorPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/transfer_only_on_wifi"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColorSecondary"
+                    android:text="@string/transfer_only_on_wifi_summary"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/wifi_only_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/dividerColor"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
             android:text="@string/notifications_pref_title"/>
 
         <RelativeLayout
