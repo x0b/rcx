@@ -46,7 +46,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private RemotesRecyclerViewAdapter recyclerViewAdapter;
     private List<RemoteItem> remotes;
     private OnRemoteClickListener remoteClickListener;
-    private AddRemoteToNavDrawer favoriteClickListener;
+    private AddRemoteToNavDrawer pinToDrawerListener;
     private Context context;
     private boolean isDarkTheme;
 
@@ -178,7 +178,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             throw new RuntimeException(context.toString() + " must implement OnRemoteClickListener");
         }
         if (context instanceof AddRemoteToNavDrawer) {
-            favoriteClickListener = (AddRemoteToNavDrawer) context;
+            pinToDrawerListener = (AddRemoteToNavDrawer) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement AddRemoteToNavDrawer");
         }
@@ -189,7 +189,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         super.onDetach();
         context = null;
         remoteClickListener = null;
-        favoriteClickListener = null;
+        pinToDrawerListener = null;
     }
 
     @Override
@@ -216,9 +216,9 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                         break;
                     case R.id.action_favorite:
                         if (remoteItem.isDrawerPinned()) {
-                            removeFromFavorites(remoteItem);
+                            unpinFromDrawer(remoteItem);
                         } else {
-                            addToFavorites(remoteItem);
+                            pinToDrawer(remoteItem);
                         }
                         break;
                     case R.id.action_add_to_home_screen:
@@ -289,36 +289,36 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         recyclerViewAdapter.moveDataItem(remotes, from, to);
     }
 
-    private void addToFavorites(RemoteItem remoteItem) {
+    private void pinToDrawer(RemoteItem remoteItem) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
-        Set<String> favoriteRemotes = new HashSet<>(stringSet); // bug in android means that we have to create a copy
-        favoriteRemotes.add(remoteItem.getName());
+        Set<String> pinnedRemotes = new HashSet<>(stringSet); // bug in android means that we have to create a copy
+        pinnedRemotes.add(remoteItem.getName());
         remoteItem.setDrawerPinned(true);
 
-        editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), favoriteRemotes);
+        editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
         editor.apply();
 
-        favoriteClickListener.addRemoteToNavDrawer(remoteItem);
+        pinToDrawerListener.addRemoteToNavDrawer(remoteItem);
     }
 
-    private void removeFromFavorites(RemoteItem remoteItem) {
+    private void unpinFromDrawer(RemoteItem remoteItem) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
-        Set<String> favoriteRemotes = new HashSet<>(stringSet);
-        if (favoriteRemotes.contains(remoteItem.getName())) {
-            favoriteRemotes.remove(remoteItem.getName());
+        Set<String> pinnedRemotes = new HashSet<>(stringSet);
+        if (pinnedRemotes.contains(remoteItem.getName())) {
+            pinnedRemotes.remove(remoteItem.getName());
         }
         remoteItem.setDrawerPinned(false);
 
-        editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), favoriteRemotes);
+        editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
         editor.apply();
 
-        favoriteClickListener.removeRemoteFromNavDrawer(remoteItem);
+        pinToDrawerListener.removeRemoteFromNavDrawer(remoteItem);
     }
 
     private void deleteRemote(final RemoteItem remoteItem) {
@@ -370,6 +370,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
             AppShortcutsHelper.removeAppShortcut(context, remoteItem.getName());
 
+            Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
+            if (drawerPinnedRemote.contains(remoteItem.getName())) {
+                drawerPinnedRemote.remove(remoteItem.getName());
+                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>(pinnedRemotes));
+                editor.apply();
+            }
+            
             recyclerViewAdapter.removeItem(remoteItem);
 
             if (rclone.getRemotes().isEmpty()) {

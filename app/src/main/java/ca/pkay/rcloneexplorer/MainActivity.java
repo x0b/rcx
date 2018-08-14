@@ -568,6 +568,7 @@ public class MainActivity   extends AppCompatActivity
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(getString(R.string.shared_preferences_pinned_remotes));
+            editor.remove(getString(R.string.shared_preferences_drawer_pinned_remotes));
             editor.apply();
 
             if (rclone.isConfigEncrypted()) {
