@@ -280,6 +280,10 @@ public class MainActivity   extends AppCompatActivity
         int id = item.getItemId();
 
         if (drawerPinnedRemoteIds.containsKey(id)) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+                fragmentManager.popBackStack();
+            }
             startRemote(drawerPinnedRemoteIds.get(id));
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
