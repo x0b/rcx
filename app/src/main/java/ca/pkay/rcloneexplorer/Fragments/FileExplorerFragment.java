@@ -1075,6 +1075,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        isRunning = true;
     }
 
     @Override
@@ -1980,10 +1981,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            if (result) {
-                Toasty.success(context, getString(R.string.trash_emptied), Toast.LENGTH_SHORT, true).show();
-            } else {
-                Toasty.error(context, getString(R.string.error_emptying_trash), Toast.LENGTH_SHORT, true).show();
+            if (isRunning) {
+                if (result) {
+                    Toasty.success(context, getString(R.string.trash_emptied), Toast.LENGTH_SHORT, true).show();
+                } else {
+                    Toasty.error(context, getString(R.string.error_emptying_trash), Toast.LENGTH_SHORT, true).show();
+                }
             }
         }
     }
