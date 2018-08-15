@@ -395,7 +395,11 @@ public class SettingsActivity extends AppCompatActivity {
         // for Android O
         intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
 
-        startActivity(intent);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toasty.error(this, "Couldn't find activity to start", Toast.LENGTH_SHORT, true).show();
+        }
     }
 
     private void onAppUpdatesClicked(boolean isChecked) {
