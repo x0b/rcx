@@ -5,6 +5,7 @@
 
     <group
         android:id="@+id/nav_top"
+        android:orderInCategory="0"
         android:checkableBehavior="none">
         <item
             android:id="@+id/nav_remotes"
@@ -12,29 +13,49 @@
             android:title="@string/remotes" />
     </group>
 
-    <group
-        android:id="@+id/nav_bottom"
-        android:checkableBehavior="none"
-        android:title="@string/settings">
-        <item
-            android:id="@+id/nav_import"
-            android:icon="@drawable/ic_import"
-            android:title="@string/import_rclone_config" />
+    <item
+        android:title="@string/nav_drawer_pinned_header"
+        android:id="@+id/drawer_pinned_header"
+        android:orderInCategory="1">
+        <menu>
+            <group
+                android:id="@+id/nav_pinned"
+                android:orderInCategory="1"
+                android:checkableBehavior="none">
+            </group>
+        </menu>
+    </item>
 
-        <item
-            android:id="@+id/nav_export"
-            android:icon="@drawable/ic_export"
-            android:title="@string/export_rclone_config" />
+    <item
+        android:title="@string/nav_header_options_header"
+        android:orderInCategory="2">
+        <menu>
+            <group
+                android:id="@+id/nav_bottom"
+                android:orderInCategory="2"
+                android:checkableBehavior="none"
+                android:title="@string/settings">
+                <item
+                    android:id="@+id/nav_import"
+                    android:icon="@drawable/ic_import"
+                    android:title="@string/import_rclone_config" />
 
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="@string/settings"
-            android:checkable="false" />
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_about"
-            android:title="@string/about"
-            android:checkable="false"/>
-    </group>
+                <item
+                    android:id="@+id/nav_export"
+                    android:icon="@drawable/ic_export"
+                    android:title="@string/export_rclone_config" />
+
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_settings"
+                    android:title="@string/settings"
+                    android:checkable="false" />
+                <item
+                    android:id="@+id/nav_about"
+                    android:icon="@drawable/ic_about"
+                    android:title="@string/about"
+                    android:checkable="false"/>
+            </group>
+        </menu>
+    </item>
 </menu>

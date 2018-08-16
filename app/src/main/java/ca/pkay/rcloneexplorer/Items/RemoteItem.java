@@ -3,7 +3,8 @@ package ca.pkay.rcloneexplorer.Items;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.SizeF;
+
+import ca.pkay.rcloneexplorer.R;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
@@ -35,6 +36,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private boolean isAlias;
     private boolean isCache;
     private boolean isPinned;
+    private boolean isDrawerPinned;
 
     public RemoteItem(String name, String type) {
         this.name = name;
@@ -49,6 +51,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         isCrypt = in.readByte() != 0;
         isAlias = in.readByte() != 0;
         isCache = in.readByte() != 0;
+        isPinned = in.readByte() != 0;
+        isDrawerPinned = in.readByte() != 0;
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -138,6 +142,15 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return this.isPinned;
     }
 
+    public RemoteItem setDrawerPinned(boolean isPinned) {
+        this.isDrawerPinned = isPinned;
+        return this;
+    }
+
+    public boolean isDrawerPinned() {
+        return this.isDrawerPinned;
+    }
+
     public boolean isRemoteType(int ...remotes) {
         boolean isSameType = false;
 
@@ -198,6 +211,35 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         }
     }
 
+    public int getRemoteIcon() {
+        if (isCrypt()) {
+            return R.drawable.ic_lock_black;
+        } else {
+            switch (type) {
+                case RemoteItem.AMAZON_DRIVE:
+                    return R.drawable.ic_amazon;
+                case RemoteItem.GOOGLE_DRIVE:
+                    return R.drawable.ic_google_drive;
+                case RemoteItem.DROPBOX:
+                    return R.drawable.ic_dropbox;
+                case RemoteItem.GOOGLE_CLOUD_STORAGE:
+                    return R.drawable.ic_google;
+                case RemoteItem.ONEDRIVE:
+                    return R.drawable.ic_onedrive;
+                case RemoteItem.S3:
+                    return R.drawable.ic_amazon;
+                case RemoteItem.BOX:
+                    return R.drawable.ic_box;
+                case RemoteItem.SFTP:
+                    return R.drawable.ic_terminal;
+                case RemoteItem.LOCAL:
+                    return R.drawable.ic_tablet_cellphone;
+                default:
+                    return R.drawable.ic_cloud;
+            }
+        }
+    }
+
     @Override
     public int compareTo(@NonNull RemoteItem remoteItem) {
         if (this.isPinned && !remoteItem.isPinned()) {
@@ -206,6 +248,11 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             return 1;
         }
         return name.toLowerCase().compareTo(remoteItem.getName().toLowerCase());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof RemoteItem && ((RemoteItem) obj).getName().equals(this.name) && ((RemoteItem) obj).getType() == this.type;
     }
 
     @Override
@@ -221,5 +268,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         dest.writeByte((byte) (isCrypt ? 1 : 0));
         dest.writeByte((byte) (isAlias ? 1 : 0));
         dest.writeByte((byte) (isCache ? 1 : 0));
+        dest.writeByte((byte) (isPinned ? 1 : 0));
+        dest.writeByte((byte) (isDrawerPinned ? 1 : 0));
     }
 }

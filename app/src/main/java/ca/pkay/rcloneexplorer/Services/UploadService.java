@@ -5,9 +5,15 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -19,6 +25,7 @@ import java.io.InputStreamReader;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
@@ -35,7 +42,11 @@ public class UploadService extends IntentService {
     private final int PERSISTENT_NOTIFICATION_ID = 90;
     private final int UPLOAD_FINISHED_NOTIFICATION_ID = 41;
     private final int UPLOAD_FAILED_NOTIFICATION_ID = 14;
+    private final int CONNECTIVITY_CHANGE_NOTIFICATION_ID = 94;
+    private boolean connectivityChanged;
+    private boolean transferOnWiFiOnly;
     private Rclone rclone;
+    private Log2File log2File;
     private Process currentProcess;
 
     /**
@@ -50,6 +61,14 @@ public class UploadService extends IntentService {
         super.onCreate();
         setNotificationChannel();
         rclone = new Rclone(this);
+        log2File = new Log2File(this);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
+
+        if (transferOnWiFiOnly) {
+            registerBroadcastReceivers();
+        }
     }
 
     @Override
@@ -57,6 +76,13 @@ public class UploadService extends IntentService {
         if (intent == null) {
             return;
         }
+
+        if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
+            showConnectivityChangedNotification();
+            stopSelf();
+            return;
+        }
+
         final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
         final String uploadFilePath = intent.getStringExtra(LOCAL_PATH_ARG);
         final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
@@ -68,6 +94,9 @@ public class UploadService extends IntentService {
         } else {
             uploadFileName = uploadFilePath;
         }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
         Intent foregroundIntent = new Intent(this, UploadService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
@@ -96,22 +125,22 @@ public class UploadService extends IntentService {
                     if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
                         notificationBigText[0] = line;
                         notificationContent = line;
-                    }
-                    if (line.startsWith(" *")) {
+                    } else if (line.startsWith(" *")) {
                         String s = line.substring(2).trim();
                         notificationBigText[1] = s;
-                    }
-                    if (line.startsWith("Errors:")) {
+                    } else if (line.startsWith("Errors:")) {
                         notificationBigText[2] = line;
-                    }
-                    if (line.startsWith("Checks:")) {
+                    } else if (line.startsWith("Checks:")) {
                         notificationBigText[3] = line;
-                    }
-                    if (line.matches("Transferred:\\s+\\d+$")) {
+                    } else if (line.matches("Transferred:\\s+\\d+$")) {
                         notificationBigText[4] = line;
+                    } else if (isLoggingEnable && line.startsWith("ERROR :")){
+                        log2File.log(line);
                     }
 
-                    updateNotification(uploadFileName, notificationContent, notificationBigText);
+                    if (transferOnWiFiOnly && !connectivityChanged) {
+                        updateNotification(uploadFileName, notificationContent, notificationBigText);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -124,14 +153,42 @@ public class UploadService extends IntentService {
             }
         }
 
-        if (currentProcess != null && currentProcess.exitValue() != 0) {
-            rclone.logErrorOutput(currentProcess);
-        }
-
         boolean result = currentProcess != null && currentProcess.exitValue() == 0;
         onUploadFinished(remote.getName(), uploadPath, uploadFilePath, result);
 
         stopForeground(true);
+    }
+
+    private void registerBroadcastReceivers() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter);
+    }
+
+    private BroadcastReceiver connectivityChangeBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            connectivityChanged = true;
+            stopSelf();
+        }
+    };
+
+    private boolean checkWifiOnAndConnected() {
+        WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+
+        if (wifiMgr == null) {
+            return false;
+        }
+
+        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+
+            return wifiInfo.getNetworkId() != -1;
+        }
+        else {
+            return false; // Wi-Fi adapter is OFF
+        }
     }
 
     private void updateNotification(String uploadFileName, String content, String[] bigTextArray) {
@@ -176,6 +233,8 @@ public class UploadService extends IntentService {
 
         if (result) {
             showUploadFinishedNotification(notificationId, fileName);
+        } else if (transferOnWiFiOnly && connectivityChanged) {
+                showConnectivityChangedNotification();
         } else {
             showUploadFailedNotification(notificationId, fileName);
         }
@@ -249,12 +308,27 @@ public class UploadService extends IntentService {
         notificationManager.notify(UPLOAD_FAILED_NOTIFICATION_ID, summaryNotification);
     }
 
+    private void showConnectivityChangedNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setContentTitle(getString(R.string.upload_cancelled))
+                .setContentText(getString(R.string.wifi_connections_isnt_available))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(CONNECTIVITY_CHANGE_NOTIFICATION_ID, builder.build());
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (currentProcess != null) {
             currentProcess.destroy();
+        }
+
+        if (transferOnWiFiOnly) {
+            unregisterReceiver(connectivityChangeBroadcastReceiver);
         }
     }
 

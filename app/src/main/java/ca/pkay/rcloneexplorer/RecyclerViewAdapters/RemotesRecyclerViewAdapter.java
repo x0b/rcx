@@ -46,47 +46,12 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         String remoteName = remotes.get(position).getName();
-        int remoteType = remotes.get(position).getType();
         boolean isPinned = remotes.get(position).isPinned();
         holder.remoteName = remoteName;
         holder.tvName.setText(remoteName);
 
-        if (remotes.get(position).isCrypt()) {
-            holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_lock_black));
-        } else {
-            switch (remoteType) {
-                case RemoteItem.AMAZON_DRIVE:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_amazon));
-                    break;
-                case RemoteItem.GOOGLE_DRIVE:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_google_drive));
-                    break;
-                case RemoteItem.DROPBOX:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_dropbox));
-                    break;
-                case RemoteItem.GOOGLE_CLOUD_STORAGE:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_google));
-                    break;
-                case RemoteItem.ONEDRIVE:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_onedrive));
-                    break;
-                case RemoteItem.S3:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_amazon));
-                    break;
-                case RemoteItem.BOX:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_box));
-                    break;
-                case RemoteItem.SFTP:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_terminal));
-                    break;
-                case RemoteItem.LOCAL:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_tablet_cellphone));
-                    break;
-                default:
-                    holder.ivIcon.setImageDrawable(view.getResources().getDrawable(R.drawable.ic_cloud));
-                    break;
-            }
-        }
+        int icon = remotes.get(position).getRemoteIcon();
+        holder.ivIcon.setImageDrawable(view.getResources().getDrawable(icon));
 
         if (isPinned) {
             holder.pinIcon.setVisibility(View.VISIBLE);

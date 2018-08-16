@@ -29,6 +29,7 @@
         <item name="cardColor">#424242</item>
         <item name="textColorPrimary">#FFFFFFFF</item>
         <item name="textColorSecondary">#B3FFFFFF</item>
+        <item name="android:textColorSecondary">#B3FFFFFF</item>
         <item name="dividerColor">#1FFFFFFF</item>
         <item name="iconTint">#FFFFFF</item>
         <item name="android:textColorHint">#B3FFFFFF</item>

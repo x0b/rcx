@@ -1,3 +1,17 @@
+### 1.7.0
+* **New:** Show progress in upload, download, and sync notifications
+* **New:** Pin remotes to navigation drawer
+* **New:** Option to limit transfers to Wi-Fi only
+* **New:** Sync
+* **New:** Add sync webdev
+* **New:** When downloading, uploading, syncing, transfer only one file in parallel
+* **New:** Make crash reports and app update notifications optional
+* **New:** Update some icons
+* **Fix:** Proper encoding of URLs for streaming
+* **Fix:** Crashes
+
+***
+
 ### 1.6.0
 * **New:** Allow setting which remotes are in app shortcuts (from settings)
 * **New:** Pin remotes on supported launchers (Android 8.0)

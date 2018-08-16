@@ -57,6 +57,8 @@ public class SettingsActivity extends AppCompatActivity {
     private View showThumbnailsElement;
     private Switch showThumbnailsSwitch;
     private View appShortcutsElement;
+    private View wifiOnlyElement;
+    private Switch wifiOnlySwitch;
     private boolean isDarkTheme;
     private boolean themeHasChanged;
 
@@ -149,21 +151,25 @@ public class SettingsActivity extends AppCompatActivity {
         showThumbnailsElement = findViewById(R.id.show_thumbnails);
         showThumbnailsSwitch = findViewById(R.id.show_thumbnails_switch);
         appShortcutsElement = findViewById(R.id.app_shortcuts);
+        wifiOnlyElement = findViewById(R.id.wifi_only);
+        wifiOnlySwitch = findViewById(R.id.wifi_only_switch);
     }
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         boolean useLogs = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
-        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
-        boolean crashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), true);
+        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
+        boolean crashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
         boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
+        boolean isWifiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
 
         darkThemeSwitch.setChecked(isDarkTheme);
         useLogsSwitch.setChecked(useLogs);
         appUpdatesSwitch.setChecked(appUpdates);
         crashReportsSwitch.setChecked(crashReports);
         showThumbnailsSwitch.setChecked(showThumbnails);
+        wifiOnlySwitch.setChecked(isWifiOnly);
 
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
             appShortcutsElement.setVisibility(View.GONE);
@@ -277,6 +283,29 @@ public class SettingsActivity extends AppCompatActivity {
                 showAppShortcutDialog();
             }
         });
+        wifiOnlyElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (wifiOnlySwitch.isChecked()) {
+                    wifiOnlySwitch.setChecked(false);
+                } else {
+                    wifiOnlySwitch.setChecked(true);
+                }
+            }
+        });
+        wifiOnlySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setWifiOnlyTransfers(isChecked);
+            }
+        });
+    }
+
+    private void setWifiOnlyTransfers(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_wifi_only_transfers), isChecked);
+        editor.apply();
     }
 
     private void showPrimaryColorPicker() {
@@ -366,7 +395,11 @@ public class SettingsActivity extends AppCompatActivity {
         // for Android O
         intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
 
-        startActivity(intent);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Toasty.error(this, "Couldn't find activity to start", Toast.LENGTH_SHORT, true).show();
+        }
     }
 
     private void onAppUpdatesClicked(boolean isChecked) {

@@ -17,7 +17,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,9 +45,19 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private Rclone rclone;
     private RemotesRecyclerViewAdapter recyclerViewAdapter;
     private List<RemoteItem> remotes;
-    private OnRemoteClickListener clickListener;
+    private OnRemoteClickListener remoteClickListener;
+    private AddRemoteToNavDrawer pinToDrawerListener;
     private Context context;
     private boolean isDarkTheme;
+
+    public interface OnRemoteClickListener {
+        void onRemoteClick(RemoteItem remote);
+    }
+
+    public interface AddRemoteToNavDrawer {
+        void addRemoteToNavDrawer(RemoteItem remoteItem);
+        void removeRemoteFromNavDrawer(RemoteItem remoteItem);
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -109,7 +118,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         RecyclerView recyclerView =  view.findViewById(R.id.remotes_list);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
+        recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, remoteClickListener, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         SpeedDialView speedDialView = view.findViewById(R.id.fab);
@@ -139,7 +148,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             case CONFIG_RECREATE_REQ_CODE:
                 remotes = rclone.getRemotes();
                 Collections.sort(remotes);
-                recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, clickListener, this);
+                recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, remoteClickListener, this);
                 refreshFragment();
                 if (remotes.size() == 1) {
                     AppShortcutsHelper.populateAppShortcuts(context, remotes);
@@ -164,9 +173,14 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         super.onAttach(context);
         this.context = context;
         if (context instanceof OnRemoteClickListener) {
-            clickListener = (OnRemoteClickListener) context;
+            remoteClickListener = (OnRemoteClickListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnRemoteClickListener");
+        }
+        if (context instanceof AddRemoteToNavDrawer) {
+            pinToDrawerListener = (AddRemoteToNavDrawer) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement AddRemoteToNavDrawer");
         }
     }
 
@@ -174,7 +188,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     public void onDetach() {
         super.onDetach();
         context = null;
-        clickListener = null;
+        remoteClickListener = null;
+        pinToDrawerListener = null;
     }
 
     @Override
@@ -199,6 +214,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                             pinRemote(remoteItem);
                         }
                         break;
+                    case R.id.action_favorite:
+                        if (remoteItem.isDrawerPinned()) {
+                            unpinFromDrawer(remoteItem);
+                        } else {
+                            pinToDrawer(remoteItem);
+                        }
+                        break;
                     case R.id.action_add_to_home_screen:
                         AppShortcutsHelper.addRemoteToHomeScreen(context, remoteItem);
                         break;
@@ -219,6 +241,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         if (!AppShortcutsHelper.isRequestPinShortcutSupported(context)) {
             MenuItem addToHomeScreenAction = popupMenu.getMenu().findItem(R.id.action_add_to_home_screen);
             addToHomeScreenAction.setVisible(false);
+        }
+
+        MenuItem favoriteAction = popupMenu.getMenu().findItem(R.id.action_favorite);
+        if (remoteItem.isDrawerPinned()) {
+            favoriteAction.setTitle(R.string.unpin_from_drawer);
+        } else {
+            favoriteAction.setTitle(R.string.pin_to_drawer);
         }
     }
 
@@ -260,6 +289,38 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         recyclerViewAdapter.moveDataItem(remotes, from, to);
     }
 
+    private void pinToDrawer(RemoteItem remoteItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
+        Set<String> pinnedRemotes = new HashSet<>(stringSet); // bug in android means that we have to create a copy
+        pinnedRemotes.add(remoteItem.getName());
+        remoteItem.setDrawerPinned(true);
+
+        editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
+        editor.apply();
+
+        pinToDrawerListener.addRemoteToNavDrawer(remoteItem);
+    }
+
+    private void unpinFromDrawer(RemoteItem remoteItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Set<String> stringSet = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
+        Set<String> pinnedRemotes = new HashSet<>(stringSet);
+        if (pinnedRemotes.contains(remoteItem.getName())) {
+            pinnedRemotes.remove(remoteItem.getName());
+        }
+        remoteItem.setDrawerPinned(false);
+
+        editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
+        editor.apply();
+
+        pinToDrawerListener.removeRemoteFromNavDrawer(remoteItem);
+    }
+
     private void deleteRemote(final RemoteItem remoteItem) {
         AlertDialog.Builder builder;
         if (isDarkTheme) {
@@ -277,10 +338,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
         });
         builder.show();
-    }
-
-    public interface OnRemoteClickListener {
-        void onRemoteClick(RemoteItem remote);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -313,6 +370,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
             AppShortcutsHelper.removeAppShortcut(context, remoteItem.getName());
 
+            Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
+            if (drawerPinnedRemote.contains(remoteItem.getName())) {
+                drawerPinnedRemote.remove(remoteItem.getName());
+                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>(pinnedRemotes));
+                editor.apply();
+            }
+            
             recyclerViewAdapter.removeItem(remoteItem);
 
             if (rclone.getRemotes().isEmpty()) {

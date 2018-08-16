@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-class Log2File {
+public class Log2File {
 
     private Context context;
 
-    Log2File(Context context) {
+    public Log2File(Context context) {
         this.context = context;
     }
 

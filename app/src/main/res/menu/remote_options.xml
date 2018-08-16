@@ -6,6 +6,10 @@
         android:title="@string/pin_to_the_top" />
 
     <item
+        android:id="@+id/action_favorite"
+        android:title="@string/pin_to_drawer" />
+
+    <item
         android:id="@+id/action_delete"
         android:title="@string/delete" />
 
