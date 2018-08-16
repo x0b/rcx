@@ -45,6 +45,7 @@ public class BreadcrumbView extends HorizontalScrollView {
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         childFrame = new LinearLayout(context);
         childFrame.setLayoutParams(layoutParams);
+        childFrame.removeAllViews();
         this.context = context;
         addView(childFrame, layoutParams);
         pathList = new ArrayList<>();
