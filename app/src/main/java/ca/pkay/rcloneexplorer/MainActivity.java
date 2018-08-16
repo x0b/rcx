@@ -476,7 +476,7 @@ public class MainActivity   extends AppCompatActivity
     }
 
     @Override
-    public void addRemoteToNavDrawer(RemoteItem remoteItem) {
+    public void addRemoteToNavDrawer() {
         Menu menu = navigationView.getMenu();
 
         // remove all items and add them again so that it's in alpha order
@@ -488,7 +488,7 @@ public class MainActivity   extends AppCompatActivity
     }
 
     @Override
-    public void removeRemoteFromNavDrawer(RemoteItem remoteItem) {
+    public void removeRemoteFromNavDrawer() {
         Menu menu = navigationView.getMenu();
 
         // remove all items and add them again so that it's in alpha order
@@ -586,10 +586,12 @@ public class MainActivity   extends AppCompatActivity
             editor.apply();
 
             if (rclone.isConfigEncrypted()) {
+                pinRemotesToDrawer(); // this will clear any previous pinned remotes
                 askForConfigPassword();
             } else {
                 AppShortcutsHelper.removeAllAppShortcuts(context);
                 AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
+                pinRemotesToDrawer();
                 startRemotesFragment();
             }
         }

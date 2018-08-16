@@ -55,8 +55,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     public interface AddRemoteToNavDrawer {
-        void addRemoteToNavDrawer(RemoteItem remoteItem);
-        void removeRemoteFromNavDrawer(RemoteItem remoteItem);
+        void addRemoteToNavDrawer();
+        void removeRemoteFromNavDrawer();
     }
 
     /**
@@ -301,7 +301,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
         editor.apply();
 
-        pinToDrawerListener.addRemoteToNavDrawer(remoteItem);
+        pinToDrawerListener.addRemoteToNavDrawer();
     }
 
     private void unpinFromDrawer(RemoteItem remoteItem) {
@@ -318,7 +318,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
         editor.apply();
 
-        pinToDrawerListener.removeRemoteFromNavDrawer(remoteItem);
+        pinToDrawerListener.removeRemoteFromNavDrawer();
     }
 
     private void deleteRemote(final RemoteItem remoteItem) {
@@ -373,8 +373,9 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
             if (drawerPinnedRemote.contains(remoteItem.getName())) {
                 drawerPinnedRemote.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>(pinnedRemotes));
+                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>(pinnedRemotes));
                 editor.apply();
+                pinToDrawerListener.removeRemoteFromNavDrawer();
             }
             
             recyclerViewAdapter.removeItem(remoteItem);
