@@ -164,7 +164,7 @@ public class MainActivity   extends AppCompatActivity
             RemoteItem remoteItem = getRemoteItemFromName(remoteName);
             if (remoteItem != null) {
                 AppShortcutsHelper.reportAppShortcutUsage(this, remoteItem.getName());
-                restoreRemote(remoteItem);
+                startRemote(remoteItem, false);
             } else {
                 Toasty.error(this, getString(R.string.remote_not_found), Toast.LENGTH_SHORT, true).show();
                 finish();
@@ -280,13 +280,7 @@ public class MainActivity   extends AppCompatActivity
         int id = item.getItemId();
 
         if (drawerPinnedRemoteIds.containsKey(id)) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
-                fragmentManager.popBackStack();
-            }
-            startRemote(drawerPinnedRemoteIds.get(id));
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
+            startPinnedRemote(drawerPinnedRemoteIds.get(id));
             return true;
         }
 
@@ -442,27 +436,43 @@ public class MainActivity   extends AppCompatActivity
 
     @Override
     public void onRemoteClick(RemoteItem remote) {
-        startRemote(remote);
+        startRemote(remote, true);
     }
 
-    private void startRemote(RemoteItem remote) {
+    private void startRemote(RemoteItem remote, boolean addToBackStack) {
         fragment = FileExplorerFragment.newInstance(remote);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
-        transaction.addToBackStack(null);
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
         transaction.commit();
 
         AppShortcutsHelper.reportAppShortcutUsage(this, remote.getName());
         navigationView.getMenu().getItem(0).setChecked(false);
     }
 
-    private void restoreRemote(RemoteItem remoteItem) {
-        fragment = FileExplorerFragment.newInstance(remoteItem);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.flFragment, fragment, FILE_EXPLORER_FRAGMENT_TAG);
-        transaction.commit();
+    private void startPinnedRemote(RemoteItem remoteItem) {
+        if (fragment != null && fragment instanceof FileExplorerFragment) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
-        navigationView.getMenu().getItem(0).setChecked(false);
+            // this is the case when remote gets started from a shortcut
+            // therefore back should exit the app, and not go into remotes screen
+            if (fragmentManager.getBackStackEntryCount() == 0) {
+                startRemote(remoteItem, false);
+            } else {
+                for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+                    fragmentManager.popBackStack();
+                }
+
+                startRemote(remoteItem, true);
+            }
+        } else {
+            startRemote(remoteItem, true);
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override
