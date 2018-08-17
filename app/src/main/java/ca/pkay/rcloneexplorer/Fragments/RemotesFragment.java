@@ -100,11 +100,17 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             });
 
             SpeedDialView speedDialView = view.findViewById(R.id.fab);
-            speedDialView.setMainFabOnClickListener(new View.OnClickListener() {
+            speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onMainActionSelected() {
                     Intent intent = new Intent(context, RemoteConfig.class);
                     startActivityForResult(intent, CONFIG_RECREATE_REQ_CODE);
+                    return false;
+                }
+
+                @Override
+                public void onToggleChanged(boolean isOpen) {
+
                 }
             });
             return view;
@@ -122,11 +128,17 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         recyclerView.setAdapter(recyclerViewAdapter);
 
         SpeedDialView speedDialView = view.findViewById(R.id.fab);
-        speedDialView.setMainFabOnClickListener(new View.OnClickListener() {
+        speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onMainActionSelected() {
                 Intent intent = new Intent(context, RemoteConfig.class);
                 startActivityForResult(intent, CONFIG_REQ_CODE);
+                return false;
+            }
+
+            @Override
+            public void onToggleChanged(boolean isOpen) {
+
             }
         });
 

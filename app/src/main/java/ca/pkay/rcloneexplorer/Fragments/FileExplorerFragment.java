@@ -256,22 +256,27 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         fab = view.findViewById(R.id.fab);
-        fab.setSpeedDialOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
-        fab.setMainFabOnClickListener(new View.OnClickListener() {
+        fab.setOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
+        fab.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
             @Override
-            public void onClick(View v) {
-                if (fab.isFabMenuOpen()) {
-                    fab.closeOptionsMenu();
+            public boolean onActionSelected(SpeedDialActionItem actionItem) {
+                switch (actionItem.getId()) {
+                    case R.id.fab_add_folder:
+                        onCreateNewDirectory();
+                        break;
+                    case R.id.fab_upload:
+                        onUploadFiles();
+                        break;
                 }
+                return false;
             }
         });
-        fab.addFabOptionItem(new SpeedDialActionItem.Builder(R.id.fab_upload, R.drawable.ic_file_upload)
+        fab.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_upload, R.drawable.ic_file_upload)
                 .setLabel(getString(R.string.fab_upload_files))
                 .create());
-        fab.addFabOptionItem(new SpeedDialActionItem.Builder(R.id.fab_add_folder, R.drawable.ic_create_new_folder)
+        fab.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_add_folder, R.drawable.ic_create_new_folder)
                 .setLabel(getString(R.string.fab_new_folder))
                 .create());
-        setFabClickListeners();
 
         breadcrumbView = ((FragmentActivity) context).findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
@@ -751,23 +756,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
     }
 
-    private void setFabClickListeners() {
-        fab.setOptionFabSelectedListener(new SpeedDialView.OnOptionFabSelectedListener() {
-            @Override
-            public void onOptionFabSelected(SpeedDialActionItem speedDialActionItem) {
-                fab.closeOptionsMenu();
-                switch (speedDialActionItem.getId()) {
-                    case R.id.fab_add_folder:
-                        onCreateNewDirectory();
-                        break;
-                    case R.id.fab_upload:
-                        onUploadFiles();
-                        break;
-                }
-            }
-        });
-    }
-
     private void setBottomBarClickListeners(final View view) {
         view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1113,8 +1101,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else if (isSearchMode) {
             searchClicked();
             return true;
-        } else if (fab.isFabMenuOpen()) {
-            fab.closeOptionsMenu();
+        } else if (fab.isOpen()) {
+            fab.close(true);
             return true;
         } else if (pathStack.isEmpty()) {
             return false;
@@ -1334,8 +1322,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public void onBreadCrumbClicked(String path) {
-        if (fab.isFabMenuOpen()) {
-            fab.closeOptionsMenu();
+        if (fab.isOpen()) {
+            fab.close(true);
         }
         if (isSearchMode) {
             searchClicked();

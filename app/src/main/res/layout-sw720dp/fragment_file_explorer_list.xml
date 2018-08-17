@@ -47,9 +47,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="2dp"
         app:sdExpansionMode="top"
-        app:sdFabCloseSrc="@drawable/ic_close"
-        app:sdFabRotateOnToggle="true"
-        app:srcCompat="@drawable/ic_add" />
+        app:sdMainFabOpenedSrc="@drawable/ic_close"
+        app:sdMainFabClosedSrc="@drawable/ic_add" />
 
     <include
         android:id="@+id/bottom_bar"
