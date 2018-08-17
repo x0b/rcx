@@ -32,15 +32,15 @@ import java.util.ArrayList;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
+import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
 
-public class SharingActivity extends AppCompatActivity implements   RemotesFragment.OnRemoteClickListener,
-        ShareFragment.OnShareDestinationSelected {
+public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
+                                                                    ShareFragment.OnShareDestinationSelected {
 
     private boolean isDarkTheme;
-    private Rclone rclone;
     private Fragment fragment;
     private ArrayList<String> uploadList;
     private boolean isDataReady;
@@ -53,7 +53,7 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        rclone = new Rclone(this);
+        Rclone rclone = new Rclone(this);
         uploadList = new ArrayList<>();
 
         Intent intent = getIntent();
@@ -69,7 +69,7 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
             return;
         }
 
-        if (!rclone.isRcloneBinaryCreated() || rclone.isConfigEncrypted() || !rclone.isConfigFileCreated()) {
+        if (!rclone.isRcloneBinaryCreated() || rclone.isConfigEncrypted() || !rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
             AlertDialog.Builder builder;
             if (isDarkTheme) {
                 builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
@@ -121,7 +121,7 @@ public class SharingActivity extends AppCompatActivity implements   RemotesFragm
     }
 
     private void startRemotesFragment() {
-        fragment = RemotesFragment.newInstance();
+        fragment = ShareRemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
