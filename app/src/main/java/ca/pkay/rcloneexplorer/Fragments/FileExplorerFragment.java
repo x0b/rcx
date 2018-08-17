@@ -1822,17 +1822,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 rclone.logErrorOutput(process);
             }
 
-            return process.exitValue() == 0;
+            return process != null && process.exitValue() == 0;
         }
 
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            if (loadingDialog != null) {
-                if (loadingDialog.isStateSaved()) {
-                    loadingDialog.dismissAllowingStateLoss();
-                } else {
+            if (loadingDialog.isStateSaved()) {
+                loadingDialog.dismissAllowingStateLoss();
+            } else {
+                try {
                     loadingDialog.dismiss();
+                } catch (NullPointerException e) {
+                    return;
                 }
             }
             if (!status) {
