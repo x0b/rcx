@@ -50,6 +50,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
 
