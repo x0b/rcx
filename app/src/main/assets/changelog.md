@@ -1,3 +1,12 @@
+### 1.7.1
+* **New:** Redesign settings layout
+* **Update:** Libraries
+* **Fix:** Some bugs with pinned navigation drawer remotes
+* **Fix:** Crash when sharing files with the app
+* **Fix:** Some other crashes
+
+***
+
 ### 1.7.0
 * **New:** Show progress in upload, download, and sync notifications
 * **New:** Pin remotes to navigation drawer
