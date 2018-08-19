@@ -355,4 +355,7 @@
     <string name="general_settings_icon_content_description">General settings icon</string>
     <string name="notification_settings_icon_content_description">Notification settings icon</string>
     <string name="logging_settings_icon_content_description">Logging settings icon</string>
+    <string name="hidden_remotes">Hidden remotes</string>
+    <string name="shared_preferences_hidden_remotes">shared_preferences_hidden_remotes</string>
+    <string name="select_remotes_to_hide">Select remotes to hide</string>
 </resources>
