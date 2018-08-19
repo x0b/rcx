@@ -205,7 +205,6 @@ public class Rclone {
 
             remotesJSON = new JSONObject(output.toString());
         } catch (IOException | InterruptedException | JSONException e) {
-            Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
             e.printStackTrace();
             return new ArrayList<>();
         }
