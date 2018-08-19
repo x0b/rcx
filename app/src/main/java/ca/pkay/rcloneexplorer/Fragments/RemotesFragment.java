@@ -55,8 +55,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     public interface AddRemoteToNavDrawer {
-        void addRemoteToNavDrawer(RemoteItem remoteItem);
-        void removeRemoteFromNavDrawer(RemoteItem remoteItem);
+        void addRemoteToNavDrawer();
+        void removeRemoteFromNavDrawer();
     }
 
     /**
@@ -100,11 +100,17 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             });
 
             SpeedDialView speedDialView = view.findViewById(R.id.fab);
-            speedDialView.setMainFabOnClickListener(new View.OnClickListener() {
+            speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onMainActionSelected() {
                     Intent intent = new Intent(context, RemoteConfig.class);
                     startActivityForResult(intent, CONFIG_RECREATE_REQ_CODE);
+                    return false;
+                }
+
+                @Override
+                public void onToggleChanged(boolean isOpen) {
+
                 }
             });
             return view;
@@ -122,11 +128,17 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         recyclerView.setAdapter(recyclerViewAdapter);
 
         SpeedDialView speedDialView = view.findViewById(R.id.fab);
-        speedDialView.setMainFabOnClickListener(new View.OnClickListener() {
+        speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onMainActionSelected() {
                 Intent intent = new Intent(context, RemoteConfig.class);
                 startActivityForResult(intent, CONFIG_REQ_CODE);
+                return false;
+            }
+
+            @Override
+            public void onToggleChanged(boolean isOpen) {
+
             }
         });
 
@@ -301,7 +313,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
         editor.apply();
 
-        pinToDrawerListener.addRemoteToNavDrawer(remoteItem);
+        pinToDrawerListener.addRemoteToNavDrawer();
     }
 
     private void unpinFromDrawer(RemoteItem remoteItem) {
@@ -318,7 +330,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes);
         editor.apply();
 
-        pinToDrawerListener.removeRemoteFromNavDrawer(remoteItem);
+        pinToDrawerListener.removeRemoteFromNavDrawer();
     }
 
     private void deleteRemote(final RemoteItem remoteItem) {
@@ -373,8 +385,9 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>());
             if (drawerPinnedRemote.contains(remoteItem.getName())) {
                 drawerPinnedRemote.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<String>(pinnedRemotes));
+                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>(pinnedRemotes));
                 editor.apply();
+                pinToDrawerListener.removeRemoteFromNavDrawer();
             }
             
             recyclerViewAdapter.removeItem(remoteItem);

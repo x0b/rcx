@@ -50,6 +50,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
 
@@ -476,7 +477,7 @@ public class MainActivity   extends AppCompatActivity
     }
 
     @Override
-    public void addRemoteToNavDrawer(RemoteItem remoteItem) {
+    public void addRemoteToNavDrawer() {
         Menu menu = navigationView.getMenu();
 
         // remove all items and add them again so that it's in alpha order
@@ -488,7 +489,7 @@ public class MainActivity   extends AppCompatActivity
     }
 
     @Override
-    public void removeRemoteFromNavDrawer(RemoteItem remoteItem) {
+    public void removeRemoteFromNavDrawer() {
         Menu menu = navigationView.getMenu();
 
         // remove all items and add them again so that it's in alpha order
@@ -586,10 +587,12 @@ public class MainActivity   extends AppCompatActivity
             editor.apply();
 
             if (rclone.isConfigEncrypted()) {
+                pinRemotesToDrawer(); // this will clear any previous pinned remotes
                 askForConfigPassword();
             } else {
                 AppShortcutsHelper.removeAllAppShortcuts(context);
                 AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
+                pinRemotesToDrawer();
                 startRemotesFragment();
             }
         }

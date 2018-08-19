@@ -146,16 +146,12 @@
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="pref_key_version_name">pref_key_version_name</string>
     <string name="look_and_feel">Look and Feel</string>
-    <string name="primary_color_content_desc">Primary color</string>
     <string name="primary_color">Primary Color</string>
-    <string name="accent_color_content_desc">Accent color</string>
     <string name="accent_color">Accent Color</string>
-    <string name="dark_theme_content_desc">Dark theme</string>
     <string name="dark_theme">Dark theme</string>
     <string name="transfer_only_on_wifi">Transfer files only over Wi-Fi</string>
     <string name="transfer_only_on_wifi_summary">Uploading and downloading of files will be cancelled when not on Wi-Fi</string>
     <string name="miscellaneous">Miscellaneous</string>
-    <string name="use_logs_content_desc">Use logs</string>
     <string name="use_logs">Use logs</string>
     <string name="use_logs_summary">Errors will be logged to a local file</string>
     <string name="color_picker_checkmark">Color picker checkmark</string>
@@ -285,7 +281,6 @@
     <string name="firebase_msg_app_updates_topic">app_updates</string>
     <string name="app_update_notification_title">New version of Rclone Explorer is available on GitHub</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
-    <string name="app_updates_icon_content_description">App updates icon</string>
     <string name="delete_remote_title">Delete remote?</string>
     <string name="empty_trash">Empty trash</string>
     <string name="trash_emptied">Trash emptied</string>
@@ -306,7 +301,6 @@
     <string name="selected_cache_expiry">Cache expiry time: %1$s</string>
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
-    <string name="crash_reporting_icon_content_description">Crash reporting icon</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
     <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
@@ -343,7 +337,6 @@
     <string name="app_shortcuts_settings_dialog_title">Application Shortcuts</string>
     <string name="settings_header_general">General</string>
     <string name="app_shortcuts_settings">Application Shortcuts</string>
-    <string name="app_shortcuts_icon_content_description">App Shortcuts Icon</string>
     <string name="shared_preferences_app_shortcuts">shared_preferences_app_shortcuts</string>
     <string name="app_shortcuts_max_toast">Maximum of 4 shortcuts allowed</string>
     <string name="remote_not_found">Remote not found</string>
@@ -357,4 +350,9 @@
     <string name="wifi_connections_isnt_available">Wi-Fi connection isn\'t available</string>
     <string name="sync_cancelled">Sync operation cancelled</string>
     <string name="upload_cancelled">Upload cancelled</string>
+    <string name="logging_settings_header">Logging</string>
+    <string name="look_and_feel_settings_icon_content_description">Look and Feel settings icon</string>
+    <string name="general_settings_icon_content_description">General settings icon</string>
+    <string name="notification_settings_icon_content_description">Notification settings icon</string>
+    <string name="logging_settings_icon_content_description">Logging settings icon</string>
 </resources>
