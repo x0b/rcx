@@ -17,6 +17,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,6 +170,7 @@ public class GeneralSettingsFragment extends Fragment {
 
         Rclone rclone = new Rclone(context);
         final ArrayList<RemoteItem> remotes = new ArrayList<>(rclone.getRemotes());
+        Collections.sort(remotes);
         final CharSequence[] options = new CharSequence[remotes.size()];
         int i = 0;
         for (RemoteItem remoteItem : remotes) {
