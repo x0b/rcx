@@ -373,8 +373,11 @@ public class Rclone {
         String path = (servePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + servePath;
         String[] command = createCommandWithOptions("serve", "webdav", "--addr", ":" + String.valueOf(port), path);
 
+        String cachePath = context.getCacheDir().getAbsolutePath();
+        String[] environmentalVariables = {"TMPDIR=" + cachePath}; // this is a fix for #199
+
         try {
-            return Runtime.getRuntime().exec(command);
+            return Runtime.getRuntime().exec(command, environmentalVariables);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
