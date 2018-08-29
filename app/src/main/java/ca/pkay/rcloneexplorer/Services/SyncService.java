@@ -157,6 +157,8 @@ public class SyncService extends IntentService {
             showFailedNotification(errorTitle, title, notificationId);
         }
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
         stopForeground(true);
     }
 

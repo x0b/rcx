@@ -155,6 +155,8 @@ public class DownloadService extends IntentService {
             showDownloadFailedNotification(notificationId, downloadItem.getName());
         }
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID);
         stopForeground(true);
     }
 
