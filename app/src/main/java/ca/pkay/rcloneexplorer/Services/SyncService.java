@@ -134,9 +134,7 @@ public class SyncService extends IntentService {
                         log2File.log(line);
                     }
 
-                    if (transferOnWiFiOnly && !connectivityChanged) {
-                        updateNotification(title, notificationContent, notificationBigText);
-                    }
+                    updateNotification(title, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

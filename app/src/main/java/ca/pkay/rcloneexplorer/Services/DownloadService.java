@@ -132,9 +132,7 @@ public class DownloadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    if (transferOnWiFiOnly && !connectivityChanged) {
-                        updateNotification(downloadItem, notificationContent, notificationBigText);
-                    }
+                    updateNotification(downloadItem, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

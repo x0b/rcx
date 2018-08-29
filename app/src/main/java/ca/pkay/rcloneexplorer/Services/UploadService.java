@@ -138,9 +138,7 @@ public class UploadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    if (transferOnWiFiOnly && !connectivityChanged) {
-                        updateNotification(uploadFileName, notificationContent, notificationBigText);
-                    }
+                    updateNotification(uploadFileName, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
