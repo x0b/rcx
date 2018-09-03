@@ -26,6 +26,8 @@ public class NotificationsSettingsFragment extends Fragment {
     private View notificationsElement;
     private View appUpdatesElement;
     private Switch appUpdatesSwitch;
+    private View betaAppUpdatesElement;
+    private Switch betaAppUpdatesSwitch;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -68,13 +70,23 @@ public class NotificationsSettingsFragment extends Fragment {
         notificationsElement = view.findViewById(R.id.notifications);
         appUpdatesElement = view.findViewById(R.id.app_updates);
         appUpdatesSwitch = view.findViewById(R.id.app_updates_switch);
+        betaAppUpdatesElement = view.findViewById(R.id.beta_app_updates);
+        betaAppUpdatesSwitch = view.findViewById(R.id.beta_app_updates_switch);
     }
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
+        boolean betaUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates_beta), false);
 
         appUpdatesSwitch.setChecked(appUpdates);
+        betaAppUpdatesSwitch.setChecked(betaUpdates);
+
+        if (appUpdates) {
+            betaAppUpdatesElement.setVisibility(View.VISIBLE);
+        } else {
+            betaAppUpdatesElement.setVisibility(View.GONE);
+        }
     }
 
     private void setClickListeners() {
@@ -101,6 +113,22 @@ public class NotificationsSettingsFragment extends Fragment {
                 onAppUpdatesClicked(isChecked);
             }
         });
+        betaAppUpdatesElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (betaAppUpdatesSwitch.isChecked()) {
+                    betaAppUpdatesSwitch.setChecked(false);
+                } else {
+                    betaAppUpdatesSwitch.setChecked(true);
+                }
+            }
+        });
+        betaAppUpdatesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onBetaAppUpdatesClicked(isChecked);
+            }
+        });
     }
 
     private void onNotificationsClicked() {
@@ -124,13 +152,29 @@ public class NotificationsSettingsFragment extends Fragment {
     private void onAppUpdatesClicked(boolean isChecked) {
         if (isChecked) {
             FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
+            betaAppUpdatesElement.setVisibility(View.VISIBLE);
         } else {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.firebase_msg_app_updates_topic));
+            betaAppUpdatesSwitch.setChecked(false);
+            betaAppUpdatesElement.setVisibility(View.GONE);
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_app_updates), isChecked);
+        editor.apply();
+    }
+
+    private void onBetaAppUpdatesClicked(boolean isChecked) {
+        if (isChecked) {
+            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_beta_app_updates_topic));
+        } else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.firebase_msg_beta_app_updates_topic));
+        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_app_updates_beta), isChecked);
         editor.apply();
     }
 }
