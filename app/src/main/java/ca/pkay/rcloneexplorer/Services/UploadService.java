@@ -138,9 +138,7 @@ public class UploadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    if (transferOnWiFiOnly && !connectivityChanged) {
-                        updateNotification(uploadFileName, notificationContent, notificationBigText);
-                    }
+                    updateNotification(uploadFileName, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -156,6 +154,8 @@ public class UploadService extends IntentService {
         boolean result = currentProcess != null && currentProcess.exitValue() == 0;
         onUploadFinished(remote.getName(), uploadPath, uploadFilePath, result);
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID);
         stopForeground(true);
     }
 

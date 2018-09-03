@@ -132,9 +132,7 @@ public class DownloadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    if (transferOnWiFiOnly && !connectivityChanged) {
-                        updateNotification(downloadItem, notificationContent, notificationBigText);
-                    }
+                    updateNotification(downloadItem, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -157,6 +155,8 @@ public class DownloadService extends IntentService {
             showDownloadFailedNotification(notificationId, downloadItem.getName());
         }
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID);
         stopForeground(true);
     }
 

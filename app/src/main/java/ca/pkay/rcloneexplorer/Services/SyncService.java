@@ -134,9 +134,7 @@ public class SyncService extends IntentService {
                         log2File.log(line);
                     }
 
-                    if (transferOnWiFiOnly && !connectivityChanged) {
-                        updateNotification(title, notificationContent, notificationBigText);
-                    }
+                    updateNotification(title, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -159,6 +157,8 @@ public class SyncService extends IntentService {
             showFailedNotification(errorTitle, title, notificationId);
         }
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
         stopForeground(true);
     }
 
