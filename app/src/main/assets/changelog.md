@@ -1,3 +1,10 @@
+### 1.7.3
+* **Fix:** FAB appearing when bottom bar is visible
+* **New:** Get notified when beta releases are available
+    * Enable in Settings under Notifications (stable update notifications must be enabled)
+
+***
+
 ### 1.7.2
 * **New:** Option to hide remotes
 * **Fix:** Upload bug in serve webdav
