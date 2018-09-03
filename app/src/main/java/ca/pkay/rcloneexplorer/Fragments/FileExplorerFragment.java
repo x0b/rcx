@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
@@ -386,11 +387,24 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             ((FragmentActivity) context).findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
+            setFabBehaviour(false);
         }
         downloadList = savedInstanceState.getParcelableArrayList(SAVED_DOWNLOAD_LIST);
         moveStartPath = savedInstanceState.getString(SAVED_MOVE_START_PATH);
         syncDirection = savedInstanceState.getInt(SAVED_SYNC_DIRECTION, -1);
         syncRemotePath = savedInstanceState.getString(SAVED_SYNC_REMOTE_PATH);
+    }
+
+    private void setFabBehaviour(boolean enableSnackBarBehaviour) {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+
+        if (enableSnackBarBehaviour) {
+            params.setBehavior(new SpeedDialView.ScrollingViewSnackbarBehavior());
+            fab.requestLayout();
+        } else {
+            params.setBehavior(new SpeedDialView.NoBehavior());
+            fab.requestLayout();
+        }
     }
 
     private void setTitle() {
@@ -874,6 +888,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
+        setFabBehaviour(true);
         showNavDrawerButtonInToolbar();
         setOptionsMenuVisibility(true);
         recyclerViewAdapter.refreshData();
@@ -905,6 +920,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         hideMoveBar();
         fab.show();
         fab.setVisibility(View.VISIBLE);
+        setFabBehaviour(true);
         setOptionsMenuVisibility(true);
         recyclerViewAdapter.setMoveMode(false);
         recyclerViewAdapter.refreshData();
@@ -1206,6 +1222,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             showBottomBar();
             fab.hide();
             fab.setVisibility(View.INVISIBLE);
+            setFabBehaviour(false);
             setOptionsMenuVisibility(false);
             showCancelButtonInToolbar();
             if (numOfSelected > 1) {
@@ -1225,6 +1242,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             hideBottomBar();
             fab.show();
             fab.setVisibility(View.VISIBLE);
+            setFabBehaviour(true);
             setOptionsMenuVisibility(true);
             showNavDrawerButtonInToolbar();
         } else {
@@ -1488,6 +1506,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         setOptionsMenuVisibility(false);
         fab.hide();
         fab.setVisibility(View.INVISIBLE);
+        setFabBehaviour(false);
     }
 
     private void onCreateNewDirectory() {

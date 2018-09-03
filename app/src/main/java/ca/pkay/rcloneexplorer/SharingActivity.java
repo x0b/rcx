@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
-import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
