@@ -1,3 +1,10 @@
+### 1.7.2
+* **New:** Option to hide remotes
+* **Fix:** Upload bug in serve webdav
+* **Fix:** Missing transfer status missing from notification
+
+***
+
 ### 1.7.1
 * **New:** Redesign settings layout
 * **Update:** Libraries
