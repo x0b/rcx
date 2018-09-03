@@ -84,6 +84,13 @@ public class MainActivity   extends AppCompatActivity
                 finish();
                 return;
             }
+
+            s = getIntent().getStringExtra(getString(R.string.firebase_msg_beta_app_updates_topic));
+            if (s != null) {
+                openBetaUpdate(s);
+                finish();
+                return;
+            }
         }
         
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -431,6 +438,12 @@ public class MainActivity   extends AppCompatActivity
 
     private void openAppUpdate() {
         Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    private void openBetaUpdate(String url) {
+        Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
