@@ -122,9 +122,10 @@ public class UploadService extends IntentService {
                 String notificationContent = "";
                 String[] notificationBigText = new String[5];
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+$")) {
-                        notificationBigText[0] = line;
-                        notificationContent = line;
+                    if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+\\s+/\\s+\\d+,\\s+\\d+%$")) {
+                        String s = line.substring(12).trim();
+                        notificationBigText[0] = s;
+                        notificationContent = s;
                     } else if (line.startsWith(" *")) {
                         String s = line.substring(2).trim();
                         notificationBigText[1] = s;
@@ -132,7 +133,7 @@ public class UploadService extends IntentService {
                         notificationBigText[2] = line;
                     } else if (line.startsWith("Checks:")) {
                         notificationBigText[3] = line;
-                    } else if (line.matches("Transferred:\\s+\\d+$")) {
+                    } else if (line.matches("Transferred:\\s+\\d+\\s+/\\s+\\d+,\\s+\\d+%$")) {
                         notificationBigText[4] = line;
                     } else if (isLoggingEnable && line.startsWith("ERROR :")){
                         log2File.log(line);
