@@ -508,6 +508,10 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             File[] extFiles = getExternalMediaDirs();
             String internalStorage = storageDirectories.get(0);
             for (File f : extFiles) {
+                if (f == null) {
+                    continue;
+                }
+
                 if (!f.getAbsolutePath().startsWith(internalStorage)) {
                     storageDirectories.add(f.getAbsolutePath());
                 }

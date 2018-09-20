@@ -240,7 +240,7 @@ public class DriveConfig extends Fragment {
                 break;
         }
 
-        scope.setText("scrope: \"" + scopeString + "\"");
+        scope.setText("scope: \"" + scopeString + "\"");
     }
 
     private void setUpRemote() {

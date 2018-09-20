@@ -62,6 +62,7 @@ import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LinkDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
+import ca.pkay.rcloneexplorer.Dialogs.ServeDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
@@ -90,7 +91,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                                                 OpenAsDialog.OnClickListener,
                                                                 InputDialog.OnPositive,
                                                                 GoToDialog.Callbacks,
-                                                                SortDialog.OnClickListener {
+                                                                SortDialog.OnClickListener,
+                                                                ServeDialog.Callback {
 
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
@@ -593,34 +595,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 recyclerViewAdapter.toggleSelectAll();
                 return true;
             case R.id.action_serve:
-                String[] serveOptions = new String[] {"HTTP", "Webdav"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setItems(serveOptions, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getContext(), StreamingService.class);
-                        switch (which) {
-                            case 0: // HTTP
-                                intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
-                                intent.putExtra(StreamingService.REMOTE_ARG, remote);
-                                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
-                                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                                break;
-                            case 1: // Webdav
-                                intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
-                                intent.putExtra(StreamingService.REMOTE_ARG, remote);
-                                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
-                                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                                break;
-                            default:
-                                return;
-                        }
-                        context.startService(intent);
-                    }
-                });
-                builder.setTitle(R.string.pick_a_protocol);
-                builder.show();
-
+                serve();
                 return true;
             case R.id.action_empty_trash:
                 emptyTrash();
@@ -648,6 +623,36 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             default:
                     return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void serve() {
+        ServeDialog serveDialog = new ServeDialog();
+        serveDialog.setDarkTheme(isDarkTheme);
+        serveDialog.show(getChildFragmentManager(), "serve dialog");
+    }
+
+    // serve callback
+    @Override
+    public void onServeOptionsSelected(int protocol, boolean allowRemoteAccess, String user, String password) {
+        Intent intent = new Intent(getContext(), StreamingService.class);
+        intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
+        intent.putExtra(StreamingService.REMOTE_ARG, remote);
+        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+        intent.putExtra(StreamingService.ALLOW_REMOTE_ACCESS, allowRemoteAccess);
+        intent.putExtra(StreamingService.AUTHENTICATION_USERNAME, user);
+        intent.putExtra(StreamingService.AUTHENTICATION_PASSWORD, password);
+
+        switch (protocol) {
+            case Rclone.SERVE_PROTOCOL_HTTP: // HTTP
+                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
+                break;
+            case Rclone.SERVE_PROTOCOL_WEBDAV: // Webdav
+                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
+                break;
+            default:
+                return;
+        }
+        context.startService(intent);
     }
 
     private void emptyTrash() {
