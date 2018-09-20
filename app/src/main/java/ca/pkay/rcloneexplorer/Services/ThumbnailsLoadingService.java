@@ -30,7 +30,7 @@ public class ThumbnailsLoadingService extends IntentService {
         }
 
         RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
-        process = rclone.serveHttp(remote, "", 29170);
+        process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, 29170, true, remote, "");
         if (process != null) {
             try {
                 process.waitFor();

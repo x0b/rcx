@@ -361,4 +361,8 @@
     <string name="hidden_remotes">Hidden remotes</string>
     <string name="shared_preferences_hidden_remotes">shared_preferences_hidden_remotes</string>
     <string name="select_remotes_to_hide">Select remotes to hide</string>
+    <string name="allow_remote_access">Allow remote access</string>
+    <string name="authentication">Authentication</string>
+    <string name="optional">Optional</string>
+    <string name="serve_dialog_title">Serve a remote</string>
 </resources>

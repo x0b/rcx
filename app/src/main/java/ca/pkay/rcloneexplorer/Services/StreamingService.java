@@ -23,6 +23,9 @@ public class StreamingService extends IntentService {
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.streaming_service.arg2";
     public static final String SHOW_NOTIFICATION_TEXT = "ca.pkay.rcexplorer.streaming_service.arg3";
     public static final String SERVE_PROTOCOL = "ca.pkay.rcexplorer.serve_protocol";
+    public static final String ALLOW_REMOTE_ACCESS = "ca.pkay.rcexplorer.allow_remote_access";
+    public static final String AUTHENTICATION_USERNAME = "ca.pkay.rcexplorer.username";
+    public static final String AUTHENTICATION_PASSWORD = "ca.pkay.rcexplorer.password";
     public static final int SERVE_HTTP = 11;
     public static final int SERVE_WEBDAV = 12;
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
@@ -54,6 +57,9 @@ public class StreamingService extends IntentService {
         final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
         final Boolean showNotificationText = intent.getBooleanExtra(SHOW_NOTIFICATION_TEXT, false);
         final int protocol = intent.getIntExtra(SERVE_PROTOCOL, SERVE_HTTP);
+        final Boolean allowRemoteAccess = intent.getBooleanExtra(ALLOW_REMOTE_ACCESS, false);
+        final String authenticationUsername = intent.getStringExtra(AUTHENTICATION_USERNAME);
+        final String authenticationPassword = intent.getStringExtra(AUTHENTICATION_PASSWORD);
 
         Intent foregroundIntent = new Intent(this, StreamingService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
@@ -81,11 +87,11 @@ public class StreamingService extends IntentService {
 
         switch (protocol) {
             case SERVE_WEBDAV:
-                runningProcess = rclone.serveWebdav(remote, servePath, 8080);
+                runningProcess = rclone.serve(Rclone.SERVE_PROTOCOL_WEBDAV, 8080, allowRemoteAccess, authenticationUsername, authenticationPassword, remote, servePath);
                 break;
             case SERVE_HTTP:
             default:
-                runningProcess = rclone.serveHttp(remote, servePath, 8080);
+                runningProcess = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, 8080, allowRemoteAccess, authenticationUsername, authenticationPassword, remote, servePath);
                 break;
         }
 
