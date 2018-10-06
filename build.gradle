@@ -10,9 +10,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
-        classpath 'com.google.gms:google-services:4.0.1' // google-services plugin
-        classpath 'io.fabric.tools:gradle:1.25.4'
-        
+        if (getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains("google")) {
+            classpath 'com.google.gms:google-services:4.0.1' // google-services plugin
+            classpath 'io.fabric.tools:gradle:1.25.4'
+        }
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
