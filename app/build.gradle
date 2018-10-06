@@ -17,6 +17,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "store"
+    productFlavors {
+        fdroid {
+            dimension "store"
+            versionNameSuffix "-fdroid"
+        }
+        google {
+            dimension "store"
+            versionNameSuffix "-google"
+        }
+    }
 }
 
 repositories {
