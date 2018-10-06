@@ -1,2 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="ca.pkay.rcloneexplorer"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ca.pkay.rcloneexplorer">
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_short_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".Services.DownloadService" />
+        <service android:name=".Services.UploadService" />
+        <service android:name=".Services.StreamingService" />
+        <service android:name=".Services.ThumbnailsLoadingService" />
+        <service android:name=".Services.DeleteService" />
+        <service android:name=".Services.MoveService" />
+        <service android:name=".Services.SyncService" />
+
+        <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
+        <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
+        <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
+        <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
+        <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
+        <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="ca.pkay.rcloneexplorer.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChangelogActivity"
+            android:label="@string/title_activity_changelog"
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AboutLibsActivity"
+            android:label="@string/credits_libraries"
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SharingActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".FilePicker"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RemoteConfig.RemoteConfig"
+            android:label="@string/title_activity_remote_config"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+    </application>
+
+</manifest>
