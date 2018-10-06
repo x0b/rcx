@@ -139,9 +139,6 @@
     <string name="pref_key_color_primary">pref_key_color_primary</string>
     <string name="pref_key_color_accent">pref_key_color_accent</string>
     <string name="pref_key_dark_theme">pref_key_dark_theme</string>
-    <string name="pref_key_app_updates">pref_key_app_updates</string>
-    <string name="pref_key_app_updates_beta">pref_key_app_updates_beta</string>
-    <string name="pref_key_crash_reports">pref_key_crash_reports</string>
     <string name="pref_key_show_thumbnails">pref_key_show_thumbnails</string>
     <string name="pref_key_wifi_only_transfers">pref_key_wifi_only_transfers</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
@@ -279,11 +276,7 @@
     <string name="no_remotes">There are no remotes</string>
     <string name="choose_dir">Choose directory</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
-    <string name="firebase_msg_app_updates_topic">app_updates</string>
-    <string name="firebase_msg_beta_app_updates_topic">beta_app_updates</string>
     <string name="app_update_notification_title">New version of Rclone Explorer is available on GitHub</string>
-    <string name="app_updates_notifications">Get notified about app updates</string>
-    <string name="beta_app_updates_notifications">Get notified about beta releases</string>
     <string name="delete_remote_title">Delete remote?</string>
     <string name="empty_trash">Empty trash</string>
     <string name="trash_emptied">Trash emptied</string>
@@ -304,7 +297,6 @@
     <string name="selected_cache_expiry">Cache expiry time: %1$s</string>
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
-    <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
     <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
     <string name="pin_to_drawer">Pin to drawer</string>

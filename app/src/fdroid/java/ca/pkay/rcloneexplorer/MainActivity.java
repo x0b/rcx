@@ -36,9 +36,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -52,7 +49,6 @@ import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import es.dmoral.toasty.Toasty;
-import io.fabric.sdk.android.Fabric;
 
 public class MainActivity   extends AppCompatActivity
                             implements  NavigationView.OnNavigationItemSelectedListener,
@@ -77,27 +73,7 @@ public class MainActivity   extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent() != null) {
-            String s = getIntent().getStringExtra(getString(R.string.firebase_msg_app_updates_topic));
-            if (s != null && s.equals("true")) {
-                openAppUpdate();
-                finish();
-                return;
-            }
-
-            s = getIntent().getStringExtra(getString(R.string.firebase_msg_beta_app_updates_topic));
-            if (s != null) {
-                openBetaUpdate(s);
-                finish();
-                return;
-            }
-        }
-        
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
-        if (enableCrashReports) {
-            Fabric.with(this, new Crashlytics());
-        }
 
         applyTheme();
         context = this;
@@ -126,11 +102,6 @@ public class MainActivity   extends AppCompatActivity
                 askForConfigPassword();
             }
         });
-
-        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
-        if (appUpdates) {
-            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
-        }
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -434,18 +405,6 @@ public class MainActivity   extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
         }
-    }
-
-    private void openAppUpdate() {
-        Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
-    }
-
-    private void openBetaUpdate(String url) {
-        Uri uri = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
     }
 
     @Override

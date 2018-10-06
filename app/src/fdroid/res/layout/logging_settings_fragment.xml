@@ -14,11 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:animateLayoutChanges="true">
+        android:paddingBottom="16dp">
 
         <RelativeLayout
-            android:id="@+id/notifications"
+            android:id="@+id/use_logs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
@@ -29,12 +28,32 @@
             android:focusable="true"
             android:background="?selectableItemBackground" >
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/textColorPrimary"
-                android:textStyle="bold"
-                android:text="@string/open_system_settings"/>
+                android:layout_centerVertical="true"
+                android:orientation="vertical" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColorPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/use_logs"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColorSecondary"
+                    android:text="@string/use_logs_summary"/>
+
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/use_logs_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+
         </RelativeLayout>
 
         <View
