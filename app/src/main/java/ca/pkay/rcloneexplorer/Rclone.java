@@ -37,6 +37,7 @@ public class Rclone {
     public static final int SYNC_DIRECTION_REMOTE_TO_LOCAL = 2;
     public static final int SERVE_PROTOCOL_HTTP = 1;
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
+    public static final int SERVE_PROTOCOL_FTP = 3;
     private Context context;
     private String rclone;
     private String rcloneConf;
@@ -359,9 +360,20 @@ public class Rclone {
         String remoteName = remote.getName();
         String localRemotePath = (remote.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
         String path = (servePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + servePath;
-
-        String commandProtocol = protocol == SERVE_PROTOCOL_HTTP ? "http" : "webdav";
         String address;
+        String commandProtocol;
+
+        switch (protocol) {
+            case SERVE_PROTOCOL_HTTP:
+                commandProtocol = "http";
+                break;
+            case SERVE_PROTOCOL_FTP:
+                commandProtocol = "ftp";
+                break;
+            default:
+                commandProtocol = "webdav";
+        }
+
         if (allowRemoteAccess) {
             address = ":" + String.valueOf(port);
         } else {

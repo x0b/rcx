@@ -646,6 +646,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case Rclone.SERVE_PROTOCOL_HTTP: // HTTP
                 intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
                 break;
+            case Rclone.SERVE_PROTOCOL_FTP: // FTP
+                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_FTP);
+                break;
             case Rclone.SERVE_PROTOCOL_WEBDAV: // Webdav
                 intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
                 break;
