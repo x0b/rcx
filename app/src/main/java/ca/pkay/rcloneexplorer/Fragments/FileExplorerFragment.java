@@ -258,7 +258,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
 
-        fab = view.findViewById(R.id.fab);
+        fab = view.findViewById(R.id.fab_fragment_file_explorer_list);
         fab.setOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
         fab.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
             @Override
@@ -645,6 +645,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         switch (protocol) {
             case Rclone.SERVE_PROTOCOL_HTTP: // HTTP
                 intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
+                break;
+            case Rclone.SERVE_PROTOCOL_FTP: // FTP
+                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_FTP);
                 break;
             case Rclone.SERVE_PROTOCOL_WEBDAV: // Webdav
                 intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);

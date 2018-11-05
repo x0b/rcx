@@ -110,7 +110,7 @@ public class ServeDialog extends DialogFragment {
         }
 
         int savedProtocol = savedInstanceState.getInt("protocol", -1);
-        if (savedProtocol == R.id.radio_http || savedProtocol == R.id.radio_webdav) {
+        if (savedProtocol == R.id.radio_http || savedProtocol == R.id.radio_webdav || savedProtocol == R.id.radio_ftp) {
             protocol.check(savedProtocol);
         }
     }
@@ -134,6 +134,9 @@ public class ServeDialog extends DialogFragment {
         int selectedProtocolId = protocol.getCheckedRadioButtonId();
         int selectedProtocol;
         switch (selectedProtocolId) {
+            case R.id.radio_ftp:
+                selectedProtocol = Rclone.SERVE_PROTOCOL_FTP;
+                break;
             case R.id.radio_webdav:
                 selectedProtocol = Rclone.SERVE_PROTOCOL_WEBDAV;
                 break;

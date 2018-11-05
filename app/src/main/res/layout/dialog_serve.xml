@@ -22,8 +22,16 @@
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
             android:textColor="?attr/textColorPrimary"
-            android:text="@string/provider_http"
-            android:checked="true" />
+            android:checked="true"
+            android:text="@string/provider_http" />
+
+        <RadioButton
+            android:id="@+id/radio_ftp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textColor="?attr/textColorPrimary"
+            android:text="@string/provider_ftp"/>
 
         <RadioButton
             android:id="@+id/radio_webdav"

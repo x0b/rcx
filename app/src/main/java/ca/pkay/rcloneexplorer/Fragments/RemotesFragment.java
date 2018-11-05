@@ -118,7 +118,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                 }
             });
 
-            SpeedDialView speedDialView = view.findViewById(R.id.fab);
+            SpeedDialView speedDialView = view.findViewById(R.id.fab_empty_config);
             speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
                 public boolean onMainActionSelected() {
@@ -146,7 +146,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, remoteClickListener, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        SpeedDialView speedDialView = view.findViewById(R.id.fab);
+        SpeedDialView speedDialView = view.findViewById(R.id.fab_fragment_remote_list);
         speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
             @Override
             public boolean onMainActionSelected() {
