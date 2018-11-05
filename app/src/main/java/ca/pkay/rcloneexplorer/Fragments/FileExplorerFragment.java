@@ -258,7 +258,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
 
-        fab = view.findViewById(R.id.fab);
+        fab = view.findViewById(R.id.fab_fragment_file_explorer_list);
         fab.setOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
         fab.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
             @Override

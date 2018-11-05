@@ -112,7 +112,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         filePickerAdapter = new FilePickerAdapter(this, fileList, destinationPickerType, findViewById(R.id.empty_folder_view));
         recyclerView.setAdapter(filePickerAdapter);
 
-        speedDialView = findViewById(R.id.fab);
+        speedDialView = findViewById(R.id.fab_activity_file_picker);
         if (!destinationPickerType) {
             speedDialView.setVisibility(View.INVISIBLE);
         }
