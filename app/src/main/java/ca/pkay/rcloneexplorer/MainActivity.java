@@ -140,9 +140,7 @@ public class MainActivity   extends AppCompatActivity
         int currentVersionCode = BuildConfig.VERSION_CODE;
         String currentVersionName = BuildConfig.VERSION_NAME;
 
-        if (!rclone.isRcloneBinaryCreated()) {
-            new CreateRcloneBinary().execute();
-        } else if (lastVersionCode < currentVersionCode || !lastVersionName.equals(currentVersionName)) {
+        if (lastVersionCode < currentVersionCode || !lastVersionName.equals(currentVersionName)) {
             // In version code 24 there were changes to app shortcuts
             // Remove this in the long future
             if (lastVersionCode <= 23) {
@@ -150,7 +148,7 @@ public class MainActivity   extends AppCompatActivity
                 AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
             }
 
-            new CreateRcloneBinary().execute();
+            startRemotesFragment();
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(getString(R.string.pref_key_version_code), currentVersionCode);
@@ -511,48 +509,6 @@ public class MainActivity   extends AppCompatActivity
         availableDrawerPinnedRemoteId = 1;
 
         pinRemotesToDrawer();
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class CreateRcloneBinary extends AsyncTask<Void, Void, Boolean> {
-
-        private LoadingDialog loadingDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            loadingDialog = new LoadingDialog()
-                    .setTitle(R.string.creating_rclone_binary)
-                    .setCanCancel(false);
-            loadingDialog.show(getSupportFragmentManager(), "loading dialog");
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                rclone.createRcloneBinary();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            super.onPostExecute(success);
-            if (!success) {
-                Toasty.error(context, getString(R.string.error_creating_rclone_binary), Toast.LENGTH_LONG, true).show();
-                finish();
-                System.exit(0);
-            }
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
-            }
-            startRemotesFragment();
-        }
     }
 
     @SuppressLint("StaticFieldLeak")

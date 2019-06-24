@@ -843,13 +843,4 @@ public class Rclone {
         outputStream.flush();
         outputStream.close();
     }
-
-    public boolean isRcloneBinaryCreated() {
-        File file = new File(rclone);
-        return file.exists() && file.canExecute();
-    }
-
-    public void createRcloneBinary() throws IOException {
-        // this.rclone is extracted by Android during app installation
-    }
 }

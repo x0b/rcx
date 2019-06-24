@@ -68,7 +68,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             return;
         }
 
-        if (!rclone.isRcloneBinaryCreated() || rclone.isConfigEncrypted() || !rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
+        if (rclone.isConfigEncrypted() || !rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
             AlertDialog.Builder builder;
             if (isDarkTheme) {
                 builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
