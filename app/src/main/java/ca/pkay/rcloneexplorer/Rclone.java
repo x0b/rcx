@@ -3,7 +3,6 @@ package ca.pkay.rcloneexplorer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.webkit.MimeTypeMap;
@@ -45,7 +44,7 @@ public class Rclone {
 
     public Rclone(Context context) {
         this.context = context;
-        this.rclone = context.getFilesDir().getPath() + "/rclone";
+        this.rclone = context.getApplicationInfo().nativeLibraryDir + "/librclone.so";
         this.rcloneConf = context.getFilesDir().getPath() + "/rclone.conf";
         log2File = new Log2File(context);
     }
@@ -846,44 +845,11 @@ public class Rclone {
     }
 
     public boolean isRcloneBinaryCreated() {
-        String appsFileDir = context.getFilesDir().getPath();
-        String exeFilePath = appsFileDir + "/rclone";
-        File file = new File(exeFilePath);
+        File file = new File(rclone);
         return file.exists() && file.canExecute();
     }
 
     public void createRcloneBinary() throws IOException {
-        String appsFileDir = context.getFilesDir().getPath();
-        String rcloneArchitecture = null;
-        String[] supportedABIS = Build.SUPPORTED_ABIS;
-        if (supportedABIS[0].toUpperCase().contains("ARM")) {
-            if (supportedABIS[0].contains("64")) {
-                rcloneArchitecture = "rclone-arm64";
-            } else {
-                rcloneArchitecture = "rclone-arm32";
-            }
-        } else if (supportedABIS[0].toUpperCase().contains("X86")) {
-            if (supportedABIS[0].contains("64")) {
-                rcloneArchitecture = "rclone-x86_32";
-            } else {
-                rcloneArchitecture = "rclone-x86_32";
-            }
-        } else {
-            System.exit(1);
-        }
-        String exeFilePath = appsFileDir + "/rclone";
-        InputStream inputStream = context.getAssets().open(rcloneArchitecture);
-        File outFile = new File(appsFileDir, "rclone");
-        FileOutputStream fileOutputStream = new FileOutputStream(outFile);
-
-        byte[] buffer = new byte[4096];
-        int offset;
-        while ((offset = inputStream.read(buffer)) > 0) {
-            fileOutputStream.write(buffer, 0, offset);
-        }
-        inputStream.close();
-        fileOutputStream.close();
-
-        Runtime.getRuntime().exec("chmod 0777 " + exeFilePath);
+        // this.rclone is extracted by Android during app installation
     }
 }

@@ -22,7 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["lib"]
+        }
     }
 }
 
