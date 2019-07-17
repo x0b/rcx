@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -365,6 +366,17 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (syncRemotePath != null) {
             outState.putString(SAVED_SYNC_REMOTE_PATH, syncRemotePath);
         }
+        if (calculateBundleSize(outState) > 500 * 1024) {
+            outState.remove(SAVED_CONTENT);
+        }
+    }
+
+    private int calculateBundleSize(@NonNull Bundle bundle) {
+        Parcel parcel = Parcel.obtain();
+        parcel.writeBundle(bundle);
+        int size = parcel.dataSize();
+        parcel.recycle();
+        return size;
     }
 
     @Override
