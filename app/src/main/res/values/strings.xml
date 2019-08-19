@@ -365,4 +365,6 @@
     <string name="authentication">Authentication</string>
     <string name="optional">Optional</string>
     <string name="serve_dialog_title">Serve a remote</string>
+    <string name="config_use_external_question">Import found configuration?</string>
+    <string name="config_import_external_explain">Automatically import from %1$s</string>
 </resources>

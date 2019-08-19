@@ -380,13 +380,44 @@ public class MainActivity   extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
-                importConfigFile();
+                Uri configUri;
+                if(null != (configUri = rclone.searchExternalConfig())){
+                    askUseExternalConfig(configUri);
+                } else {
+                    importConfigFile();
+                }
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    public void askUseExternalConfig(final Uri uri) {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle(R.string.config_use_external_question);
+        builder.setMessage(context.getString(R.string.config_import_external_explain, uri.toString()));
+        builder.setPositiveButton(R.string.continue_statement, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+                new CopyConfigFile().execute(uri);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+                importConfigFile();
             }
         });
         builder.show();

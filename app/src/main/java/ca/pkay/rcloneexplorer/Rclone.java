@@ -808,6 +808,18 @@ public class Rclone {
         return file.exists();
     }
 
+    // on all devices, look under ./Android/ca.pkay.rcloneexplorer/files/rclone.config
+    public Uri searchExternalConfig(){
+        File[] extDir = context.getExternalFilesDirs(null);
+        for(File dir : extDir){
+            File file = new File(dir + "/rclone.conf");
+            if(file.exists()){
+                return Uri.fromFile(file);
+            }
+        }
+        return null;
+    }
+
     public void copyConfigFile(Uri uri) throws IOException {
         String appsFileDir = context.getFilesDir().getPath();
         InputStream inputStream = context.getContentResolver().openInputStream(uri);

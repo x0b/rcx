@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -112,8 +113,15 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             view.findViewById(R.id.empty_state_btn).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (getActivity() != null) {
-                        ((MainActivity) getActivity()).importConfigFile();
+                    Uri externalConfig;
+                    if(null != (externalConfig = rclone.searchExternalConfig())){
+                        if (getActivity() != null) {
+                            ((MainActivity) getActivity()).askUseExternalConfig(externalConfig);
+                        }
+                    } else {
+                        if (getActivity() != null) {
+                            ((MainActivity) getActivity()).importConfigFile();
+                        }
                     }
                 }
             });
