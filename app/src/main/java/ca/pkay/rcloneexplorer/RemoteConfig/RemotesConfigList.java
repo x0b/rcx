@@ -282,7 +282,9 @@ public class RemotesConfigList extends Fragment {
         listContent.addView(providerHTTP);
         listContent.addView(providerLocal);
         listContent.addView(providerAzureblob);
-        listContent.addView(providerOneDrive);
+        // Disabled due to https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/246
+        // waiting for upstream to implement auto-config
+        // listContent.addView(providerOneDrive);
         listContent.addView(providerPcloud);
         listContent.addView(providerQingstor);
         listContent.addView(providerSFTP);
