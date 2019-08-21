@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer.Items;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
+import android.webkit.MimeTypeMap;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,7 +33,7 @@ public class FileItem implements Parcelable {
         this.modTime = modTimeToMilis(modTime);
         this.humanReadableModTime = modTimeToHumanReadable(modTime);
         this.formattedModTime = modTimeToFormattedTime(modTime);
-        this.mimeType = mimeType;
+        this.mimeType = getMimeType(mimeType, path);
         this.isDir = isDir;
     }
 
@@ -96,6 +97,22 @@ public class FileItem implements Parcelable {
 
     public boolean isDir() {
         return isDir;
+    }
+
+    private String getMimeType(String mimeType, String path) {
+        if ("application/octet-stream".equals(mimeType)) {
+            String extension = MimeTypeMap.getFileExtensionFromUrl(path);
+            if ((extension == null || "".equals(extension)) && path.lastIndexOf('.') < path.length() + 1) {
+                extension = path.substring(path.lastIndexOf('.') + 1);
+            }
+            if (extension != null) {
+                String mimeQueryResult = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                if (null != mimeQueryResult) {
+                    mimeType = mimeQueryResult;
+                }
+            }
+        }
+        return mimeType;
     }
 
     private String sizeToHumanReadable(long size) {
