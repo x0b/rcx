@@ -563,12 +563,10 @@ public class MainActivity   extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Uri... uris) {
             try {
-                rclone.copyConfigFile(uris[0]);
+                return rclone.copyConfigFile(uris[0]);
             } catch (IOException e) {
-                e.printStackTrace();
                 return false;
             }
-            return true;
         }
 
         @Override
@@ -580,6 +578,7 @@ public class MainActivity   extends AppCompatActivity
                 loadingDialog.dismiss();
             }
             if (!success) {
+                Toasty.error(context, getString(R.string.copying_rclone_config_fail), Toast.LENGTH_LONG, true).show();
                 return;
             }
 

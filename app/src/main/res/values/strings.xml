@@ -99,6 +99,7 @@
     <string name="hash_unsupported">UNSUPPORTED</string>
     <string name="hash_copied_confirmation">Hash copied to clipboard</string>
     <string name="copying_rclone_config">Copying rclone configuration</string>
+    <string name="copying_rclone_config_fail">Copying rclone configuration failed</string>
     <string name="creating_rclone_binary">Creating rclone binary</string>
     <string name="error_creating_rclone_binary">Error creating rclone binary</string>
     <string name="config_password_protected">Configuration file is password protected</string>

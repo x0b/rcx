@@ -7,7 +7,9 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
-
+import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import es.dmoral.toasty.Toasty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,10 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import ca.pkay.rcloneexplorer.Items.FileItem;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import es.dmoral.toasty.Toasty;
 
 public class Rclone {
 
@@ -813,18 +811,19 @@ public class Rclone {
         File[] extDir = context.getExternalFilesDirs(null);
         for(File dir : extDir){
             File file = new File(dir + "/rclone.conf");
-            if(file.exists()){
+            if(file.exists() && isValidConfig(file.getAbsolutePath())){
                 return Uri.fromFile(file);
             }
         }
         return null;
     }
 
-    public void copyConfigFile(Uri uri) throws IOException {
+    public boolean copyConfigFile(Uri uri) throws IOException {
         String appsFileDir = context.getFilesDir().getPath();
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
-        File outFile = new File(appsFileDir, "rclone.conf");
-        FileOutputStream fileOutputStream = new FileOutputStream(outFile);
+        File tempFile = new File(appsFileDir, "rclone.conf-tmp");
+        File configFile = new File(appsFileDir, "rclone.conf");
+        FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
 
         byte[] buffer = new byte[4096];
         int offset;
@@ -834,6 +833,36 @@ public class Rclone {
         inputStream.close();
         fileOutputStream.flush();
         fileOutputStream.close();
+
+        if (isValidConfig(tempFile.getAbsolutePath())) {
+            if (!(tempFile.renameTo(configFile) && !tempFile.delete())) {
+                throw new IOException();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isValidConfig(String path) {
+        String[] command = {rclone, "-vvv", "--ask-password=false", "--config", path, "listremotes"};
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            process.waitFor();
+            if (process.exitValue() != 0) { //
+                try (BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                     BufferedReader stdErr = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = stdOut.readLine()) != null || (line = stdErr.readLine()) != null) {
+                        if (line.contains("could not parse line")) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            return false;
+        }
+        return true;
     }
 
     public void exportConfigFile(Uri uri) throws IOException {
