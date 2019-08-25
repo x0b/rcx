@@ -295,8 +295,11 @@ public class MainActivity   extends AppCompatActivity
                 startRemotesFragment();
                 break;
             case R.id.nav_import:
+                Uri configUri;
                 if (rclone.isConfigFileCreated()) {
                     warnUserAboutOverwritingConfiguration();
+                } else if(null != (configUri = rclone.searchExternalConfig())) {
+                    askUseExternalConfig(configUri);
                 } else {
                     importConfigFile();
                 }

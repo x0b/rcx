@@ -808,7 +808,7 @@ public class Rclone {
         return file.exists();
     }
 
-    // on all devices, look under ./Android/ca.pkay.rcloneexplorer/files/rclone.config
+    // on all devices, look under ./Android/data/ca.pkay.rcloneexplorer/files/rclone.conf
     public Uri searchExternalConfig(){
         File[] extDir = context.getExternalFilesDirs(null);
         for(File dir : extDir){
