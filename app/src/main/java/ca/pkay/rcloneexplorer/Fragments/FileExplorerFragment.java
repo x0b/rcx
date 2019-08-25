@@ -192,7 +192,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return;
             }
             directoryObject.setPath(path);
-            directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
+            ArrayList<FileItem> savedContent = savedInstanceState.getParcelableArrayList(SAVED_CONTENT);
+            if(null == savedContent){
+                directoryObject.clear();
+            } else {
+                directoryObject.setContent(savedContent);
+            }
+
             buildStackFromPath(remoteName, path);
             renameItem = savedInstanceState.getParcelable(SAVED_RENAME_ITEM);
         }
@@ -1879,7 +1885,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!status) {
                 return;
             }
-            Uri sharedFileUri = FileProvider.getUriForFile(context, "ca.pkay.rcloneexplorer.fileprovider", new File(fileLocation));
+            Uri sharedFileUri = FileProvider.getUriForFile(context, "ca.pkay.rcloneexplorer.x0b.fileprovider", new File(fileLocation));
             Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
 
             if (openAs == OPEN_AS_TEXT) {
