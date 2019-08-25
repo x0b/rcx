@@ -146,6 +146,34 @@
                 </LinearLayout>
 
                 <LinearLayout
+                        android:id="@+id/contributors"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:background="?selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_contributor"
+                            android:tint="?attr/iconTint"
+                            android:contentDescription="@string/contributors" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="32dp"
+                            android:paddingEnd="0dp"
+                            android:text="@string/contributors"
+                            android:textColor="?attr/textColorPrimary"
+                            android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/open_source_libraries"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"

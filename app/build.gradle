@@ -9,11 +9,11 @@ android {
     }
     compileSdkVersion 28
     defaultConfig {
-        applicationId "ca.pkay.rcloneexplorer"
+        applicationId 'ca.pkay.rcloneexplorer.x0b'
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 29
-        versionName '1.7.4-DEV+rclone1.48'
+        versionName '1.7.5-beta'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

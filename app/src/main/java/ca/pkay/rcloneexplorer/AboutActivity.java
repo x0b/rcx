@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -39,6 +41,12 @@ public class AboutActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showChangelog();
+            }
+        });
+        findViewById(R.id.contributors).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showContributors();
             }
         });
         findViewById(R.id.open_source_libraries).setOnClickListener(new View.OnClickListener() {
@@ -97,6 +105,11 @@ public class AboutActivity extends AppCompatActivity {
         startActivity(changelogIntent);
     }
 
+    private void showContributors() {
+        Intent contributorIntent = new Intent(this, ContributorActivity.class);
+        startActivity(contributorIntent);
+    }
+
     private void showOpenSourceLibraries() {
         Intent librariesIntent = new Intent(this, AboutLibsActivity.class);
         startActivity(librariesIntent);
@@ -108,7 +121,15 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void reportBug() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_issue_url)));
+        String template = getString(R.string.github_issue_template,
+                new Rclone(this).getRcloneVersion(),
+                BuildConfig.VERSION_NAME,
+                Build.VERSION.SDK_INT,
+                Build.MODEL,
+                TextUtils.join(";", Build.SUPPORTED_ABIS)
+        );
+        String baseUri = getString(R.string.github_issue_url);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri + Uri.encode(template)));
         startActivity(browserIntent);
     }
 

@@ -1,6 +1,6 @@
-<resources>
-    <string name="app_name">Rclone Explorer</string>
-    <string name="app_short_name">Rclone Ex</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Rclone Explorer (x0b build)</string>
+    <string name="app_short_name">Rclone…(x0b)</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -9,6 +9,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_changelog">Changelog</string>
+    <string name="title_activity_contributors">Contributors</string>
     <string name="remotes">Remotes</string>
     <string name="settings">Settings</string>
     <string name="import_rclone_config">Import rclone config</string>
@@ -27,6 +28,7 @@
     <string name="app_version">App Version</string>
     <string name="rclone_version">Rclone Version</string>
     <string name="changelog">Changelog</string>
+    <string name="contributors">Contributors</string>
     <string name="credits_libraries">Credits/Libraries</string>
     <string name="star_on_github">Star on GitHub</string>
     <string name="report_a_bug">Report a bug</string>
@@ -46,8 +48,9 @@
     <string name="select">Select</string>
     <string name="app_icon">App Icon</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="github_app_url">https://github.com/kaczmarkiewiczp/rcloneExplorer</string>
-    <string name="github_issue_url">https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/new</string>
+    <string name="github_app_url">https://github.com/x0b/rcloneExplorer</string>
+    <string name="github_issue_url">https://github.com/x0b/rcloneExplorer/issues/new?title=Bug%20Report&amp;label=app%20issue%20link&amp;body=</string>
+    <string name="github_issue_template" tools:ignore="TypographyDashes">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
     <string name="github_author_url">https://github.com/kaczmarkiewiczp</string>
     <string name="replace_config_file_question">Replace current configuration file?</string>
     <string name="config_file_lost_statement">Your current configuration will be lost</string>
@@ -312,7 +315,7 @@
     <string name="unpin_from_drawer">Unpin from drawer</string>
     <string name="shared_preferences_pinned_remotes">shared_preferences_pinned_remotes</string>
     <string name="shared_preferences_drawer_pinned_remotes">shared_preferences_drawer_pinned_remotes</string>
-    <string name="app_latest_release_url">https://github.com/kaczmarkiewiczp/rcloneExplorer/releases/latest</string>
+    <string name="app_latest_release_url">https://github.com/x0b/rcloneExplorer/releases/latest</string>
     <string name="experimental_features">Experimental Features</string>
     <string name="show_thumbnails">Show thumbnails</string>
     <string name="generate_password_title">Generate Password</string>

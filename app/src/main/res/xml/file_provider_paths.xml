@@ -1,4 +1,4 @@
 <paths
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="cache" path="Android/data/ca.pkay.rcloneexplorer/cache/"/>
+    <external-path name="cache" path="Android/data/ca.pkay.rcloneexplorer.x0b/cache/"/>
 </paths>

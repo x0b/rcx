@@ -60,7 +60,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="ca.pkay.rcloneexplorer.fileprovider"
+            android:authorities="ca.pkay.rcloneexplorer.x0b.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -75,6 +75,11 @@
         <activity
             android:name=".ChangelogActivity"
             android:label="@string/title_activity_changelog"
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ContributorActivity"
+            android:label="@string/title_activity_contributors"
             android:parentActivityName=".AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
