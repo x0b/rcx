@@ -8,27 +8,36 @@ import ca.pkay.rcloneexplorer.R;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
-    public final static int AMAZON_DRIVE = 10;
-    public final static int S3 = 11;
-    public final static int B2 = 12;
-    public final static int BOX = 13;
-    public final static int CACHE = 14;
-    public final static int DROPBOX = 15;
-    public final static int FTP = 16;
-    public final static int GOOGLE_CLOUD_STORAGE = 17;
-    public final static int GOOGLE_DRIVE = 18;
-    public final static int HUBIC = 19;
-    public final static int LOCAL = 20;
-    public final static int MEGA = 21;
-    public final static int AZUREBLOB = 22;
-    public final static int ONEDRIVE = 23;
+    public final static int ALIAS = 10;
+    public final static int AMAZON_DRIVE = 11;
+    public final static int AZUREBLOB = 12;
+    public final static int B2 = 13;
+    public final static int BOX = 14;
+    public final static int CRYPT = 15;
+    public final static int CACHE = 16;
+    public final static int GOOGLE_DRIVE = 17;
+    public final static int DROPBOX = 18;
+    public final static int FICHIER = 19;
+    public final static int FTP = 20;
+    public final static int GOOGLE_CLOUD_STORAGE = 21;
+    public final static int GOOGLE_PHOTOS = 22;
+    public final static int HTTP = 23;
     public final static int SWIFT = 24;
-    public final static int PCLOUD = 25;
-    public final static int QINGSTOR = 26;
-    public final static int SFTP = 27;
-    public final static int WEBDAV = 28;
-    public final static int YANDEX = 29;
-    public final static int HTTP = 30;
+    public final static int HUBIC = 25;
+    public final static int JOTTACLOUD = 26;
+    public final static int KOOFR = 27;
+    public final static int LOCAL = 28;
+    public final static int MEGA = 29;
+    public final static int ONEDRIVE = 30;
+    public final static int OPENDRIVE = 31;
+    public final static int PCLOUD = 32;
+    public final static int QINGSTOR = 33;
+    public final static int S3 = 34;
+    public final static int SFTP = 35;
+    public final static int UNION = 36;
+    public final static int WEBDAV = 37;
+    public final static int YANDEX = 38;
+
     private String name;
     private int type;
     private String typeReadable;
@@ -164,48 +173,64 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     private int getTypeFromString(String type) {
         switch (type) {
+            case "alias":
+                return ALIAS;
             case "amazon cloud drive":
                 return AMAZON_DRIVE;
-            case "s3":
-                return S3;
+            case "azureblob":
+                return AZUREBLOB;
             case "b2":
                 return B2;
             case "box":
                 return BOX;
             case "cache":
                 return CACHE;
+            case "crypt":
+                return CRYPT;
             case "dropbox":
                 return DROPBOX;
+            case "drive":
+                return GOOGLE_DRIVE;
+            case "fichier":
+                return FICHIER;
             case "ftp":
                 return FTP;
             case "google cloud storage":
                 return GOOGLE_CLOUD_STORAGE;
-            case "drive":
-                return GOOGLE_DRIVE;
+            case "google photos":
+                return GOOGLE_PHOTOS;
+            case "http":
+                return HTTP;
+            case "swift":
+                return SWIFT;
             case "hubic":
                 return HUBIC;
+            case "jottacloud":
+                return JOTTACLOUD;
+            case "koofr":
+                return KOOFR;
             case "local":
                 return LOCAL;
             case "mega":
                 return MEGA;
-            case "azureblob":
-                return AZUREBLOB;
             case "onedrive":
                 return ONEDRIVE;
-            case "swift":
-                return SWIFT;
+            case "opendrive":
+                return OPENDRIVE;
             case "pcloud":
                 return PCLOUD;
             case "qingstor":
                 return QINGSTOR;
+            case "s3":
+                return S3;
             case "sftp":
                 return SFTP;
+            case "union":
+                return UNION;
             case "webdav":
                 return WEBDAV;
             case "yandex":
                 return YANDEX;
-            case "http":
-                return HTTP;
             default:
                 return -1;
         }
@@ -224,6 +249,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                     return R.drawable.ic_dropbox;
                 case RemoteItem.GOOGLE_CLOUD_STORAGE:
                     return R.drawable.ic_google;
+                case RemoteItem.GOOGLE_PHOTOS:
+                    return R.drawable.ic_google_photos;
                 case RemoteItem.ONEDRIVE:
                     return R.drawable.ic_onedrive;
                 case RemoteItem.S3:
@@ -234,6 +261,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                     return R.drawable.ic_terminal;
                 case RemoteItem.LOCAL:
                     return R.drawable.ic_tablet_cellphone;
+                case RemoteItem.UNION:
+                    return R.drawable.ic_union_24dp;
                 default:
                     return R.drawable.ic_cloud;
             }
