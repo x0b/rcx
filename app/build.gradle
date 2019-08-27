@@ -12,8 +12,8 @@ android {
         applicationId 'ca.pkay.rcloneexplorer.x0b'
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 29
-        versionName '1.7.5-beta'
+        versionCode 30
+        versionName '1.7.5'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -23,8 +23,43 @@ android {
         }
     }
     sourceSets {
-        main {
-            jniLibs.srcDirs = ["lib"]
+        x86 {
+            jniLibs.srcDirs = ["lib/x86"]
+        }
+        x86_64 {
+            jniLibs.srcDirs = ["lib/x86_64"]
+        }
+        armv7a {
+            jniLibs.srcDirs = ["lib/armv7a"]
+        }
+        armv8a {
+            jniLibs.srcDirs = ["lib/armv8a"]
+        }
+        fatapk {
+            jniLibs.srcDirs = ["lib/fatapk"]
+        }
+    }
+    flavorDimensions 'arch'
+    productFlavors {
+        x86 {
+            dimension 'arch'
+            versionNameSuffix "-x86"
+        }
+        armv7a {
+            dimension 'arch'
+            versionNameSuffix "-armv7a"
+        }
+        armv8a {
+            dimension 'arch'
+            versionNameSuffix "-armv8a"
+        }
+        x86_64 {
+            dimension 'arch'
+            versionNameSuffix "-x86_64"
+        }
+        fatapk {
+            dimension 'arch'
+            versionNameSuffix "-fatapk"
         }
     }
 }
@@ -57,6 +92,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

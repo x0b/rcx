@@ -55,3 +55,16 @@ google-services.json
 freeline.py
 freeline/
 freeline_project_description.json
+
+# Don't version native libraries or IDE artifacts. Module config should be done in gradle.
+# Generated artifacts (apks, libraries) just slow down cloning and can be recreated from source
+# anyways.
+app/lib/
+release/
+
+.idea/encodings.xml
+.idea/caches/build_file_checksums.ser
+.idea/misc.xml
+.idea/modules.xml
+.idea/codeStyles/Project.xml
+
