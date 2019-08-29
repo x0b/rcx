@@ -5,7 +5,7 @@
 
 
 # RcloneExplorer
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/master/releases) [![GitHub release](https://img.shields.io/github/release-pre/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest) [![GitHub release](https://img.shields.io/github/release/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest)
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/master/releases) [![GitHub release](https://img.shields.io/github/release-pre/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest) [![GitHub release](https://img.shields.io/github/v/release/x0b/rcloneExplorer?include_prereleases)](https://github.com/x0b/rcloneExplorer/releases/latest)
 
 rclone explorer for Android
 
