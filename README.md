@@ -5,7 +5,7 @@
 
 
 # RcloneExplorer
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/edit/master/releases) [![GitHub release](https://img.shields.io/github/release-pre/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest)
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/master/releases) [![GitHub release](https://img.shields.io/github/release-pre/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest) [![GitHub release](https://img.shields.io/github/release/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest)
 
 rclone explorer for Android
 
@@ -35,11 +35,21 @@ Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Next Version
+#### Current Version
 - Fixes for various bugs
 - Import without document UI
 - Android 10 (Android Q) readiness updates
-- Update to rclone 1.49 (if available)
+- Update to rclone 1.49.1
+- Support for x86_64 and automatic architecture editions
+
+#### Next Version
+- Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
+- New remotes
+- Bug fixes
+- Android 10 target version updates
+- AndroidX migration
+- AndroidTV improvements (launcher & intent integration)
+
 
 #### Next Month(s)
 - Bug fixes
@@ -47,32 +57,32 @@ Note that these plans are subject to change and might not materialize completely
 - Android 10 target version updates
 - AndroidX migration
 - AndroidTV improvements
-- Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
+
 
 #### Next Year
-- reasonably regular updates of rclone
+- Reasonably regular updates of rclone
 - F-Droid availability
 
 Screenshots
 -----------
 
-Remotes|Encrypted Config|File Explorer|File Upload
+Remotes|File Editing|File Explorer|File Upload
 :-----:|:--------------:|:-----------:|:---------:|
-![screenshot1](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_1.png?raw=true)|![screenshot11](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_11.png?raw=true)|![screenshot2](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_2.png?raw=true)|![screenshot3](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_3.png?raw=true)
+![screenshot1](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_1.png?raw=true)|![screenshot4](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_4.png?raw=true)|![screenshot2](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_2.png?raw=true)|![screenshot3](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_3.png?raw=true)
 
-File Editing|Empty Folder|Dark Theme|Encrypted Config
+Dark Theme|File Editing|Encrypted Config| Empty Folder
 :----------:|:----------:|:--------:|:-------------:|
-![screenshot4](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_4.png?raw=true)|![screenshot5](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_5.png?raw=true)|![screenshot6](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_6.png?raw=true)|![screenshot10](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_10.png?raw=true)
-**File Explorer**|**File Editing**|**Empty Folder**|
-![screenshot7](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_7.png?raw=true)|![screenshot8](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_8.png?raw=true)|![screenshot9](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_9.png?raw=true)|
+![screenshot7](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_7.png?raw=true)|![screenshot8](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_8.png?raw=true)|![screenshot10](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_10.png?raw=true) | ![screenshot9](https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/master/screenshots/screenshot_9.png?raw=true) |
 
 Installation
 ------------
-Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. Only devices running Android Lollipop 5.0 and up are supported.
+Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. Only devices running Android Lollipop 5.0 and up are supported. 
+
+If you don't know which version to pick use ```app-fatapk-release.apk```.
 
 Known Issues
 ------------
-- OneDrive remotes can no longer be configured in the app and must be imported.
+- OneDrive remotes can no longer be configured in the app and must be imported. You can configure them in Termux, copy the configuration file to an accessible destination and import from there.
 
 Credits/Libraries
 -----------------
