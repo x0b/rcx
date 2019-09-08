@@ -7,14 +7,14 @@ android {
             keyAlias 'github_x0b'
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId 'ca.pkay.rcloneexplorer.x0b'
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 30
-        versionName '1.7.5'
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        targetSdkVersion 29
+        versionCode 31
+        versionName '1.7.6'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -23,6 +23,9 @@ android {
         }
     }
     sourceSets {
+        main {
+            jniLibs.srcDirs = ["lib/x86"]
+        }
         x86 {
             jniLibs.srcDirs = ["lib/x86"]
         }
