@@ -87,6 +87,8 @@ import ca.pkay.rcloneexplorer.Services.UploadService;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
+import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
+
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
                                                                 BreadcrumbView.OnClickListener,
@@ -1903,7 +1905,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
             }
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(intent);
+            tryStartActivity(context, intent);
         }
     }
 

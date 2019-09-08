@@ -54,6 +54,8 @@ import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
 
+import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
+
 public class MainActivity   extends AppCompatActivity
                             implements  NavigationView.OnNavigationItemSelectedListener,
                                         RemotesFragment.OnRemoteClickListener,
@@ -471,13 +473,13 @@ public class MainActivity   extends AppCompatActivity
     private void openAppUpdate() {
         Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
+        tryStartActivity(this, intent);
     }
 
     private void openBetaUpdate(String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
+        tryStartActivity(this, intent);
     }
 
     @Override

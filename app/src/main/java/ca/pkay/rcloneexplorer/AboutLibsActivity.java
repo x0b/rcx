@@ -21,6 +21,8 @@ import java.util.Map;
 
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.AboutLibrariesAdapter;
 
+import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
+
 public class AboutLibsActivity extends AppCompatActivity implements AboutLibrariesAdapter.OnClickListener {
 
     private List<String> libraryNames;
@@ -135,7 +137,7 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
+            tryStartActivity(this, intent);
         }
     }
 }
