@@ -2,7 +2,7 @@ package ca.pkay.rcloneexplorer.Items;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import ca.pkay.rcloneexplorer.R;
 

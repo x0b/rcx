@@ -57,7 +57,7 @@
         android:text="@string/authentication"
         android:textColor="?attr/colorAccent" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -78,9 +78,9 @@
             android:textSize="12sp"
             android:textColor="?attr/textColorSecondary"
             android:text="@string/optional"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -103,6 +103,6 @@
             android:textSize="12sp"
             android:textColor="?attr/textColorSecondary"
             android:text="@string/optional"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
