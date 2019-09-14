@@ -530,6 +530,24 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             }
         }
 
+        // Retrieve by trial & error
+        File[] directories = getExternalFilesDirs(null);
+        for(File directory : directories){
+            try {
+                File target = directory.getParentFile().getParentFile().getParentFile().getParentFile();
+                if(target.canRead()){
+                    String targetPath = target.getCanonicalPath();
+                    if(storageDirectories.contains(targetPath)){
+                        continue;
+                    } else {
+                        storageDirectories.add(targetPath);
+                    }
+                }
+            } catch (IOException | SecurityException | NullPointerException e) {
+                Log.i("FilePicker", "File discovery exception ", e);
+            }
+        }
+
         return storageDirectories;
     }
 }
