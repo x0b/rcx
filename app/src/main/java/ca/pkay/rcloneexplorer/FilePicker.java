@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -333,7 +335,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         builder.setTitle(R.string.select_storage);
 
         int selected = availableStorage.indexOf(root.getAbsolutePath());
-        CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
+        final CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
         builder.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -344,15 +346,22 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switchStorage(userSelected[0]);
+                try {
+                    switchStorage(userSelected[0]);
+                } catch (IOException e) {
+                    Log.e("FilePicker", "Path not accessible", e);
+                }
             }
         });
 
         builder.show();
     }
 
-    private void switchStorage(int which) {
+    private void switchStorage(int which) throws IOException {
         File newStorage = new File(availableStorage.get(which));
+        if(!newStorage.canRead()) {
+            throw new IOException("Location not accessible");
+        }
         root = current = newStorage;
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
         sortDirectory();
