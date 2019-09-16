@@ -1,4 +1,19 @@
-### 1.7.5
+### 1.8.2
+* **New:** Update to Rclone v1.49.3
+* **New:** Improved Android 10 support: Streaming now works with third party players
+* **New:** Improved Android TV support: App no longer crashes on unsupported link types and will show up on your home screen if installed
+* **New:** Support more external storage options when selecting files for upload
+* **New:** Updated dependencies and migrated to AndroidX
+* **Fix:** Crash when selecting inaccessible storage location
+
+***
+
+### 1.8.1 (previously released as 1.7.5-android10test)
+* **Fix:** Rebuild with go1.13 for Android 10 testing
+
+***
+
+### 1.8.0 (previously released as v1.7.5)
 * First Release with non-conflicting package name
 * **New:** Update to Rclone v1.49.1
 * **New:** Support for devices with x86_64 cpu and new Android W^X policy
