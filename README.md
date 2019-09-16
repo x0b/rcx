@@ -35,29 +35,24 @@ Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version
-- Fixes for various bugs
-- Import without document UI
-- Android 10 (Android Q) readiness updates
-- Update to rclone 1.49.1
-- Support for x86_64 and automatic architecture editions
+#### Current Version (1.8.2)
+- Update to rclone 1.49.3
+- Android 10: Streaming now works with third party players (MX Player, VLC)
+- AndroidX migration
+- AndroidTV improvements (launcher & intent integration)
+- Support more external storage options when selecting files for upload
+- Fixed crash when selecting inaccessible storage location
 
 #### Next Version
 - Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
 - New remotes
 - Bug fixes
-- Android 10 target version updates
-- AndroidX migration
-- AndroidTV improvements (launcher & intent integration)
-
 
 #### Next Month(s)
 - Bug fixes
 - Configuration dialogs for more remotes
 - Android 10 target version updates
-- AndroidX migration
 - AndroidTV improvements
-
 
 #### Next Year
 - Reasonably regular updates of rclone
@@ -78,7 +73,7 @@ Installation
 ------------
 Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. Only devices running Android Lollipop 5.0 and up are supported. 
 
-If you don't know which version to pick use ```app-fatapk-release.apk```.
+If you don't know which version to pick use ```rcloneExplorer-fatapk-release.apk```.
 
 Known Issues
 ------------

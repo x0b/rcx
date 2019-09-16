@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:background="?selectableItemBackground">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:orientation="horizontal">
@@ -53,5 +53,5 @@
             app:layout_constraintEnd_toStartOf="@id/remote_options"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

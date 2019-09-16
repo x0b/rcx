@@ -67,4 +67,6 @@ release/
 .idea/misc.xml
 .idea/modules.xml
 .idea/codeStyles/Project.xml
-
+.idea/codeStyles/codeStyleConfig.xml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/

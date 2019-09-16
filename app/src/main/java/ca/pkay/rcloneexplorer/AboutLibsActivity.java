@@ -8,11 +8,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.AboutLibrariesAdapter;
+
+import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
 
 public class AboutLibsActivity extends AppCompatActivity implements AboutLibrariesAdapter.OnClickListener {
 
@@ -135,7 +137,7 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
+            tryStartActivity(this, intent);
         }
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/background"
     android:layout_width="match_parent"
@@ -16,14 +16,14 @@
     <include
         layout="@layout/no_search_results" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/file_explorer_srl"
         android:layout_width="600dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_above="@+id/bottom_bar" >
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/file_explorer_list"
@@ -31,7 +31,7 @@
             android:paddingBottom="54dp"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/fragment_file_explorer_item" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
         android:id="@+id/fab_overlay"
@@ -77,4 +77,4 @@
         android:focusable="true"
         layout="@layout/move_bar"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

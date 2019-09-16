@@ -9,12 +9,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+
+import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -117,7 +119,7 @@ public class AboutActivity extends AppCompatActivity {
 
     private void openAppGitHubLink() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_app_url)));
-        startActivity(browserIntent);
+        tryStartActivity(this, browserIntent);
     }
 
     private void reportBug() {
@@ -130,11 +132,11 @@ public class AboutActivity extends AppCompatActivity {
         );
         String baseUri = getString(R.string.github_issue_url);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri + Uri.encode(template)));
-        startActivity(browserIntent);
+        tryStartActivity(this, browserIntent);
     }
 
     private void openAuthorGitHubLink() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_author_url)));
-        startActivity(browserIntent);
+        tryStartActivity(this, browserIntent);
     }
 }

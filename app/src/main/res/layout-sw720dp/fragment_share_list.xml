@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,14 +11,14 @@
     <include
         layout="@layout/empty_directory_state" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="600dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:layout_above="@+id/move_bar" >
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/recycler_view"
@@ -26,7 +26,7 @@
             android:paddingBottom="54dp"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/fragment_file_explorer_item" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
         android:id="@+id/move_bar"
@@ -40,4 +40,4 @@
         android:clickable="true"
         android:focusable="true"
         layout="@layout/move_bar"/>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

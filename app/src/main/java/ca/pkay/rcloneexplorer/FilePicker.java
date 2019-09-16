@@ -1,24 +1,22 @@
 package ca.pkay.rcloneexplorer;
 
 import android.app.ActivityManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,18 +27,16 @@ import android.widget.Toast;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Stack;
 import java.util.regex.Pattern;
 
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
 import es.dmoral.toasty.Toasty;
-
-import static android.os.Build.VERSION.SDK_INT;
 
 public class FilePicker extends AppCompatActivity implements    FilePickerAdapter.OnClickListener,
                                                                 InputDialog.OnPositive,
@@ -339,7 +335,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         builder.setTitle(R.string.select_storage);
 
         int selected = availableStorage.indexOf(root.getAbsolutePath());
-        CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
+        final CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
         builder.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -350,15 +346,22 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switchStorage(userSelected[0]);
+                try {
+                    switchStorage(userSelected[0]);
+                } catch (IOException e) {
+                    Log.e("FilePicker", "Path not accessible", e);
+                }
             }
         });
 
         builder.show();
     }
 
-    private void switchStorage(int which) {
+    private void switchStorage(int which) throws IOException {
         File newStorage = new File(availableStorage.get(which));
+        if(!newStorage.canRead()) {
+            throw new IOException("Location not accessible");
+        }
         root = current = newStorage;
         fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
         sortDirectory();
@@ -524,6 +527,24 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 // All Secondary SD-CARDs splited into array
                 final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
                 Collections.addAll(storageDirectories, rawSecondaryStorages);
+            }
+        }
+
+        // Retrieve by trial & error
+        File[] directories = getExternalFilesDirs(null);
+        for(File directory : directories){
+            try {
+                File target = directory.getParentFile().getParentFile().getParentFile().getParentFile();
+                if(target.canRead()){
+                    String targetPath = target.getCanonicalPath();
+                    if(storageDirectories.contains(targetPath)){
+                        continue;
+                    } else {
+                        storageDirectories.add(targetPath);
+                    }
+                }
+            } catch (IOException | SecurityException | NullPointerException e) {
+                Log.i("FilePicker", "File discovery exception ", e);
             }
         }
 
