@@ -10,6 +10,9 @@ import android.widget.Toast;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import es.dmoral.toasty.Toasty;
+import io.github.x0b.safdav.SafAccessProvider;
+import io.github.x0b.safdav.SafDAVServer;
+import io.github.x0b.safdav.file.SafConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +38,7 @@ public class Rclone {
     public static final int SERVE_PROTOCOL_HTTP = 1;
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
+    private static SafDAVServer safDAVServer;
     private Context context;
     private String rclone;
     private String rcloneConf;
@@ -119,6 +123,10 @@ public class Rclone {
         }
         if (path.compareTo("//" + remote.getName()) != 0) {
             remoteAndPath += path;
+        }
+        // if SAFW, start emulation server
+        if(remote.isRemoteType(RemoteItem.SAFW) && path.equals("//" + remote.getName()) && safDAVServer == null){
+            safDAVServer = SafAccessProvider.getServer(context);
         }
 
         String[] command = createCommandWithOptions("lsjson", remoteAndPath);
@@ -219,6 +227,12 @@ public class Rclone {
                 if (type == null || type.trim().isEmpty()) {
                     Toasty.error(context, context.getResources().getString(R.string.error_retrieving_remote, key), Toast.LENGTH_SHORT, true).show();
                     continue;
+                }
+                if(type.equals("webdav")){
+                    String url = remoteJSON.getString("url");
+                    if(url != null && url.startsWith(SafConstants.SAF_REMOTE_URL)){
+                        type = SafConstants.SAF_REMOTE_NAME;
+                    }
                 }
 
                 RemoteItem newRemote = new RemoteItem(key, type);

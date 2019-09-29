@@ -5,8 +5,15 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import ca.pkay.rcloneexplorer.R;
+import io.github.x0b.safdav.file.SafConstants;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
+
+    /**
+     * A remote of type SAFW, a virtual WebDAV remote made backed by Storage
+     * Access Framework (SAF).
+     */
+    public final static int SAFW = -10;
 
     public final static int ALIAS = 10;
     public final static int AMAZON_DRIVE = 11;
@@ -173,6 +180,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     private int getTypeFromString(String type) {
         switch (type) {
+            case SafConstants.SAF_REMOTE_NAME:
+                return SAFW;
             case "alias":
                 return ALIAS;
             case "amazon cloud drive":
@@ -241,6 +250,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             return R.drawable.ic_lock_black;
         } else {
             switch (type) {
+                case RemoteItem.SAFW:
+                    return R.drawable.ic_tablet_cellphone;
                 case RemoteItem.AMAZON_DRIVE:
                     return R.drawable.ic_amazon;
                 case RemoteItem.GOOGLE_DRIVE:

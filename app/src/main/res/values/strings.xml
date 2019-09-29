@@ -150,6 +150,9 @@
     <string name="pref_key_wifi_only_transfers">pref_key_wifi_only_transfers</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="pref_key_version_name">pref_key_version_name</string>
+    <string name="pref_key_enable_saf">pref_key_enable_saf</string>
+    <string name="pref_key_enable_vcp">pref_key_enable_vcp</string>
+    <string name="file_access">File Access</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color">Primary Color</string>
     <string name="accent_color">Accent Color</string>
@@ -362,6 +365,7 @@
     <string name="general_settings_icon_content_description">General settings icon</string>
     <string name="notification_settings_icon_content_description">Notification settings icon</string>
     <string name="logging_settings_icon_content_description">Logging settings icon</string>
+    <string name="file_access_settings_icon_content_description">File access settings icon</string>
     <string name="hidden_remotes">Hidden remotes</string>
     <string name="shared_preferences_hidden_remotes">shared_preferences_hidden_remotes</string>
     <string name="select_remotes_to_hide">Select remotes to hide</string>
@@ -371,4 +375,19 @@
     <string name="serve_dialog_title">Serve a remote</string>
     <string name="config_use_external_question">Import found configuration?</string>
     <string name="config_import_external_explain">Automatically import from %1$s</string>
+    <string name="pref_header_file_access">File Access</string>
+    <string name="pref_saf_enable">Enable SAF Client Preview</string>
+    <string name="pref_saf_summary">EXPERIMENTAL: Access SD cards and other storage devices</string>
+    <string name="pref_saf_add_permission">Add Storage</string>
+    <string name="pref_saf_permission_label_primary">Internal Storage (%1$s)</string>
+    <string name="pref_saf_permission_label_external">External Storage (%1$s)</string>
+    <string name="pref_saf_virtual_content_provider_enable">Enable Content Provider Preview</string>
+    <string name="pref_saf_virtual_content_provider_summary">EXPERIMENTAL: Allows you to grant other apps access to rclone remotes</string>
+    <string name="saf_uri_permission_added">Storage added</string>
+    <string name="saf_uri_permission_cancelled">Permission Cancelled</string>
+    <string name="saf_uri_permission_error">Invalid permission - can not access storage</string>
+    <string name="saf_uri_permission_already_added">Storage or a subfolder is already added</string>
+    <string name="saf_uri_permission_no_support">Third party not yet supported. Open an issue with the affected app name.</string>
+    <string name="virtual_content_provider_summary">%1$d Remotes available</string>
+    <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>
 </resources>

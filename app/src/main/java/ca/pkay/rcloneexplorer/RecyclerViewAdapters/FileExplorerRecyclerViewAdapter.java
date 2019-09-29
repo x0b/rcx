@@ -2,8 +2,6 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.content.res.Resources;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,16 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import io.github.x0b.safdav.file.SafConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
@@ -98,17 +97,29 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
 
         if (showThumbnails && !item.isDir()) {
+            String server = "http://127.0.0.1:29170/";
+            boolean localLoad = item.getRemote().getType() == RemoteItem.SAFW;
             String mimeType = item.getMimeType();
             if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= 20970000) {
                 RequestOptions glideOption = new RequestOptions()
                         .centerCrop()
                         .placeholder(R.drawable.ic_file);
-                Glide
-                        .with(context)
-                        .load("http://127.0.0.1:29170/" + item.getPath())
-                        .apply(glideOption)
-                        .thumbnail(0.1f)
-                        .into(holder.fileIcon);
+                if(localLoad) {
+                    Glide
+                            .with(context)
+                            .load(SafConstants.SAF_REMOTE_URL + item.getPath())
+                            .apply(glideOption)
+                            .thumbnail(0.1f)
+                            .into(holder.fileIcon);
+                } else {
+                    Glide
+                            .with(context)
+                            .load(server + item.getPath())
+                            .apply(glideOption)
+                            .thumbnail(0.1f)
+                            .into(holder.fileIcon);
+                }
+
             } else {
                 holder.fileIcon.setImageResource(R.drawable.ic_file);
             }

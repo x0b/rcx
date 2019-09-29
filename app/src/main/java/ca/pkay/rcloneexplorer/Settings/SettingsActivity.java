@@ -97,6 +97,8 @@ public class SettingsActivity extends AppCompatActivity implements  SettingsFrag
     private void restoreFragment(Fragment fragment) {
         if (fragment instanceof GeneralSettingsFragment) {
             startGeneralSettingsFragment();
+        } else if (fragment instanceof FileAccessSettingsFragment) {
+            startFileAccessSettingsFragment();
         } else if (fragment instanceof LookAndFeelSettingsFragment) {
             startLookAndFeelSettingsFragment();
         } else if (fragment instanceof NotificationsSettingsFragment) {
@@ -115,6 +117,13 @@ public class SettingsActivity extends AppCompatActivity implements  SettingsFrag
     private void startGeneralSettingsFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, GeneralSettingsFragment.newInstance(), SAVED_FRAGMENT);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void startFileAccessSettingsFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.flFragment, FileAccessSettingsFragment.newInstance(), SAVED_FRAGMENT);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -145,6 +154,9 @@ public class SettingsActivity extends AppCompatActivity implements  SettingsFrag
         switch (category) {
             case SettingsFragment.GENERAL_SETTINGS:
                 startGeneralSettingsFragment();
+                break;
+            case SettingsFragment.FILE_ACCESS_SETTINGS:
+                startFileAccessSettingsFragment();
                 break;
             case SettingsFragment.LOOK_AND_FEEL_SETTINGS:
                 startLookAndFeelSettingsFragment();

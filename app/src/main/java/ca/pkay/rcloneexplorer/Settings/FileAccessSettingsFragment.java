@@ -1,6 +1,7 @@
 package ca.pkay.rcloneexplorer.Settings;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.VirtualContentProvider;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.file.SafConstants;
 
@@ -66,7 +68,7 @@ public class FileAccessSettingsFragment extends Fragment {
         setClickListeners();
 
         if (getActivity() != null) {
-            getActivity().setTitle(getString(R.string.pref_header_general));
+            getActivity().setTitle(getString(R.string.pref_header_file_access));
         }
 
         return view;
@@ -165,16 +167,33 @@ public class FileAccessSettingsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(Activity.RESULT_OK == resultCode) {
             Uri uri = data.getData();
-            if (null == uri) {
-                Toasty.error(context, "Could not configure storage device", Toast.LENGTH_SHORT, true).show();
+            if (null == uri || uri.getAuthority().equals("io.github.x0b.safdav")){
+                Toasty.error(context, getString(R.string.saf_uri_permission_error), Toast.LENGTH_LONG, true).show();
                 return;
             }
             if (requestCode == onDocumentTreeOpened) {
                 final int takeFlags = data.getFlags()
                         & (Intent.FLAG_GRANT_READ_URI_PERMISSION
                         | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                context.getContentResolver().takePersistableUriPermission(uri, takeFlags);
+                ContentResolver contentResolver = context.getContentResolver();
+                for (UriPermission uriPermission : contentResolver.getPersistedUriPermissions()) {
+                    if(uri.toString().startsWith(uriPermission.getUri().toString())){
+                        // granted uri is less specific than already granted ones, reject
+                        Toasty.error(context, getString(R.string.saf_uri_permission_already_added), Toast.LENGTH_LONG, true).show();
+                        return;
+                    }
+                }
+                // discard non-android storage devices
+                if(!"com.android.externalstorage.documents".equals(uri.getAuthority())){
+                    Toasty.error(context, getString(R.string.saf_uri_permission_no_support), Toast.LENGTH_LONG, true).show();
+                    return;
+                }
+                contentResolver.takePersistableUriPermission(uri, takeFlags);
+                permissionList.updatePermissions(context.getContentResolver().getPersistedUriPermissions());
+                Toasty.normal(context, getString(R.string.saf_uri_permission_added), Toast.LENGTH_SHORT).show();
             }
+        } else if(Activity.RESULT_CANCELED == resultCode){
+            Toasty.normal(context, getString(R.string.saf_uri_permission_cancelled), Toast.LENGTH_SHORT).show();
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (getActivity() != null) {
@@ -241,6 +260,11 @@ public class FileAccessSettingsFragment extends Fragment {
             context.getContentResolver().releasePersistableUriPermission(permission.getUri(),
                     Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             permissions.remove(index);
+            notifyDataSetChanged();
+        }
+
+        public void updatePermissions(List<UriPermission> newPermissions) {
+            this.permissions = newPermissions;
             notifyDataSetChanged();
         }
     }

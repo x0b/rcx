@@ -457,6 +457,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     }
 
 
+    // TODO: prepare for scoped storage / SAF on API >= 29
     /*
      * based on the answer from https://stackoverflow.com/questions/11281010/how-can-i-get-external-sd-card-path-for-android-4-0/18871043#18871043
      */
