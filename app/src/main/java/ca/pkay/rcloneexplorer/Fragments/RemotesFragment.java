@@ -85,23 +85,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         setHasOptionsMenu(true);
         ((FragmentActivity) context).setTitle(getString(R.string.remotes_toolbar_title));
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<String>());
-
         rclone = new Rclone(getContext());
-        remotes = rclone.getRemotes();
-
-        if (!hiddenRemotes.isEmpty()) {
-            ArrayList<RemoteItem> toBeHidden = new ArrayList<>();
-            for (RemoteItem remoteItem : remotes) {
-                if (hiddenRemotes.contains(remoteItem.getName())) {
-                    toBeHidden.add(remoteItem);
-                }
-            }
-            remotes.removeAll(toBeHidden);
-        }
-
-        Collections.sort(remotes);
+        remotes = filterRemotes();
     }
 
     @Nullable
@@ -309,12 +294,15 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     private void refreshRemotes() {
+        remotes = filterRemotes();
+        recyclerViewAdapter.newData(remotes);
+    }
+
+    private List<RemoteItem> filterRemotes() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<String>());
-
         remotes = rclone.getRemotes();
-
-        if (!hiddenRemotes.isEmpty()) {
+        if (hiddenRemotes != null && !hiddenRemotes.isEmpty()) {
             ArrayList<RemoteItem> toBeHidden = new ArrayList<>();
             for (RemoteItem remoteItem : remotes) {
                 if (hiddenRemotes.contains(remoteItem.getName())) {
@@ -325,8 +313,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         }
 
         Collections.sort(remotes);
-
-        recyclerViewAdapter.newData(remotes);
+        return remotes;
     }
 
     private void showHiddenRemotesDialog() {
