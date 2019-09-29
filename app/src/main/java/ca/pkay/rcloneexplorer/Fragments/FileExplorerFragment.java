@@ -1,7 +1,6 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -15,20 +14,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.content.FileProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -43,10 +28,50 @@ import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
+import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
+import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
+import ca.pkay.rcloneexplorer.Dialogs.LinkDialog;
+import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
+import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
+import ca.pkay.rcloneexplorer.Dialogs.ServeDialog;
+import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
+import ca.pkay.rcloneexplorer.FileComparators;
+import ca.pkay.rcloneexplorer.FilePicker;
+import ca.pkay.rcloneexplorer.Items.DirectoryObject;
+import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.MainActivity;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.Services.DeleteService;
+import ca.pkay.rcloneexplorer.Services.DownloadService;
+import ca.pkay.rcloneexplorer.Services.MoveService;
+import ca.pkay.rcloneexplorer.Services.StreamingService;
+import ca.pkay.rcloneexplorer.Services.SyncService;
+import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
+import ca.pkay.rcloneexplorer.Services.UploadService;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
+import es.dmoral.toasty.Toasty;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,35 +84,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import ca.pkay.rcloneexplorer.BreadcrumbView;
-import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
-import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
-import ca.pkay.rcloneexplorer.Dialogs.LinkDialog;
-import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
-import ca.pkay.rcloneexplorer.Dialogs.ServeDialog;
-import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
-import ca.pkay.rcloneexplorer.FileComparators;
-import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
-import ca.pkay.rcloneexplorer.FilePicker;
-import ca.pkay.rcloneexplorer.Items.DirectoryObject;
-import ca.pkay.rcloneexplorer.Items.FileItem;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
-import ca.pkay.rcloneexplorer.MainActivity;
-import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.Services.DeleteService;
-import ca.pkay.rcloneexplorer.Services.DownloadService;
-import ca.pkay.rcloneexplorer.Services.MoveService;
-import ca.pkay.rcloneexplorer.Services.StreamingService;
-import ca.pkay.rcloneexplorer.Services.SyncService;
-import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
-import ca.pkay.rcloneexplorer.Services.UploadService;
-import es.dmoral.toasty.Toasty;
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
-
 import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
+import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivityForResult;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
@@ -2003,7 +2001,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     loadingDialog.dismiss();
                 }
             }
-            startActivityForResult(intent, STREAMING_INTENT_RESULT);
+            tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
             return null;
         }
     }
