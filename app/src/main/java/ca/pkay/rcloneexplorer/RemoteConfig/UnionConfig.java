@@ -251,11 +251,13 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
     private static class RemotePathsViewHolder extends RecyclerView.ViewHolder {
 
         TextView text;
+        ImageView icon;
         String path;
 
         public RemotePathsViewHolder(@NonNull View itemView, final RemotesListAdapter adapter){
             super(itemView);
             text = itemView.findViewById(R.id.remote_path);
+            icon = itemView.findViewById(R.id.remote_icon);
             itemView.findViewById(R.id.remote_remove).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

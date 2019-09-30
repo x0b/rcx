@@ -22,7 +22,7 @@ public class RemotesConfigList extends Fragment {
         void onProviderSelected(int provider);
     }
 
-    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("DRIVE", "LOCAL", "CACHE", "AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX"));
+    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("DRIVE", "LOCAL", "CACHE", "AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX", "UNION"));
     private int[] selected = {-1};
     private RadioButton lastSelected;
     private ProviderSelectedListener listener;
@@ -269,6 +269,15 @@ public class RemotesConfigList extends Fragment {
             }
         });
 
+        View providerUnion = View.inflate(context, R.layout.config_list_item_template, null);
+        ((TextView)providerUnion.findViewById(R.id.provider_tv)).setText(R.string.provider_union);
+        providerUnion.findViewById(R.id.provider).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RadioButton rb = v.findViewById(R.id.provider_rb);
+                setSelected(rb, "UNION");
+            }
+        });
 
         listContent.addView(providerAlias);
         listContent.addView(providerB2);
@@ -290,7 +299,7 @@ public class RemotesConfigList extends Fragment {
         listContent.addView(providerSFTP);
         listContent.addView(providerWebdav);
         listContent.addView(providerYandex);
-
+        listContent.addView(providerUnion);
     }
 }
 

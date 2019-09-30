@@ -283,6 +283,10 @@
     <string name="provider_azureblob">Microsoft Azure Blob Storage</string>
     <string name="provider_local">Local</string>
     <string name="provider_drive">Drive</string>
+    <string name="provider_union">Union</string>
+    <string name="union_add_remote">Add Remote</string>
+    <string name="union_select_remote">Select remote path for Union</string>
+    <string name="create">Create</string>
     <string name="no_remotes">There are no remotes</string>
     <string name="choose_dir">Choose directory</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
