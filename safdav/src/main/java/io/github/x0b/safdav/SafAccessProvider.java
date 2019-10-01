@@ -12,6 +12,7 @@ import io.github.x0b.safdav.file.SafConstants;
 public class SafAccessProvider {
 
     private static SafDAVServer davServer;
+    private static SafDirectServer directServer;
 
     public static SafDAVServer getServer(Context context){
         if(null == davServer){
@@ -23,6 +24,13 @@ public class SafAccessProvider {
             }
         }
         return davServer;
+    }
+
+    public static SafDirectServer getDirectServer(Context context) {
+        if(null == directServer) {
+            directServer = new SafDirectServer(context);
+        }
+        return directServer;
     }
 
 }
