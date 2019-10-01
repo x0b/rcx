@@ -5,7 +5,7 @@
 
 
 # RcloneExplorer
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/master/releases) [![GitHub release](https://img.shields.io/github/release-pre/x0b/rcloneExplorer)](https://github.com/x0b/rcloneExplorer/releases/latest) [![GitHub release](https://img.shields.io/github/v/release/x0b/rcloneExplorer?include_prereleases)](https://github.com/x0b/rcloneExplorer/releases/latest)
+[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/releases) [![GitHub release](https://img.shields.io/github/v/release/x0b/rcloneExplorer?include_prereleases)](https://github.com/x0b/rcloneExplorer/releases/latest)
 
 rclone explorer for Android
 
@@ -26,33 +26,33 @@ Features
     - Customizable primary and accent colors
 - Configuration
     - Import and export rclone configuration files
-    - Encrypted configurations
+    - Encrypted configurations (import only)
 - Platform support
     - Supports ARM and x86 devices
     - Supports SDK 21+ (Lollipop 5.0)
+    - Supports Storage Access Framework (SAF) ([see docs](https://github.com/x0b/rcloneExplorer/wiki#adding-local-storage-saf))
 
 Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version (1.8.2)
-- Update to rclone 1.49.3
-- Android 10: Streaming now works with third party players (MX Player, VLC)
-- AndroidX migration
-- AndroidTV improvements (launcher & intent integration)
-- Support more external storage options when selecting files for upload
-- Fixed crash when selecting inaccessible storage location
+#### Current Version (1.9.0)
+ - Update rclone to 1.49.4
+ - Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
+ - Added support for creating union remotes
+ - Fix: Crash when no compatible streaming app is installed
+ - Fix: Crash on LoadingDialog (#7)
+ - Fix: Crash on Android 5.1.1 for remotes with time zones (#10)
+ - Fix: Crash in hide remotes dialog (#13)
 
 #### Next Version
-- Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
-- New remotes
+- New SAF implementation for much faster directory access
 - Bug fixes
 
 #### Next Month(s)
 - Bug fixes
 - Configuration dialogs for more remotes
-- Android 10 target version updates
-- AndroidTV improvements
+- Virtual Content Provider (allows access to rclone remotes from other apps)
 
 #### Next Year
 - Reasonably regular updates of rclone
@@ -78,6 +78,10 @@ If you don't know which version to pick use ```rcloneExplorer-fatapk-release.apk
 Known Issues
 ------------
 - OneDrive remotes can no longer be configured in the app and must be imported. You can configure them in Termux, copy the configuration file to an accessible destination and import from there.
+
+Contributing
+------------
+You can contribute by reporting any bugs and errors using the [issue tracker](https://github.com/x0b/rcloneExplorer/issues). Pull requests are welcome, but you have to accept a small CLA to ensure license compatibility.
 
 Credits/Libraries
 -----------------

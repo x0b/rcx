@@ -1,3 +1,14 @@
+### 1.9.0
+* **New:** Update to Rclone v1.49.4
+* **New:** Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
+* **New:** Support for creating union remotes
+* **Fix:** Crash when no compatible streaming app is installed
+* **Fix:** Crash on LoadingDialog
+* **Fix:** Crash on Android 5.1.1 for remotes with time zones
+* **Fix:** Crash in hide remotes dialog
+
+***
+
 ### 1.8.2
 * **New:** Update to Rclone v1.49.3
 * **New:** Improved Android 10 support: Streaming now works with third party players
