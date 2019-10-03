@@ -725,6 +725,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void startThumbnailService() {
+        if(RemoteItem.SAFW == remote.getType()){
+            // safdav also serves files for thumbnails
+            return;
+        }
         Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
         context.startService(serveIntent);

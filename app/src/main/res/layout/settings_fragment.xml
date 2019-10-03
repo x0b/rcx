@@ -48,6 +48,43 @@
         </RelativeLayout>
 
         <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/dividerColor"/>
+
+        <RelativeLayout
+                android:id="@+id/file_access_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="24dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackground" >
+
+            <ImageView
+                    android:id="@+id/file_access_settings_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:tint="?attr/iconTint"
+                    android:src="@drawable/ic_file_black"
+                    android:contentDescription="@string/file_access_settings_icon_content_description" />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/file_access_settings_icon"
+                    android:paddingStart="32dp"
+                    android:paddingEnd="0dp"
+                    android:textColor="?attr/textColorPrimary"
+                    android:textStyle="bold"
+                    android:text="@string/file_access"/>
+        </RelativeLayout>
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?attr/dividerColor"/>

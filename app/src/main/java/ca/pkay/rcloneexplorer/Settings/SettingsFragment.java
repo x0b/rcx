@@ -15,9 +15,10 @@ import ca.pkay.rcloneexplorer.R;
 public class SettingsFragment extends Fragment {
 
     public final static int GENERAL_SETTINGS = 1;
-    public final static int LOOK_AND_FEEL_SETTINGS = 2;
-    public final static int LOGGING_SETTINGS = 3;
-    public final static int NOTIFICATION_SETTINGS = 4;
+    public final static int FILE_ACCESS_SETTINGS = 2;
+    public final static int LOOK_AND_FEEL_SETTINGS = 3;
+    public final static int LOGGING_SETTINGS = 4;
+    public final static int NOTIFICATION_SETTINGS = 5;
     private OnSettingCategorySelectedListener clickListener;
 
     public interface OnSettingCategorySelectedListener {
@@ -79,6 +80,13 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.logging_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onSettingCategoryClicked(LOGGING_SETTINGS);
+            }
+        });
+
         view.findViewById(R.id.look_and_feel_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +98,13 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 clickListener.onSettingCategoryClicked(NOTIFICATION_SETTINGS);
+            }
+        });
+
+        view.findViewById(R.id.file_access_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onSettingCategoryClicked(FILE_ACCESS_SETTINGS);
             }
         });
     }
