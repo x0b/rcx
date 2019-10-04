@@ -295,7 +295,9 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
     private void refreshRemotes() {
         remotes = filterRemotes();
-        recyclerViewAdapter.newData(remotes);
+        if (null != recyclerViewAdapter) {
+            recyclerViewAdapter.newData(remotes);
+        }
     }
 
     private List<RemoteItem> filterRemotes() {

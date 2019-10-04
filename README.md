@@ -1,19 +1,22 @@
->**NOTE:**
->This is a modified build of rcloneExplorer because of little activity in the parent repo. For the parent repository, see [kaczmarkiewiczp/rcloneExplorer](https://github.com/kaczmarkiewiczp/rcloneExplorer).
->
->If you encounter an issue with a [version published here](https://github.com/x0b/rcloneExplorer/releases), [open an issue here](https://github.com/x0b/rcloneExplorer/issues/new). 
-
-
 # RcloneExplorer
 [![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/x0b/rcloneExplorer/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcloneExplorer/total.svg)](https://github.com/x0b/rcloneExplorer/releases) [![GitHub release](https://img.shields.io/github/v/release/x0b/rcloneExplorer?include_prereleases)](https://github.com/x0b/rcloneExplorer/releases/latest)
 
 rclone explorer for Android
 
+>**Note:**
+>This is a modified build of rcloneExplorer because of little activity in the parent repo. For the parent repository, see [kaczmarkiewiczp/rcloneExplorer](https://github.com/kaczmarkiewiczp/rcloneExplorer).
+>
+>If you encounter an issue with a [version published here](https://github.com/x0b/rcloneExplorer/releases), [open an issue here](https://github.com/x0b/rcloneExplorer/issues/new). 
+
+## SECURITY NOTICE
+If you are running rcloneExplorer **1.3.5** to **1.8.2**, or AIS-synchro make sure that "Show thumbnails" in ```Settings``` > ```General``` is **disabled** and update to the latest version. If you have not enabled thumbnails, you are not affected.
+More details in [Security Notice 201901: Remote contents readable from local network when browsing any remote with thumbnails enabled](https://github.com/x0b/rcloneExplorer/wiki/Security-Notice-201901-Remote-contents-readable-from-local-network-when-browsing-any-remote-with-thumbnails-enabled).
+
 Features
 --------
 - File Management
     - List and view files
-    - Dowload and upload files
+    - Download and upload files
     - Move, rename, and delete files and folders
 - Streaming & Integration
     - Streaming media files
@@ -44,6 +47,7 @@ Note that these plans are subject to change and might not materialize completely
  - Fix: Crash on LoadingDialog (#7)
  - Fix: Crash on Android 5.1.1 for remotes with time zones (#10)
  - Fix: Crash in hide remotes dialog (#13)
+ - Fix: Security issue when using thumbnails (#18)
 
 #### Next Version
 - New SAF implementation for much faster directory access
