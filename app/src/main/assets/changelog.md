@@ -6,7 +6,7 @@
 * **Fix:** Crash on LoadingDialog
 * **Fix:** Crash on Android 5.1.1 for remotes with time zones
 * **Fix:** Crash in hide remotes dialog
-
+* **Fix:** Security issue when using thumbnails (details see wiki)
 ***
 
 ### 1.8.2
