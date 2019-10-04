@@ -2,9 +2,9 @@ package io.github.x0b.safdav;
 
 import android.content.Context;
 import android.net.Uri;
-import io.github.x0b.safdav.saf.DocumentsContractAccess;
 import io.github.x0b.safdav.file.ItemAccess;
 import io.github.x0b.safdav.file.SafItem;
+import io.github.x0b.safdav.saf.DocumentsContractAccess;
 import io.github.x0b.safdav.saf.ProviderPaths;
 
 import java.util.List;
@@ -64,5 +64,20 @@ public class SafDirectServer {
     public void delete(String path) {
         Uri itemUri = providerPaths.getUriByMappedPath(path);
         itemAccess.deleteItem(itemUri);
+    }
+
+    /**
+     * Get a content uri from a SafDAV server uri
+     * @param safDavUri the uri to decode - include any non-host path
+     * @return an accessible content uri
+     * @throws io.github.x0b.safdav.file.ItemNotFoundException if the uri is not accessible
+     */
+    public Uri getContentUri(String safDavUri) {
+        return providerPaths.getUriByMappedPath(safDavUri);
+    }
+
+    public Uri getDocumentUri(String safDavUri) {
+        Uri itemUri = providerPaths.getUriByMappedPath(safDavUri);
+        return itemAccess.readMeta(itemUri).getUri();
     }
 }

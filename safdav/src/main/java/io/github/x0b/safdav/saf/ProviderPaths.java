@@ -43,7 +43,7 @@ public class ProviderPaths {
      */
     public Uri getUriByMappedPath(String requestUri) {
         if(null == requestUri || '/' != requestUri.charAt(0)){
-            throw new IllegalArgumentException("You must request an actual path permission");
+            throw new IllegalArgumentException("You must request an actual path permission, not " + requestUri);
         }
 
         Log.v(TAG, "Rewriting URI: " + requestUri);

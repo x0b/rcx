@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,7 +18,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import io.github.x0b.safdav.file.SafConstants;
+import io.github.x0b.safdav.SafAccessProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,9 +106,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                         .centerCrop()
                         .placeholder(R.drawable.ic_file);
                 if(localLoad) {
+                    Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/'+item.getPath());
                     Glide
                             .with(context)
-                            .load(SafConstants.SAF_REMOTE_URL + item.getPath())
+                            .load(contentUri)
                             .apply(glideOption)
                             .thumbnail(0.1f)
                             .into(holder.fileIcon);

@@ -2,6 +2,7 @@ package io.github.x0b.safdav;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Base64;
 import android.util.Log;
 import fi.iki.elonen.NanoHTTPD;
 import io.github.x0b.safdav.file.FileAccessError;
@@ -16,6 +17,7 @@ import io.github.x0b.safdav.saf.SafFileAccess;
 import io.github.x0b.safdav.xml.XmlResponseSerialization;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class SafDAVServer extends NanoHTTPD {
 
@@ -24,12 +26,14 @@ public class SafDAVServer extends NanoHTTPD {
     private final ItemAccess itemAccess;
     private final XmlResponseSerialization respSerializer;
     private ProviderPaths paths;
+    private String requiredAuthHeader;
 
     /**
      * SafDAV binds to localhost. You must provide your own port availability checking mechanism
      * Note that authentication is currently not supported.
      * @param port the device port to listen on
      */
+    @Deprecated
     public SafDAVServer(int port, Context context) {
         super(hostname, port);
         itemAccess = new SafFileAccess(context);
@@ -37,8 +41,29 @@ public class SafDAVServer extends NanoHTTPD {
         respSerializer = new XmlResponseSerialization();
     }
 
+    /**
+     * SafDAV binds to localhost. You must provide your own port availability checking mechanism
+     * Note that authentication is currently not supported.
+     * @param port the device port to listen on
+     * @param username username
+     * @param password password
+     * @param context context for file access
+     */
+    public SafDAVServer(int port, String username, String password, Context context) {
+        super(hostname, port);
+        itemAccess = new SafFileAccess(context);
+        this.paths = new ProviderPaths(context);
+        respSerializer = new XmlResponseSerialization();
+        this.requiredAuthHeader = "Basic " + Base64.encodeToString(
+                (username + ':' + password).getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP) ;
+    }
+
     @Override
     public Response serve(IHTTPSession session) {
+        if(!checkAuthorization(session)){
+            Log.e(TAG, "serve: request not (correctly) authenticated");
+            return newFixedLengthResponse(Response.Status.UNAUTHORIZED, null, null);
+        }
         switch (session.getMethod()) {
             // reading methods
             case GET:
@@ -62,6 +87,14 @@ public class SafDAVServer extends NanoHTTPD {
             default:
                 return notImplementedResponse(session, "serve");
         }
+    }
+
+    private boolean checkAuthorization(IHTTPSession session) {
+        if(null == requiredAuthHeader) {
+            return true;
+        }
+        String suppliedAuthHeader = session.getHeaders().get("authorization");
+        return requiredAuthHeader.equals(suppliedAuthHeader);
     }
 
     private Response badRequest(String signature) {
