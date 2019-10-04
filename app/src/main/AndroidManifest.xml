@@ -43,11 +43,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <service android:name=".Services.FirebaseIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
         <service android:name=".Services.ThumbnailsLoadingService" />
         <service android:name=".Services.DeleteService" />
         <service android:name=".Services.MoveService" />

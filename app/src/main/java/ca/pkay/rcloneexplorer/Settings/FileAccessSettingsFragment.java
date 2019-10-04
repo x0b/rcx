@@ -9,10 +9,6 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +17,14 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.VirtualContentProvider;
 import es.dmoral.toasty.Toasty;
+import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.file.SafConstants;
 
 import java.util.ArrayList;
@@ -138,11 +138,17 @@ public class FileAccessSettingsFragment extends Fragment {
     }
 
     private void createSafRemote() {
+        String user = SafAccessProvider.getUser(getContext());
+        String pass = SafAccessProvider.getPassword(getContext());
         ArrayList<String> options = new ArrayList<>();
         options.add(SafConstants.SAF_REMOTE_NAME);
         options.add("webdav");
         options.add("url");
         options.add(SafConstants.SAF_REMOTE_URL);
+        options.add("user");
+        options.add(user);
+        options.add("pass");
+        options.add(pass);
 
         Process process = rclone.configCreate(options);
         try {
