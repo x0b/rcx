@@ -299,6 +299,11 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         // don't do anything
     }
 
+    @Override
+    public String[] getThumbnailServerParams() {
+        return new String[0];
+    }
+
     private void onCreateNewDirectory() {
         if (getFragmentManager() != null) {
             new InputDialog()

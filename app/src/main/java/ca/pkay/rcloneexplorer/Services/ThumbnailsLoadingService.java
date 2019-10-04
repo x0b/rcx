@@ -3,13 +3,14 @@ package ca.pkay.rcloneexplorer.Services;
 import android.app.IntentService;
 import android.content.Intent;
 import androidx.annotation.Nullable;
-
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 
 public class ThumbnailsLoadingService extends IntentService {
 
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.ThumbnailsLoadingService.REMOTE_ARG";
+    public static final String HIDDEN_PATH = "ca.pkay.rcexplorer.ThumbnailsLoadingService.HIDDEN_PATH";
     private Rclone rclone;
     private Process process;
 
@@ -30,17 +31,23 @@ public class ThumbnailsLoadingService extends IntentService {
         }
 
         RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
-        process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, 29170, true, remote, "");
+        String hiddenPath = "/" + intent.getStringExtra(HIDDEN_PATH);
+        process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, 29179, false, null, null, remote, "", hiddenPath);
         if (process != null) {
             try {
+                if(getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE).
+                        getBoolean(getString(R.string.pref_key_logs), false)) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            rclone.logErrorOutput(process);
+                        }
+                    }.start();
+                }
                 process.waitFor();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-
-        if (process != null && process.exitValue() != 0) {
-            rclone.logErrorOutput(process);
         }
     }
 

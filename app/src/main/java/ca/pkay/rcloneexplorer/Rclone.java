@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -25,9 +26,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -122,8 +125,14 @@ public class Rclone {
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
             }
+        } catch (InterruptedIOException iioe) {
+            Log.i(TAG, "logErrorOutput: process died while reading. Log may be incomplete.");
         } catch (IOException e) {
-            Log.e(TAG, "logErrorOutput: ", e);
+            if("Stream closed".equals(e.getMessage())) {
+                Log.d(TAG, "logErrorOutput: could not read stderr, process stream is already closed");
+            } else {
+                Log.e(TAG, "logErrorOutput: ", e);
+            }
             return;
         }
         log2File.log(stringBuilder.toString());
@@ -384,7 +393,9 @@ public class Rclone {
         }
     }
 
-    public Process serve(int protocol, int port, boolean allowRemoteAccess, String user, String password, RemoteItem remote, String servePath) {
+    public Process serve(int protocol, int port, boolean allowRemoteAccess, @Nullable String user,
+                         @Nullable String password, @NonNull RemoteItem remote, @Nullable String servePath,
+                         @Nullable String baseUrl) {
         String remoteName = remote.getName();
         String localRemotePath = (remote.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
         String path = (servePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + servePath;
@@ -410,18 +421,25 @@ public class Rclone {
         String cachePath = context.getCacheDir().getAbsolutePath();
         String[] environmentalVariables = {"TMPDIR=" + cachePath}; // this is a fix for #199
 
-        String[] command;
+        ArrayList<String> params = new ArrayList<>(Arrays.asList(
+                createCommandWithOptions("serve", commandProtocol, "--addr", address, path)));
 
-        if (user == null && password != null) {
-            command = createCommandWithOptions("serve", commandProtocol, "--addr", address, path, "--pass", password);
-        } else if (user != null && password == null) {
-            command = createCommandWithOptions("serve", commandProtocol, "--addr", address, path, "--user", user);
-        } else if (user != null) {
-            command = createCommandWithOptions("serve", commandProtocol, "--addr", address, path, "--user", user, "--pass", password);
-        } else {
-            command = createCommandWithOptions("serve", commandProtocol, "--addr", address, path);
+        if(null != user) {
+            params.add("--user");
+            params.add(user);
         }
 
+        if(null != password) {
+            params.add("--password");
+            params.add(password);
+        }
+
+        if(null != baseUrl) {
+            params.add("--baseurl");
+            params.add(baseUrl);
+        }
+
+        String[] command = params.toArray(new String[0]);
         try {
             if (protocol == SERVE_PROTOCOL_WEBDAV) {
                 return Runtime.getRuntime().exec(command, environmentalVariables);
@@ -434,8 +452,14 @@ public class Rclone {
         }
     }
 
-    public Process serve(int protocol, int port, boolean localhostOnly, RemoteItem remote, String servePath) {
-        return serve(protocol, port, localhostOnly, null, null, remote, servePath);
+    // TODO: remove for 1.9.1
+    // Disabled, this is a security issue
+    //public Process serve(int protocol, int port, boolean localhostOnly, RemoteItem remote, String servePath) {
+    //    return serve(protocol, port, localhostOnly, null, null, remote, servePath);
+    //}
+
+    public Process serve(int protocol, int port, boolean allowRemoteAccess, String user, String password, RemoteItem remote, String servePath) {
+        return serve(protocol, port, allowRemoteAccess, user, password, remote, servePath, null);
     }
 
     public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection) {

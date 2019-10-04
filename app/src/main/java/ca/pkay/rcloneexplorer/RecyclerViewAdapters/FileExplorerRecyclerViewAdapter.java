@@ -47,6 +47,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         void onFilesSelected();
         void onFileDeselected();
         void onFileOptionsClicked(View view, FileItem fileItem);
+        String[] getThumbnailServerParams();
     }
 
     public FileExplorerRecyclerViewAdapter(Context context, View emptyView, View noSearchResultsView, OnClickListener listener) {
@@ -98,7 +99,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
 
         if (showThumbnails && !item.isDir()) {
-            String server = "http://127.0.0.1:29170/";
+            String server = "http://127.0.0.1:29179/";
             boolean localLoad = item.getRemote().getType() == RemoteItem.SAFW;
             String mimeType = item.getMimeType();
             if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= 20970000) {
@@ -114,9 +115,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                             .thumbnail(0.1f)
                             .into(holder.fileIcon);
                 } else {
+                    String[] serverParams = listener.getThumbnailServerParams();
+                    String hiddenPath = serverParams[0];
+                    String url = server + hiddenPath + '/' + item.getPath();
                     Glide
                             .with(context)
-                            .load(server + item.getPath())
+                            .load(url)
                             .apply(glideOption)
                             .thumbnail(0.1f)
                             .into(holder.fileIcon);

@@ -16,6 +16,7 @@ import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -77,6 +78,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -151,6 +153,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private boolean startAtRoot;
     private boolean goToDefaultSet;
     private Context context;
+    private String thumbnailServerAuth;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -237,6 +240,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         if (showThumbnails) {
+            initializeThumbnailParams();
             startThumbnailService();
         }
 
@@ -731,8 +735,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
+        serveIntent.putExtra(ThumbnailsLoadingService.HIDDEN_PATH, thumbnailServerAuth);
         context.startService(serveIntent);
         isThumbnailsServiceRunning = true;
+    }
+
+    private void initializeThumbnailParams() {
+        SecureRandom random = new SecureRandom();
+        byte[] values = new byte[16];
+        random.nextBytes(values);
+        thumbnailServerAuth = Base64.encodeToString(values, Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE);
     }
 
     private void searchClicked() {
@@ -1284,6 +1296,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Override
     public void onFileOptionsClicked(View view, FileItem fileItem) {
         showFileMenu(view, fileItem);
+    }
+
+    @Override
+    public String[] getThumbnailServerParams() {
+        return new String[]{thumbnailServerAuth};
     }
 
     private void showFileMenu(View view, final FileItem fileItem) {

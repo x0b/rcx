@@ -286,6 +286,11 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     @Override
+    public String[] getThumbnailServerParams() {
+        return new String[0];
+    }
+
+    @Override
     public void onBreadCrumbClicked(String path) {
         if (directoryObject.getCurrentPath().equals(path)) {
             return;
