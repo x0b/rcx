@@ -103,7 +103,9 @@
                 android:paddingBottom="24dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?selectableItemBackground" >
+                android:background="?selectableItemBackground"
+                android:visibility="gone">
+            <!-- hide, not even beta-test quality -->
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

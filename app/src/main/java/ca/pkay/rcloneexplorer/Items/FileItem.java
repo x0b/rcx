@@ -4,11 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
 import android.webkit.MimeTypeMap;
+import io.github.x0b.rfc3339parser.Rfc3339Parser;
+import io.github.x0b.rfc3339parser.Rfc3339Strict;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public class FileItem implements Parcelable {
@@ -23,6 +23,7 @@ public class FileItem implements Parcelable {
     private String humanReadableModTime;
     private String formattedModTime;
     private boolean isDir;
+    private static final Rfc3339Parser rfc3339Parser = new Rfc3339Strict();
 
     public FileItem(RemoteItem remote, String path, String name, long size, String modTime, String mimeType, boolean isDir) {
         this.remote = remote;
@@ -30,9 +31,13 @@ public class FileItem implements Parcelable {
         this.name = name;
         this.size = size;
         this.humanReadableSize = sizeToHumanReadable(size);
-        this.modTime = modTimeToMilis(modTime);
-        this.humanReadableModTime = modTimeToHumanReadable(modTime);
-        this.formattedModTime = modTimeToFormattedTime(modTime);
+        try {
+            this.modTime = rfc3339Parser.parseCalendar(modTime).getTimeInMillis();
+        } catch (ParseException e) {
+            this.modTime = -1;
+        }
+        this.humanReadableModTime = modTimeToHumanReadable(this.modTime);
+        this.formattedModTime = modTimeToFormattedTime(this.modTime);
         this.mimeType = getMimeType(mimeType, path);
         this.isDir = isDir;
     }
@@ -123,63 +128,22 @@ public class FileItem implements Parcelable {
         return String.format(Locale.US, "%.1f %sB", size / Math.pow(unit, exp), pre);
     }
 
-    private long modTimeToMilis(String modTime) {
-        if (modTime.lastIndexOf("+") > 18 || modTime.lastIndexOf("-") > 18) {
-            return modTimeZonedToMillis(modTime);
-        }
-
-        String[] dateTime = modTime.split("T");
-        String yearMonthDay = dateTime[0];
-        String hourMinuteSecond = dateTime[1].substring(0, dateTime[1].length() - 1);
-        if (hourMinuteSecond.contains(".")) {
-            int index = hourMinuteSecond.indexOf(".");
-            hourMinuteSecond = hourMinuteSecond.substring(0, index);
-        }
-
-        String formattedDate = yearMonthDay + " " + hourMinuteSecond + " UTC";
-        long dateInMillis;
-        Date date;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-        try {
-            date = simpleDateFormat.parse(formattedDate);
-            dateInMillis = date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            dateInMillis = 0;
-        }
-
-        return dateInMillis;
-    }
-
-    private long modTimeZonedToMillis(String modTime) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
-        int index = modTime.lastIndexOf("+");
-        if (index == -1) {
-            index = modTime.lastIndexOf("-");
-        }
-        int fractionIndex = modTime.indexOf('.');
-        String reducedString = fractionIndex == -1 ? modTime : modTime.substring(0, fractionIndex) + modTime.substring(index);
-        try {
-            return format.parse(reducedString).getTime();
-        } catch (ParseException e) {
-            return 0L;
-        }
-    }
-
-    private String modTimeToHumanReadable(String modTime) {
+    private String modTimeToHumanReadable(long modTime) {
         long now = System.currentTimeMillis();
-        long dateInMillis = modTimeToMilis(modTime);
+        if(1 > modTime){
+            // mod time is invalid, don't show it
+            return "";
+        }
 
-        CharSequence humanReadable = DateUtils.getRelativeTimeSpanString(dateInMillis, now, DateUtils.MINUTE_IN_MILLIS);
+        CharSequence humanReadable = DateUtils.getRelativeTimeSpanString(modTime, now, DateUtils.MINUTE_IN_MILLIS);
         if (humanReadable.toString().startsWith("In") || humanReadable.toString().startsWith("0")) {
             humanReadable = "Now";
         }
         return humanReadable.toString();
     }
 
-    private String modTimeToFormattedTime(String modTime) {
-        long modTimeInMillis = modTimeToMilis(modTime);
-        formattedModTime = DateFormat.getDateTimeInstance().format(modTimeInMillis);
+    private String modTimeToFormattedTime(long modTime) {
+        formattedModTime = DateFormat.getDateTimeInstance().format(modTime);
         return formattedModTime;
     }
 

@@ -130,6 +130,24 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryUrls.put(toasty, "https://github.com/GrenderG/Toasty");
         libraryLicences.put(toasty, "Licensed under LGPL-3.0");
         libraryLicenceUrls.put(toasty, "https://github.com/GrenderG/Toasty/blob/master/LICENSE");
+
+        String rcloneExplorer = "rcloneExplorer";
+        libraryNames.add(rcloneExplorer);
+        libraryUrls.put(rcloneExplorer, "https://github.com/kaczmarkiewiczp/rcloneExplorer");
+        libraryLicences.put(rcloneExplorer, "Licensed under MIT");
+        libraryLicenceUrls.put(rcloneExplorer, "https://github.com/kaczmarkiewiczp/rcloneExplorer/blob/e5afbfda50c747bc088543dab9576d80bf99ec63/LICENSE");
+
+        String okhttp = "OkHttp";
+        libraryNames.add(okhttp);
+        libraryUrls.put(okhttp, "https://square.github.io/okhttp");
+        libraryLicences.put(okhttp, "Licensed under Apache 2.0");
+        libraryLicenceUrls.put(okhttp, "https://square.github.io/okhttp/#license");
+
+        String rfc3339 = "RFC 3339 Date Parser";
+        libraryNames.add(rfc3339);
+        libraryUrls.put(rfc3339, "https://github.com/x0b/rfc3339parser");
+        libraryLicences.put(rfc3339, "Licensed under MIT");
+        libraryLicenceUrls.put(rfc3339, "https://github.com/x0b/rfc3339parser/blob/master/LICENSE");
     }
 
     @Override

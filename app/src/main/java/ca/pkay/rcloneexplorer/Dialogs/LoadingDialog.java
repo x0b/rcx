@@ -71,14 +71,18 @@ public class LoadingDialog extends DialogFragment {
             builder.setNegativeButton(negativeText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    onNegativeListener.onNegative();
+                    if(null != onNegativeListener) {
+                        onNegativeListener.onNegative();
+                    }
                 }
             });
         } else if (negativeTextId > 0) {
             builder.setNeutralButton(negativeTextId, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    onNegativeListener.onNegative();
+                    if(null != onNegativeListener) {
+                        onNegativeListener.onNegative();
+                    }
                 }
             });
         }

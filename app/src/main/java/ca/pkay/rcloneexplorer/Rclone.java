@@ -5,8 +5,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import es.dmoral.toasty.Toasty;
@@ -33,6 +35,7 @@ import java.util.Set;
 
 public class Rclone {
 
+    private static final String TAG = "Rclone";
     public static final int SYNC_DIRECTION_LOCAL_TO_REMOTE = 1;
     public static final int SYNC_DIRECTION_REMOTE_TO_LOCAL = 2;
     public static final int SERVE_PROTOCOL_HTTP = 1;
@@ -52,14 +55,22 @@ public class Rclone {
     }
 
     private String[] createCommand(String ...args) {
-        int arraySize = args.length + 3;
+        boolean loggingEnabled = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_key_logs), false);
+        int staticArgSize = loggingEnabled ? 4 : 3;
+        int arraySize = args.length + staticArgSize;
         String[] command = new String[arraySize];
 
         command[0] = rclone;
         command[1] = "--config";
         command[2] = rcloneConf;
 
-        int i = 3;
+        if(loggingEnabled) {
+            command[3] = "-vvv";
+        }
+
+        int i = staticArgSize;
         for (String arg : args) {
             command[i++] = arg;
         }
@@ -67,7 +78,11 @@ public class Rclone {
     }
 
     private String[] createCommandWithOptions(String ...args) {
-        int arraySize = args.length + 7;
+        boolean loggingEnabled = PreferenceManager
+                .getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_key_logs), false);
+        int staticArgSize = loggingEnabled ? 8 : 7;
+        int arraySize = args.length + staticArgSize;
         String[] command = new String[arraySize];
         String cachePath = context.getCacheDir().getAbsolutePath();
 
@@ -79,7 +94,11 @@ public class Rclone {
         command[5] = "--config";
         command[6] = rcloneConf;
 
-        int i = 7;
+        if(loggingEnabled) {
+            command[7] = "-vvv";
+        }
+
+        int i = staticArgSize;
         for (String arg : args) {
             command[i++] = arg;
         }
@@ -92,27 +111,25 @@ public class Rclone {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean isLoggingEnable = sharedPreferences.getBoolean(context.getString(R.string.pref_key_logs), false);
+        boolean isLoggingEnable = sharedPreferences.getBoolean(context.getString(R.string.pref_key_logs), false);
         if (!isLoggingEnable) {
             return;
         }
 
         StringBuilder stringBuilder = new StringBuilder(100);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        String line;
-
-        try {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            String line;
             while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
+                stringBuilder.append(line).append("\n");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "logErrorOutput: ", e);
             return;
         }
-
         log2File.log(stringBuilder.toString());
     }
 
+    @Nullable
     public List<FileItem> getDirectoryContent(RemoteItem remote, String path, boolean startAtRoot) {
         String remoteAndPath = remote.getName() + ":";
         if (startAtRoot) {
@@ -130,7 +147,6 @@ public class Rclone {
         }
 
         String[] command = createCommandWithOptions("lsjson", remoteAndPath);
-
         JSONArray results;
         Process process;
         try {
@@ -149,10 +165,11 @@ public class Rclone {
                 return null;
             }
 
-            results = new JSONArray(output.toString());
+            String outputStr = output.toString();
+            results = new JSONArray(outputStr);
 
         } catch (IOException | InterruptedException | JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getDirectoryContent: Could not get folder content", e);
             return null;
         }
 

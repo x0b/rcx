@@ -206,6 +206,10 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
                 fragment = DriveConfig.newInstance();
                 title = "Drive";
                 break;
+            case "UNION":
+                fragment = UnionConfig.newInstance();
+                title = "Union";
+                break;
             default:
                 return;
         }
