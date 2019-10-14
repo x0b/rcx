@@ -1,3 +1,10 @@
+### 1.9.1
+* **New:** Update to Rclone v1.49.5
+* **Fix:** Crash in LoadingDialog
+* **Fix:** Rclone serve not starting correctly
+* **Fix:** Crash from robotest (#23)
+***
+
 ### 1.9.0
 * **New:** Update to Rclone v1.49.4
 * **New:** Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
