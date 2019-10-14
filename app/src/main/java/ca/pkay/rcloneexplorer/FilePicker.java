@@ -270,7 +270,10 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         actionBar.setTitle(file.getName());
         current = file;
         fileList.clear();
-        fileList.addAll(Arrays.asList(file.listFiles()));
+        File[] files = file.listFiles();
+        if(null != files) {
+            fileList.addAll(Arrays.asList(files));
+        }
         sortDirectory();
         filePickerAdapter.setNewData(fileList);
 
