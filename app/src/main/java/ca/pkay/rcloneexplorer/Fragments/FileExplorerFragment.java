@@ -2018,7 +2018,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (loadingDialog != null) {
                 if (loadingDialog.isStateSaved()) {
                     loadingDialog.dismissAllowingStateLoss();
-                } else {
+                } else if(loadingDialog.isAdded()){
                     loadingDialog.dismiss();
                 }
             }

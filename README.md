@@ -39,15 +39,11 @@ Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version (1.9.0)
- - Update rclone to 1.49.4
- - Preview of Storage Access Layer for rclone (allows access to Storage Access Framework locations from rclone/rcloneExplorer)
- - Added support for creating union remotes
- - Fix: Crash when no compatible streaming app is installed
- - Fix: Crash on LoadingDialog (#7)
- - Fix: Crash on Android 5.1.1 for remotes with time zones (#10)
- - Fix: Crash in hide remotes dialog (#13)
- - Fix: Security issue when using thumbnails (#18)
+#### Current Version (1.9.1)
+ - Update to Rclone v1.49.5
+ - Fix: Crash in LoadingDialog (#21)
+ - Fix: Rclone serve not starting correctly (#22)
+ - Fix: Crash from robotest (#23)
 
 #### Next Version
 - New SAF implementation for much faster directory access

@@ -424,17 +424,17 @@ public class Rclone {
         ArrayList<String> params = new ArrayList<>(Arrays.asList(
                 createCommandWithOptions("serve", commandProtocol, "--addr", address, path)));
 
-        if(null != user) {
+        if(null != user && user.length() > 0) {
             params.add("--user");
             params.add(user);
         }
 
-        if(null != password) {
-            params.add("--password");
+        if(null != password && password.length() > 0) {
+            params.add("--pass");
             params.add(password);
         }
 
-        if(null != baseUrl) {
+        if(null != baseUrl && baseUrl.length() > 0) {
             params.add("--baseurl");
             params.add(baseUrl);
         }
