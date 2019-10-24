@@ -625,6 +625,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return true;
             case R.id.action_link:
                 new LinkTask().execute(directoryObject.getCurrentPath());
+                return true;
             case R.id.action_wrap_filenames:
                 wrapFilenames(item);
                 return true;
