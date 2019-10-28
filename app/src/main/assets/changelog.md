@@ -1,3 +1,10 @@
+### 1.9.2
+* **New:** SAF DCA: faster directory lists & more
+* **Fix:** Crash when upload from directory that is no longer accessible
+* **Fix:** Creating a public link also toggles "wrap filenames"
+* **Fix:** OAuth configurations not working
+***
+
 ### 1.9.1
 * **New:** Update to Rclone v1.49.5
 * **Fix:** Crash in LoadingDialog
