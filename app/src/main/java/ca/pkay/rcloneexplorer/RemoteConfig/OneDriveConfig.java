@@ -6,29 +6,30 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import ca.pkay.rcloneexplorer.MainActivity;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
+import com.google.android.material.textfield.TextInputLayout;
+import es.dmoral.toasty.Toasty;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import ca.pkay.rcloneexplorer.MainActivity;
-import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
-import es.dmoral.toasty.Toasty;
-
 public class OneDriveConfig extends Fragment {
 
+    private static final String TAG = "OneDriveConfig";
     private Context context;
     private Rclone rclone;
     private View authView;
@@ -143,6 +144,7 @@ public class OneDriveConfig extends Fragment {
             }
         });
 
+        // TODO: remove 1.9.4
         view.findViewById(R.id.launch_browser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,20 +226,17 @@ public class OneDriveConfig extends Fragment {
                 outputStream.write((selectedAccountType + "\n").getBytes());
                 outputStream.flush();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "ConfigCreate/doInBackground: ", e);
                 return false;
             }
 
-            String url = "http://127.0.0.1:53682/auth";
-
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(context, Uri.parse(url));
-
+            Thread authThread = new OauthHelper.UrlAuthThread(process, context);
+            authThread.start();
             try {
                 process.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                authThread.interrupt();
+                Log.e(TAG, "doInBackground: ", e);
             }
             return process.exitValue() == 0;
         }

@@ -9,12 +9,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +16,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import com.google.android.material.textfield.TextInputLayout;
 import es.dmoral.toasty.Toasty;
+
+import java.util.ArrayList;
 
 public class DriveConfig extends Fragment {
 
@@ -175,6 +174,7 @@ public class DriveConfig extends Fragment {
             }
         });
 
+        // TODO: remove 1.9.4
         view.findViewById(R.id.launch_browser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -298,20 +298,7 @@ public class DriveConfig extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            process = rclone.configCreate(options);
-
-            String url = "http://127.0.0.1:53682/auth";
-
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(context, Uri.parse(url));
-
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return process.exitValue() == 0;
+            return OauthHelper.createOptionsWithOauth(options, rclone, context);
         }
 
         @Override
