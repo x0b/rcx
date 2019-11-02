@@ -98,7 +98,11 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             root = current = new File(availableStorage.get(0));
         }
 
-        fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
+        File[] files = current.listFiles();
+        fileList = new ArrayList<>();
+        if (null != files) {
+            fileList.addAll(Arrays.asList(files));
+        }
         sortDirectory();
 
         RecyclerView recyclerView = findViewById(R.id.file_picker_list);
@@ -255,7 +259,10 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 actionBar.setTitle(current.getName());
             }
             fileList.clear();
-            fileList.addAll(Arrays.asList(current.listFiles()));
+            File[] files = current.listFiles();
+            if (null != files) {
+                fileList.addAll(Arrays.asList(files));
+            }
             sortDirectory();
             filePickerAdapter.setNewData(fileList);
 
@@ -320,7 +327,10 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         File newDir = new File(current.getAbsolutePath() + "/" + input);
         if (newDir.mkdir()) {
             fileList.clear();
-            fileList.addAll(Arrays.asList(current.listFiles()));
+            File[] files = current.listFiles();
+            if (null != files) {
+                fileList.addAll(Arrays.asList(files));
+            }
             sortDirectory();
             filePickerAdapter.setNewData(fileList);
         }
@@ -366,7 +376,11 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             throw new IOException("Location not accessible");
         }
         root = current = newStorage;
-        fileList = new ArrayList<>(Arrays.asList(current.listFiles()));
+        File[] files = current.listFiles();
+        fileList = new ArrayList<>();
+        if (null != files) {
+            fileList.addAll(Arrays.asList(files));
+        }
         sortDirectory();
         filePickerAdapter.setNewData(fileList);
     }

@@ -12,8 +12,8 @@ import io.github.x0b.safdav.file.ItemNotFoundException;
 import io.github.x0b.safdav.file.SafConstants;
 import io.github.x0b.safdav.file.SafException;
 import io.github.x0b.safdav.file.SafItem;
+import io.github.x0b.safdav.saf.DocumentsContractAccess;
 import io.github.x0b.safdav.saf.ProviderPaths;
-import io.github.x0b.safdav.saf.SafFileAccess;
 import io.github.x0b.safdav.xml.XmlResponseSerialization;
 
 import java.io.InputStream;
@@ -36,7 +36,7 @@ public class SafDAVServer extends NanoHTTPD {
     @Deprecated
     public SafDAVServer(int port, Context context) {
         super(hostname, port);
-        itemAccess = new SafFileAccess(context);
+        itemAccess = new DocumentsContractAccess(context);
         this.paths = new ProviderPaths(context);
         respSerializer = new XmlResponseSerialization();
     }
@@ -51,7 +51,7 @@ public class SafDAVServer extends NanoHTTPD {
      */
     public SafDAVServer(int port, String username, String password, Context context) {
         super(hostname, port);
-        itemAccess = new SafFileAccess(context);
+        itemAccess = new DocumentsContractAccess(context);
         this.paths = new ProviderPaths(context);
         respSerializer = new XmlResponseSerialization();
         this.requiredAuthHeader = "Basic " + Base64.encodeToString(
