@@ -11,7 +11,7 @@ Features
 
 Cloud Access | 256 Bit AES Encryption | Integrated Experience
 :-----:|:--------------:|:-----------:
-<img src="https://github.com/x0b/rcloneExplorer/blob/master/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="192" /> | <img src="https://github.com/x0b/rcloneExplorer/blob/master/docs/locked-padlock.png?raw=true" alt="256 Bit AES End-to-End Encryption" width="144" /> | <img src="https://github.com/x0b/rcloneExplorer/blob/master/docs/smartphone.png?raw=true" alt="Integrated Experience" width="176"/>
+<img src="https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="192" /> | <img src="https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/locked-padlock.png?raw=true" alt="256 Bit AES End-to-End Encryption" width="144" /> | <img src="https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/smartphone.png?raw=true" alt="Integrated Experience" width="176"/>
 Use your cloud storage as if it were a local folder | Keep your files private on any cloud provider | Open your files or send them to the cloud with other apps
 
 ### Full list
@@ -40,11 +40,11 @@ Screenshots
 -----------
 Remotes|File Editing|File Explorer|File Upload
 :-----:|:--------------:|:-----------:|:---------:|
-![screenshot1](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_1.png?raw=true)|![screenshot4](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_4.png?raw=true)|![screenshot2](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_2.png?raw=true)|![screenshot3](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_3.png?raw=true)
+![screenshot1](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_1.png?raw=true)|![screenshot4](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_4.png?raw=true)|![screenshot2](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_2.png?raw=true)|![screenshot3](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_3.png?raw=true)
 
 Dark Theme|File Editing|Encrypted Config| Empty Folder
 :----------:|:----------:|:--------:|:-------------:|
-![screenshot7](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_7.png?raw=true)|![screenshot8](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_8.png?raw=true)|![screenshot10](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_10.png?raw=true) | ![screenshot9](https://github.com/x0b/rcloneExplorer/blob/master/docs/screenshot_9.png?raw=true) |
+![screenshot7](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_7.png?raw=true)|![screenshot8](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_8.png?raw=true)|![screenshot10](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_10.png?raw=true) | ![screenshot9](https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/screenshot_9.png?raw=true) |
 
 
 Installation
