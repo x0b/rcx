@@ -8,11 +8,11 @@ import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
