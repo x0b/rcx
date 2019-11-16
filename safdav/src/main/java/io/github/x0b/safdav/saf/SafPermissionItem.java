@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static io.github.x0b.safdav.saf.ProviderPaths.getNormalizedPath;
+import static io.github.x0b.safdav.saf.ProviderPaths.getPathForUri;
 
 public class SafPermissionItem implements SafItem {
 
@@ -56,7 +57,7 @@ public class SafPermissionItem implements SafItem {
         if(null == permission){
             return "";
         }
-        return getNormalizedPath(getUri());
+        return getPathForUri(getUri());
     }
 
     @Override

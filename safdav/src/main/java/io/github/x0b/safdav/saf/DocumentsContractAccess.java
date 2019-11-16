@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import androidx.documentfile.provider.DocumentFile;
 import io.github.x0b.safdav.file.FileAccessError;
 import io.github.x0b.safdav.file.ItemAccess;
 import io.github.x0b.safdav.file.ItemExistsException;
@@ -253,6 +254,10 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("UTF-8 not available");
             }
+        } else {
+            // This is a thirdparty provider. No assumptions regarding URL
+            // structure are possible. Instead, follow documented semantics.
+            DocumentFile.fromTreeUri(context, uri);
         }
         throw new SafException("Unsupported DocumentsProvider: " + uri.toString());
     }

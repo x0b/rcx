@@ -367,19 +367,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
      */
     @Override
     public void onDestinationSelected(String path) {
-        if (selectedRemote.isRemoteType(RemoteItem.LOCAL)) {
-            if (path.equals("//" + selectedRemote.getName())) {
-                remotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
-            } else {
-                remotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + path;
-            }
-        } else {
-            if (path.equals("//" + selectedRemote.getName())) {
-                remotePath = selectedRemote.getName() + ":";
-            } else {
-                remotePath = selectedRemote.getName() + ":" + path;
-            }
-        }
+        remotePath = RemoteConfigHelper.getRemotePath(path, selectedRemote);
         remote.setText(remotePath);
     }
 

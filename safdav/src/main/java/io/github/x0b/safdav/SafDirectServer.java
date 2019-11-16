@@ -32,7 +32,7 @@ public class SafDirectServer {
      * @param path directory path
      * @return a {@link List<SafItem>} of items identified by that path
      */
-    public List<SafItem> list(String path){
+    public List<? extends SafItem> list(String path){
         Uri uri = providerPaths.getUriByMappedPath(path);
         return itemAccess.list(uri);
     }
