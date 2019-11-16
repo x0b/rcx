@@ -23,6 +23,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.file.SafConstants;
@@ -150,17 +151,7 @@ public class FileAccessSettingsFragment extends Fragment {
         options.add("pass");
         options.add(pass);
 
-        Process process = rclone.configCreate(options);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (process.exitValue() != 0) {
-            Toasty.error(context, getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
-        } else {
-            Toasty.success(context, getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
-        }
+        RemoteConfigHelper.setupAndWait(context, options);
     }
 
     public void addRoot(){

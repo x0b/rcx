@@ -408,17 +408,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
             options.add(chunkTotalSizeString);
         }
 
-        Process process = rclone.configCreate(options);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (process.exitValue() != 0) {
-            Toasty.error(context, getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
-        } else {
-            Toasty.success(context, getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
-        }
+        RemoteConfigHelper.setupAndWait(context, options);
         if (getActivity() != null) {
             getActivity().finish();
         }

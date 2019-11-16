@@ -86,8 +86,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
-import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
