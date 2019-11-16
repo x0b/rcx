@@ -1,12 +1,9 @@
 package ca.pkay.rcloneexplorer;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +31,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -47,7 +44,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        applyTheme();
+        ActivityHelper.applyTheme(this);
         setContentView(R.layout.activity_about);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,25 +102,6 @@ public class AboutActivity extends AppCompatActivity {
                 openMaintainerGithubLink();
             }
         });
-    }
-
-    private void applyTheme() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
-        int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
-        Boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
-        getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
-        getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
-        if (isDarkTheme) {
-            getTheme().applyStyle(R.style.DarkTheme, true);
-        } else {
-            getTheme().applyStyle(R.style.LightTheme, true);
-        }
-
-        // set recents app color to the primary color
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
-        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
-        setTaskDescription(taskDesc);
     }
 
     @Override
