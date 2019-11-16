@@ -478,7 +478,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                     storageDirectories.add(Environment.getExternalStorageDirectory().getAbsolutePath());
                 }
             } else {
-                storageDirectories.add(rawExternalStorage);
+                storageDirectories.add(canonicalizePath(rawExternalStorage));
             }
         } else {
             // Device has emulated storage; external storage paths should have
@@ -539,6 +539,8 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                     } else {
                         storageDirectories.add(targetPath);
                     }
+                } else if(directory.canRead()){
+                    storageDirectories.add(directory.getCanonicalPath());
                 }
             } catch (IOException | SecurityException | NullPointerException e) {
                 Log.i("FilePicker", "File discovery exception ", e);
@@ -546,5 +548,18 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         }
 
         return storageDirectories;
+    }
+
+    /**
+     * Returns the canonical path, if there is any
+     * @param path maybe not canonical path
+     * @return canonical path if known
+     */
+    private String canonicalizePath(String path) {
+        try {
+            return new File(path).getCanonicalPath();
+        } catch (IOException e) {
+            return path;
+        }
     }
 }
