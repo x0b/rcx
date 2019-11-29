@@ -312,9 +312,10 @@
     <string name="error_exporting_config_file">Error exporting config file</string>
     <string name="firebase_msg_app_updates_topic">app_updates</string>
     <string name="firebase_msg_beta_app_updates_topic">beta_app_updates</string>
-    <string name="app_update_notification_title">New version of Rclone Explorer is available on GitHub</string>
+    <string name="app_update_notification_title">App update available on Github</string>
+    <string name="app_update_notification_beta">App update available on Github</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
-    <string name="beta_app_updates_notifications">Get notified about beta releases</string>
+    <string name="beta_app_updates_notifications">Get notified about pre-release versions</string>
     <string name="delete_remote_title">Delete remote?</string>
     <string name="empty_trash">Empty trash</string>
     <string name="trash_emptied">Trash emptied</string>
@@ -345,6 +346,7 @@
     <string name="shared_preferences_drawer_pinned_remotes">shared_preferences_drawer_pinned_remotes</string>
     <string name="app_latest_release_url">https://github.com/x0b/rcloneExplorer/releases/latest</string>
     <string name="app_relase_api_url">https://api.github.com/repos/x0b/rcloneExplorer/releases/latest</string>
+    <string name="app_pre_release_api_url">https://api.github.com/repos/x0b/rcloneExplorer/releases</string>
     <string name="pref_key_update_release_version">github_release_version</string>
     <string name="pref_key_update_last_check">last_update_check</string>
     <string name="experimental_features">Experimental Features</string>

@@ -11,58 +11,74 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.preference.PreferenceManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.InputType;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
-
-import com.crashlytics.android.Crashlytics;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
+import com.crashlytics.android.Crashlytics;
+import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
+import io.github.x0b.rfc3339parser.Rfc3339Parser;
+import io.github.x0b.rfc3339parser.Rfc3339Strict;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 
-public class MainActivity   extends AppCompatActivity
-                            implements  NavigationView.OnNavigationItemSelectedListener,
-                                        RemotesFragment.OnRemoteClickListener,
-                                        RemotesFragment.AddRemoteToNavDrawer,
-                                        InputDialog.OnPositive {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        RemotesFragment.OnRemoteClickListener,
+        RemotesFragment.AddRemoteToNavDrawer,
+        InputDialog.OnPositive {
 
+    private static final String TAG = "MainActivity";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
+    private static final int UPDATE_AVAILABLE = 201;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -72,6 +88,15 @@ public class MainActivity   extends AppCompatActivity
     private Boolean isDarkTheme;
     private HashMap<Integer, RemoteItem> drawerPinnedRemoteIds;
     private int availableDrawerPinnedRemoteId;
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if(UPDATE_AVAILABLE == msg.what) {
+                Toasty.info(context, context.getString(R.string.app_update_notification_title), Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +116,7 @@ public class MainActivity   extends AppCompatActivity
                 return;
             }
         }
-        
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
         if (enableCrashReports) {
@@ -126,9 +151,9 @@ public class MainActivity   extends AppCompatActivity
             }
         });
 
-        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
+        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
         if (appUpdates) {
-            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
+            checkForUpdate(false);
         }
 
         Intent intent = getIntent();
@@ -528,6 +553,104 @@ public class MainActivity   extends AppCompatActivity
         availableDrawerPinnedRemoteId = 1;
 
         pinRemotesToDrawer();
+    }
+
+    private void checkForUpdate(boolean force) {
+        Context context = this;
+        // only check if not disabled
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if(!force && !sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true)){
+            Log.i(TAG, "checkForUpdate: Not checking, updates are disabled");
+            return;
+        }
+        // only check if the last check was >6 hours ago
+        long lastUpdateCheck = sharedPreferences.getLong(context.getString(R.string.pref_key_update_last_check), 0);
+        long now = System.currentTimeMillis();
+        if(lastUpdateCheck + 1000 * 60 * 60 * 6 > now){
+            Log.i(TAG, "checkForUpdate: recent check to new, not checking for updates");
+            return;
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        boolean checkBeta = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates_beta), false);
+        String url;
+        if (checkBeta) {
+            url = context.getString(R.string.app_pre_release_api_url);
+        } else {
+            url = context.getString(R.string.app_relase_api_url);
+        }
+        Request request = new Request.Builder().url(url).build();
+        client.newCall(request).enqueue(new UpdateRequestResultHandler(this, checkBeta, handler));
+    }
+
+    private static class UpdateRequestResultHandler implements Callback {
+
+        private SharedPreferences sharedPreferences;
+        private Context context;
+        private boolean betaCheck;
+        private Handler handler;
+
+        public UpdateRequestResultHandler(Context context, boolean betaCheck, Handler handler) {
+            this.context = context;
+            this.betaCheck = betaCheck;
+            this.handler = handler;
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        }
+
+        @Override
+        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            Log.w(TAG, "onFailure: Update check failed", e);
+            updateLastUpdateRequest();
+        }
+
+        @Override
+        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+            updateLastUpdateRequest();
+            long publishedAt = getLastPublishTimestamp(response);
+            // Since the app is not published immediately during build, 15 minutes are added
+            long publishBarrier = publishedAt + 1000 * 60 * 15;
+            if(BuildConfig.BUILD_TIME < publishBarrier) {
+                Log.i(TAG, "onResponse: App is not up-to-date");
+                handler.obtainMessage(MainActivity.UPDATE_AVAILABLE).sendToTarget();
+            } else {
+                Log.i(TAG, "onResponse: App is up-to-date");
+            }
+        }
+
+        private long getLastPublishTimestamp(Response response) throws IOException {
+            try (ResponseBody body = response.body()) {
+                long publishedAt = -1;
+                if (null == body) {
+                    return publishedAt;
+                }
+                try {
+                    Rfc3339Parser parser = new Rfc3339Strict();
+                    if(betaCheck){
+                        JSONArray releases = new JSONArray(body.string());
+                        for(int i = 0; i < releases.length(); i++) {
+                            JSONObject release = releases.getJSONObject(i);
+                            long timestamp = parser.parse(release.getString("published_at")).getTime();
+                            if(timestamp > publishedAt) {
+                                publishedAt = timestamp;
+                            }
+                        }
+                    } else {
+                        JSONObject json = new JSONObject(body.string());
+                        publishedAt = parser.parse(json.getString("published_at")).getTime();
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "Update check failed: JSON error", e);
+                } catch (ParseException e) {
+                    Log.e(TAG, "Update check failed: time format error", e);
+                }
+                return publishedAt;
+            }
+        }
+
+        private void updateLastUpdateRequest(){
+            long now = System.currentTimeMillis();
+            sharedPreferences.edit().putLong(context.getString(R.string.pref_key_update_last_check), now).apply();
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
