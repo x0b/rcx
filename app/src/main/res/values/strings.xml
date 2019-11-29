@@ -180,7 +180,7 @@
     <string name="pref_proxy_port_dlg_title">Enter Proxy port</string>
     <string name="pref_proxy_exclude">Exclude from Proxy</string>
     <string name="miscellaneous">Miscellaneous</string>
-    <string name="use_logs">Use logs</string>
+    <string name="use_logs">Log Rclone errors</string>
     <string name="use_logs_summary">Errors will be logged to a local file</string>
     <string name="color_picker_checkmark">Color picker checkmark</string>
     <string name="primary_color_picker_title">Select primary color</string>
@@ -336,6 +336,7 @@
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
+    <string name="pref_crash_report_summary">Send a report if the app crashes. This will help the development with technical details and won\'t contain personal information. Data will be send to Fabric Crashlytics (<a href="https://docs.fabric.io/android/fabric/data-privacy.html&#35;crashlytics">Privacy Policy</a>).</string>
     <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
     <string name="pin_to_drawer">Pin to drawer</string>
