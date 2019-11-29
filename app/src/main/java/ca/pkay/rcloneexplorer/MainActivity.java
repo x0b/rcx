@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // TODO: document deletion on exit
         File dir = getExternalCacheDir();
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();

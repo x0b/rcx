@@ -51,53 +51,61 @@ Installation
 ------------
 Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. Only devices running Android Lollipop 5.0 and up are supported. 
 
-| CPU architecture | Where to find | APK prefix |
+| CPU architecture | Where to find | APK identifier |
 |:---|:--|:---:|
-|ARM 32 Bit | older or low-cost devices | ```armv7a``` |
-|ARM 64 Bit | most newer devices | ```armv8a``` |
+|ARM 32 Bit | older or low-cost devices | ```armeabi-v7a``` |
+|ARM 64 Bit | most newer devices | ```arm64-v8a``` |
 |x86 32 Bit | some TV boxes and tablets | ```x86``` |
 |x86_64 | some emulators | ```x86_64``` |
 
-If you don't know which version to pick use ```rcloneExplorer-<version>-fatapk-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance.
+If you don't know which version to pick use ```rcloneExplorer-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance.
 
 
 Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version (1.9.2)
- - Enabled SAF DCA: faster directory lists & more
- - Fix: Crash when upload from directory that is no longer accessible
- - Fix: Creating a public link also toggles "wrap filenames"
- - Fix: OAuth configurations not working. Rclone reset to 1.49.3 [due to incompatibility](#known-issues)
+#### Current Version (1.10.0)
+ * **New:** Proxy support (for https & http)
+ * **New:** Various internal refactorings
+ * **New:** The thumbnail size limit can now be set in the settings
+ * **New:** Update rclone to 1.50.2
+ * **Fix:** Logging settings not explaining data collection
+ * **Fix:** External locations listed multiple times
+ * **Fix:** OAuth not working on newer rclone versions
+ * **Fix:** Crash when streaming in background
 
-#### Next Version
+#### Next minor version
 - Bug fixes
 
-#### Next Month(s)
+#### Next major version(s)
 - Bug fixes
 - Configuration dialogs for more remotes
+- Rclone about ([kaczmarkiewiczp#196](https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/196))
+- Re-authorize existing remotes ([#6](https://github.com/x0b/rcloneExplorer/issues/6))
+- Support for cli interactive commands
 - Virtual Content Provider (allows access to rclone remotes from other apps)
 
-#### Next Year
+#### Next year
+- Configuration encryption ([#12](https://github.com/x0b/rcloneExplorer/issues/12))
 - Reasonably regular updates of rclone
-- F-Droid availability
+- Play store and F-Droid availability ([kaczmarkiewiczp#192](https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/197))
 
 Known Issues
 ------------
-- OneDrive remotes can no longer be configured in the app and must be imported. You can configure them in Termux, copy the configuration file to an accessible destination and import from there.
-- Rclone 1.49.4+ is currently [not compatible](https://github.com/rclone/rclone/issues/3686). An update is in the works and will be released with the next major version.
+- OneDrive remotes can no longer be configured in the app and must be imported. You can configure them in Termux, copy the configuration file to an accessible destination and import from there. An fix is in the works and will be released in a future version.
 
 Contributing
 ------------
-You can contribute by reporting any bugs and errors using the [issue tracker](https://github.com/x0b/rcloneExplorer/issues). Pull requests are welcome, but you have to accept a small CLA to ensure license compatibility.
+You can contribute by reporting any bugs and errors using the [issue tracker](https://github.com/x0b/rcloneExplorer/issues). 
+Pull requests are welcome, but you have to accept a small CLA to ensure license compatibility.
 
 This is a modified build of rcloneExplorer because of little activity in the parent repo. For the parent repository, see [kaczmarkiewiczp/rcloneExplorer](https://github.com/kaczmarkiewiczp/rcloneExplorer). If you encounter an issue with a [version published here](https://github.com/x0b/rcloneExplorer/releases), open an issue  [here](https://github.com/x0b/rcloneExplorer/issues/new). 
 
 Credits/Libraries
 -----------------
 - [rclone](https://github.com/rclone/rclone) - "rsync for cloud storage"
-- [Android Support Libraries](https://developer.android.com/topic/libraries/support-library)
+- [Jetpack AndroidX](https://developer.android.com/license)
 - [Floating Action Button SpeedDial](https://github.com/leinardi/FloatingActionButtonSpeedDial) - A Floating Action Button Speed Dial implementation for Android that follows the Material Design specification.
 - [Glide](https://github.com/bumptech/glide) - An image loading and caching library for Android focused on smooth scrolling.
 - [Markdown View](https://github.com/falnatsheh/MarkdownView) - MarkdownView is an Android webview with the capablity of loading Markdown text or file and display it as HTML, it uses MarkdownJ and extends Android webview.

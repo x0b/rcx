@@ -490,12 +490,6 @@ public class Rclone {
         }
     }
 
-    // TODO: remove for 1.9.1
-    // Disabled, this is a security issue
-    //public Process serve(int protocol, int port, boolean localhostOnly, RemoteItem remote, String servePath) {
-    //    return serve(protocol, port, localhostOnly, null, null, remote, servePath);
-    //}
-
     public Process serve(int protocol, int port, boolean allowRemoteAccess, String user, String password, RemoteItem remote, String servePath) {
         return serve(protocol, port, allowRemoteAccess, user, password, remote, servePath, null);
     }
