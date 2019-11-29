@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.text.InputType;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,6 +21,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +35,7 @@ import es.dmoral.toasty.Toasty;
 
 public class GeneralSettingsFragment extends Fragment {
 
+    private static final String TAG = "GeneralSettingsFragment";
     private Context context;
     private View appShortcutsElement;
     private View showThumbnailsElement;
@@ -38,6 +43,20 @@ public class GeneralSettingsFragment extends Fragment {
     private View wifiOnlyElement;
     private Switch wifiOnlySwitch;
     private boolean isDarkTheme;
+
+    private Switch useProxySwitch;
+    private View useProxyElement;
+    private View proxyProtocolElement;
+    private TextView proxyProtocolSummary;
+    private View proxyHostElement;
+    private TextView proxyHostSummary;
+    private View proxyPortElement;
+    private TextView proxyPortSummary;
+    private boolean useProxy;
+    private String proxyProtocol;
+    private String proxyHost;
+    private int proxyPort;
+    private String noProxyHosts;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -88,6 +107,14 @@ public class GeneralSettingsFragment extends Fragment {
         showThumbnailsSwitch = view.findViewById(R.id.show_thumbnails_switch);
         wifiOnlyElement = view.findViewById(R.id.wifi_only);
         wifiOnlySwitch = view.findViewById(R.id.wifi_only_switch);
+        useProxyElement = view.findViewById(R.id.use_proxy);
+        useProxySwitch = view.findViewById(R.id.use_proxy_switch);
+        proxyProtocolElement = view.findViewById(R.id.proxy_protocol);
+        proxyProtocolSummary = view.findViewById(R.id.proxy_protocol_summary);
+        proxyHostElement = view.findViewById(R.id.proxy_host);
+        proxyHostSummary = view.findViewById(R.id.proxy_host_summary);
+        proxyPortElement = view.findViewById(R.id.proxy_port);
+        proxyPortSummary = view.findViewById(R.id.proxy_port_summary);
     }
     
     private void setDefaultStates() {
@@ -95,9 +122,23 @@ public class GeneralSettingsFragment extends Fragment {
         boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         boolean isWifiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        useProxy = sharedPreferences.getBoolean(getString(R.string.pref_key_use_proxy), false);
+        proxyProtocol = sharedPreferences.getString(getString(R.string.pref_key_proxy_protocol), "http");
+        proxyHost = sharedPreferences.getString(getString(R.string.pref_key_proxy_host), "localhost");
+        proxyPort = sharedPreferences.getInt(getString(R.string.pref_key_proxy_port), 8080);
+        noProxyHosts = sharedPreferences.getString(getString(R.string.pref_key_no_proxy_hosts), "localhost");
 
         showThumbnailsSwitch.setChecked(showThumbnails);
         wifiOnlySwitch.setChecked(isWifiOnly);
+        useProxySwitch.setChecked(useProxy);
+        proxyProtocolSummary.setText(proxyProtocol);
+        proxyHostSummary.setText(proxyHost);
+        proxyPortSummary.setText(String.valueOf(proxyPort));
+        if(!useProxy) {
+            proxyProtocolElement.setVisibility(View.GONE);
+            proxyHostElement.setVisibility(View.GONE);
+            proxyPortElement.setVisibility(View.GONE);
+        }
 
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
             appShortcutsElement.setVisibility(View.GONE);
@@ -141,6 +182,40 @@ public class GeneralSettingsFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setWifiOnlyTransfers(isChecked);
+            }
+        });
+        useProxyElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(useProxySwitch.isChecked()) {
+                    useProxySwitch.setChecked(false);
+                } else {
+                    useProxySwitch.setChecked(true);
+                }
+            }
+        });
+        useProxySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setUseProxy(isChecked);
+            }
+        });
+        proxyProtocolElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProxyProtocolMenu();
+            }
+        });
+        proxyHostElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProxyHostMenu();
+            }
+        });
+        proxyPortElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProxyPortMenu();
             }
         });
     }
@@ -275,5 +350,128 @@ public class GeneralSettingsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_wifi_only_transfers), isChecked);
         editor.apply();
+    }
+
+    private void setUseProxy(boolean isChecked) {
+        if(isChecked) {
+            proxyProtocolElement.setVisibility(View.VISIBLE);
+            proxyHostElement.setVisibility(View.VISIBLE);
+            proxyPortElement.setVisibility(View.VISIBLE);
+        } else {
+            proxyProtocolElement.setVisibility(View.GONE);
+            proxyHostElement.setVisibility(View.GONE);
+            proxyPortElement.setVisibility(View.GONE);
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_use_proxy), isChecked);
+        editor.apply();
+    }
+
+    private void showProxyProtocolMenu() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final List<String> proxyProtocols = Arrays.asList(context.getResources().getStringArray(R.array.proxy_protocols));
+
+        int initialSelection = proxyProtocols.indexOf(
+                                pref.getString(context.getString(R.string.pref_key_proxy_protocol), "http"));
+
+        builder.setTitle(R.string.pref_proxy_protocol_dlg_title);
+        final int[] userSelected = new int[1];
+        builder.setSingleChoiceItems(R.array.proxy_protocols, initialSelection, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                userSelected[0] = which;
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String protocol = proxyProtocols.get(userSelected[0]);
+                pref.edit().putString(getString(R.string.pref_key_proxy_protocol), protocol).apply();
+                if(proxyProtocolSummary != null) {
+                    proxyProtocolSummary.setText(protocol);
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showProxyHostMenu() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final EditText proxyHostEdit = new EditText(context);
+        String initialText = pref.getString(context.getString(R.string.pref_key_proxy_host), "localhost");
+        proxyHostEdit.setText(initialText);
+
+        builder.setTitle(R.string.pref_proxy_host_dlg_title);
+        builder.setView(proxyHostEdit);
+
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String host = proxyHostEdit.getText().toString();
+                pref.edit().putString(getString(R.string.pref_key_proxy_host), host).apply();
+                if(null != proxyHostSummary) {
+                    proxyHostSummary.setText(host);
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showProxyPortMenu() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final EditText proxyPortEdit = new EditText(context);
+        proxyPortEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        int initialPort = pref.getInt(context.getString(R.string.pref_key_proxy_port), 8080);
+        proxyPortEdit.setText(String.valueOf(initialPort));
+
+        builder.setTitle(R.string.pref_proxy_port_dlg_title);
+        builder.setView(proxyPortEdit);
+
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String portString = proxyPortEdit.getText().toString();
+                int port;
+                try {
+                    port = Integer.parseInt(portString);
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "showProxyPortMenu: invalid port", e);
+                    return;
+                }
+                pref.edit().putInt(getString(R.string.pref_key_proxy_port), port).apply();
+                if(null != proxyPortSummary) {
+                    proxyPortSummary.setText(String.valueOf(port));
+                }
+            }
+        });
+
+        builder.show();
     }
 }

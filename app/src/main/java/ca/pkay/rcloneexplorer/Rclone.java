@@ -108,6 +108,43 @@ public class Rclone {
         return command;
     }
 
+    public String[] getRcloneEnv(String... overwriteOptions) {
+        ArrayList<String> environmentValues = new ArrayList<>();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        boolean proxyEnabled = pref.getBoolean(context.getString(R.string.pref_key_use_proxy), false);
+        if(proxyEnabled) {
+            String noProxy = pref.getString(context.getString(R.string.pref_key_no_proxy_hosts), "localhost");
+            String protocol = pref.getString(context.getString(R.string.pref_key_proxy_protocol), "http");
+            String host = pref.getString(context.getString(R.string.pref_key_proxy_host), "localhost");
+            int port = pref.getInt(context.getString(R.string.pref_key_proxy_port), 8080);
+            String url = protocol + "://" + host + ":" + port;
+            // per https://golang.org/pkg/net/http/#ProxyFromEnvironment
+            environmentValues.add("http_proxy=" + url);
+            environmentValues.add("https_proxy=" + url);
+            environmentValues.add("no_proxy=" + noProxy);
+        }
+
+        // if TMPDIR is not set, golang uses /data/local/tmp which is only
+        // only accessible for the shell user
+        String tmpDir = context.getCacheDir().getAbsolutePath();
+        environmentValues.add("TMPDIR=" + tmpDir);
+
+        // Allow the caller to overwrite any option for special cases
+        Iterator<String> envVarIter = environmentValues.iterator();
+        while(envVarIter.hasNext()){
+            String envVar = envVarIter.next();
+            String optionName = envVar.substring(0, envVar.indexOf('='));
+            for(String overwrite : overwriteOptions){
+                if(overwrite.startsWith(optionName)) {
+                    envVarIter.remove();
+                    environmentValues.add(overwrite);
+                }
+            }
+        }
+        return environmentValues.toArray(new String[0]);
+    }
+
     public void logErrorOutput(Process process) {
         if (process == null) {
             return;
@@ -156,10 +193,11 @@ public class Rclone {
         }
 
         String[] command = createCommandWithOptions("lsjson", remoteAndPath);
+        String[] env = getRcloneEnv();
         JSONArray results;
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -418,8 +456,6 @@ public class Rclone {
         } else {
             address = "127.0.0.1:" + String.valueOf(port);
         }
-        String cachePath = context.getCacheDir().getAbsolutePath();
-        String[] environmentalVariables = {"TMPDIR=" + cachePath}; // this is a fix for #199
 
         ArrayList<String> params = new ArrayList<>(Arrays.asList(
                 createCommandWithOptions("serve", commandProtocol, "--addr", address, path)));
@@ -439,12 +475,13 @@ public class Rclone {
             params.add(baseUrl);
         }
 
+        String[] env = getRcloneEnv();
         String[] command = params.toArray(new String[0]);
         try {
             if (protocol == SERVE_PROTOCOL_WEBDAV) {
-                return Runtime.getRuntime().exec(command, environmentalVariables);
+                return Runtime.getRuntime().exec(command, env);
             } else {
-                return Runtime.getRuntime().exec(command);
+                return Runtime.getRuntime().exec(command, env);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -476,8 +513,9 @@ public class Rclone {
             return null;
         }
 
+        String[] env = getRcloneEnv();
         try {
-            return Runtime.getRuntime().exec(command);
+            return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -502,8 +540,9 @@ public class Rclone {
         }
         command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
 
+        String[] env = getRcloneEnv();
         try {
-            return Runtime.getRuntime().exec(command);
+            return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -533,8 +572,9 @@ public class Rclone {
 
         command = createCommandWithOptions("copy", uploadFile, path, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
 
+        String[] env = getRcloneEnv();
         try {
-            return Runtime.getRuntime().exec(command);
+            return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -561,8 +601,9 @@ public class Rclone {
             command = createCommandWithOptions("delete", filePath);
         }
 
+        String[] env = getRcloneEnv();
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -580,8 +621,9 @@ public class Rclone {
 
         String newDir = remote.getName() + ":" + localRemotePath + path;
         String[] command = createCommandWithOptions("mkdir", newDir);
+        String[] env = getRcloneEnv();
         try {
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -611,8 +653,9 @@ public class Rclone {
         oldFilePath = remoteName + ":" + localRemotePath + moveItem.getPath();
         newFilePath = (newLocation.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath + moveItem.getName() : remoteName + ":" + localRemotePath + newLocation + "/" + moveItem.getName();
         command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
+        String[] env = getRcloneEnv();
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -633,8 +676,9 @@ public class Rclone {
         String oldFilePath = remoteName + ":" + localRemotePath + oldFile;
         String newFilePath = remoteName + ":" + localRemotePath + newFile;
         String[] command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
+        String[] env = getRcloneEnv();
         try {
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -650,9 +694,9 @@ public class Rclone {
     public boolean emptyTrashCan(String remote) {
         String[] command = createCommandWithOptions("cleanup", remote + ":");
         Process process = null;
-
+        String[] env = getRcloneEnv();
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -669,9 +713,10 @@ public class Rclone {
         }
         String[] command = createCommandWithOptions("link", linkPath);
         Process process = null;
+        String[] env = getRcloneEnv();
 
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -701,9 +746,10 @@ public class Rclone {
 
         String remoteAndPath = remote.getName() + ":" + localRemotePath + fileItem.getName();
         String[] command = createCommandWithOptions("md5sum", remoteAndPath);
+        String[] env = getRcloneEnv();
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 return context.getString(R.string.hash_error);
@@ -734,9 +780,10 @@ public class Rclone {
 
         String remoteAndPath = remote.getName() + ":" + localRemotePath + fileItem.getName();
         String[] command = createCommandWithOptions("sha1sum", remoteAndPath);
+        String[] env = getRcloneEnv();
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 return context.getString(R.string.hash_error);
