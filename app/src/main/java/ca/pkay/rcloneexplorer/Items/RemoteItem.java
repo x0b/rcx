@@ -44,6 +44,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public final static int UNION = 36;
     public final static int WEBDAV = 37;
     public final static int YANDEX = 38;
+    public final static int SHAREFILE = 39;
+    public final static int MAILRU = 40;
+    public final static int PUTIO = 41;
+    public final static int PREMIUMIZEME = 42;
 
     private String name;
     private int type;
@@ -240,6 +244,14 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                 return WEBDAV;
             case "yandex":
                 return YANDEX;
+            case "sharefile":
+                return SHAREFILE;
+            case "mailru":
+                return MAILRU;
+            case "putio":
+                return PUTIO;
+            case "premiumizeme":
+                return PREMIUMIZEME;
             default:
                 return -1;
         }
