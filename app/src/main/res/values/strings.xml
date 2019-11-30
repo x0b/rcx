@@ -151,6 +151,7 @@
     <string name="pref_key_app_updates_beta">pref_key_app_updates_beta</string>
     <string name="pref_key_crash_reports">pref_key_crash_reports</string>
     <string name="pref_key_show_thumbnails">pref_key_show_thumbnails</string>
+    <string name="pref_key_thumbnail_size_limit">thumbnail_max_size</string>
     <string name="pref_key_wifi_only_transfers">pref_key_wifi_only_transfers</string>
     <string name="pref_key_version_code">pref_key_version_code</string>
     <string name="pref_key_version_name">pref_key_version_name</string>
@@ -351,6 +352,9 @@
     <string name="pref_key_update_last_check">last_update_check</string>
     <string name="experimental_features">Experimental Features</string>
     <string name="show_thumbnails">Show thumbnails</string>
+    <string name="pref_thumbnails_size_title">Max. file size for thumbnails</string>
+    <string name="pref_thumbnails_dlg_title">Size limit (MB)</string>
+    <string name="pref_thumbnails_size_summary">%1$.1f MB</string>
     <string name="generate_password_title">Generate Password</string>
     <string name="set_password_button">Set Password</string>
     <string name="generate_password">Generate</string>
