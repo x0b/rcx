@@ -16,6 +16,7 @@ android {
         versionName '1.10.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         debug {
             buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
@@ -26,44 +27,32 @@ android {
             buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
         }
     }
+
     sourceSets {
-        x86 {
-            jniLibs.srcDirs = ["lib/x86"]
-        }
-        x86_64 {
-            jniLibs.srcDirs = ["lib/x86_64"]
-        }
-        armv7a {
-            jniLibs.srcDirs = ["lib/armv7a"]
-        }
-        armv8a {
-            jniLibs.srcDirs = ["lib/armv8a"]
-        }
-        fatapk {
-            jniLibs.srcDirs = ["lib/fatapk"]
+        all {
+            jniLibs.srcDirs = ["lib"]
         }
     }
-    flavorDimensions 'arch'
-    productFlavors {
-        x86 {
-            dimension 'arch'
-            versionNameSuffix "-x86"
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            universalApk true
         }
-        armv7a {
-            dimension 'arch'
-            versionNameSuffix "-armv7a"
-        }
-        armv8a {
-            dimension 'arch'
-            versionNameSuffix "-armv8a"
-        }
-        x86_64 {
-            dimension 'arch'
-            versionNameSuffix "-x86_64"
-        }
-        fatapk {
-            dimension 'arch'
-            versionNameSuffix "-fatapk"
+    }
+
+    project.ext.versionCodes = [
+            'armeabi-v7a': 6,
+            'arm64-v8a': 7,
+            'x86': 8,
+            'x86_64': 9]
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.versionCodeOverride =
+                    project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) + android.defaultConfig.versionCode * 10
         }
     }
 }
