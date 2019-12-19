@@ -66,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -470,7 +471,7 @@ public class MainActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
         intent.putExtra(Intent.EXTRA_TITLE, "rclone.conf");
-        startActivityForResult(intent, WRITE_REQUEST_CODE);
+        tryStartActivityForResult(this, intent, WRITE_REQUEST_CODE);
     }
 
     public void requestPermissions() {

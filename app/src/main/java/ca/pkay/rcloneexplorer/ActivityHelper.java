@@ -28,11 +28,19 @@ public class ActivityHelper {
     }
 
     @SuppressLint("CheckResult")
-    public static void tryStartActivityForResult(Fragment activity, Intent intent, int requestCode) {
+    public static void tryStartActivityForResult(Fragment fragment, Intent intent, int requestCode) {
+        try {
+            fragment.startActivityForResult(intent, requestCode);
+        } catch (ActivityNotFoundException e) {
+            showErrorToast(fragment.getContext());
+        }
+    }
+
+    public static void tryStartActivityForResult(Activity activity, Intent intent, int requestCode) {
         try {
             activity.startActivityForResult(intent, requestCode);
         } catch (ActivityNotFoundException e) {
-            showErrorToast(activity.getContext());
+            showErrorToast(activity);
         }
     }
 
