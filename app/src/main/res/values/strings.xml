@@ -476,4 +476,11 @@
     <string name="pref_key_accessible_storage_locations" translatable="false">accessible_storage_locations</string>
     <string name="no_app_found_for_this_link">No app found for this link</string>
     <string name="documentsui_missing">System component for files (com.android.documentsui) missing</string>
+
+    <string name="back">Back</string>
+    <string name="task_dialog_save">save</string>
+    <string name="task_dialog_title_textfield_hint">Name</string>
+
+    <string name="sync_direction_local_remote">Sync local to remote</string>
+    <string name="sync_direction_remote_local">Sync remote to local</string>
 </resources>
