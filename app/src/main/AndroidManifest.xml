@@ -2,12 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ca.pkay.rcloneexplorer">
 
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,47 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service android:name=".Services.DownloadService" />
-        <service android:name=".Services.UploadService" />
-        <service android:name=".Services.StreamingService" />
-        <service android:name=".Services.FirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-        <service android:name=".Services.FirebaseIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-        <service android:name=".Services.ThumbnailsLoadingService" />
-        <service android:name=".Services.DeleteService" />
-        <service android:name=".Services.MoveService" />
-        <service android:name=".Services.SyncService" />
-
-        <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
-        <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
-        <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
-        <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
-        <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
-        <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
-
-        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
-
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="ca.pkay.rcloneexplorer.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths" />
-        </provider>
 
         <activity
             android:name=".AboutActivity"
@@ -89,35 +42,47 @@
         <activity
             android:name=".SharingActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -128,7 +93,58 @@
             android:name=".RemoteConfig.RemoteConfig"
             android:label="@string/title_activity_remote_config"
             android:theme="@style/AppTheme.NoActionBar" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
 
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="ca.pkay.rcloneexplorer.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
+
+        <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
+        <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
+        <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
+        <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
+        <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
+        <service
+            android:name=".Services.TaskStartService"
+            android:exported="true">
+        </service>
+
+        <service android:name=".Services.DownloadService" />
+        <service android:name=".Services.UploadService" />
+        <service android:name=".Services.StreamingService" />
+        <service android:name=".Services.FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".Services.FirebaseIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".Services.ThumbnailsLoadingService" />
+        <service android:name=".Services.DeleteService" />
+        <service android:name=".Services.MoveService" />
+        <service android:name=".Services.SyncService" />
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
 </manifest>
