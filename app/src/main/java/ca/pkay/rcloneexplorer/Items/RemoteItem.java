@@ -44,6 +44,12 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         this.type = getTypeFromString(type);
     }
 
+    public RemoteItem(String name, int type, String typeReadable) {
+        this.name = name;
+        this.typeReadable = typeReadable;
+        this.type = type;
+    }
+
     private RemoteItem(Parcel in) {
         name = in.readString();
         type = in.readInt();
