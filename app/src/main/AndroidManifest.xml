@@ -43,6 +43,7 @@
         <service android:name=".Services.DeleteService" />
         <service android:name=".Services.MoveService" />
         <service android:name=".Services.SyncService" />
+        <service android:name=".Services.TaskStartService" />
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
