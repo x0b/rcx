@@ -1404,7 +1404,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        String[] options = new String[] {"Sync local to remote", "Sync remote to local"};
+        String[] options = new String[] {getContext().getResources().getString(R.string.sync_direction_local_remote),getContext().getString(R.string.sync_direction_remote_local)};
         builder.setTitle(R.string.select_sync_direction);
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
