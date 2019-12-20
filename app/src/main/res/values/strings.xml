@@ -365,4 +365,11 @@
     <string name="authentication">Authentication</string>
     <string name="optional">Optional</string>
     <string name="serve_dialog_title">Serve a remote</string>
+
+    <string name="back">Back</string>
+    <string name="task_dialog_save">save</string>
+    <string name="task_dialog_title_textfield_hint">Name</string>
+
+    <string name="sync_direction_local_remote">Sync local to remote</string>
+    <string name="sync_direction_remote_local">Sync remote to local</string>
 </resources>

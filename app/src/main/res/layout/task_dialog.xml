@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/task_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:text="TITLE"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/task_name_layout">
+                <EditText
+                    android:text="@string/task_dialog_title_textfield_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/task_title_textfield" android:autofillHints="" android:inputType=""/>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/task_remote_layout">
+
+                <Spinner
+                    android:id="@+id/task_remote_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/task_remote_path_layout">
+
+                <EditText
+                    android:id="@+id/task_remote_path_textfield"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:inputType=""
+                    android:text="remote path" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/task_local_path_layout">
+
+                <EditText
+                    android:id="@+id/task_local_path_textfield"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:inputType=""
+                    android:text="local" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/task_direction_layout">
+
+                <Spinner
+                    android:id="@+id/task_direction_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" tools:visibility="visible">
+        <Button
+            android:text="@string/cancel"
+            android:minWidth="0dp"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/task_cancel"
+            android:textColor="@color/colorPrimaryDark"/>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"/>
+        <Button
+            android:text="@string/back"
+            android:minWidth="0dp"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/task_back"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimaryDark"/>
+        <Button
+            android:text="@string/next"
+            android:minWidth="0dp"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/task_next"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimaryDark"/>
+        <Button
+            android:text="@string/task_dialog_save"
+            android:minWidth="0dp"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/task_save"
+            android:layout_weight="1"
+            android:textColor="@color/colorPrimaryDark" android:visibility="gone"/>
+    </LinearLayout>
+
+
+</LinearLayout>
