@@ -49,6 +49,7 @@ import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
+import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import es.dmoral.toasty.Toasty;
@@ -296,6 +297,9 @@ public class MainActivity   extends AppCompatActivity
             case R.id.nav_remotes:
                 startRemotesFragment();
                 break;
+            case R.id.nav_tasks:
+                startTasksFragment();
+                break;
             case R.id.nav_import:
                 if (rclone.isConfigFileCreated()) {
                     warnUserAboutOverwritingConfiguration();
@@ -348,6 +352,19 @@ public class MainActivity   extends AppCompatActivity
 
     private void startRemotesFragment() {
         fragment = RemotesFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+            fragmentManager.popBackStack();
+        }
+
+        if (!isFinishing()) {
+            fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commitAllowingStateLoss();
+        }
+    }
+
+    private void startTasksFragment() {
+        fragment = TasksFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
