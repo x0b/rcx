@@ -483,4 +483,5 @@
 
     <string name="sync_direction_local_remote">Sync local to remote</string>
     <string name="sync_direction_remote_local">Sync remote to local</string>
+    <string name="tasks">Tasks</string>
 </resources>
