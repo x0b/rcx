@@ -381,4 +381,5 @@
     <string name="action_tasks_import">Import Tasks</string>
     <string name="importer_unknown_error">Unknown error importing task!</string>
     <string name="importer_no_file_selected">No File was selected</string>
+    <string name="exporter_success">The file was successfully stored at:</string>
 </resources>

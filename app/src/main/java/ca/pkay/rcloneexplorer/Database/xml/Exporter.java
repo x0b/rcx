@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,6 +31,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
+import ca.pkay.rcloneexplorer.R;
+import es.dmoral.toasty.Toasty;
 
 public class Exporter {
 
@@ -104,6 +107,7 @@ public class Exporter {
 
         try {
             myOutWriter.append(content);
+            Toasty.info(a, a.getResources().getString(R.string.exporter_success)+" "+Environment.getExternalStorageDirectory().getAbsolutePath()+"/rcloneExplorer/"+filename, Toast.LENGTH_SHORT, true).show();
         } finally {
             myOutWriter.close();
             stream.close();
