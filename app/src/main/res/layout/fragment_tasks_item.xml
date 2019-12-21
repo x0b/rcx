@@ -42,7 +42,7 @@
             android:id="@+id/fromLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:text="From:"
             app:layout_constraintStart_toStartOf="@+id/taskName"
             app:layout_constraintTop_toBottomOf="@+id/taskName" />
@@ -68,7 +68,6 @@
             android:id="@+id/toLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:text="To:"
             app:layout_constraintBottom_toBottomOf="parent"
