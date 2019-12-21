@@ -61,14 +61,16 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         if(selectedTask.getDirection()== Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE){
             holder.fromID.setVisibility(View.GONE);
-            holder.fromPath.setText(String.format("@%s", selectedTask.getLocal_path()));
-            holder.toID.setText(selectedTask.getRemote_id());
+            holder.fromPath.setText(selectedTask.getLocal_path());
+
+            holder.toID.setText(String.format("@%s", selectedTask.getRemote_id()));
             holder.toPath.setText(selectedTask.getRemote_path());
         }
 
         if(selectedTask.getDirection()== Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL){
             holder.fromID.setText(String.format("@%s", selectedTask.getRemote_id()));
             holder.fromPath.setText(selectedTask.getRemote_path());
+
             holder.toID.setVisibility(View.GONE);
             holder.toPath.setText(selectedTask.getLocal_path());
         }
