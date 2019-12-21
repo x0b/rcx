@@ -17,10 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
+import ca.pkay.rcloneexplorer.Dialogs.TaskDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -86,6 +88,11 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         notifyDataSetChanged();
     }
 
+    public void setList(ArrayList<Task> data) {
+        tasks=data;
+        notifyDataSetChanged();
+    }
+
     private void startTask(Task task){
         String path = task.getLocal_path();
         RemoteItem ri = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
@@ -98,7 +105,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private void editTask(Task task){
-
+        new TaskDialog(context, this, task).show();
     }
 
 

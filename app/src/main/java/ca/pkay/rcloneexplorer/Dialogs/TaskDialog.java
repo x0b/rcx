@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -30,11 +32,20 @@ public class TaskDialog extends Dialog {
     private TasksRecyclerViewAdapter recyclerViewAdapter;
     private Rclone r = new Rclone(getContext());
 
+    private Task existingTask;
+
+
     private int state = 0;
 
-    public TaskDialog(@NonNull Context context, TasksRecyclerViewAdapter recyclerViewAdapter) {
+    public TaskDialog(@NonNull Context context, TasksRecyclerViewAdapter tasksRecyclerViewAdapter) {
         super(context);
-        this.recyclerViewAdapter=recyclerViewAdapter;
+        this.recyclerViewAdapter=tasksRecyclerViewAdapter;
+    }
+
+    public TaskDialog(@NonNull Context context, TasksRecyclerViewAdapter tasksRecyclerViewAdapter, Task task) {
+        super(context);
+        this.recyclerViewAdapter=tasksRecyclerViewAdapter;
+        this.existingTask=task;
     }
 
 
@@ -74,6 +85,8 @@ public class TaskDialog extends Dialog {
         ArrayAdapter<String> directionAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, options);
         directionDropdown.setAdapter(directionAdapter);
 
+
+        populateFields(items);
         hideAll();
         decideState();
 
@@ -103,41 +116,77 @@ public class TaskDialog extends Dialog {
         task_save.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.e("APP!", "TaskDialog: Save!");
-                save();
+                if(existingTask==null){
+                    save();
+                }else{
+                    update();
+                }
             }
         });
     }
 
-    private void save(){
+    private void populateFields(String[] remotes) {
+        Log.e("app!", "Populate Task");
+        if(existingTask!=null){
+            Log.e("app!", "Populate Task"+existingTask.getTitle());
+            ((TextView)findViewById(R.id.task_title_textfield)).setText(existingTask.getTitle());
+            Spinner s = findViewById(R.id.task_remote_spinner);
+
+            int i=0;
+            for(String remote: remotes) {
+                if(remote.equals(existingTask.getRemote_id())){
+                    s.setSelection(i);
+                }
+                i++;
+            }
+
+            ((TextView)findViewById(R.id.task_remote_path_textfield)).setText(existingTask.getRemote_path());
+            ((TextView)findViewById(R.id.task_local_path_textfield)).setText(existingTask.getLocal_path());
+            ((Spinner)findViewById(R.id.task_direction_spinner)).setSelection(existingTask.getDirection()-1);
+        }
+    }
+
+    private void update(){
 
         DatabaseHandler dbHandler = new DatabaseHandler(getContext());
-        Task t = new Task(0L);
+        dbHandler.updateEntry(getTaskValues(existingTask.getId()));
 
-        t.setTitle(((EditText)findViewById(R.id.task_title_textfield)).getText().toString());
+        recyclerViewAdapter.setList((ArrayList<Task>) dbHandler.getAllTasks());
+
+        Log.e("app!", "Update Task: ");
+        cancel();
+    }
+
+    private void save(){
+        DatabaseHandler dbHandler = new DatabaseHandler(getContext());
+        Task newTask = dbHandler.createEntry(getTaskValues(0L));
+        recyclerViewAdapter.addTask(newTask);
+
+        Log.e("app!", "Task Dialog: "+newTask.toString());
+        cancel();
+    }
+
+    private Task getTaskValues(Long id ){
+        Task taskToPopulate = new Task(id);
+        taskToPopulate.setTitle(((EditText)findViewById(R.id.task_title_textfield)).getText().toString());
 
         String remotename=((Spinner)findViewById(R.id.task_remote_spinner)).getSelectedItem().toString();
-        t.setRemote_id(remotename);
+        taskToPopulate.setRemote_id(remotename);
 
         int direction = ((Spinner)findViewById(R.id.task_direction_spinner)).getSelectedItemPosition()+1;
 
 
 
         for (RemoteItem ri: r.getRemotes()) {
-            if(ri.getName().equals(t.getRemote_id())){
-                t.setRemote_type(ri.getType());
+            if(ri.getName().equals(taskToPopulate.getRemote_id())){
+                taskToPopulate.setRemote_type(ri.getType());
             }
         }
 
-        t.setRemote_path(((EditText)findViewById(R.id.task_remote_path_textfield)).getText().toString());
-        t.setLocal_path(((EditText)findViewById(R.id.task_local_path_textfield)).getText().toString());
-        t.setDirection(direction);
-
-        Task newTask = dbHandler.createEntry(t);
-        recyclerViewAdapter.addTask(newTask);
-
-        Log.e("app!", "Task Dialog: "+newTask.toString());
-
-        cancel();
+        taskToPopulate.setRemote_path(((EditText)findViewById(R.id.task_remote_path_textfield)).getText().toString());
+        taskToPopulate.setLocal_path(((EditText)findViewById(R.id.task_local_path_textfield)).getText().toString());
+        taskToPopulate.setDirection(direction);
+        return taskToPopulate;
     }
 
 

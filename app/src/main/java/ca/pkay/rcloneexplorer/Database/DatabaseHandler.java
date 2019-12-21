@@ -109,6 +109,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+    public void updateEntry(Task taskToUpdate) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Task.COLUMN_NAME_TITLE, taskToUpdate.getTitle());
+        values.put(Task.COLUMN_NAME_LOCAL_PATH, taskToUpdate.getLocal_path());
+        values.put(Task.COLUMN_NAME_REMOTE_ID, taskToUpdate.getRemote_id());
+        values.put(Task.COLUMN_NAME_REMOTE_PATH, taskToUpdate.getRemote_path());
+        values.put(Task.COLUMN_NAME_REMOTE_TYPE, taskToUpdate.getRemote_type());
+        values.put(Task.COLUMN_NAME_SYNC_DIRECTION, taskToUpdate.getDirection());
+
+        db.update(Task.TABLE_NAME, values, Task.COLUMN_NAME_ID+" = ?", new String[]{String.valueOf(taskToUpdate.getId())});
+
+    }
+
     public int deleteEntry(long id){
         SQLiteDatabase db = getWritableDatabase();
         String selection = Task.COLUMN_NAME_ID + " LIKE ?";
