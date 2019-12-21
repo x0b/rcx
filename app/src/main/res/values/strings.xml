@@ -377,4 +377,8 @@
     <string name="start_task">Start Task</string>
     <string name="copy_taskid">Copy TaskID</string>
     <string name="task_copied_id_to_clipboard">Copied ID to clipboard!</string>
+    <string name="action_tasks_export">Export Tasks</string>
+    <string name="action_tasks_import">Import Tasks</string>
+    <string name="importer_unknown_error">Unknown error importing task!</string>
+    <string name="importer_no_file_selected">No File was selected</string>
 </resources>
