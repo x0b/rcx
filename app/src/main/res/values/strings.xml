@@ -373,4 +373,8 @@
     <string name="sync_direction_local_remote">Sync local to remote</string>
     <string name="sync_direction_remote_local">Sync remote to local</string>
     <string name="tasks">Tasks</string>
+    <string name="edit">Edit</string>
+    <string name="start_task">Start Task</string>
+    <string name="copy_taskid">Copy TaskID</string>
+    <string name="task_copied_id_to_clipboard">Copied ID to clipboard!</string>
 </resources>
