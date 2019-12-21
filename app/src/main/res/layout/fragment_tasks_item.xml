@@ -51,18 +51,18 @@
             android:id="@+id/fromID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="TextView"
-            app:layout_constraintStart_toEndOf="@+id/fromLabel"
+            android:text="fromid"
+            app:layout_constraintStart_toEndOf="@+id/fromPath"
             app:layout_constraintTop_toTopOf="@+id/fromLabel" />
 
         <TextView
             android:id="@+id/fromPath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintStart_toEndOf="@+id/fromID"
-            app:layout_constraintTop_toTopOf="@+id/fromID" />
+            android:layout_marginStart="8dp"
+            android:text="fromPath"
+            app:layout_constraintStart_toEndOf="@+id/fromLabel"
+            app:layout_constraintTop_toTopOf="@+id/fromLabel" />
 
         <TextView
             android:id="@+id/toLabel"
@@ -79,53 +79,35 @@
             android:id="@+id/toID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintStart_toStartOf="@+id/fromID"
+            android:text="toid"
+            app:layout_constraintStart_toEndOf="@+id/toPath"
             app:layout_constraintTop_toTopOf="@+id/toLabel" />
 
         <TextView
             android:id="@+id/toPath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintStart_toEndOf="@+id/toID"
-            app:layout_constraintTop_toTopOf="@+id/toID" />
+            android:text="toPath"
+            app:layout_constraintStart_toStartOf="@+id/fromPath"
+            app:layout_constraintTop_toTopOf="@+id/toLabel" />
 
-        <LinearLayout
-            android:id="@+id/button_layout"
+        <ImageButton
+            android:id="@+id/file_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/file_options_content_description"
+            android:paddingStart="16dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="26dp"
+            android:src="@drawable/ic_more_vert"
+            android:tint="?attr/iconTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="32dp"
-                app:srcCompat="@android:drawable/btn_star" />
-
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Start!" />
-
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/task_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/button_layout"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_delete_black" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>

@@ -1,16 +1,21 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,6 +25,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.Services.SyncService;
+import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
 
@@ -42,51 +48,36 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        final Task t = tasks.get(position);
-        String remoteName = t.getTitle();
+        final Task selectedTask = tasks.get(position);
+        String remoteName = selectedTask.getTitle();
 
         holder.taskName.setText(remoteName);
 
-        RemoteItem ri = new RemoteItem(t.getRemote_id(), String.valueOf(t.getRemote_type()));
+        RemoteItem ri = new RemoteItem(selectedTask.getRemote_id(), String.valueOf(selectedTask.getRemote_type()));
 
         holder.taskIcon.setImageDrawable(view.getResources().getDrawable(ri.getRemoteIcon()));
 
-        if(t.getDirection()== Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE){
+        if(selectedTask.getDirection()== Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE){
             holder.fromID.setVisibility(View.GONE);
-            holder.fromPath.setText(String.format("%s:", t.getLocal_path()));
-            holder.toID.setText(t.getRemote_id());
-            holder.toPath.setText(t.getRemote_path());
+            holder.fromPath.setText(String.format("@%s", selectedTask.getLocal_path()));
+            holder.toID.setText(selectedTask.getRemote_id());
+            holder.toPath.setText(selectedTask.getRemote_path());
         }
 
-        if(t.getDirection()== Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL){
-            holder.fromID.setText(String.format("%s:", t.getRemote_id()));
-            holder.fromPath.setText(t.getRemote_path());
+        if(selectedTask.getDirection()== Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL){
+            holder.fromID.setText(String.format("@%s", selectedTask.getRemote_id()));
+            holder.fromPath.setText(selectedTask.getRemote_path());
             holder.toID.setVisibility(View.GONE);
-            holder.toPath.setText(t.getLocal_path());
+            holder.toPath.setText(selectedTask.getLocal_path());
         }
 
 
-        holder.button_layout.setOnClickListener(new View.OnClickListener() {
+        holder.fileOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                String path = t.getLocal_path();
-                RemoteItem ri = new RemoteItem(t.getRemote_id(), t.getRemote_type(), "");
-                Intent intent = new Intent(context, SyncService.class);
-                intent.putExtra(SyncService.REMOTE_ARG, ri);
-                intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
-                intent.putExtra(SyncService.SYNC_DIRECTION_ARG, t.getDirection());
-                intent.putExtra(SyncService.REMOTE_PATH_ARG, t.getRemote_path());
-                context.startService(intent);
+                showFileMenu(v, selectedTask);
             }
         });
-
-        holder.task_delete.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new DatabaseHandler(context).deleteEntry(t.getId());
-                notifyDataSetChanged();
-                removeItem(t);
-            }
-        });
-
 
     }
 
@@ -94,6 +85,22 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         tasks.add(data);
         notifyDataSetChanged();
     }
+
+    private void startTask(Task task){
+        String path = task.getLocal_path();
+        RemoteItem ri = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
+        Intent intent = new Intent(context, SyncService.class);
+        intent.putExtra(SyncService.REMOTE_ARG, ri);
+        intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
+        intent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
+        intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
+        context.startService(intent);
+    }
+
+    private void editTask(Task task){
+
+    }
+
 
     public void removeItem(Task task) {
         int index = tasks.indexOf(task);
@@ -111,29 +118,67 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         return tasks.size();
     }
 
+    /**
+     * Stolen from this app
+     * @param view
+     * @param t
+     */
+    private void showFileMenu(View view, final Task t) {
+        PopupMenu popupMenu = new PopupMenu(context, view);
+        popupMenu.getMenuInflater().inflate(R.menu.task_item_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_start_task:
+                        startTask(t);
+                        break;
+                    case R.id.action_edit_task:
+                        editTask(t);
+                        break;
+                    case R.id.action_delete_task:
+                        new DatabaseHandler(context).deleteEntry(t.getId());
+                        notifyDataSetChanged();
+                        removeItem(t);
+                        break;
+                    case R.id.action_copy_id_task:
+                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("rclone_explorer_task_id", t.getId().toString());
+                        clipboard.setPrimaryClip(clip);
+                        Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         final View view;
         final ImageView taskIcon;
-        final ImageView task_delete;
         final TextView taskName;
         final TextView toID;
         final TextView fromID;
         final TextView toPath;
         final TextView fromPath;
-        final LinearLayout button_layout;
+        final ImageButton fileOptions;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.view = itemView;
             this.taskIcon = view.findViewById(R.id.taskIcon);
-            this.task_delete = view.findViewById(R.id.task_delete);
             this.taskName = view.findViewById(R.id.taskName);
             this.toID = view.findViewById(R.id.toID);
             this.fromID = view.findViewById(R.id.fromID);
             this.toPath = view.findViewById(R.id.toPath);
             this.fromPath = view.findViewById(R.id.fromPath);
-            this.button_layout = view.findViewById(R.id.button_layout);
+
+            this.fileOptions = view.findViewById(R.id.file_options);
         }
     }
 
