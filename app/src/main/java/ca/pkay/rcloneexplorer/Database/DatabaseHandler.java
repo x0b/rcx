@@ -69,7 +69,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             task.setDirection(cursor.getInt(6));
 
             results.add(task);
-            Log.e("app!", "List: "+task.toString());
         }
         cursor.close();
 
@@ -80,7 +79,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Task createEntry(Task taskToStore){
         SQLiteDatabase db = getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_NAME_TITLE, taskToStore.getTitle());
         values.put(Task.COLUMN_NAME_LOCAL_PATH, taskToStore.getLocal_path());
@@ -89,10 +87,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Task.COLUMN_NAME_REMOTE_TYPE, taskToStore.getRemote_type());
         values.put(Task.COLUMN_NAME_SYNC_DIRECTION, taskToStore.getDirection());
 
-
-        Log.e("app!", "Pre Store: "+taskToStore.toString());
-
-        // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(Task.TABLE_NAME, null, values);
 
         Task newObject = new Task(newRowId);
@@ -102,8 +96,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         newObject.setRemote_path(taskToStore.getRemote_path());
         newObject.setRemote_type(taskToStore.getRemote_type());
         newObject.setDirection(taskToStore.getDirection());
-
-        Log.e("app!", "Post Store: "+newObject.toString());
 
         return newObject;
 
