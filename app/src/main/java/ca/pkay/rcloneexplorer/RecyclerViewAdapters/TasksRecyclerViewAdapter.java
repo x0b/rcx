@@ -24,6 +24,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Dialogs.TaskDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.Services.SyncService;
@@ -59,7 +60,9 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         holder.taskIcon.setImageDrawable(view.getResources().getDrawable(ri.getRemoteIcon()));
 
-        if(selectedTask.getDirection()== Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE){
+        int direction = selectedTask.getDirection();
+
+        if(direction == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE || direction == SyncDirectionObject.COPY_LOCAL_TO_REMOTE){
             holder.fromID.setVisibility(View.GONE);
             holder.fromPath.setText(selectedTask.getLocal_path());
 
@@ -67,7 +70,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             holder.toPath.setText(selectedTask.getRemote_path());
         }
 
-        if(selectedTask.getDirection()== Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL){
+        if(direction == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL || direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL){
             holder.fromID.setText(String.format("@%s", selectedTask.getRemote_id()));
             holder.fromPath.setText(selectedTask.getRemote_path());
 
@@ -75,6 +78,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             holder.toPath.setText(selectedTask.getLocal_path());
         }
 
+        switch (direction){
+            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL: holder.task_sync_direction.setText(view.getResources().getString(R.string.sync)); break;
+            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE: holder.task_sync_direction.setText(view.getResources().getString(R.string.copy)); break;
+            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL: holder.task_sync_direction.setText(view.getResources().getString(R.string.copy)); break;
+            default: holder.task_sync_direction.setText(view.getResources().getString(R.string.sync)); break;
+        }
 
         holder.fileOptions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +185,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         final TextView toPath;
         final TextView fromPath;
         final ImageButton fileOptions;
+        final TextView task_sync_direction;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -186,6 +196,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             this.fromID = view.findViewById(R.id.fromID);
             this.toPath = view.findViewById(R.id.toPath);
             this.fromPath = view.findViewById(R.id.fromPath);
+            this.task_sync_direction = view.findViewById(R.id.task_sync_direction);
 
             this.fileOptions = view.findViewById(R.id.file_options);
         }
