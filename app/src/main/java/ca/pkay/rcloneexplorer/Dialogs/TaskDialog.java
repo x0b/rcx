@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
@@ -81,7 +82,7 @@ public class TaskDialog extends Dialog {
 
 
         Spinner directionDropdown = findViewById(R.id.task_direction_spinner);
-        String[] options = new String[] {getContext().getResources().getString(R.string.sync_direction_local_remote),getContext().getString(R.string.sync_direction_remote_local)};
+        String[] options = SyncDirectionObject.getOptionsArray(getContext());
         ArrayAdapter<String> directionAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, options);
         directionDropdown.setAdapter(directionAdapter);
 

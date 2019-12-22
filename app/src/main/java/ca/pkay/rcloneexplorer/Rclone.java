@@ -29,12 +29,10 @@ import java.util.Set;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import es.dmoral.toasty.Toasty;
 
 public class Rclone {
-
-    public static final int SYNC_DIRECTION_LOCAL_TO_REMOTE = 1;
-    public static final int SYNC_DIRECTION_REMOTE_TO_LOCAL = 2;
     public static final int SERVE_PROTOCOL_HTTP = 1;
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
@@ -416,11 +414,15 @@ public class Rclone {
         String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? Environment.getExternalStorageDirectory().getAbsolutePath() + "/" : "";
         String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
 
-        if (syncDirection == 1) {
+        if (syncDirection == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE) {
             command = createCommandWithOptions("sync", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
-        } else if (syncDirection == 2) {
+        } else if (syncDirection == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL) {
             command = createCommandWithOptions("sync", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
-        } else {
+        } else if (syncDirection == SyncDirectionObject.COPY_LOCAL_TO_REMOTE) {
+            command = createCommandWithOptions("copy", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+        }else if (syncDirection == SyncDirectionObject.COPY_REMOTE_TO_LOCAL) {
+            command = createCommandWithOptions("copy", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+        }else {
             return null;
         }
 

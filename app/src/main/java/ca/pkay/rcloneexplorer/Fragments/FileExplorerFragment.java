@@ -71,6 +71,7 @@ import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
+import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -1404,16 +1405,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        String[] options = new String[] {getContext().getResources().getString(R.string.sync_direction_local_remote),getContext().getString(R.string.sync_direction_remote_local)};
+        String[] options = SyncDirectionObject.getOptionsArray(getContext());
         builder.setTitle(R.string.select_sync_direction);
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    syncDirection = Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE;
-                } else {
-                    syncDirection = Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL;
+                int value = which+1;
+                switch (value){
+                    case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL: syncDirection = SyncDirectionObject.SYNC_REMOTE_TO_LOCAL; break;
+                    case SyncDirectionObject.COPY_LOCAL_TO_REMOTE: syncDirection = SyncDirectionObject.COPY_LOCAL_TO_REMOTE; break;
+                    case SyncDirectionObject.COPY_REMOTE_TO_LOCAL: syncDirection = SyncDirectionObject.COPY_REMOTE_TO_LOCAL; break;
+                    default: syncDirection = SyncDirectionObject.SYNC_LOCAL_TO_REMOTE; break;
                 }
+
                 Intent intent = new Intent(context, FilePicker.class);
                 intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
                 startActivityForResult(intent, FILE_PICKER_SYNC_RESULT);

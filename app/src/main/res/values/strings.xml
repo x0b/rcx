@@ -382,4 +382,6 @@
     <string name="importer_unknown_error">Unknown error importing task!</string>
     <string name="importer_no_file_selected">No File was selected</string>
     <string name="exporter_success">The file was successfully stored at:</string>
+    <string name="sync_direction_copy_local_remote">Copy local to remote</string>
+    <string name="sync_direction_copy_remote_local">Copy remote to local</string>
 </resources>
