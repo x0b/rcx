@@ -42,10 +42,10 @@
             android:id="@+id/fromLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="20dp"
             android:text="From:"
-            app:layout_constraintStart_toStartOf="@+id/taskName"
-            app:layout_constraintTop_toBottomOf="@+id/taskName" />
+            app:layout_constraintStart_toEndOf="@+id/task_sync_direction"
+            app:layout_constraintTop_toTopOf="@+id/task_sync_direction" />
 
         <TextView
             android:id="@+id/fromID"
@@ -107,6 +107,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/task_sync_direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/sync"
+            app:layout_constraintStart_toStartOf="@+id/taskName"
+            app:layout_constraintTop_toBottomOf="@+id/taskName" />
 
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>
