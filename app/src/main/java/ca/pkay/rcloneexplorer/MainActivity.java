@@ -40,6 +40,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
@@ -693,6 +694,10 @@ public class MainActivity extends AppCompatActivity
             }
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if(sharedPreferences.getBoolean(getString(R.string.pref_key_enable_saf), false)){
+                RemoteConfigHelper.enableSaf(context);
+            }
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(getString(R.string.shared_preferences_pinned_remotes));
             editor.remove(getString(R.string.shared_preferences_drawer_pinned_remotes));

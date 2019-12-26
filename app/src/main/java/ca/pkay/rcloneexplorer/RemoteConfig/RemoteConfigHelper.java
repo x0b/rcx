@@ -7,6 +7,8 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import es.dmoral.toasty.Toasty;
+import io.github.x0b.safdav.SafAccessProvider;
+import io.github.x0b.safdav.file.SafConstants;
 
 import java.util.ArrayList;
 
@@ -50,5 +52,20 @@ public class RemoteConfigHelper {
         } else {
             Toasty.success(context, context.getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
         }
+    }
+
+    public static void enableSaf(Context context) {
+        String user = SafAccessProvider.getUser(context);
+        String pass = SafAccessProvider.getPassword(context);
+        ArrayList<String> options = new ArrayList<>();
+        options.add(SafConstants.SAF_REMOTE_NAME);
+        options.add("webdav");
+        options.add("url");
+        options.add(SafConstants.SAF_REMOTE_URL);
+        options.add("user");
+        options.add(user);
+        options.add("pass");
+        options.add(pass);
+        setupAndWait(context, options);
     }
 }

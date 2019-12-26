@@ -139,19 +139,7 @@ public class FileAccessSettingsFragment extends Fragment {
     }
 
     private void createSafRemote() {
-        String user = SafAccessProvider.getUser(getContext());
-        String pass = SafAccessProvider.getPassword(getContext());
-        ArrayList<String> options = new ArrayList<>();
-        options.add(SafConstants.SAF_REMOTE_NAME);
-        options.add("webdav");
-        options.add("url");
-        options.add(SafConstants.SAF_REMOTE_URL);
-        options.add("user");
-        options.add(user);
-        options.add("pass");
-        options.add(pass);
-
-        RemoteConfigHelper.setupAndWait(context, options);
+        RemoteConfigHelper.enableSaf(getContext());
     }
 
     public void addRoot(){
