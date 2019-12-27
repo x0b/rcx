@@ -7,12 +7,12 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -375,19 +375,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
      */
     @Override
     public void onDestinationSelected(String path) {
-        if (selectedRemote.isRemoteType(RemoteItem.LOCAL)) {
-            if (path.equals("//" + selectedRemote.getName())) {
-                remotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
-            } else {
-                remotePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + path;
-            }
-        } else {
-            if (path.equals("//" + selectedRemote.getName())) {
-                remotePath = selectedRemote.getName() + ":";
-            } else {
-                remotePath = selectedRemote.getName() + ":" + path;
-            }
-        }
+        remotePath = RemoteConfigHelper.getRemotePath(path, selectedRemote);
         remote.setText(remotePath);
     }
 
@@ -440,17 +428,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         options.add("directory_name_encryption");
         options.add(directoryEncryption);
 
-        Process process = rclone.configCreate(options);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (process.exitValue() != 0) {
-            Toasty.error(context, getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
-        } else {
-            Toasty.success(context, getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
-        }
+        RemoteConfigHelper.setupAndWait(context, options);
         if (getActivity() != null) {
             getActivity().finish();
         }

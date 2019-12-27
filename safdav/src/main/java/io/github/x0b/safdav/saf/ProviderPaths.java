@@ -3,10 +3,12 @@ package io.github.x0b.safdav.saf;
 import android.content.Context;
 import android.content.UriPermission;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import io.github.x0b.safdav.file.ItemNotFoundException;
 import io.github.x0b.safdav.file.SafItem;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
@@ -17,6 +19,8 @@ public class ProviderPaths {
     private static final String ANDROID_EXTERNAL_STORAGE_PREFIX = "content://com.android.externalstorage.documents/tree/";
 
     private final Context context;
+    // stores permissions by their name
+    private static HashMap<String, Uri> permissionsByPath = new HashMap<>();
 
     public ProviderPaths(Context context) {
         this.context = context;
@@ -32,6 +36,32 @@ public class ProviderPaths {
         return new SafPermissionItem(permissions);
     }
 
+    public static String getPathForUri(Uri uri){
+        String path = getNormalizedPath(uri);
+        path = path.substring(0, path.length()-1);
+        if("primary".equals(path) && "com.android.externalstorage.documents".equals(uri.getAuthority())) {
+            if(Environment.isExternalStorageRemovable()) {
+                path = "SD Card";
+            } else {
+                path = "Internal Storage";
+            }
+        }
+        Uri storedUri = permissionsByPath.get(path);
+        if(null == storedUri || storedUri.equals(uri)) {
+            permissionsByPath.put(path, uri);
+        } else {
+            // if the name is not unique, we need to generate a counter
+            int counter = 2;
+            String nameInternal = path;
+            while(null != storedUri) {
+                path =  nameInternal + " (" + counter++ +")";
+                storedUri = permissionsByPath.get(path);
+            }
+            permissionsByPath.put(path, uri);
+        }
+        return path + "/";
+    }
+
     /**
      * Translates a request path into a requestable contest uri. This process assumes that <br>
      * - a hierarchical filesystem is accessed<br>
@@ -44,6 +74,25 @@ public class ProviderPaths {
     public Uri getUriByMappedPath(String requestUri) {
         if(null == requestUri || '/' != requestUri.charAt(0)){
             throw new IllegalArgumentException("You must request an actual path permission, not " + requestUri);
+        }
+
+        // the first path segment is the id to resolve to the underlying permission uri
+        String path = requestUri.substring(1);
+        int idx;
+        String pathExtra = "";
+        if((idx = requestUri.indexOf('/', 1)) != -1) {
+            path = requestUri.substring(1, idx);
+            pathExtra = requestUri.substring(idx+1);
+        }
+        // try to retrieve by map
+        Uri storedUri = permissionsByPath.get(path);
+        if(null != storedUri) {
+            Uri.Builder builder = new Uri.Builder();
+            return builder
+                    .scheme("content")
+                    .authority(storedUri.getAuthority())
+                    .path(storedUri.getPath() + pathExtra)
+                    .build();
         }
 
         Log.v(TAG, "Rewriting URI: " + requestUri);
@@ -95,8 +144,11 @@ public class ProviderPaths {
         String path = uri.getPath().replace(":", "/");
         int begin = !path.contains("/tree/") ? 0 : "/tree/".length();
         int end = path.lastIndexOf(':') == path.length()-1 ? path.length()-1 : path.length();
-        String folder = path.substring(begin, end);
-        return folder;// + "_" + getProviderHash(uri);
+        path = path.substring(begin, end);
+        if(path.length()-1 != path.lastIndexOf('/')) {
+            path = path + '/';
+        }
+        return path;
     }
 
     public static String getProviderHash(Uri uri){

@@ -41,6 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@+id/cancel_auth" />
+        app:layout_constraintStart_toEndOf="@+id/cancel_auth"
+            android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

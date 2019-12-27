@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer.Services;
 import android.app.IntentService;
 import android.content.Intent;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -35,7 +36,7 @@ public class ThumbnailsLoadingService extends IntentService {
         process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, 29179, false, null, null, remote, "", hiddenPath);
         if (process != null) {
             try {
-                if(getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE).
+                if(PreferenceManager.getDefaultSharedPreferences(this).
                         getBoolean(getString(R.string.pref_key_logs), false)) {
                     new Thread() {
                         @Override

@@ -19,7 +19,7 @@ public interface ItemAccess<T extends SafItem> {
      * @param uri a permission style uri representing a directory
      * @return a List&lt;T extends SafItem&gt; of contained items
      */
-    List<T> list(Uri uri);
+    List<? extends SafItem> list(Uri uri);
 
     /**
      * Get an InputStream for a file

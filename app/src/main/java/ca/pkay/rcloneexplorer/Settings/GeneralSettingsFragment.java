@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.text.InputType;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +35,7 @@ import es.dmoral.toasty.Toasty;
 
 public class GeneralSettingsFragment extends Fragment {
 
+    private static final String TAG = "GeneralSettingsFragment";
     private Context context;
     private View appShortcutsElement;
     private View showThumbnailsElement;
@@ -37,6 +43,17 @@ public class GeneralSettingsFragment extends Fragment {
     private View wifiOnlyElement;
     private Switch wifiOnlySwitch;
     private boolean isDarkTheme;
+
+    private Switch useProxySwitch;
+    private View useProxyElement;
+    private View proxyProtocolElement;
+    private TextView proxyProtocolSummary;
+    private View proxyHostElement;
+    private TextView proxyHostSummary;
+    private View proxyPortElement;
+    private TextView proxyPortSummary;
+    private View thumbnailSizeElement;
+    private TextView thumbnailSizeSummary;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -87,6 +104,16 @@ public class GeneralSettingsFragment extends Fragment {
         showThumbnailsSwitch = view.findViewById(R.id.show_thumbnails_switch);
         wifiOnlyElement = view.findViewById(R.id.wifi_only);
         wifiOnlySwitch = view.findViewById(R.id.wifi_only_switch);
+        useProxyElement = view.findViewById(R.id.use_proxy);
+        useProxySwitch = view.findViewById(R.id.use_proxy_switch);
+        proxyProtocolElement = view.findViewById(R.id.proxy_protocol);
+        proxyProtocolSummary = view.findViewById(R.id.proxy_protocol_summary);
+        proxyHostElement = view.findViewById(R.id.proxy_host);
+        proxyHostSummary = view.findViewById(R.id.proxy_host_summary);
+        proxyPortElement = view.findViewById(R.id.proxy_port);
+        proxyPortSummary = view.findViewById(R.id.proxy_port_summary);
+        thumbnailSizeElement = view.findViewById(R.id.thumbnail_size);
+        thumbnailSizeSummary = view.findViewById(R.id.thumbnail_size_summary);
     }
     
     private void setDefaultStates() {
@@ -94,12 +121,34 @@ public class GeneralSettingsFragment extends Fragment {
         boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         boolean isWifiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        boolean useProxy = sharedPreferences.getBoolean(getString(R.string.pref_key_use_proxy), false);
+        String proxyProtocol = sharedPreferences.getString(getString(R.string.pref_key_proxy_protocol), "http");
+        String proxyHost = sharedPreferences.getString(getString(R.string.pref_key_proxy_host), "localhost");
+        int proxyPort = sharedPreferences.getInt(getString(R.string.pref_key_proxy_port), 8080);
+        // TODO: build ui
+        //String noProxyHosts = sharedPreferences.getString(getString(R.string.pref_key_no_proxy_hosts), "localhost");
 
         showThumbnailsSwitch.setChecked(showThumbnails);
         wifiOnlySwitch.setChecked(isWifiOnly);
+        useProxySwitch.setChecked(useProxy);
+        proxyProtocolSummary.setText(proxyProtocol);
+        proxyHostSummary.setText(proxyHost);
+        proxyPortSummary.setText(String.valueOf(proxyPort));
+        if(!useProxy) {
+            proxyProtocolElement.setVisibility(View.GONE);
+            proxyHostElement.setVisibility(View.GONE);
+            proxyPortElement.setVisibility(View.GONE);
+        }
 
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
             appShortcutsElement.setVisibility(View.GONE);
+        }
+        long thumbnailSizeLimit = sharedPreferences.getLong(getString(R.string.pref_key_thumbnail_size_limit),
+                getResources().getInteger(R.integer.default_thumbnail_size_limit));
+        thumbnailSizeSummary.setText(getString(R.string.pref_thumbnails_size_summary,
+                thumbnailSizeLimit / (1024 * 1024d)));
+        if(showThumbnails) {
+            thumbnailSizeElement.setVisibility(View.VISIBLE);
         }
     }
     
@@ -142,9 +191,54 @@ public class GeneralSettingsFragment extends Fragment {
                 setWifiOnlyTransfers(isChecked);
             }
         });
+        useProxyElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(useProxySwitch.isChecked()) {
+                    useProxySwitch.setChecked(false);
+                } else {
+                    useProxySwitch.setChecked(true);
+                }
+            }
+        });
+        useProxySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setUseProxy(isChecked);
+            }
+        });
+        proxyProtocolElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProxyProtocolMenu();
+            }
+        });
+        proxyHostElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProxyHostMenu();
+            }
+        });
+        proxyPortElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProxyPortMenu();
+            }
+        });
+        thumbnailSizeElement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showThumbnailSizeDialog();
+            }
+        });
     }
 
     private void showThumbnails(boolean isChecked) {
+        if (isChecked) {
+            thumbnailSizeElement.setVisibility(View.VISIBLE);
+        } else {
+            thumbnailSizeElement.setVisibility(View.GONE);
+        }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_show_thumbnails), isChecked);
@@ -274,5 +368,170 @@ public class GeneralSettingsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_wifi_only_transfers), isChecked);
         editor.apply();
+    }
+
+    private void setUseProxy(boolean isChecked) {
+        if(isChecked) {
+            proxyProtocolElement.setVisibility(View.VISIBLE);
+            proxyHostElement.setVisibility(View.VISIBLE);
+            proxyPortElement.setVisibility(View.VISIBLE);
+        } else {
+            proxyProtocolElement.setVisibility(View.GONE);
+            proxyHostElement.setVisibility(View.GONE);
+            proxyPortElement.setVisibility(View.GONE);
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_use_proxy), isChecked);
+        editor.apply();
+    }
+
+    private void showProxyProtocolMenu() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final List<String> proxyProtocols = Arrays.asList(context.getResources().getStringArray(R.array.proxy_protocols));
+
+        int initialSelection = proxyProtocols.indexOf(
+                                pref.getString(context.getString(R.string.pref_key_proxy_protocol), "http"));
+
+        builder.setTitle(R.string.pref_proxy_protocol_dlg_title);
+        final int[] userSelected = new int[1];
+        builder.setSingleChoiceItems(R.array.proxy_protocols, initialSelection, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                userSelected[0] = which;
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String protocol = proxyProtocols.get(userSelected[0]);
+                pref.edit().putString(getString(R.string.pref_key_proxy_protocol), protocol).apply();
+                if(proxyProtocolSummary != null) {
+                    proxyProtocolSummary.setText(protocol);
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showProxyHostMenu() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final EditText proxyHostEdit = new EditText(context);
+        String initialText = pref.getString(context.getString(R.string.pref_key_proxy_host), "localhost");
+        proxyHostEdit.setText(initialText);
+
+        builder.setTitle(R.string.pref_proxy_host_dlg_title);
+        builder.setView(proxyHostEdit);
+
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String host = proxyHostEdit.getText().toString();
+                pref.edit().putString(getString(R.string.pref_key_proxy_host), host).apply();
+                if(null != proxyHostSummary) {
+                    proxyHostSummary.setText(host);
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showProxyPortMenu() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final EditText proxyPortEdit = new EditText(context);
+        proxyPortEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        int initialPort = pref.getInt(context.getString(R.string.pref_key_proxy_port), 8080);
+        proxyPortEdit.setText(String.valueOf(initialPort));
+
+        builder.setTitle(R.string.pref_proxy_port_dlg_title);
+        builder.setView(proxyPortEdit);
+
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String portString = proxyPortEdit.getText().toString();
+                int port;
+                try {
+                    port = Integer.parseInt(portString);
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "showProxyPortMenu: invalid port", e);
+                    return;
+                }
+                pref.edit().putInt(getString(R.string.pref_key_proxy_port), port).apply();
+                if(null != proxyPortSummary) {
+                    proxyPortSummary.setText(String.valueOf(port));
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showThumbnailSizeDialog() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final EditText thumbnailSizeEdit = new EditText(context);
+        thumbnailSizeEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        long size = pref.getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
+                getResources().getInteger(R.integer.default_thumbnail_size_limit));
+        thumbnailSizeEdit.setText(String.valueOf(size / (1024 * 1024d)));
+
+        builder.setTitle(R.string.pref_thumbnails_dlg_title);
+        builder.setView(thumbnailSizeEdit);
+
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String sizeString = thumbnailSizeEdit.getText().toString();
+                long size;
+                double sizeMb;
+                try {
+                    sizeMb = Double.parseDouble(sizeString);
+                    size = (long)(sizeMb * 1024 * 1024);
+                } catch (NumberFormatException e) {
+                    Log.e(TAG, "showThumbnailSizeDialog: invalid size", e);
+                    return;
+                }
+                pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size).apply();
+                if(null != thumbnailSizeSummary) {
+                    thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
+                }
+            }
+        });
+
+        builder.show();
     }
 }

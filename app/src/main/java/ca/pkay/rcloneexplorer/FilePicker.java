@@ -1,14 +1,10 @@
 package ca.pkay.rcloneexplorer;
 
-import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -17,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,7 +59,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        applyTheme();
+        ActivityHelper.applyTheme(this);
         setContentView(R.layout.activity_file_picker);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,6 +72,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
+        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
         if (savedInstanceState != null) {
             destinationPickerType = savedInstanceState.getBoolean(SAVED_DESTINATION_PICKER_TYPE);
@@ -157,25 +155,6 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             }
             filePickerAdapter.setSelectedFiles(selectedFiles);
         }
-    }
-
-    private void applyTheme() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
-        int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
-        getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
-        getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
-        if (isDarkTheme) {
-            getTheme().applyStyle(R.style.DarkTheme, true);
-        } else {
-            getTheme().applyStyle(R.style.LightTheme, true);
-        }
-
-        // set recents app color to the primary color
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
-        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
-        setTaskDescription(taskDesc);
     }
 
     private void fabClicked() {
@@ -499,7 +478,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                     storageDirectories.add(Environment.getExternalStorageDirectory().getAbsolutePath());
                 }
             } else {
-                storageDirectories.add(rawExternalStorage);
+                storageDirectories.add(canonicalizePath(rawExternalStorage));
             }
         } else {
             // Device has emulated storage; external storage paths should have
@@ -560,6 +539,8 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                     } else {
                         storageDirectories.add(targetPath);
                     }
+                } else if(directory.canRead()){
+                    storageDirectories.add(directory.getCanonicalPath());
                 }
             } catch (IOException | SecurityException | NullPointerException e) {
                 Log.i("FilePicker", "File discovery exception ", e);
@@ -567,5 +548,18 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         }
 
         return storageDirectories;
+    }
+
+    /**
+     * Returns the canonical path, if there is any
+     * @param path maybe not canonical path
+     * @return canonical path if known
+     */
+    private String canonicalizePath(String path) {
+        try {
+            return new File(path).getCanonicalPath();
+        } catch (IOException e) {
+            return path;
+        }
     }
 }

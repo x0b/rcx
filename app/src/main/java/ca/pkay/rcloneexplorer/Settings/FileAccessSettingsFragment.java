@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +19,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.file.SafConstants;
@@ -138,29 +139,7 @@ public class FileAccessSettingsFragment extends Fragment {
     }
 
     private void createSafRemote() {
-        String user = SafAccessProvider.getUser(getContext());
-        String pass = SafAccessProvider.getPassword(getContext());
-        ArrayList<String> options = new ArrayList<>();
-        options.add(SafConstants.SAF_REMOTE_NAME);
-        options.add("webdav");
-        options.add("url");
-        options.add(SafConstants.SAF_REMOTE_URL);
-        options.add("user");
-        options.add(user);
-        options.add("pass");
-        options.add(pass);
-
-        Process process = rclone.configCreate(options);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (process.exitValue() != 0) {
-            Toasty.error(context, getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
-        } else {
-            Toasty.success(context, getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
-        }
+        RemoteConfigHelper.enableSaf(getContext());
     }
 
     public void addRoot(){

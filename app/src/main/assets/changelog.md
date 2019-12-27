@@ -1,8 +1,21 @@
+### 1.10.0
+* **New:** Proxy support (for https & http)
+* **New:** Various internal refactorings
+* **New:** The thumbnail size limit can now be set in the settings
+* **New:** Update rclone to 1.50.2
+* **Fix:** Logging settings not explaining data collection
+* **Fix:** External locations listed multiple times
+* **Fix:** OAuth not working on newer rclone versions
+* **Fix:** Crash when streaming in background
+
+***
+
 ### 1.9.2
 * **New:** SAF DCA: faster directory lists & more
 * **Fix:** Crash when upload from directory that is no longer accessible
 * **Fix:** Creating a public link also toggles "wrap filenames"
 * **Fix:** OAuth configurations not working
+
 ***
 
 ### 1.9.1
@@ -10,6 +23,7 @@
 * **Fix:** Crash in LoadingDialog
 * **Fix:** Rclone serve not starting correctly
 * **Fix:** Crash from robotest (#23)
+
 ***
 
 ### 1.9.0
@@ -21,6 +35,7 @@
 * **Fix:** Crash on Android 5.1.1 for remotes with time zones
 * **Fix:** Crash in hide remotes dialog
 * **Fix:** Security issue when using thumbnails (details see wiki)
+
 ***
 
 ### 1.8.2

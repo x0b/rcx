@@ -73,12 +73,26 @@
             android:focusable="true"
             android:background="?selectableItemBackground" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/textColorPrimary"
-                android:textStyle="bold"
-                android:text="@string/send_anonymous_crash_reports"/>
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical" >
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/textColorPrimary"
+                        android:textStyle="bold"
+                        android:text="@string/send_anonymous_crash_reports"/>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/textColorSecondary"
+                        android:autoLink="web"
+                        android:text="@string/pref_crash_report_summary"/>
+
+            </LinearLayout>
 
             <Switch
                 android:id="@+id/crash_reporting_switch"

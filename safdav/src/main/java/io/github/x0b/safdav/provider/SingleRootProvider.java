@@ -20,7 +20,8 @@ public abstract class SingleRootProvider extends DocumentsProvider {
             DocumentsContract.Root.COLUMN_ICON,
             DocumentsContract.Root.COLUMN_TITLE,
             DocumentsContract.Root.COLUMN_FLAGS,
-            DocumentsContract.Root.COLUMN_DOCUMENT_ID
+            DocumentsContract.Root.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Root.COLUMN_SUMMARY
     };
 
     protected static final String[] DEFAULT_DOCUMENT_PROJECTION = new String[]{

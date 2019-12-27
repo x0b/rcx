@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -40,6 +39,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -86,8 +86,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
-import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,

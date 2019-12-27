@@ -3,6 +3,7 @@ package io.github.x0b.safdav;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
 import android.util.Base64;
 import io.github.x0b.safdav.file.SafConstants;
 
@@ -37,8 +38,7 @@ public class SafAccessProvider {
 
     @SuppressLint("ApplySharedPref")
     private static void initAuth(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(
-                                        context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if(preferences.contains(PREF_KEY_SAF_PASS) && preferences.contains((PREF_KEY_SAF_USER))){
             password = preferences.getString(PREF_KEY_SAF_PASS, "");
             user = preferences.getString(PREF_KEY_SAF_USER, "dav");

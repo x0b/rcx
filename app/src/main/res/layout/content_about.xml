@@ -64,15 +64,6 @@
                             android:textColor="?attr/textColorSecondary" />
                     </LinearLayout>
 
-                    <Button
-                            android:id="@+id/server_version_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginEnd="16dp"
-                            android:textColor="?attr/textColorPrimary" />
                 </LinearLayout>
 
                 <LinearLayout

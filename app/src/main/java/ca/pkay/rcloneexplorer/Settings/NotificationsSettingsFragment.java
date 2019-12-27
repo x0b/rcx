@@ -4,18 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
-
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import ca.pkay.rcloneexplorer.R;
 import es.dmoral.toasty.Toasty;
@@ -76,7 +74,7 @@ public class NotificationsSettingsFragment extends Fragment {
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
+        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
         boolean betaUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates_beta), false);
 
         appUpdatesSwitch.setChecked(appUpdates);
@@ -151,10 +149,8 @@ public class NotificationsSettingsFragment extends Fragment {
 
     private void onAppUpdatesClicked(boolean isChecked) {
         if (isChecked) {
-            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
             betaAppUpdatesElement.setVisibility(View.VISIBLE);
         } else {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.firebase_msg_app_updates_topic));
             betaAppUpdatesSwitch.setChecked(false);
             betaAppUpdatesElement.setVisibility(View.GONE);
         }
@@ -162,19 +158,15 @@ public class NotificationsSettingsFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_app_updates), isChecked);
+        editor.putLong(getString(R.string.pref_key_update_last_check), 0L);
         editor.apply();
     }
 
     private void onBetaAppUpdatesClicked(boolean isChecked) {
-        if (isChecked) {
-            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_beta_app_updates_topic));
-        } else {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(getString(R.string.firebase_msg_beta_app_updates_topic));
-        }
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_app_updates_beta), isChecked);
+        editor.putLong(getString(R.string.pref_key_update_last_check), 0L);
         editor.apply();
     }
 }

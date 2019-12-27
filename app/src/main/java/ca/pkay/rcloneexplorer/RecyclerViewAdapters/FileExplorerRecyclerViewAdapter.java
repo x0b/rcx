@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -40,6 +41,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private boolean optionsDisabled;
     private boolean wrapFileNames;
     private Context context;
+    private long sizeLimit;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -71,6 +73,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
         selectionColor = typedValue.data;
         optionsDisabled = false;
+        sizeLimit = PreferenceManager.getDefaultSharedPreferences(context)
+                .getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
+                        context.getResources().getInteger(R.integer.default_thumbnail_size_limit));
     }
 
     @NonNull
@@ -102,7 +107,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             String server = "http://127.0.0.1:29179/";
             boolean localLoad = item.getRemote().getType() == RemoteItem.SAFW;
             String mimeType = item.getMimeType();
-            if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= 20970000) {
+            if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= sizeLimit) {
                 RequestOptions glideOption = new RequestOptions()
                         .centerCrop()
                         .placeholder(R.drawable.ic_file);

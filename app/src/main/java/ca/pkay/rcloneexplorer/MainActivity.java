@@ -3,69 +3,84 @@ package ca.pkay.rcloneexplorer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.InputType;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
-
-import com.crashlytics.android.Crashlytics;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
+import com.crashlytics.android.Crashlytics;
+import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
+import io.github.x0b.rfc3339parser.Rfc3339Parser;
+import io.github.x0b.rfc3339parser.Rfc3339Strict;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import static ca.pkay.rcloneexplorer.StartActivity.tryStartActivity;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
-public class MainActivity   extends AppCompatActivity
-                            implements  NavigationView.OnNavigationItemSelectedListener,
-                                        RemotesFragment.OnRemoteClickListener,
-                                        RemotesFragment.AddRemoteToNavDrawer,
-                                        InputDialog.OnPositive {
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        RemotesFragment.OnRemoteClickListener,
+        RemotesFragment.AddRemoteToNavDrawer,
+        InputDialog.OnPositive {
+
+    private static final String TAG = "MainActivity";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
+    private static final int UPDATE_AVAILABLE = 201;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -75,6 +90,15 @@ public class MainActivity   extends AppCompatActivity
     private Boolean isDarkTheme;
     private HashMap<Integer, RemoteItem> drawerPinnedRemoteIds;
     private int availableDrawerPinnedRemoteId;
+
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if(UPDATE_AVAILABLE == msg.what) {
+                Toasty.info(context, context.getString(R.string.app_update_notification_title), Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +118,7 @@ public class MainActivity   extends AppCompatActivity
                 return;
             }
         }
-        
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
         if (enableCrashReports) {
@@ -129,9 +153,9 @@ public class MainActivity   extends AppCompatActivity
             }
         });
 
-        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
+        boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
         if (appUpdates) {
-            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
+            checkForUpdate(false);
         }
 
         Intent intent = getIntent();
@@ -189,26 +213,12 @@ public class MainActivity   extends AppCompatActivity
     }
 
     private void applyTheme() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int customPrimaryColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), -1);
-        int customAccentColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), -1);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
-        getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(this, customPrimaryColor), true);
-        getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(this, customAccentColor), true);
-        if (isDarkTheme) {
-            getTheme().applyStyle(R.style.DarkTheme, true);
-        } else {
-            getTheme().applyStyle(R.style.LightTheme, true);
-        }
-
+        isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_key_dark_theme), false);
+        ActivityHelper.applyTheme(this);
         TypedValue typedValue = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
         getWindow().setStatusBarColor(typedValue.data);
-
-        // set recents app color to the primary color
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
-        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, customPrimaryColor);
-        setTaskDescription(taskDesc);
     }
 
     @Override
@@ -258,6 +268,7 @@ public class MainActivity   extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // TODO: document deletion on exit
         File dir = getExternalCacheDir();
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
@@ -461,7 +472,7 @@ public class MainActivity   extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
         intent.putExtra(Intent.EXTRA_TITLE, "rclone.conf");
-        startActivityForResult(intent, WRITE_REQUEST_CODE);
+        tryStartActivityForResult(this, intent, WRITE_REQUEST_CODE);
     }
 
     public void requestPermissions() {
@@ -547,6 +558,104 @@ public class MainActivity   extends AppCompatActivity
         pinRemotesToDrawer();
     }
 
+    private void checkForUpdate(boolean force) {
+        Context context = this;
+        // only check if not disabled
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if(!force && !sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true)){
+            Log.i(TAG, "checkForUpdate: Not checking, updates are disabled");
+            return;
+        }
+        // only check if the last check was >6 hours ago
+        long lastUpdateCheck = sharedPreferences.getLong(context.getString(R.string.pref_key_update_last_check), 0);
+        long now = System.currentTimeMillis();
+        if(lastUpdateCheck + 1000 * 60 * 60 * 6 > now){
+            Log.i(TAG, "checkForUpdate: recent check to new, not checking for updates");
+            return;
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        boolean checkBeta = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates_beta), false);
+        String url;
+        if (checkBeta) {
+            url = context.getString(R.string.app_pre_release_api_url);
+        } else {
+            url = context.getString(R.string.app_relase_api_url);
+        }
+        Request request = new Request.Builder().url(url).build();
+        client.newCall(request).enqueue(new UpdateRequestResultHandler(this, checkBeta, handler));
+    }
+
+    private static class UpdateRequestResultHandler implements Callback {
+
+        private SharedPreferences sharedPreferences;
+        private Context context;
+        private boolean betaCheck;
+        private Handler handler;
+
+        public UpdateRequestResultHandler(Context context, boolean betaCheck, Handler handler) {
+            this.context = context;
+            this.betaCheck = betaCheck;
+            this.handler = handler;
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        }
+
+        @Override
+        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            Log.w(TAG, "onFailure: Update check failed", e);
+            updateLastUpdateRequest();
+        }
+
+        @Override
+        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+            updateLastUpdateRequest();
+            long publishedAt = getLastPublishTimestamp(response);
+            // Since the app is not published immediately during build, 15 minutes are added
+            long publishBarrier = publishedAt + 1000 * 60 * 15;
+            if(BuildConfig.BUILD_TIME < publishBarrier) {
+                Log.i(TAG, "onResponse: App is not up-to-date");
+                handler.obtainMessage(MainActivity.UPDATE_AVAILABLE).sendToTarget();
+            } else {
+                Log.i(TAG, "onResponse: App is up-to-date");
+            }
+        }
+
+        private long getLastPublishTimestamp(Response response) throws IOException {
+            try (ResponseBody body = response.body()) {
+                long publishedAt = -1;
+                if (null == body) {
+                    return publishedAt;
+                }
+                try {
+                    Rfc3339Parser parser = new Rfc3339Strict();
+                    if(betaCheck){
+                        JSONArray releases = new JSONArray(body.string());
+                        for(int i = 0; i < releases.length(); i++) {
+                            JSONObject release = releases.getJSONObject(i);
+                            long timestamp = parser.parse(release.getString("published_at")).getTime();
+                            if(timestamp > publishedAt) {
+                                publishedAt = timestamp;
+                            }
+                        }
+                    } else {
+                        JSONObject json = new JSONObject(body.string());
+                        publishedAt = parser.parse(json.getString("published_at")).getTime();
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "Update check failed: JSON error", e);
+                } catch (ParseException e) {
+                    Log.e(TAG, "Update check failed: time format error", e);
+                }
+                return publishedAt;
+            }
+        }
+
+        private void updateLastUpdateRequest(){
+            long now = System.currentTimeMillis();
+            sharedPreferences.edit().putLong(context.getString(R.string.pref_key_update_last_check), now).apply();
+        }
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class CopyConfigFile extends AsyncTask<Uri, Void, Boolean> {
 
@@ -585,6 +694,10 @@ public class MainActivity   extends AppCompatActivity
             }
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if(sharedPreferences.getBoolean(getString(R.string.pref_key_enable_saf), false)){
+                RemoteConfigHelper.enableSaf(context);
+            }
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(getString(R.string.shared_preferences_pinned_remotes));
             editor.remove(getString(R.string.shared_preferences_drawer_pinned_remotes));
