@@ -11,12 +11,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import es.dmoral.toasty.Toasty;
 
 public class ActivityHelper {
+
+    private static final String TAG = "ActivityHelper";
 
     @SuppressLint("CheckResult")
     public static void tryStartActivity(Context context, Intent intent) {
@@ -30,6 +33,10 @@ public class ActivityHelper {
     @SuppressLint("CheckResult")
     public static void tryStartActivityForResult(Fragment fragment, Intent intent, int requestCode) {
         try {
+            if(!fragment.isAdded()) {
+                Log.w(TAG, "tryStartActivityForResult: fragment is not attached, can't start");
+                return;
+            }
             fragment.startActivityForResult(intent, requestCode);
         } catch (ActivityNotFoundException e) {
             showErrorToast(fragment.getContext());
