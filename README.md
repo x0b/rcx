@@ -17,6 +17,7 @@ Features
 - Customizable primary and accent colors
 - Supports ARM and x86 devices
 - Supports SDK 21+ (Lollipop 5.0)
+- Intentservice to start tasks via third party apps!
 
 TODO
 ------------
@@ -45,6 +46,21 @@ Grab the [latest version](https://github.com/kaczmarkiewiczp/rcloneExplorer/rele
 - For ARM 64-bit devices download RcloneExplorer-ARM_64.apk
 - For x86 devices download RcloneExplorer-x86.apk
 - Ultimately, RcloneExplorer.apk will work with both ARM and x86 devices.
+
+
+
+Intentservice
+-------------
+This app includes the ability to launch an intent! Create a task to sync to a remote, and copy it's id (via the treedot-menu)
+The intent needs the following:
+
+| Intent        | Content       |         | 
+| :------------- | :-------------: | -------------: |
+| packageName      | ca.pkay.rcloneexplorer | | 
+| className      | ca.pkay.rcloneexplorer.Services.TaskStartService | | 
+| Action    | START_TASK | | 
+| Integer Extra    | task | idOfTask | 
+
 
 Credits/Libraries
 -----------------
