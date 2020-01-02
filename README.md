@@ -59,6 +59,20 @@ This app is developed by and for its community. Any contribution to improve the 
 - Not all enhancements must be new features. If you find yourself wanting to do something with the app but you are unsure how to do it, or you think it is needlessly complicated or might not be possible, then just ask on the [issue tracker](https://github.com/x0b/rcx/issues), which may spark a new feature/enhancement request.
 - You might also find help from other members of the larger rclone community on the [rclone forum](https://forum.rclone.org/) or the [subreddit](https://www.reddit.com/r/rclone/).
 
+
+Intentservice
+-------------
+This app includes the ability to launch an intent! Create a task to sync to a remote, and copy it's id (via the treedot-menu)
+The intent needs the following:
+
+| Intent        | Content       |         | 
+| :------------- | :-------------: | -------------: |
+| packageName      | ca.pkay.rcloneexplorer | | 
+| className      | ca.pkay.rcloneexplorer.Services.TaskStartService | | 
+| Action    | START_TASK | | 
+| Integer Extra    | task | idOfTask | 
+
+
 License
 -----------------
 ### About this app
