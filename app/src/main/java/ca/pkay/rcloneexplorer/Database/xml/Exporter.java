@@ -1,7 +1,6 @@
 package ca.pkay.rcloneexplorer.Database.xml;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -38,33 +37,26 @@ public class Exporter {
 
     private static final int PERMISSION_WRITE_EXTERNAL = 739;
 
-    public static void export(Activity a){
+    public static void export(Activity activity){
         try {
-            String val = Exporter.create(a);
-            Exporter.storeFile(a, val);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            String xml = Exporter.create(activity);
+            Exporter.storeFile(activity, xml);
+        } catch (ParserConfigurationException | TransformerException | IOException e) {
             e.printStackTrace();
         }
     }
 
     public static String create(Activity a) throws ParserConfigurationException, TransformerException {
-        String resXML="";
 
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        DocumentBuilder documentBuilder =  DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = documentBuilder.newDocument();
 
         Element rootElement = document.createElement("tasks");
         document.appendChild(rootElement);
 
-
         DatabaseHandler dbHandler = new DatabaseHandler(a);
 
-        for(Task task :dbHandler.getAllTasks()){
+        for(Task task : dbHandler.getAllTasks()){
             Element em = document.createElement("task");
             em.appendChild(createChild(document, "id", String.valueOf(task.getId())));
             em.appendChild(createChild(document, "name", task.getTitle()));
@@ -82,21 +74,19 @@ public class Exporter {
         transformer.transform(new DOMSource(document), new StreamResult(sw));
 
 
-        String result= sw.toString();
-
-        return result;
+        return sw.toString();
     }
 
-    public static void storeFile(Activity a, String content) throws IOException {
+    public static void storeFile(Activity activity, String content) throws IOException {
 
-        if(!Exporter.isWriteStoragePermissionGranted(a)){
+        if(!Exporter.isWriteStoragePermissionGranted(activity)){
             return;
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String currentDateandTime = sdf.format(new Date());
+        String currentDateAndTime = sdf.format(new Date());
 
-        String filename = "rcloneExplorer_"+currentDateandTime+".xml";
+        String filename = "rcloneExplorer_"+currentDateAndTime+".xml";
 
 
         File path = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/rcloneExplorer");
@@ -107,7 +97,7 @@ public class Exporter {
 
         try {
             myOutWriter.append(content);
-            Toasty.info(a, a.getResources().getString(R.string.exporter_success)+" "+Environment.getExternalStorageDirectory().getAbsolutePath()+"/rcloneExplorer/"+filename, Toast.LENGTH_SHORT, true).show();
+            Toasty.info(activity, activity.getResources().getString(R.string.exporter_success)+" "+Environment.getExternalStorageDirectory().getAbsolutePath()+"/rcloneExplorer/"+filename, Toast.LENGTH_SHORT, true).show();
         } finally {
             myOutWriter.close();
             stream.close();
@@ -131,7 +121,7 @@ public class Exporter {
                 return false;
             }
         }else{
-            //permission is always granted
+            //permission is always granted on lower versions
             return true;
         }
     }

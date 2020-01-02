@@ -32,12 +32,8 @@ public class SyncDirectionObject {
     public static final int COPY_LOCAL_TO_REMOTE = 3;
     public static final int COPY_REMOTE_TO_LOCAL = 4;
 
+
     public static String[] getOptionsArray(Context context) {
-        return new String[] {
-                context.getResources().getString(R.string.sync_direction_local_remote),
-                context.getString(R.string.sync_direction_remote_local),
-                context.getString(R.string.sync_direction_copy_local_remote),
-                context.getString(R.string.sync_direction_copy_remote_local)
-        };
+        return context.getResources().getStringArray(R.array.sync_direction_array);
     }
 }

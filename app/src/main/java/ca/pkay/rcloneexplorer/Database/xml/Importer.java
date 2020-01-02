@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.Database.xml;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,19 +26,17 @@ public class Importer {
     public static final int READ_REQUEST_CODE = 896;
     public static final int PERM_REQUEST_CODE = 897;
 
-    public static ArrayList<Task> createTasklist(Context c, String content) throws ParserConfigurationException, IOException, SAXException {
+    public static ArrayList<Task> createTasklist(String content) throws ParserConfigurationException, IOException, SAXException {
         ArrayList<Task> result = new ArrayList<>();
 
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        InputSource is = new InputSource(new StringReader(content));
-        Document document = documentBuilder.parse(is);
+        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = documentBuilder.parse(new InputSource(new StringReader(content)));
 
-        NodeList nList = document.getElementsByTagName("task");
+        NodeList nodeList = document.getElementsByTagName("task");
 
-        for (int i = 0; i < nList.getLength(); i++) {
-            Node n = nList.item(i);
-            NodeList children = n.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            NodeList children = node.getChildNodes();
             Task task = new Task(-1L);
             for (int j = 0; j < children.getLength(); j++) {
                 Node type = children.item(j);

@@ -31,12 +31,11 @@ public class TaskDialog extends Dialog {
     private Button task_save;
     private Button task_cancel;
     private TasksRecyclerViewAdapter recyclerViewAdapter;
-    private Rclone r = new Rclone(getContext());
+    private Rclone rcloneInstance = new Rclone(getContext());
 
     private Task existingTask;
 
-
-    private int state = 0;
+    private int uiButtonState = 0;
 
     public TaskDialog(@NonNull Context context, TasksRecyclerViewAdapter tasksRecyclerViewAdapter) {
         super(context);
@@ -71,10 +70,10 @@ public class TaskDialog extends Dialog {
 
         Spinner remoteDropdown = findViewById(R.id.task_remote_spinner);
 
-        String[] items = new String[r.getRemotes().size()];
+        String[] items = new String[rcloneInstance.getRemotes().size()];
 
-        for (int i = 0; i< r.getRemotes().size();i++) {
-            items[i]=r.getRemotes().get(i).getName();
+        for (int i = 0; i< rcloneInstance.getRemotes().size(); i++) {
+            items[i]= rcloneInstance.getRemotes().get(i).getName();
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, items);
@@ -88,24 +87,24 @@ public class TaskDialog extends Dialog {
 
 
         populateFields(items);
-        hideAll();
-        decideState();
+        hideAllSettingsInUI();
+        decideUIButtonState();
 
 
         task_next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.e("APP!", "TaskDialog: next!");
-                hideAll();
-                state++;
-                decideState();
+                hideAllSettingsInUI();
+                uiButtonState++;
+                decideUIButtonState();
             }
         });
         task_back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.e("APP!", "TaskDialog: back!");
-                hideAll();
-                state--;
-                decideState();
+                hideAllSettingsInUI();
+                uiButtonState--;
+                decideUIButtonState();
             }
         });
         task_cancel.setOnClickListener(new View.OnClickListener() {
@@ -118,9 +117,9 @@ public class TaskDialog extends Dialog {
             public void onClick(View v) {
                 Log.e("APP!", "TaskDialog: Save!");
                 if(existingTask==null){
-                    save();
+                    saveTask();
                 }else{
-                    update();
+                    persistTaskChanges();
                 }
             }
         });
@@ -147,7 +146,7 @@ public class TaskDialog extends Dialog {
         }
     }
 
-    private void update(){
+    private void persistTaskChanges(){
 
         DatabaseHandler dbHandler = new DatabaseHandler(getContext());
         dbHandler.updateEntry(getTaskValues(existingTask.getId()));
@@ -158,7 +157,7 @@ public class TaskDialog extends Dialog {
         cancel();
     }
 
-    private void save(){
+    private void saveTask(){
         DatabaseHandler dbHandler = new DatabaseHandler(getContext());
         Task newTask = dbHandler.createEntry(getTaskValues(0L));
         recyclerViewAdapter.addTask(newTask);
@@ -178,7 +177,7 @@ public class TaskDialog extends Dialog {
 
 
 
-        for (RemoteItem ri: r.getRemotes()) {
+        for (RemoteItem ri: rcloneInstance.getRemotes()) {
             if(ri.getName().equals(taskToPopulate.getRemote_id())){
                 taskToPopulate.setRemote_type(ri.getType());
             }
@@ -191,7 +190,7 @@ public class TaskDialog extends Dialog {
     }
 
 
-    private void hideAll(){
+    private void hideAllSettingsInUI(){
 
         findViewById(R.id.task_name_layout).setVisibility(View.GONE);
         findViewById(R.id.task_remote_layout).setVisibility(View.GONE);
@@ -201,13 +200,13 @@ public class TaskDialog extends Dialog {
 
     }
 
-    private void decideState(){
+    private void decideUIButtonState(){
 
-        if(state==0){
+        if(uiButtonState ==0){
             task_back.setVisibility(View.INVISIBLE);
             task_save.setVisibility(View.GONE);
             task_next.setVisibility(View.VISIBLE);
-        }else if (state == 4){
+        }else if (uiButtonState == 4){
             task_save.setVisibility(View.VISIBLE);
             task_back.setVisibility(View.VISIBLE);
             task_next.setVisibility(View.GONE);
@@ -217,25 +216,25 @@ public class TaskDialog extends Dialog {
             task_save.setVisibility(View.GONE);
         }
 
-        switch(state) {
+        switch(uiButtonState) {
             case 0:
-                ((TextView)findViewById(R.id.task_dialog_title)).setText("Name");
+                ((TextView)findViewById(R.id.task_dialog_title)).setText(getContext().getString(R.string.task_dialog_title_name));
                 findViewById(R.id.task_name_layout).setVisibility(View.VISIBLE);
                 break;
             case 1:
-                ((TextView)findViewById(R.id.task_dialog_title)).setText("remote");
+                ((TextView)findViewById(R.id.task_dialog_title)).setText(getContext().getString(R.string.task_dialog_title_remote));
                 findViewById(R.id.task_remote_layout).setVisibility(View.VISIBLE);
                 break;
             case 2:
-                ((TextView)findViewById(R.id.task_dialog_title)).setText("remote path");
+                ((TextView)findViewById(R.id.task_dialog_title)).setText(getContext().getString(R.string.task_dialog_title_remote_path));
                 findViewById(R.id.task_remote_path_layout).setVisibility(View.VISIBLE);
                 break;
             case 3:
-                ((TextView)findViewById(R.id.task_dialog_title)).setText("local path");
+                ((TextView)findViewById(R.id.task_dialog_title)).setText(getContext().getString(R.string.task_dialog_title_local_path));
                 findViewById(R.id.task_local_path_layout).setVisibility(View.VISIBLE);
                 break;
             case 4:
-                ((TextView)findViewById(R.id.task_dialog_title)).setText("direction");
+                ((TextView)findViewById(R.id.task_dialog_title)).setText(getContext().getString(R.string.task_dialog_title_sync_direction));
                 findViewById(R.id.task_direction_layout).setVisibility(View.VISIBLE);
                 break;
         }

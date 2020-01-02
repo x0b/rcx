@@ -124,11 +124,11 @@ public class TasksFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        Activity tA = getActivity();
-        Context tC = getContext();
+        Activity activity = getActivity();
+        Context context = getContext();
 
-        if(tA==null){
-            Toasty.error(tC, tC.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
+        if(activity==null){
+            Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
             return;
         }
 
@@ -149,11 +149,11 @@ public class TasksFragment extends Fragment {
                             uri = resultData.getData();
 
                             if(uri==null){
-                                Toasty.error(tC, tC.getResources().getString(R.string.importer_no_file_selected), Toast.LENGTH_SHORT, true).show();
+                                Toasty.error(context, context.getResources().getString(R.string.importer_no_file_selected), Toast.LENGTH_SHORT, true).show();
                                 return;
                             }
 
-                            InputStream in =  tA.getContentResolver().openInputStream(uri);
+                            InputStream in =  activity.getContentResolver().openInputStream(uri);
                             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                             StringBuilder out = new StringBuilder();
                             String line;
@@ -169,8 +169,8 @@ public class TasksFragment extends Fragment {
                         }
                     }
 
-                    ArrayList<Task> importedList = Importer.createTasklist(tC, importedData);
-                    DatabaseHandler dbHandler = new DatabaseHandler(tC);
+                    ArrayList<Task> importedList = Importer.createTasklist(importedData);
+                    DatabaseHandler dbHandler = new DatabaseHandler(context);
                     for (Task t : dbHandler.getAllTasks()){
                         dbHandler.deleteEntry(t.getId());
                     }

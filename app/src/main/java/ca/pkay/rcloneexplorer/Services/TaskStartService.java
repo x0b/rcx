@@ -14,6 +14,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
+
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
@@ -23,6 +24,9 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
  */
 public class TaskStartService extends IntentService {
 
+    private static String TASK_ACTION= "START_TASK";
+    private static String EXTRA_TASK_ID= "task";
+
     public TaskStartService() {
         super("TaskStartService");
         Log.e("Service", "Start service intent!");
@@ -31,52 +35,52 @@ public class TaskStartService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            String CHANNEL_ID = "my_channel_01";
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-
-            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("")
-                    .setContentText("").build();
-
-            startForeground(1, notification);
-        }
+        createPersistentNotification();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-       // Log.e("Service", "Start Intent: "+intent.);
         if (intent != null) {
             final String action = intent.getAction();
-            if (action.equals("START_TASK")) {
+            if (action.equals(TASK_ACTION)) {
                 DatabaseHandler db = new DatabaseHandler(this);
-                for (Task t: db.getAllTasks()){
-                    if(t.getId()==intent.getIntExtra("task", -1)){
-                        Log.e("Service", "Start Task: "+t.getTitle());
+                for (Task task: db.getAllTasks()){
+                    if(task.getId()==intent.getIntExtra(EXTRA_TASK_ID, -1)){
+                        String path = task.getLocal_path();
 
-                        String path = t.getLocal_path();
+                        RemoteItem remoteItem = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
+                        Intent taskIntent = new Intent();
+                        taskIntent.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
 
-                        RemoteItem ri = new RemoteItem(t.getRemote_id(), t.getRemote_type(), "");
-                        Intent i = new Intent();
-                        i.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
-
-                        i.putExtra(SyncService.REMOTE_ARG, ri);
-                        i.putExtra(SyncService.LOCAL_PATH_ARG, path);
-                        i.putExtra(SyncService.SYNC_DIRECTION_ARG, t.getDirection());
-                        i.putExtra(SyncService.REMOTE_PATH_ARG, t.getRemote_path());
+                        taskIntent.putExtra(SyncService.REMOTE_ARG, remoteItem);
+                        taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
+                        taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
+                        taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(i);
+                            startForegroundService(taskIntent);
                         }else {
-                            startService(i);
+                            startService(taskIntent);
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * This can be called when an intent is recieved. If no notification is created when a service is started via startForegroundService(), the service is beeing killed by
+     * android after 5 seconds. In this case, we need to create a persistent notification because otherwise we cant start the sync task.
+     */
+    private void createPersistentNotification() {
+        if (Build.VERSION.SDK_INT >= 26) {
+            String CHANNEL_ID = "task_intent_notification";
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel for intent notifications", NotificationManager.IMPORTANCE_DEFAULT);
+
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
+
+            startForeground(1, notification);
         }
     }
 

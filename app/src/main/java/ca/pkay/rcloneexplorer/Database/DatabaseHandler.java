@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DatabaseInfo.SQL_CREATE_TABLES);
@@ -49,14 +49,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String sortOrder = Task.COLUMN_NAME_ID + " ASC";
 
         Cursor cursor = db.query(
-                Task.TABLE_NAME,  // The table to query
-                projection,                                  // The array of columns to return (pass null to get all)
-                selection,                                   // The columns for the WHERE clause
-                selectionArgs,                               // The values for the WHERE clause
-                null,                               // don't group the rows
-                null,                                // don't filter by row groups
-                sortOrder                                   // The sort order
+                Task.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
         );
+
         List<Task> results = new ArrayList<>();
         while(cursor.moveToNext()) {
 
