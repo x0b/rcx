@@ -385,4 +385,9 @@
     <string name="sync_direction_copy_local_remote">Copy local to remote</string>
     <string name="sync_direction_copy_remote_local">Copy remote to local</string>
     <string name="copy">Copy</string>
+    <string name="task_dialog_title_name">Name</string>
+    <string name="task_dialog_title_remote">Remote</string>
+    <string name="task_dialog_title_remote_path">remote path</string>
+    <string name="task_dialog_title_local_path">Local Path</string>
+    <string name="task_dialog_title_sync_direction">Sync Direction</string>
 </resources>

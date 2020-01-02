@@ -26,11 +26,13 @@ import ca.pkay.rcloneexplorer.Dialogs.TaskDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.Services.SyncService;
 import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
+
+
+    private static String clipboardID="rclone_explorer_task_id";
 
     private List<Task> tasks;
     private View view;
@@ -56,9 +58,9 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         holder.taskName.setText(remoteName);
 
-        RemoteItem ri = new RemoteItem(selectedTask.getRemote_id(), String.valueOf(selectedTask.getRemote_type()));
+        RemoteItem remote = new RemoteItem(selectedTask.getRemote_id(), String.valueOf(selectedTask.getRemote_type()));
 
-        holder.taskIcon.setImageDrawable(view.getResources().getDrawable(ri.getRemoteIcon()));
+        holder.taskIcon.setImageDrawable(view.getResources().getDrawable(remote.getRemoteIcon()));
 
         int direction = selectedTask.getDirection();
 
@@ -79,10 +81,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         }
 
         switch (direction){
-            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL: holder.task_sync_direction.setText(view.getResources().getString(R.string.sync)); break;
-            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE: holder.task_sync_direction.setText(view.getResources().getString(R.string.copy)); break;
-            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL: holder.task_sync_direction.setText(view.getResources().getString(R.string.copy)); break;
-            default: holder.task_sync_direction.setText(view.getResources().getString(R.string.sync)); break;
+            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL: holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync)); break;
+            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE: holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy)); break;
+            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL: holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy)); break;
+            default: holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync)); break;
         }
 
         holder.fileOptions.setOnClickListener(new View.OnClickListener() {
@@ -136,12 +138,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         return tasks.size();
     }
 
-    /**
-     * Stolen from this app
-     * @param view
-     * @param t
-     */
-    private void showFileMenu(View view, final Task t) {
+    private void showFileMenu(View view, final Task task) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.task_item_menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -150,19 +147,19 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_start_task:
-                        startTask(t);
+                        startTask(task);
                         break;
                     case R.id.action_edit_task:
-                        editTask(t);
+                        editTask(task);
                         break;
                     case R.id.action_delete_task:
-                        new DatabaseHandler(context).deleteEntry(t.getId());
+                        new DatabaseHandler(context).deleteEntry(task.getId());
                         notifyDataSetChanged();
-                        removeItem(t);
+                        removeItem(task);
                         break;
                     case R.id.action_copy_id_task:
                         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("rclone_explorer_task_id", t.getId().toString());
+                        ClipData clip = ClipData.newPlainText(clipboardID, task.getId().toString());
                         clipboard.setPrimaryClip(clip);
                         Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
                         break;
@@ -185,7 +182,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         final TextView toPath;
         final TextView fromPath;
         final ImageButton fileOptions;
-        final TextView task_sync_direction;
+        final TextView taskSyncDirection;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -196,7 +193,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             this.fromID = view.findViewById(R.id.fromID);
             this.toPath = view.findViewById(R.id.toPath);
             this.fromPath = view.findViewById(R.id.fromPath);
-            this.task_sync_direction = view.findViewById(R.id.task_sync_direction);
+            this.taskSyncDirection = view.findViewById(R.id.task_sync_direction);
 
             this.fileOptions = view.findViewById(R.id.file_options);
         }
