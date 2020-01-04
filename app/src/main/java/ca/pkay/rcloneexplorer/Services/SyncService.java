@@ -36,10 +36,12 @@ public class SyncService extends IntentService {
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG";
     public static final String SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG";
     private final String OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP";
+    private final String OPERATION_SUCCESS = "ca.pkay.rcexplorer.OPERATION_SUCCESS";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.sync_service";
     private final String CHANNEL_NAME = "Sync service";
     private final int PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162;
     private final int OPERATION_FAILED_NOTIFICATION_ID = 89;
+    private final int OPERATION_SUCCESS_NOTIFICATION_ID = 698;
     private final int CONNECTIVITY_CHANGE_NOTIFICATION_ID = 462;
     private Rclone rclone;
     private Log2File log2File;
@@ -149,12 +151,14 @@ public class SyncService extends IntentService {
 
         sendUploadFinishedBroadcast(remoteItem.getName(), remotePath);
 
+        int notificationId = (int)System.currentTimeMillis();
         if (transferOnWiFiOnly && connectivityChanged) {
             showConnectivityChangedNotification();
         } else if (currentProcess == null || currentProcess.exitValue() != 0) {
             String errorTitle = getString(R.string.sync_operation_failed);
-            int notificationId = (int)System.currentTimeMillis();
             showFailedNotification(errorTitle, title, notificationId);
+        } else {
+            showSuccessNotification( title, notificationId);
         }
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
@@ -256,6 +260,21 @@ public class SyncService extends IntentService {
         notificationManager.notify(notificationId, builder.build());
 
     }
+
+    private void showSuccessNotification(String content, int notificationId) {
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(getString(R.string.operation_success))
+                .setContentText(content)
+                .setGroup(OPERATION_SUCCESS)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(notificationId, builder.build());
+
+    }
+
 
     private void showConnectivityChangedNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)

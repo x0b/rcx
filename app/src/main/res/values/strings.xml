@@ -501,4 +501,6 @@
     <string name="task_dialog_title_remote_path">remote path</string>
     <string name="task_dialog_title_local_path">Local Path</string>
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
+    <string name="operation_success">Sync was successful</string>
+    <string name="notification_sync_failed">Sync operation failed</string>
 </resources>
