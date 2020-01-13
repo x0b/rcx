@@ -36,7 +36,7 @@ public class SyncService extends IntentService {
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG";
     public static final String SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG";
     private final String OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP";
-    private final String OPERATION_SUCCESS = "ca.pkay.rcexplorer.OPERATION_SUCCESS";
+    private final String OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.sync_service";
     private final String CHANNEL_NAME = "Sync service";
     private final int PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162;
@@ -262,12 +262,13 @@ public class SyncService extends IntentService {
     }
 
     private void showSuccessNotification(String content, int notificationId) {
+        createSummaryNotificationForSuccess();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification_success)
                 .setContentTitle(getString(R.string.operation_success))
                 .setContentText(content)
-                .setGroup(OPERATION_SUCCESS)
+                .setGroup(OPERATION_SUCCESS_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -301,6 +302,22 @@ public class SyncService extends IntentService {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(OPERATION_FAILED_NOTIFICATION_ID, summaryNotification);
+    }
+
+    private void createSummaryNotificationForSuccess() {
+        Notification summaryNotification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle(getString(R.string.operation_success))
+                        //set content text to support devices running API level < 24
+                        .setContentText(getString(R.string.operation_success))
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setGroup(OPERATION_SUCCESS_GROUP)
+                        .setGroupSummary(true)
+                        .setAutoCancel(true)
+                        .build();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(OPERATION_SUCCESS_NOTIFICATION_ID, summaryNotification);
     }
 
     private void setNotificationChannel() {
