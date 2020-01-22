@@ -24,7 +24,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
  */
 public class TaskStartService extends IntentService {
 
-    private static String TASK_ACTION= "START_TASK";
+    public static String TASK_ACTION= "START_TASK";
     private static String EXTRA_TASK_ID= "task";
     private static String EXTRA_TASK_SILENT= "notification";
 

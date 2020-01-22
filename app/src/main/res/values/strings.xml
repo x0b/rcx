@@ -503,4 +503,5 @@
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
     <string name="operation_success">Sync was successful</string>
     <string name="notification_sync_failed">Sync operation failed</string>
+    <string name="pin_to_dektop">Pin to Home</string>
 </resources>
