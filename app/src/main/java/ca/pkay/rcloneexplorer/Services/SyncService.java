@@ -35,6 +35,7 @@ public class SyncService extends IntentService {
     public static final String REMOTE_PATH_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_PATH_ARG";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG";
     public static final String SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG";
+    public static final String SHOW_RESULT_NOTIFICATION = "ca.pkay.rcexplorer.SHOW_RESULT_NOTIFICATION";
     private final String OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP";
     private final String OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP";
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.sync_service";
@@ -84,6 +85,8 @@ public class SyncService extends IntentService {
         final String remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
         final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
         final int syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
+
+        final boolean silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
@@ -152,14 +155,18 @@ public class SyncService extends IntentService {
         sendUploadFinishedBroadcast(remoteItem.getName(), remotePath);
 
         int notificationId = (int)System.currentTimeMillis();
-        if (transferOnWiFiOnly && connectivityChanged) {
+
+        if(silentRun){
+            if (transferOnWiFiOnly && connectivityChanged) {
             showConnectivityChangedNotification();
         } else if (currentProcess == null || currentProcess.exitValue() != 0) {
-            String errorTitle = getString(R.string.notification_sync_failed);
-            showFailedNotification(errorTitle, title, notificationId);
-        }else{
-            showSuccessNotification( title, notificationId);
+                String errorTitle = getString(R.string.notification_sync_failed);
+                showFailedNotification(errorTitle, title, notificationId);
+            }else{
+            showSuccessNotification(title, notificationId);
         }
+        }
+
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
