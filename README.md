@@ -70,7 +70,8 @@ The intent needs the following:
 | packageName      | ca.pkay.rcloneexplorer | | 
 | className      | ca.pkay.rcloneexplorer.Services.TaskStartService | | 
 | Action    | START_TASK | | 
-| Integer Extra    | task | idOfTask | 
+| Integer Extra    | task | idOfTask |
+| Boolean Extra    | notification | true or false |
 
 
 License

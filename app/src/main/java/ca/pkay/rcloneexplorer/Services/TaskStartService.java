@@ -26,6 +26,7 @@ public class TaskStartService extends IntentService {
 
     private static String TASK_ACTION= "START_TASK";
     private static String EXTRA_TASK_ID= "task";
+    private static String EXTRA_TASK_SILENT= "notification";
 
     public TaskStartService() {
         super("TaskStartService");
@@ -48,6 +49,8 @@ public class TaskStartService extends IntentService {
                     if(task.getId()==intent.getIntExtra(EXTRA_TASK_ID, -1)){
                         String path = task.getLocal_path();
 
+                        boolean silentRun =intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
+
                         RemoteItem remoteItem = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
                         Intent taskIntent = new Intent();
                         taskIntent.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
@@ -56,6 +59,7 @@ public class TaskStartService extends IntentService {
                         taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
                         taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
                         taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
+                        taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             startForegroundService(taskIntent);
                         }else {
