@@ -1,13 +1,20 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
+import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
@@ -27,6 +35,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.SyncService;
+import ca.pkay.rcloneexplorer.Services.TaskStartService;
 import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
@@ -163,6 +172,10 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         clipboard.setPrimaryClip(clip);
                         Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
                         break;
+                    case R.id.action_add_to_home_screen:
+                        Log.e("1234", "pintohome");
+                        createShortcut(context, task);
+                        break;
                     default:
                         return false;
                 }
@@ -196,6 +209,46 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             this.taskSyncDirection = view.findViewById(R.id.task_sync_direction);
 
             this.fileOptions = view.findViewById(R.id.file_options);
+        }
+    }
+
+    private static void createShortcut(Context c, Task t) {
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
+
+
+            Intent i = new Intent(c, TaskStartService.class);
+            i.putExtra("task", t.getId());
+            i.setAction(TaskStartService.TASK_ACTION);
+
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(t.getId()))
+                    .setShortLabel(t.getTitle())
+                    .setLongLabel(t.getRemote_path())
+                    .setIcon(Icon.createWithResource(c, R.mipmap.ic_launcher))
+                    .setIntent(i)
+                    .build();
+
+            shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
+
+            if (shortcutManager.isRequestPinShortcutSupported()) {
+                // Assumes there's already a shortcut with the ID "my-shortcut".
+                // The shortcut must be enabled.
+
+                // Create the PendingIntent object only if your app needs to be notified
+                // that the user allowed the shortcut to be pinned. Note that, if the
+                // pinning operation fails, your app isn't notified. We assume here that the
+                // app has implemented a method called createShortcutResultIntent() that
+                // returns a broadcast intent.
+                Intent pinnedShortcutCallbackIntent = shortcutManager.createShortcutResultIntent(shortcut);
+
+                // Configure the intent so that your app's broadcast receiver gets
+                // the callback successfully.For details, see PendingIntent.getBroadcast().
+                PendingIntent successCallback = PendingIntent.getBroadcast(c, 0, pinnedShortcutCallbackIntent, 0);
+
+                shortcutManager.requestPinShortcut(shortcut, successCallback.getIntentSender());
+            }
+
         }
     }
 
