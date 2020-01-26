@@ -44,6 +44,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
@@ -1896,15 +1897,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                try {
-                    loadingDialog.dismiss();
-                } catch (NullPointerException e) {
-                    return;
-                }
-            }
+            Dialogs.dismissSilently(loadingDialog);
             if (!status) {
                 return;
             }
@@ -2016,13 +2009,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 retries--;
             }
 
-            if (loadingDialog != null) {
-                if (loadingDialog.isStateSaved()) {
-                    loadingDialog.dismissAllowingStateLoss();
-                } else if(loadingDialog.isAdded()){
-                    loadingDialog.dismiss();
-                }
-            }
+            Dialogs.dismissSilently(loadingDialog);
             tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
             return null;
         }
@@ -2074,13 +2061,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if (loadingDialog != null) {
-                if (loadingDialog.isStateSaved()) {
-                    loadingDialog.dismissAllowingStateLoss();
-                } else if (loadingDialog.isAdded()) {
-                    loadingDialog.dismiss();
-                }
-            }
+            Dialogs.dismissSilently(loadingDialog);
 
             if (s == null) {
                 Toasty.error(context, getString(R.string.error_generating_link), Toast.LENGTH_SHORT, true).show();
@@ -2106,11 +2087,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
-            }
+            Dialogs.dismissSilently(loadingDialog);
         }
     }
 }

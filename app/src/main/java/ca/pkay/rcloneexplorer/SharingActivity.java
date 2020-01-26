@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
@@ -191,11 +192,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
-            }
+            Dialogs.dismissSilently(loadingDialog);
 
             for (String uploadFile : uploadList) {
                 Intent intent = new Intent(context, UploadService.class);
