@@ -18,9 +18,13 @@ import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
 import io.github.x0b.safdav.SafAccessProvider;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +114,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= sizeLimit) {
                 RequestOptions glideOption = new RequestOptions()
                         .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.ic_file);
                 if(localLoad) {
                     Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/'+item.getPath());
@@ -122,10 +127,11 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 } else {
                     String[] serverParams = listener.getThumbnailServerParams();
                     String hiddenPath = serverParams[0];
-                    String url = server + hiddenPath + '/' + item.getPath();
+                    int serverPort = Integer.parseInt(serverParams[1]);
+                    String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
                     Glide
                             .with(context)
-                            .load(url)
+                            .load(new PersistentGlideUrl(url))
                             .apply(glideOption)
                             .thumbnail(0.1f)
                             .into(holder.fileIcon);
@@ -217,6 +223,24 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 }
             }
         });
+    }
+
+    private static class PersistentGlideUrl extends GlideUrl {
+
+        public PersistentGlideUrl(String url) {
+            super(url);
+        }
+
+        @Override
+        public String getCacheKey() {
+            try {
+                URL url = super.toURL();
+                String path = url.getPath();
+                return path.substring(path.indexOf('/', 1));
+            } catch (MalformedURLException e) {
+                return super.getCacheKey();
+            }
+        }
     }
 
     @Override
