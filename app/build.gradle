@@ -34,6 +34,22 @@ android {
         }
     }
 
+    flavorDimensions 'edition'
+    productFlavors {
+
+        // App id for play store
+        rcx {
+            dimension 'edition'
+            applicationId 'io.github.x0b.rcx'
+        }
+
+        // App id for github
+        rcloneExplorer {
+            dimension 'edition'
+            applicationId 'ca.pkay.rcloneexplorer.x0b'
+        }
+    }
+
     splits {
         abi {
             enable true
