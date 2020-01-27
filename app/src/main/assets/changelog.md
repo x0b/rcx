@@ -1,3 +1,11 @@
+### 1.10.1
+* **Fix:** Thubnails not loading after device rotation
+* **Fix:** Crash when importing rclone config
+* **Fix:** Crash when dismissing invalid dialog
+* **Fix:** Crash when streaming starting stream
+
+***
+
 ### 1.10.0
 * **New:** Proxy support (for https & http)
 * **New:** Various internal refactorings
