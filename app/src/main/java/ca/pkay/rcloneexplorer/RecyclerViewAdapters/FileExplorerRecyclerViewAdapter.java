@@ -178,12 +178,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileOptions.setVisibility(View.GONE);
         } else {
             holder.fileOptions.setVisibility(View.VISIBLE);
-            holder.fileOptions.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onFileOptionsClicked(v, item);
-                }
-            });
+            holder.fileOptions.setOnClickListener(v -> listener.onFileOptionsClicked(v, item));
         }
 
         if (wrapFileNames) {
@@ -194,33 +189,24 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileName.setSingleLine(false);
         }
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isInSelectMode) {
-                    onLongClickAction(item, holder);
-                } else {
-                    onClickAction(item, holder.getAdapterPosition());
-                }
+        holder.view.setOnClickListener(view -> {
+            if (isInSelectMode) {
+                onLongClickAction(item, holder);
+            } else {
+                onClickAction(item, holder.getAdapterPosition());
             }
         });
 
-        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (!isInMoveMode && canSelect) {
-                    onLongClickAction(item, holder);
-                }
-                return true;
+        holder.view.setOnLongClickListener(view -> {
+            if (!isInMoveMode && canSelect) {
+                onLongClickAction(item, holder);
             }
+            return true;
         });
 
-        holder.icons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isInMoveMode && canSelect) {
-                    onLongClickAction(item, holder);
-                }
+        holder.icons.setOnClickListener(v -> {
+            if (!isInMoveMode && canSelect) {
+                onLongClickAction(item, holder);
             }
         });
     }

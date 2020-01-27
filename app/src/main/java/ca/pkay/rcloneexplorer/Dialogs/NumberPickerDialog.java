@@ -84,12 +84,7 @@ public class NumberPickerDialog extends DialogFragment {
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                valueSelected();
-            }
-        });
+        builder.setPositiveButton(R.string.select, (dialog, which) -> valueSelected());
         builder.setTitle(title);
         builder.setView(view);
         return builder.create();

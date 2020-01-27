@@ -160,12 +160,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
         remoteSelectorLine = view.findViewById(R.id.text_view_line);
         remote = remoteSelectorTemplate.findViewById(R.id.text_view);
         remote.setText(R.string.alias_remote_hint);
-        remoteSelectorTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setRemote();
-            }
-        });
+        remoteSelectorTemplate.setOnClickListener(v -> setRemote());
 
         View chunkSizeTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
         chunkSizeTemplate.setLayoutParams(params);
@@ -173,12 +168,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
 
         chunkSize = chunkSizeTemplate.findViewById(R.id.text_view);
         chunkSize.setText(R.string.chunk_size_hint);
-        chunkSizeTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showChunkSizeDialog();
-            }
-        });
+        chunkSizeTemplate.setOnClickListener(v -> showChunkSizeDialog());
 
         View infoAgeTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
         infoAgeTemplate.setLayoutParams(params);
@@ -186,12 +176,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
 
         infoAge = infoAgeTemplate.findViewById(R.id.text_view);
         infoAge.setText(R.string.info_age_hint);
-        infoAgeTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCacheExpiryDialog();
-            }
-        });
+        infoAgeTemplate.setOnClickListener(v -> showCacheExpiryDialog());
 
         View chunkTotalSizeTemplate = View.inflate(context, R.layout.config_form_template_text_field, null);
         chunkTotalSizeTemplate.setLayoutParams(params);
@@ -199,26 +184,13 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
 
         chunkTotalSize = chunkTotalSizeTemplate.findViewById(R.id.text_view);
         chunkTotalSize.setText(R.string.chunk_total_size_hint);
-        chunkTotalSizeTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCacheSizeDialog();
-            }
-        });
+        chunkTotalSizeTemplate.setOnClickListener(v -> showCacheSizeDialog());
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }
@@ -328,29 +300,16 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.select_remote)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = null;
+                .setNegativeButton(R.string.cancel, (dialog, which) -> selectedRemote = null)
+                .setPositiveButton(R.string.select, (dialog, which) -> {
+                    if (selectedRemote == null) {
+                        Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
+                        setRemote();
+                    } else {
+                        setPath();
                     }
                 })
-                .setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (selectedRemote == null) {
-                            Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
-                            setRemote();
-                        } else {
-                            setPath();
-                        }
-                    }
-                })
-                .setSingleChoiceItems(options, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = remotes.get(which);
-                    }
-                })
+                .setSingleChoiceItems(options, -1, (dialog, which) -> selectedRemote = remotes.get(which))
                 .show();
     }
 

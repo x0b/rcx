@@ -50,32 +50,16 @@ public class GoToDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_go_to, null);
         builder.setTitle(R.string.dialog_go_to_title);
         checkBox = view.findViewById(R.id.checkbox);
-        view.findViewById(R.id.linearLayout_root).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-                listener.onRootClicked(isDefaultSet);
-            }
+        view.findViewById(R.id.linearLayout_root).setOnClickListener(v -> {
+            dismiss();
+            listener.onRootClicked(isDefaultSet);
         });
-        view.findViewById(R.id.linearLayout_home).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-                listener.onHomeClicked(isDefaultSet);
-            }
+        view.findViewById(R.id.linearLayout_home).setOnClickListener(v -> {
+            dismiss();
+            listener.onHomeClicked(isDefaultSet);
         });
-        view.findViewById(R.id.linearLayout_checkbox).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBox.setChecked(!checkBox.isChecked());
-            }
-        });
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isDefaultSet = isChecked;
-            }
-        });
+        view.findViewById(R.id.linearLayout_checkbox).setOnClickListener(v -> checkBox.setChecked(!checkBox.isChecked()));
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> isDefaultSet = isChecked);
         builder.setView(view);
         return builder.create();
     }

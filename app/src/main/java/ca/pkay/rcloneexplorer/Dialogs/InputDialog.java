@@ -91,20 +91,14 @@ public class InputDialog extends DialogFragment {
             builder.setMessage(messageId);
         }
         if (positiveTextId > 1) {
-            builder.setPositiveButton(positiveTextId, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String input = editText.getText().toString();
-                    onPositiveListener.onPositive(tag, input);
-                }
+            builder.setPositiveButton(positiveTextId, (dialog, which) -> {
+                String input = editText.getText().toString();
+                onPositiveListener.onPositive(tag, input);
             });
         }
         if (negativeTextId > 1) {
-            builder.setNegativeButton(negativeTextId, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+            builder.setNegativeButton(negativeTextId, (dialog, which) -> {
 
-                }
             });
         }
         if (filledText != null) {

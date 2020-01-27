@@ -47,17 +47,14 @@ public class LinkDialog extends DialogFragment {
 
         TextView textView = view.findViewById(R.id.text_view);
         textView.setText(linkUrl);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newPlainText("Copied link", linkUrl);
-                if (clipboardManager == null) {
-                    return;
-                }
-                clipboardManager.setPrimaryClip(clipData);
-                Toasty.info(context, getString(R.string.link_copied_to_clipboard), Toast.LENGTH_SHORT, true).show();
+        textView.setOnClickListener(v -> {
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("Copied link", linkUrl);
+            if (clipboardManager == null) {
+                return;
             }
+            clipboardManager.setPrimaryClip(clipData);
+            Toasty.info(context, getString(R.string.link_copied_to_clipboard), Toast.LENGTH_SHORT, true).show();
         });
 
         builder.setView(view)

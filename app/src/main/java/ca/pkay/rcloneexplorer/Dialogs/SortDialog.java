@@ -69,13 +69,10 @@ public class SortDialog extends DialogFragment {
             builder.setTitle(title);
         }
         if (positiveText > 0) {
-            builder.setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    int sortById = ((RadioGroup)view.findViewById(R.id.radio_group_sort_by)).getCheckedRadioButtonId();
-                    int sortOrderId = ((RadioGroup)view.findViewById(R.id.radio_group_sort_order)).getCheckedRadioButtonId();
-                    listener.onPositiveButtonClick(sortById, sortOrderId);
-                }
+            builder.setPositiveButton(positiveText, (dialog, which) -> {
+                int sortById = ((RadioGroup)view.findViewById(R.id.radio_group_sort_by)).getCheckedRadioButtonId();
+                int sortOrderId = ((RadioGroup)view.findViewById(R.id.radio_group_sort_order)).getCheckedRadioButtonId();
+                listener.onPositiveButtonClick(sortById, sortOrderId);
             });
         }
         if (negativeText > 0) {

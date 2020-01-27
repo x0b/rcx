@@ -75,40 +75,17 @@ public class AboutLibrariesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             holder.libraryLicence.setText(libraryLicence);
         }
         if (libraryUrl != null) {
-            holder.libraryName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onLibraryClick(libraryUrl);
-                }
-            });
+            holder.libraryName.setOnClickListener(v -> listener.onLibraryClick(libraryUrl));
         }
         if (libraryLicenceUrl != null) {
-            holder.libraryLicence.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onLibraryClick(libraryLicenceUrl);
-                }
-            });
+            holder.libraryLicence.setOnClickListener(v -> listener.onLibraryClick(libraryLicenceUrl));
         }
     }
 
     private void setFooter(RecyclerView.ViewHolder viewHolder) {
         FooterViewHolder holder = (FooterViewHolder) viewHolder;
-
-        holder.smashIcons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onLibraryClick("https://www.flaticon.com/authors/smashicons");
-
-            }
-        });
-
-        holder.flatIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onLibraryClick("https://www.flaticon.com/");
-            }
-        });
+        holder.smashIcons.setOnClickListener(v -> listener.onLibraryClick("https://www.flaticon.com/authors/smashicons"));
+        holder.flatIcon.setOnClickListener(v -> listener.onLibraryClick("https://www.flaticon.com/"));
     }
 
     @Override

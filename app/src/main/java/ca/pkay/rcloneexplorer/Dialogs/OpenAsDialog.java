@@ -68,36 +68,24 @@ public class OpenAsDialog extends DialogFragment {
     }
 
     private void setListeners() {
-        view.findViewById(R.id.open_as_text).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClickText(fileItem);
-                dismiss();
-            }
+        view.findViewById(R.id.open_as_text).setOnClickListener(v -> {
+            listener.onClickText(fileItem);
+            dismiss();
         });
 
-        view.findViewById(R.id.open_as_audio).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClickAudio(fileItem);
-                dismiss();
-            }
+        view.findViewById(R.id.open_as_audio).setOnClickListener(v -> {
+            listener.onClickAudio(fileItem);
+            dismiss();
         });
 
-        view.findViewById(R.id.open_as_video).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClickVideo(fileItem);
-                dismiss();
-            }
+        view.findViewById(R.id.open_as_video).setOnClickListener(v -> {
+            listener.onClickVideo(fileItem);
+            dismiss();
         });
 
-        view.findViewById(R.id.open_as_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onClickImage(fileItem);
-                dismiss();
-            }
+        view.findViewById(R.id.open_as_image).setOnClickListener(v -> {
+            listener.onClickImage(fileItem);
+            dismiss();
         });
     }
 

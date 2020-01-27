@@ -79,38 +79,22 @@ public class LoggingSettingsFragment extends Fragment {
     }
 
     private void setClickListeners() {
-        useLogsElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (useLogsSwitch.isChecked()) {
-                    useLogsSwitch.setChecked(false);
-                } else {
-                    useLogsSwitch.setChecked(true);
-                }
+        useLogsElement.setOnClickListener(v -> {
+            if (useLogsSwitch.isChecked()) {
+                useLogsSwitch.setChecked(false);
+            } else {
+                useLogsSwitch.setChecked(true);
             }
         });
-        useLogsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onUseLogsClicked(isChecked);
+        useLogsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onUseLogsClicked(isChecked));
+        crashReportsElement.setOnClickListener(v -> {
+            if (crashReportsSwitch.isChecked()) {
+                crashReportsSwitch.setChecked(false);
+            } else {
+                crashReportsSwitch.setChecked(true);
             }
         });
-        crashReportsElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (crashReportsSwitch.isChecked()) {
-                    crashReportsSwitch.setChecked(false);
-                } else {
-                    crashReportsSwitch.setChecked(true);
-                }
-            }
-        });
-        crashReportsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                crashReportsClicked(isChecked);
-            }
-        });
+        crashReportsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> crashReportsClicked(isChecked));
     }
 
     private void onUseLogsClicked(boolean isChecked) {

@@ -53,19 +53,11 @@ public class LocalConfig extends Fragment {
         remoteNameInputLayout.setVisibility(View.VISIBLE);
         remoteName = view.findViewById(R.id.remote_name);
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }

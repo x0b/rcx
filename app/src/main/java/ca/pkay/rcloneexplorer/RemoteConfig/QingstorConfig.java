@@ -130,19 +130,11 @@ public class QingstorConfig extends Fragment {
         connectionRetries.setInputType(InputType.TYPE_CLASS_NUMBER);
         ((TextView)connectionRetriesTemplate.findViewById(R.id.helper_text)).setText(R.string.qingstor_connection_retires_helper);
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }

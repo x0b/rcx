@@ -59,19 +59,11 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
             holder.pinIcon.setVisibility(View.INVISIBLE);
         }
 
-        holder.options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                optionsListener.onRemoteOptionsClicked(holder.options, remotes.get(holder.getAdapterPosition()));
-            }
-        });
+        holder.options.setOnClickListener(v -> optionsListener.onRemoteOptionsClicked(holder.options, remotes.get(holder.getAdapterPosition())));
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != clickListener) {
-                    clickListener.onRemoteClick(remotes.get(holder.getAdapterPosition()));
-                }
+        holder.view.setOnClickListener(view -> {
+            if (null != clickListener) {
+                clickListener.onRemoteClick(remotes.get(holder.getAdapterPosition()));
             }
         });
     }

@@ -143,12 +143,7 @@ public class DriveConfig extends Fragment {
 
         scope = view.findViewById(R.id.text_view);
         scope.setText(R.string.drive_scope__hint);
-        scopeTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setScope();
-            }
-        });
+        scopeTemplate.setOnClickListener(v -> setScope());
 
         View rootFolderIdTemplate = View.inflate(context, R.layout.config_form_template_edit_text, null);
         rootFolderIdTemplate.setPadding(0, 0, 0, padding);
@@ -158,42 +153,28 @@ public class DriveConfig extends Fragment {
         rootFolderId = rootFolderIdTemplate.findViewById(R.id.edit_text);
         rootFolderIdTemplate.findViewById(R.id.helper_text).setVisibility(View.VISIBLE);
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
 
         // TODO: remove 1.9.4
-        view.findViewById(R.id.launch_browser).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "http://127.0.0.1:53682/auth";
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(context, Uri.parse(url));
-            }
+        view.findViewById(R.id.launch_browser).setOnClickListener(v -> {
+            String url = "http://127.0.0.1:53682/auth";
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(context, Uri.parse(url));
         });
 
-        view.findViewById(R.id.cancel_auth).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (authTask != null) {
-                    authTask.cancel(true);
-                }
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel_auth).setOnClickListener(v -> {
+            if (authTask != null) {
+                authTask.cancel(true);
+            }
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }
@@ -206,12 +187,7 @@ public class DriveConfig extends Fragment {
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.drive_scope_title);
-        builder.setItems(R.array.drive_scopes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                scopeSet(which);
-            }
-        });
+        builder.setItems(R.array.drive_scopes, (dialog, which) -> scopeSet(which));
         /*builder.setSingleChoiceItems(R.array.drive_scopes, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

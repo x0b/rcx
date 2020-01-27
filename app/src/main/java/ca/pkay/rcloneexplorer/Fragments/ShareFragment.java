@@ -163,24 +163,10 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
         view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
         view.findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.cancel_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((FragmentActivity) context).finish();
-            }
-        });
-        view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onShareDestinationSelected(remote, directoryObject.getCurrentPath());
-            }
-        });
-        view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCreateNewDirectory();
-            }
-        });
+        view.findViewById(R.id.cancel_move).setOnClickListener(v -> ((FragmentActivity) context).finish());
+        view.findViewById(R.id.select_move).setOnClickListener(
+                v -> listener.onShareDestinationSelected(remote, directoryObject.getCurrentPath()));
+        view.findViewById(R.id.new_folder).setOnClickListener(v -> onCreateNewDirectory());
 
         int currentOrientation = getResources().getConfiguration().orientation;
         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {

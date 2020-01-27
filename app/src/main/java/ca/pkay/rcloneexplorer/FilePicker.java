@@ -328,21 +328,13 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
         int selected = availableStorage.indexOf(root.getAbsolutePath());
         final CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
-        builder.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                userSelected[0] = which;
-            }
-        });
+        builder.setSingleChoiceItems(options, selected, (dialog, which) -> userSelected[0] = which);
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    switchStorage(userSelected[0]);
-                } catch (IOException e) {
-                    Log.e("FilePicker", "Path not accessible", e);
-                }
+        builder.setPositiveButton(R.string.select, (dialog, which) -> {
+            try {
+                switchStorage(userSelected[0]);
+            } catch (IOException e) {
+                Log.e("FilePicker", "Path not accessible", e);
             }
         });
 

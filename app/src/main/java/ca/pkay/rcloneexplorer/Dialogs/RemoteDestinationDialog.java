@@ -137,31 +137,13 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
         view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
         view.findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.cancel_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
+        view.findViewById(R.id.cancel_move).setOnClickListener(v -> dismiss());
+        view.findViewById(R.id.select_move).setOnClickListener(v -> {
+            listener.onDestinationSelected(directoryObject.getCurrentPath());
+            dismiss();
         });
-        view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onDestinationSelected(directoryObject.getCurrentPath());
-                dismiss();
-            }
-        });
-        view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCreateNewDirectory();
-            }
-        });
-        view.findViewById(R.id.previous_dir).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goUp();
-            }
-        });
+        view.findViewById(R.id.new_folder).setOnClickListener(v -> onCreateNewDirectory());
+        view.findViewById(R.id.previous_dir).setOnClickListener(v -> goUp());
         previousDirView = view.findViewById(R.id.previous_dir);
         previousDirView.setVisibility(View.GONE);
         previousDirLabel = view.findViewById(R.id.previous_dir_label);
@@ -178,15 +160,12 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogThemeFullScreen);
         builder.setView(view);
-        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    goUp();
-                    return true;
-                }
-                return false;
+        builder.setOnKeyListener((dialog, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                goUp();
+                return true;
             }
+            return false;
         });
         return builder.create();
     }

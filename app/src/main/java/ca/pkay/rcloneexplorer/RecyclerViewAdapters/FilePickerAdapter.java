@@ -107,30 +107,19 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.checkBox.setChecked(selectedFiles.contains(file));
 
-            holder.checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleSelection(file);
-                }
-            });
+            holder.checkBox.setOnClickListener(v -> toggleSelection(file));
 
-            holder.view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    toggleSelection(file);
-                    return true;
-                }
+            holder.view.setOnLongClickListener(v -> {
+                toggleSelection(file);
+                return true;
             });
         }
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (file.isDirectory()) {
-                    listener.onDirectoryClicked(file);
-                } else if (!destinationPickerType) {
-                    toggleSelection(file);
-               }
-            }
+        holder.view.setOnClickListener(v -> {
+            if (file.isDirectory()) {
+                listener.onDirectoryClicked(file);
+            } else if (!destinationPickerType) {
+                toggleSelection(file);
+           }
         });
     }
 

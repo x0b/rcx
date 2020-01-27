@@ -81,19 +81,11 @@ public class B2Config extends Fragment {
         endpoint = endpointTemplate.findViewById(R.id.edit_text);
         endpointTemplate.findViewById(R.id.helper_text).setVisibility(View.VISIBLE);
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }

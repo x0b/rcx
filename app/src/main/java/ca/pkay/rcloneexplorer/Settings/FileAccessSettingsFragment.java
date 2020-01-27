@@ -102,24 +102,9 @@ public class FileAccessSettingsFragment extends Fragment {
     }
 
     private void setClickListeners() {
-        safEnabledView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                safEnabledSwitch.setChecked(!safEnabledSwitch.isChecked());
-            }
-        });
-        safEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setSafEnabled(isChecked);
-            }
-        });
-        addPermissionBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addRoot();
-            }
-        });
+        safEnabledView.setOnClickListener(v -> safEnabledSwitch.setChecked(!safEnabledSwitch.isChecked()));
+        safEnabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setSafEnabled(isChecked));
+        addPermissionBtn.setOnClickListener(v -> addRoot());
     }
 
     private void setSafEnabled(boolean isChecked) {
@@ -194,12 +179,7 @@ public class FileAccessSettingsFragment extends Fragment {
         public PermissionsViewHolder(@NonNull View itemView, final PermissionListAdapter adapter){
             super(itemView);
             text = itemView.findViewById(R.id.permission_path);
-            itemView.findViewById(R.id.permission_remove).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    adapter.remove(getAdapterPosition());
-                }
-            });
+            itemView.findViewById(R.id.permission_remove).setOnClickListener(v -> adapter.remove(getAdapterPosition()));
         }
     }
 

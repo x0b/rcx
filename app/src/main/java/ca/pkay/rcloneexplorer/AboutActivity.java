@@ -36,48 +36,13 @@ public class AboutActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.version_number)).setText(BuildConfig.VERSION_NAME);
         ((TextView)findViewById(R.id.rclone_version)).setText(rclone.getRcloneVersion());
 
-        findViewById(R.id.changelog).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showChangelog();
-            }
-        });
-        findViewById(R.id.contributors).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showContributors();
-            }
-        });
-        findViewById(R.id.open_source_libraries).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showOpenSourceLibraries();
-            }
-        });
-        findViewById(R.id.star_on_github).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openAppGitHubLink();
-            }
-        });
-        findViewById(R.id.report_bug).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reportBug();
-            }
-        });
-        findViewById(R.id.author_github_link).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openAuthorGitHubLink();
-            }
-        });
-        findViewById(R.id.maintainer_github_link).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openMaintainerGithubLink();
-            }
-        });
+        findViewById(R.id.changelog).setOnClickListener(v -> showChangelog());
+        findViewById(R.id.contributors).setOnClickListener(v -> showContributors());
+        findViewById(R.id.open_source_libraries).setOnClickListener(v -> showOpenSourceLibraries());
+        findViewById(R.id.star_on_github).setOnClickListener(v -> openAppGitHubLink());
+        findViewById(R.id.report_bug).setOnClickListener(v -> reportBug());
+        findViewById(R.id.author_github_link).setOnClickListener(v -> openAuthorGitHubLink());
+        findViewById(R.id.maintainer_github_link).setOnClickListener(v -> openMaintainerGithubLink());
     }
 
     @Override

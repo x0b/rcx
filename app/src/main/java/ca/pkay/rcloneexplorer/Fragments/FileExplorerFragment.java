@@ -277,19 +277,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         fab = view.findViewById(R.id.fab_fragment_file_explorer_list);
         fab.setOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
-        fab.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
-            @Override
-            public boolean onActionSelected(SpeedDialActionItem actionItem) {
-                switch (actionItem.getId()) {
-                    case R.id.fab_add_folder:
-                        onCreateNewDirectory();
-                        break;
-                    case R.id.fab_upload:
-                        onUploadFiles();
-                        break;
-                }
-                return false;
+        fab.setOnActionSelectedListener(actionItem -> {
+            switch (actionItem.getId()) {
+                case R.id.fab_add_folder:
+                    onCreateNewDirectory();
+                    break;
+                case R.id.fab_upload:
+                    onUploadFiles();
+                    break;
             }
+            return false;
         });
         fab.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_upload, R.drawable.ic_file_upload)
                 .setLabel(getString(R.string.fab_upload_files))
@@ -315,12 +312,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         view.findViewById(R.id.bottom_bar).setBackgroundColor(accentColorValue.data);
         view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
         if (view.findViewById(R.id.background) != null) {
-            view.findViewById(R.id.background).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickOutsideOfView();
-                }
-            });
+            view.findViewById(R.id.background).setOnClickListener(v -> onClickOutsideOfView());
         }
 
         setBottomBarClickListeners(view);
@@ -698,12 +690,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         builder.setMessage(R.string.empty_trash_confirmation)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        new EmptyTrashTask().execute();
-                    }
-                })
+                .setPositiveButton(R.string.ok, (dialog, which) -> new EmptyTrashTask().execute())
                 .show();
     }
 
@@ -834,56 +821,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void setBottomBarClickListeners(final View view) {
-        view.findViewById(R.id.file_download).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
-                downloadFiles();
-            }
+        view.findViewById(R.id.file_download).setOnClickListener(v -> {
+            downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
+            downloadFiles();
         });
 
-        view.findViewById(R.id.file_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                moveFiles(recyclerViewAdapter.getSelectedItems());
-            }
+        view.findViewById(R.id.file_move).setOnClickListener(v -> moveFiles(recyclerViewAdapter.getSelectedItems()));
+
+        view.findViewById(R.id.file_rename).setOnClickListener(v -> {
+            renameItem = recyclerViewAdapter.getSelectedItems().get(0);
+            renameFiles();
         });
 
-        view.findViewById(R.id.file_rename).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                renameItem = recyclerViewAdapter.getSelectedItems().get(0);
-                renameFiles();
-            }
-        });
-
-        view.findViewById(R.id.file_delete).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteFiles(recyclerViewAdapter.getSelectedItems());
-            }
-        });
-
-        view.findViewById(R.id.cancel_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelMoveClicked();
-            }
-        });
-
-        view.findViewById(R.id.select_move).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveLocationSelected();
-            }
-        });
-
-        view.findViewById(R.id.new_folder).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCreateNewDirectory();
-            }
-        });
+        view.findViewById(R.id.file_delete).setOnClickListener(v -> deleteFiles(recyclerViewAdapter.getSelectedItems()));
+        view.findViewById(R.id.cancel_move).setOnClickListener(v -> cancelMoveClicked());
+        view.findViewById(R.id.select_move).setOnClickListener(v -> moveLocationSelected());
+        view.findViewById(R.id.new_folder).setOnClickListener(v -> onCreateNewDirectory());
 
         ((EditText)searchBar.findViewById(R.id.search_field)).addTextChangedListener(new TextWatcher() {
             @Override
@@ -902,16 +855,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         });
 
-        searchBar.findViewById(R.id.search_clear).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText searchField = searchBar.findViewById(R.id.search_field);
-                if (searchField.getText().toString().isEmpty()) {
-                    searchClicked();
-                } else {
-                    searchDirContent("");
-                    searchField.setText("");
-                }
+        searchBar.findViewById(R.id.search_clear).setOnClickListener(v -> {
+            EditText searchField = searchBar.findViewById(R.id.search_field);
+            if (searchField.getText().toString().isEmpty()) {
+                searchClicked();
+            } else {
+                searchDirContent("");
+                searchField.setText("");
             }
         });
     }
@@ -1326,71 +1276,65 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void showFileMenu(View view, final FileItem fileItem) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.file_explorer_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_file_properties:
-                        showFileProperties(fileItem);
-                        break;
-                    case R.id.action_open_as:
-                        showOpenAsDialog(fileItem);
-                        break;
-                    case R.id.action_serve:
-                        String[] serveOptions = new String[] {"HTTP", "Webdav"};
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setItems(serveOptions, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(getContext(), StreamingService.class);
-                                switch (which) {
-                                    case 0: // HTTP
-                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
-                                        intent.putExtra(StreamingService.REMOTE_ARG, remote);
-                                        intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
-                                        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                                        break;
-                                    case 1: // Webdav
-                                        intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
-                                        intent.putExtra(StreamingService.REMOTE_ARG, remote);
-                                        intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
-                                        intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
-                                        break;
-                                    default:
-                                        return;
-                                }
-                                context.startService(intent);
-                            }
-                        });
-                        builder.setTitle(R.string.pick_a_protocol);
-                        builder.show();
-                        break;
-                    case R.id.action_download:
-                        downloadList = new ArrayList<>();
-                        downloadList.add(fileItem);
-                        downloadFiles();
-                        break;
-                    case R.id.action_move:
-                        moveFiles(Collections.singletonList(fileItem));
-                        break;
-                    case R.id.action_rename:
-                        renameItem = fileItem;
-                        renameFiles();
-                        break;
-                    case R.id.action_delete:
-                        deleteFiles(Collections.singletonList(fileItem));
-                        break;
-                    case R.id.action_link:
-                        new LinkTask().execute(fileItem.getPath());
-                        break;
-                    case R.id.action_sync:
-                        showSyncDialog(fileItem.getPath());
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_file_properties:
+                    showFileProperties(fileItem);
+                    break;
+                case R.id.action_open_as:
+                    showOpenAsDialog(fileItem);
+                    break;
+                case R.id.action_serve:
+                    String[] serveOptions = new String[] {"HTTP", "Webdav"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setItems(serveOptions, (dialog, which) -> {
+                        Intent intent = new Intent(getContext(), StreamingService.class);
+                        switch (which) {
+                            case 0: // HTTP
+                                intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
+                                intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_HTTP);
+                                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                                break;
+                            case 1: // Webdav
+                                intent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
+                                intent.putExtra(StreamingService.REMOTE_ARG, remote);
+                                intent.putExtra(StreamingService.SERVE_PROTOCOL, StreamingService.SERVE_WEBDAV);
+                                intent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, true);
+                                break;
+                            default:
+                                return;
+                        }
+                        context.startService(intent);
+                    });
+                    builder.setTitle(R.string.pick_a_protocol);
+                    builder.show();
+                    break;
+                case R.id.action_download:
+                    downloadList = new ArrayList<>();
+                    downloadList.add(fileItem);
+                    downloadFiles();
+                    break;
+                case R.id.action_move:
+                    moveFiles(Collections.singletonList(fileItem));
+                    break;
+                case R.id.action_rename:
+                    renameItem = fileItem;
+                    renameFiles();
+                    break;
+                case R.id.action_delete:
+                    deleteFiles(Collections.singletonList(fileItem));
+                    break;
+                case R.id.action_link:
+                    new LinkTask().execute(fileItem.getPath());
+                    break;
+                case R.id.action_sync:
+                    showSyncDialog(fileItem.getPath());
+                    break;
+                default:
+                    return false;
             }
+            return true;
         });
         popupMenu.show();
         if (fileItem.isDir()) {
@@ -1466,18 +1410,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         String[] options = new String[] {"Sync local to remote", "Sync remote to local"};
         builder.setTitle(R.string.select_sync_direction);
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    syncDirection = Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE;
-                } else {
-                    syncDirection = Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL;
-                }
-                Intent intent = new Intent(context, FilePicker.class);
-                intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
-                startActivityForResult(intent, FILE_PICKER_SYNC_RESULT);
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                syncDirection = Rclone.SYNC_DIRECTION_LOCAL_TO_REMOTE;
+            } else {
+                syncDirection = Rclone.SYNC_DIRECTION_REMOTE_TO_LOCAL;
             }
+            Intent intent = new Intent(context, FilePicker.class);
+            intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
+            startActivityForResult(intent, FILE_PICKER_SYNC_RESULT);
         });
         builder.show();
     }
@@ -1522,19 +1463,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         builder
                 .setTitle(title)
                 .setNegativeButton(getResources().getString(R.string.cancel), null)
-                .setPositiveButton(getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        recyclerViewAdapter.cancelSelection();
-                        for (FileItem deleteItem : deleteList) {
-                            Intent intent = new Intent(context, DeleteService.class);
-                            intent.putExtra(DeleteService.REMOTE_ARG, remote);
-                            intent.putExtra(DeleteService.DELETE_ITEM, deleteItem);
-                            intent.putExtra(DeleteService.PATH, directoryObject.getCurrentPath());
-                            context.startService(intent);
-                        }
-                        Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
+                .setPositiveButton(getResources().getString(R.string.delete), (dialog, which) -> {
+                    recyclerViewAdapter.cancelSelection();
+                    for (FileItem deleteItem : deleteList) {
+                        Intent intent = new Intent(context, DeleteService.class);
+                        intent.putExtra(DeleteService.REMOTE_ARG, remote);
+                        intent.putExtra(DeleteService.DELETE_ITEM, deleteItem);
+                        intent.putExtra(DeleteService.PATH, directoryObject.getCurrentPath());
+                        context.startService(intent);
                     }
+                    Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
                 });
         if (!content.trim().isEmpty()) {
             builder.setMessage(content);
@@ -1864,13 +1802,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setDarkTheme(isDarkTheme)
                     .setTitle(getString(R.string.loading_file))
                     .setNegativeButton(getResources().getString(R.string.cancel))
-                    .setOnNegativeListener(new LoadingDialog.OnNegative() {
-                @Override
-                public void onNegative() {
-                    cancelProcess();
-                    cancel(true);
-                }
-            });
+                    .setOnNegativeListener(() -> {
+                        cancelProcess();
+                        cancel(true);
+                    });
             if (getFragmentManager() != null) {
                 loadingDialog.show(getChildFragmentManager(), "loading dialog");
             }

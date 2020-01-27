@@ -77,12 +77,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             builder
                     .setTitle(R.string.app_not_configured)
                     .setMessage(R.string.open_app_to_configure)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
+                    .setPositiveButton(R.string.ok, (dialog, which) -> finish())
                     .show();
         } else {
             startRemotesFragment();
@@ -168,12 +163,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                     .setTitle(R.string.loading)
                     .setDarkTheme(isDarkTheme)
                     .setNegativeButton(R.string.cancel)
-                    .setOnNegativeListener(new LoadingDialog.OnNegative() {
-                        @Override
-                        public void onNegative() {
-                            cancel(true);
-                        }
-                    });
+                    .setOnNegativeListener(() -> cancel(true));
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");
         }
 

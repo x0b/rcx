@@ -96,34 +96,10 @@ public class LookAndFeelSettingsFragment extends Fragment {
     }
 
     private void setClickListeners() {
-        primaryColorElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPrimaryColorPicker();
-            }
-        });
-        accentColorElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAccentColorPicker();
-            }
-        });
-        darkThemeElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (darkThemeSwitch.isChecked()) {
-                    darkThemeSwitch.setChecked(false);
-                } else {
-                    darkThemeSwitch.setChecked(true);
-                }
-            }
-        });
-        darkThemeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onDarkThemeClicked(isChecked);
-            }
-        });
+        primaryColorElement.setOnClickListener(v -> showPrimaryColorPicker());
+        accentColorElement.setOnClickListener(v -> showAccentColorPicker());
+        darkThemeElement.setOnClickListener(v -> darkThemeSwitch.setChecked(!darkThemeSwitch.isChecked()));
+        darkThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onDarkThemeClicked(isChecked));
     }
 
     private void showPrimaryColorPicker() {
@@ -135,12 +111,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
                 .setColorChoices(R.array.primary_color_choices)
                 .setDefaultColor(defaultColor)
                 .setDarkTheme(isDarkTheme)
-                .setListener(new ColorPickerDialog.OnClickListener() {
-                    @Override
-                    public void onColorSelected(int color) {
-                        onPrimaryColorSelected(color);
-                    }
-                });
+                .setListener(this::onPrimaryColorSelected);
 
         colorPickerDialog.show(getChildFragmentManager(), "primary color picker");
     }
@@ -154,12 +125,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
                 .setColorChoices(R.array.accent_color_choices)
                 .setDefaultColor(defaultColor)
                 .setDarkTheme(isDarkTheme)
-                .setListener(new ColorPickerDialog.OnClickListener() {
-                    @Override
-                    public void onColorSelected(int color) {
-                        onAccentColorSelected(color);
-                    }
-                });
+                .setListener(this::onAccentColorSelected);
 
         colorPickerDialog.show(getChildFragmentManager(), "accent color picker");
     }

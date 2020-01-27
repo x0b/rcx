@@ -71,6 +71,10 @@ android {
                     project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) + android.defaultConfig.versionCode * 10
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 repositories {

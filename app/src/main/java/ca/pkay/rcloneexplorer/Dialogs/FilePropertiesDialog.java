@@ -99,18 +99,8 @@ public class FilePropertiesDialog extends DialogFragment {
             sha1Container.setVisibility(View.VISIBLE);
             hashSeparator.setVisibility(View.VISIBLE);
 
-            md5Container.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    calculateMD5();
-                }
-            });
-            sha1Container.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    calculateSHA1();
-                }
-            });
+            md5Container.setOnClickListener(v -> calculateMD5());
+            sha1Container.setOnClickListener(v -> calculateSHA1());
 
             if (md5String != null) {
                 ((TextView)view.findViewById(R.id.file_md5)).setText(md5String);

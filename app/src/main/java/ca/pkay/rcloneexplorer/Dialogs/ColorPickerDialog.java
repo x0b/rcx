@@ -67,12 +67,9 @@ public class ColorPickerDialog extends DialogFragment {
         createLayout(view);
 
         builder.setTitle(title);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dismiss();
-                listener.onColorSelected(getSelectedColor());
-            }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            dismiss();
+            listener.onColorSelected(getSelectedColor());
         });
         builder.setView(view);
         return builder.create();
@@ -97,17 +94,14 @@ public class ColorPickerDialog extends DialogFragment {
                 selectedColor = defaultColor;
             }
 
-            item.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (visibleCheckmark != null) {
-                        visibleCheckmark.setVisibility(View.INVISIBLE);
-                    }
-                    (v.findViewById(R.id.checkmark)).setVisibility(View.VISIBLE);
-                    visibleCheckmark = v.findViewById(R.id.checkmark);
-                    selectedColor = color;
-                    defaultColor = selectedColor;
+            item.setOnClickListener(v -> {
+                if (visibleCheckmark != null) {
+                    visibleCheckmark.setVisibility(View.INVISIBLE);
                 }
+                (v.findViewById(R.id.checkmark)).setVisibility(View.VISIBLE);
+                visibleCheckmark = v.findViewById(R.id.checkmark);
+                selectedColor = color;
+                defaultColor = selectedColor;
             });
 
             rowLayout.addView(item);

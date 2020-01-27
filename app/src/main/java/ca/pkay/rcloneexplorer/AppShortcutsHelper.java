@@ -92,7 +92,7 @@ public class AppShortcutsHelper {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> appShortcutIds = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_app_shortcuts), new HashSet<String>());
+        Set<String> appShortcutIds = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_app_shortcuts), new HashSet<>());
         String id = getUniqueIdFromString(remoteName);
 
         if (!appShortcutIds.contains(id)) {
@@ -138,7 +138,7 @@ public class AppShortcutsHelper {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> appShortcutIds = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_app_shortcuts), new HashSet<String>());
+        Set<String> appShortcutIds = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_app_shortcuts), new HashSet<>());
 
         String id = getUniqueIdFromString(remoteName);
 

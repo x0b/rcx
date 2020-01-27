@@ -89,44 +89,23 @@ public class NotificationsSettingsFragment extends Fragment {
 
     private void setClickListeners() {
 
-        notificationsElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onNotificationsClicked();
+        notificationsElement.setOnClickListener(v -> onNotificationsClicked());
+        appUpdatesElement.setOnClickListener(v -> {
+            if (appUpdatesSwitch.isChecked()) {
+                appUpdatesSwitch.setChecked(false);
+            } else {
+                appUpdatesSwitch.setChecked(true);
             }
         });
-        appUpdatesElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (appUpdatesSwitch.isChecked()) {
-                    appUpdatesSwitch.setChecked(false);
-                } else {
-                    appUpdatesSwitch.setChecked(true);
-                }
+        appUpdatesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onAppUpdatesClicked(isChecked));
+        betaAppUpdatesElement.setOnClickListener(v -> {
+            if (betaAppUpdatesSwitch.isChecked()) {
+                betaAppUpdatesSwitch.setChecked(false);
+            } else {
+                betaAppUpdatesSwitch.setChecked(true);
             }
         });
-        appUpdatesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onAppUpdatesClicked(isChecked);
-            }
-        });
-        betaAppUpdatesElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (betaAppUpdatesSwitch.isChecked()) {
-                    betaAppUpdatesSwitch.setChecked(false);
-                } else {
-                    betaAppUpdatesSwitch.setChecked(true);
-                }
-            }
-        });
-        betaAppUpdatesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onBetaAppUpdatesClicked(isChecked);
-            }
-        });
+        betaAppUpdatesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onBetaAppUpdatesClicked(isChecked));
     }
 
     private void onNotificationsClicked() {

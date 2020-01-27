@@ -177,8 +177,8 @@ public class SafFileAccess implements ItemAccess<SafFileItem> {
         String path = uri.getPath();
         String mediaPath = path.substring(path.indexOf(':') + 1);
         String[] directories = mediaPath.split("/");
-        for (int index = 0; index < directories.length; index++) {
-            DocumentFile file = subFolder.findFile(directories[index]);
+        for (String directory : directories) {
+            DocumentFile file = subFolder.findFile(directory);
             if (file == null && parentDirIfNotExist) {
                 return subFolder;
             }

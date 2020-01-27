@@ -71,12 +71,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
             builder = new AlertDialog.Builder(context);
         }
 
-        builder.setPositiveButton(R.string.set_password_button, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                callback.onPasswordSelected(getTag(), generatedPassword);
-            }
-        });
+        builder.setPositiveButton(R.string.set_password_button, (dialog, which) -> callback.onPasswordSelected(getTag(), generatedPassword));
         builder.setNegativeButton(R.string.cancel, null);
 
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
@@ -112,68 +107,16 @@ public class PasswordGeneratorDialog extends DialogFragment {
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
-        checkBoxLowerCase.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                generatePassword();
-            }
-        });
+        checkBoxLowerCase.setOnCheckedChangeListener((buttonView, isChecked) -> generatePassword());
+        checkBoxUpperCase.setOnCheckedChangeListener((buttonView, isChecked) -> generatePassword());
+        checkBoxNumbers.setOnCheckedChangeListener((buttonView, isChecked) -> generatePassword());
+        checkBoxSpecialChars.setOnCheckedChangeListener((buttonView, isChecked) -> generatePassword());
 
-        checkBoxUpperCase.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                generatePassword();
-            }
-        });
-
-        checkBoxNumbers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                generatePassword();
-            }
-        });
-
-        checkBoxSpecialChars.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                generatePassword();
-            }
-        });
-
-        view.findViewById(R.id.lower_case).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBoxLowerCase.setChecked(!checkBoxLowerCase.isChecked());
-            }
-        });
-
-        view.findViewById(R.id.upper_case).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBoxUpperCase.setChecked(!checkBoxUpperCase.isChecked());
-            }
-        });
-
-        view.findViewById(R.id.numbers).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBoxNumbers.setChecked(!checkBoxNumbers.isChecked());
-            }
-        });
-
-        view.findViewById(R.id.special_chars).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkBoxSpecialChars.setChecked(!checkBoxSpecialChars.isChecked());
-            }
-        });
-
-        view.findViewById(R.id.refresh_password).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                generatePassword();
-            }
-        });
+        view.findViewById(R.id.lower_case).setOnClickListener(v -> checkBoxLowerCase.setChecked(!checkBoxLowerCase.isChecked()));
+        view.findViewById(R.id.upper_case).setOnClickListener(v -> checkBoxUpperCase.setChecked(!checkBoxUpperCase.isChecked()));
+        view.findViewById(R.id.numbers).setOnClickListener(v -> checkBoxNumbers.setChecked(!checkBoxNumbers.isChecked()));
+        view.findViewById(R.id.special_chars).setOnClickListener(v -> checkBoxSpecialChars.setChecked(!checkBoxSpecialChars.isChecked()));
+        view.findViewById(R.id.refresh_password).setOnClickListener(v -> generatePassword());
 
         if (savedInstanceState != null) {
             checkBoxLowerCase.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_LOWERCASE));

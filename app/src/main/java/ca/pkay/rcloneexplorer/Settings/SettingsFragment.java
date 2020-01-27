@@ -66,46 +66,16 @@ public class SettingsFragment extends Fragment {
 
     private void setClickListeners(View view) {
 
-        view.findViewById(R.id.general_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onSettingCategoryClicked(GENERAL_SETTINGS);
-            }
-        });
+        view.findViewById(R.id.general_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(GENERAL_SETTINGS));
 
-        view.findViewById(R.id.logging_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onSettingCategoryClicked(LOGGING_SETTINGS);
-            }
-        });
+        view.findViewById(R.id.logging_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(LOGGING_SETTINGS));
 
-        view.findViewById(R.id.logging_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onSettingCategoryClicked(LOGGING_SETTINGS);
-            }
-        });
+        view.findViewById(R.id.logging_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(LOGGING_SETTINGS));
 
-        view.findViewById(R.id.look_and_feel_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onSettingCategoryClicked(LOOK_AND_FEEL_SETTINGS);
-            }
-        });
+        view.findViewById(R.id.look_and_feel_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(LOOK_AND_FEEL_SETTINGS));
 
-        view.findViewById(R.id.notification_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onSettingCategoryClicked(NOTIFICATION_SETTINGS);
-            }
-        });
+        view.findViewById(R.id.notification_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(NOTIFICATION_SETTINGS));
 
-        view.findViewById(R.id.file_access_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onSettingCategoryClicked(FILE_ACCESS_SETTINGS);
-            }
-        });
+        view.findViewById(R.id.file_access_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(FILE_ACCESS_SETTINGS));
     }
 }

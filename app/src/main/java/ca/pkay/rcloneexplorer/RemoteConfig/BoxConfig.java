@@ -95,42 +95,28 @@ public class BoxConfig extends Fragment {
         clientSecret = clientSecretTemplate.findViewById(R.id.edit_text);
         clientSecretTemplate.findViewById(R.id.helper_text).setVisibility(View.VISIBLE);
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
 
         // TODO: remove 1.9.4
-        view.findViewById(R.id.launch_browser).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "http://127.0.0.1:53682/auth";
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(context, Uri.parse(url));
-            }
+        view.findViewById(R.id.launch_browser).setOnClickListener(v -> {
+            String url = "http://127.0.0.1:53682/auth";
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(context, Uri.parse(url));
         });
 
-        view.findViewById(R.id.cancel_auth).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (authTask != null) {
-                    authTask.cancel(true);
-                }
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel_auth).setOnClickListener(v -> {
+            if (authTask != null) {
+                authTask.cancel(true);
+            }
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }

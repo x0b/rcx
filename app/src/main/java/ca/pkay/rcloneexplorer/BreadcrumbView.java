@@ -100,22 +100,12 @@ public class BreadcrumbView extends HorizontalScrollView {
         textViewCrumb.setBackgroundResource(outValue.resourceId);
         textViewCrumb.setPadding( 8, 8, 8, 0);
         textViewCrumb.setElevation(50);
-        textViewCrumb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickListener.onBreadCrumbClicked(path);
-            }
-        });
+        textViewCrumb.setOnClickListener(view -> onClickListener.onBreadCrumbClicked(path));
         previousCrumb = textViewCrumb;
         pathList.add(path);
         textViewMap.put(path, textViewCrumb);
         childFrame.addView(textViewCrumb);
-        childFrame.post(new Runnable() {
-            @Override
-            public void run() {
-                smoothScrollTo(textViewCrumb.getLeft() - 50, 0);
-            }
-        });
+        childFrame.post(() -> smoothScrollTo(textViewCrumb.getLeft() - 50, 0));
     }
 
     public void removeCrumbsUpTo(String path) {

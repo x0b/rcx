@@ -103,26 +103,13 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
         remotesList.setAdapter(remotesListAdapter);
 
 
-        view.findViewById(R.id.union_btn_add_remote).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addRemote();
-            }
-        });
+        view.findViewById(R.id.union_btn_add_remote).setOnClickListener(v -> addRemote());
 
-        view.findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.create).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }
@@ -148,28 +135,15 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.select_remote)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = null;
+                .setNegativeButton(R.string.cancel, (dialog, which) -> selectedRemote = null)
+                .setPositiveButton(R.string.select, (dialog, which) -> {
+                    if (selectedRemote == null) {
+                        Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
+                    } else {
+                        setPath();
                     }
                 })
-                .setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (selectedRemote == null) {
-                            Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
-                        } else {
-                            setPath();
-                        }
-                    }
-                })
-                .setSingleChoiceItems(options, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = configuredRemotes.get(which);
-                    }
-                })
+                .setSingleChoiceItems(options, -1, (dialog, which) -> selectedRemote = configuredRemotes.get(which))
                 .show();
     }
 
@@ -248,12 +222,7 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
             super(itemView);
             text = itemView.findViewById(R.id.remote_path);
             icon = itemView.findViewById(R.id.remote_icon);
-            itemView.findViewById(R.id.remote_remove).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    adapter.remove(getAdapterPosition());
-                }
-            });
+            itemView.findViewById(R.id.remote_remove).setOnClickListener(v -> adapter.remove(getAdapterPosition()));
         }
     }
 

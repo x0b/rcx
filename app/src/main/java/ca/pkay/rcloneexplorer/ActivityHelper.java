@@ -56,12 +56,8 @@ public class ActivityHelper {
         if(main.equals(Looper.myLooper())){
             Toasty.error(context, "No app found for this link", Toast.LENGTH_LONG, true).show();
         } else {
-            new Handler(main).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toasty.error(context, "No app found for this link", Toast.LENGTH_LONG, true).show();
-                }
-            });
+            new Handler(main).post(() ->
+               Toasty.error(context, "No app found for this link", Toast.LENGTH_LONG, true).show());
         }
     }
 

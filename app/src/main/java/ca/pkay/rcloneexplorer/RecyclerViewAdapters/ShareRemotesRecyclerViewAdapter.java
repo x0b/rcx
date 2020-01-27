@@ -51,12 +51,9 @@ public class ShareRemotesRecyclerViewAdapter extends RecyclerView.Adapter<ShareR
             holder.pinIcon.setVisibility(View.INVISIBLE);
         }
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != clickListener) {
-                    clickListener.onRemoteClick(remotes.get(holder.getAdapterPosition()));
-                }
+        holder.view.setOnClickListener(view -> {
+            if (null != clickListener) {
+                clickListener.onRemoteClick(remotes.get(holder.getAdapterPosition()));
             }
         });
     }

@@ -153,84 +153,35 @@ public class GeneralSettingsFragment extends Fragment {
     }
     
     private void setClickListeners() {
-        showThumbnailsElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (showThumbnailsSwitch.isChecked()) {
-                    showThumbnailsSwitch.setChecked(false);
-                } else {
-                    showThumbnailsSwitch.setChecked(true);
-                }
+        showThumbnailsElement.setOnClickListener(v -> {
+            if (showThumbnailsSwitch.isChecked()) {
+                showThumbnailsSwitch.setChecked(false);
+            } else {
+                showThumbnailsSwitch.setChecked(true);
             }
         });
-        showThumbnailsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                showThumbnails(isChecked);
+        showThumbnailsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> showThumbnails(isChecked));
+        appShortcutsElement.setOnClickListener(v -> showAppShortcutDialog());
+        wifiOnlyElement.setOnClickListener(v -> {
+            if (wifiOnlySwitch.isChecked()) {
+                wifiOnlySwitch.setChecked(false);
+            } else {
+                wifiOnlySwitch.setChecked(true);
             }
         });
-        appShortcutsElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAppShortcutDialog();
+        wifiOnlySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setWifiOnlyTransfers(isChecked));
+        useProxyElement.setOnClickListener(v -> {
+            if(useProxySwitch.isChecked()) {
+                useProxySwitch.setChecked(false);
+            } else {
+                useProxySwitch.setChecked(true);
             }
         });
-        wifiOnlyElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (wifiOnlySwitch.isChecked()) {
-                    wifiOnlySwitch.setChecked(false);
-                } else {
-                    wifiOnlySwitch.setChecked(true);
-                }
-            }
-        });
-        wifiOnlySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setWifiOnlyTransfers(isChecked);
-            }
-        });
-        useProxyElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(useProxySwitch.isChecked()) {
-                    useProxySwitch.setChecked(false);
-                } else {
-                    useProxySwitch.setChecked(true);
-                }
-            }
-        });
-        useProxySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setUseProxy(isChecked);
-            }
-        });
-        proxyProtocolElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProxyProtocolMenu();
-            }
-        });
-        proxyHostElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProxyHostMenu();
-            }
-        });
-        proxyPortElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProxyPortMenu();
-            }
-        });
-        thumbnailSizeElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showThumbnailSizeDialog();
-            }
-        });
+        useProxySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setUseProxy(isChecked));
+        proxyProtocolElement.setOnClickListener(v -> showProxyProtocolMenu());
+        proxyHostElement.setOnClickListener(v -> showProxyHostMenu());
+        proxyPortElement.setOnClickListener(v -> showProxyPortMenu());
+        thumbnailSizeElement.setOnClickListener(v -> showThumbnailSizeDialog());
     }
 
     private void showThumbnails(boolean isChecked) {
@@ -251,7 +202,7 @@ public class GeneralSettingsFragment extends Fragment {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> appShortcuts = sharedPreferences.getStringSet(getString(R.string.shared_preferences_app_shortcuts), new HashSet<String>());
+        Set<String> appShortcuts = sharedPreferences.getStringSet(getString(R.string.shared_preferences_app_shortcuts), new HashSet<>());
 
         AlertDialog.Builder builder;
         if (isDarkTheme) {
@@ -284,28 +235,20 @@ public class GeneralSettingsFragment extends Fragment {
             i++;
         }
 
-        builder.setMultiChoiceItems(options, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                if (userSelected.size() >= 4 && isChecked) {
-                    Toasty.info(context, getString(R.string.app_shortcuts_max_toast), Toast.LENGTH_SHORT, true).show();
-                    //((AlertDialog)dialog).getListView().setItemChecked(which, false); This doesn't work
-                }
-                if (isChecked) {
-                    userSelected.add(options[which].toString());
-                } else {
-                    userSelected.remove(options[which].toString());
-                }
+        builder.setMultiChoiceItems(options, checkedItems, (dialog, which, isChecked) -> {
+            if (userSelected.size() >= 4 && isChecked) {
+                Toasty.info(context, getString(R.string.app_shortcuts_max_toast), Toast.LENGTH_SHORT, true).show();
+                //((AlertDialog)dialog).getListView().setItemChecked(which, false); This doesn't work
+            }
+            if (isChecked) {
+                userSelected.add(options[which].toString());
+            } else {
+                userSelected.remove(options[which].toString());
             }
         });
 
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                setAppShortcuts(remotes, userSelected);
-            }
-        });
+        builder.setPositiveButton(R.string.select, (dialog, which) -> setAppShortcuts(remotes, userSelected));
 
         builder.show();
     }
@@ -321,7 +264,7 @@ public class GeneralSettingsFragment extends Fragment {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Set<String> savedAppShortcutIds = sharedPreferences.getStringSet(getString(R.string.shared_preferences_app_shortcuts), new HashSet<String>());
+        Set<String> savedAppShortcutIds = sharedPreferences.getStringSet(getString(R.string.shared_preferences_app_shortcuts), new HashSet<>());
         Set<String> updatedAppShortcutIDds = new HashSet<>(savedAppShortcutIds);
 
         // Remove app shortcuts first
@@ -402,21 +345,13 @@ public class GeneralSettingsFragment extends Fragment {
 
         builder.setTitle(R.string.pref_proxy_protocol_dlg_title);
         final int[] userSelected = new int[1];
-        builder.setSingleChoiceItems(R.array.proxy_protocols, initialSelection, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                userSelected[0] = which;
-            }
-        });
+        builder.setSingleChoiceItems(R.array.proxy_protocols, initialSelection, (dialog, which) -> userSelected[0] = which);
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String protocol = proxyProtocols.get(userSelected[0]);
-                pref.edit().putString(getString(R.string.pref_key_proxy_protocol), protocol).apply();
-                if(proxyProtocolSummary != null) {
-                    proxyProtocolSummary.setText(protocol);
-                }
+        builder.setPositiveButton(R.string.select, (dialog, which) -> {
+            String protocol = proxyProtocols.get(userSelected[0]);
+            pref.edit().putString(getString(R.string.pref_key_proxy_protocol), protocol).apply();
+            if(proxyProtocolSummary != null) {
+                proxyProtocolSummary.setText(protocol);
             }
         });
 
@@ -440,14 +375,11 @@ public class GeneralSettingsFragment extends Fragment {
         builder.setView(proxyHostEdit);
 
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String host = proxyHostEdit.getText().toString();
-                pref.edit().putString(getString(R.string.pref_key_proxy_host), host).apply();
-                if(null != proxyHostSummary) {
-                    proxyHostSummary.setText(host);
-                }
+        builder.setPositiveButton(R.string.select, (dialog, which) -> {
+            String host = proxyHostEdit.getText().toString();
+            pref.edit().putString(getString(R.string.pref_key_proxy_host), host).apply();
+            if(null != proxyHostSummary) {
+                proxyHostSummary.setText(host);
             }
         });
 
@@ -472,21 +404,18 @@ public class GeneralSettingsFragment extends Fragment {
         builder.setView(proxyPortEdit);
 
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String portString = proxyPortEdit.getText().toString();
-                int port;
-                try {
-                    port = Integer.parseInt(portString);
-                } catch (NumberFormatException e) {
-                    Log.e(TAG, "showProxyPortMenu: invalid port", e);
-                    return;
-                }
-                pref.edit().putInt(getString(R.string.pref_key_proxy_port), port).apply();
-                if(null != proxyPortSummary) {
-                    proxyPortSummary.setText(String.valueOf(port));
-                }
+        builder.setPositiveButton(R.string.select, (dialog, which) -> {
+            String portString = proxyPortEdit.getText().toString();
+            int port;
+            try {
+                port = Integer.parseInt(portString);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "showProxyPortMenu: invalid port", e);
+                return;
+            }
+            pref.edit().putInt(getString(R.string.pref_key_proxy_port), port).apply();
+            if(null != proxyPortSummary) {
+                proxyPortSummary.setText(String.valueOf(port));
             }
         });
 
@@ -512,23 +441,20 @@ public class GeneralSettingsFragment extends Fragment {
         builder.setView(thumbnailSizeEdit);
 
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String sizeString = thumbnailSizeEdit.getText().toString();
-                long size;
-                double sizeMb;
-                try {
-                    sizeMb = Double.parseDouble(sizeString);
-                    size = (long)(sizeMb * 1024 * 1024);
-                } catch (NumberFormatException e) {
-                    Log.e(TAG, "showThumbnailSizeDialog: invalid size", e);
-                    return;
-                }
-                pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size).apply();
-                if(null != thumbnailSizeSummary) {
-                    thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
-                }
+        builder.setPositiveButton(R.string.select, (dialog, which) -> {
+            String sizeString = thumbnailSizeEdit.getText().toString();
+            long size1;
+            double sizeMb;
+            try {
+                sizeMb = Double.parseDouble(sizeString);
+                size1 = (long)(sizeMb * 1024 * 1024);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, "showThumbnailSizeDialog: invalid size", e);
+                return;
+            }
+            pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size1).apply();
+            if(null != thumbnailSizeSummary) {
+                thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
             }
         });
 

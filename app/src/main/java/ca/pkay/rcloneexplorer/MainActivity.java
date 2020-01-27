@@ -147,12 +147,7 @@ public class MainActivity extends AppCompatActivity
 
         rclone = new Rclone(this);
 
-        findViewById(R.id.locked_config_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                askForConfigPassword();
-            }
-        });
+        findViewById(R.id.locked_config_btn).setOnClickListener(v -> askForConfigPassword());
 
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
         if ("rcloneExplorer".equals(BuildConfig.FLAVOR) && appUpdates) {
@@ -393,24 +388,16 @@ public class MainActivity extends AppCompatActivity
         }
         builder.setTitle(R.string.replace_config_file_question);
         builder.setMessage(R.string.config_file_lost_statement);
-        builder.setPositiveButton(R.string.continue_statement, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-                Uri configUri;
-                if(null != (configUri = rclone.searchExternalConfig())){
-                    askUseExternalConfig(configUri);
-                } else {
-                    importConfigFile();
-                }
+        builder.setPositiveButton(R.string.continue_statement, (dialogInterface, i) -> {
+            dialogInterface.cancel();
+            Uri configUri;
+            if(null != (configUri = rclone.searchExternalConfig())){
+                askUseExternalConfig(configUri);
+            } else {
+                importConfigFile();
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel());
         builder.show();
     }
 
@@ -423,19 +410,13 @@ public class MainActivity extends AppCompatActivity
         }
         builder.setTitle(R.string.config_use_external_question);
         builder.setMessage(context.getString(R.string.config_import_external_explain, uri.toString()));
-        builder.setPositiveButton(R.string.continue_statement, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-                new CopyConfigFile().execute(uri);
-            }
+        builder.setPositiveButton(R.string.continue_statement, (dialogInterface, i) -> {
+            dialogInterface.cancel();
+            new CopyConfigFile().execute(uri);
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-                importConfigFile();
-            }
+        builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+            dialogInterface.cancel();
+            importConfigFile();
         });
         builder.show();
     }

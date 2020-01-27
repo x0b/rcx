@@ -110,26 +110,13 @@ public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnD
         remoteSelectorLine = view.findViewById(R.id.text_view_line);
         remote = view.findViewById(R.id.text_view);
         remote.setText(R.string.alias_remote_hint);
-        remoteSelectorTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setRemote();
-            }
-        });
+        remoteSelectorTemplate.setOnClickListener(v -> setRemote());
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }
@@ -155,29 +142,16 @@ public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnD
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.select_remote)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = null;
+                .setNegativeButton(R.string.cancel, (dialog, which) -> selectedRemote = null)
+                .setPositiveButton(R.string.select, (dialog, which) -> {
+                    if (selectedRemote == null) {
+                        Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
+                        setRemote();
+                    } else {
+                        setPath();
                     }
                 })
-                .setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (selectedRemote == null) {
-                            Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
-                            setRemote();
-                        } else {
-                            setPath();
-                        }
-                    }
-                })
-                .setSingleChoiceItems(options, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = remotes.get(which);
-                    }
-                })
+                .setSingleChoiceItems(options, -1, (dialog, which) -> selectedRemote = remotes.get(which))
                 .show();
     }
 

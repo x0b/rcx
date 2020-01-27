@@ -149,12 +149,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         remoteSelectorLine = remoteSelectorTemplate.findViewById(R.id.text_view_line);
         remote = remoteSelectorTemplate.findViewById(R.id.text_view);
         remote.setText(R.string.encrypt_remote_hint);
-        remoteSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setRemote();
-            }
-        });
+        remoteSelector.setOnClickListener(v -> setRemote());
 
         View passwordTemplate = View.inflate(context, R.layout.config_form_template_password, null);
         passwordTemplate.setPadding(0, 0, 0, padding);
@@ -163,19 +158,16 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         passwordInputLayout.setHintEnabled(true);
         passwordInputLayout.setHint(getString(R.string.crypt_pass_hint));
         password = passwordTemplate.findViewById(R.id.pass);
-        password.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_RIGHT = 2;
+        password.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
 
-                if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        showPasswordGenerator(0);
-                        return true;
-                    }
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    showPasswordGenerator(0);
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
 
         View password2Template = View.inflate(context, R.layout.config_form_template_password, null);
@@ -188,19 +180,16 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         pass2HelperText.setVisibility(View.VISIBLE);
         pass2HelperText.setText(R.string.crypt_pass2_helper_text);
         password2 = password2Template.findViewById(R.id.pass);
-        password2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                final int DRAWABLE_RIGHT = 2;
+        password2.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
 
-                if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        showPasswordGenerator(1);
-                        return true;
-                    }
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                if(event.getRawX() >= (password.getRight() - password.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    showPasswordGenerator(1);
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
 
         View showPasswordsTemplate = View.inflate(context, R.layout.config_form_show_password, null);
@@ -208,24 +197,16 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         formContent.addView(showPasswordsTemplate);
         final CheckBox showPasswordsSwitch = showPasswordsTemplate.findViewById(R.id.show_password_checkbox);
         TextView showPasswords = showPasswordsTemplate.findViewById(R.id.show_password);
-        showPasswordsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    password2.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                } else {
-                    password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    password2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                }
+        showPasswordsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                password2.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            } else {
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                password2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
         });
-        showPasswords.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPasswordsSwitch.setChecked(!showPasswordsSwitch.isChecked());
-            }
-        });
+        showPasswords.setOnClickListener(v -> showPasswordsSwitch.setChecked(!showPasswordsSwitch.isChecked()));
 
         View spinnerTemplate = View.inflate(context, R.layout.config_form_template_spinner, null);
         spinnerTemplate.setPadding(0, 0, 0, padding);
@@ -257,35 +238,21 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         formContent.addView(switchTemplate);
         directoryEncryption = "false";
         ((Switch)switchTemplate.findViewById(R.id.flip_switch)).setChecked(false);
-        switchTemplate.findViewById(R.id.switch_layout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Switch s = v.findViewById(R.id.flip_switch);
-                s.setChecked(!s.isChecked());
-            }
+        switchTemplate.findViewById(R.id.switch_layout).setOnClickListener(v -> {
+            Switch s = v.findViewById(R.id.flip_switch);
+            s.setChecked(!s.isChecked());
         });
-        ((Switch)switchTemplate.findViewById(R.id.flip_switch)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Switch s = buttonView.findViewById(R.id.flip_switch);
-                directoryEncryption = (s.isChecked()) ? "true" : "false";
-            }
+        ((Switch)switchTemplate.findViewById(R.id.flip_switch)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Switch s = buttonView.findViewById(R.id.flip_switch);
+            directoryEncryption = (s.isChecked()) ? "true" : "false";
         });
         ((TextView)switchTemplate.findViewById(R.id.switch_text)).setText(R.string.directory_name_encryption_hint);
 
-        view.findViewById(R.id.next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setUpRemote();
-            }
-        });
+        view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
-        view.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().finish();
             }
         });
     }
@@ -335,29 +302,16 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.select_remote)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = null;
+                .setNegativeButton(R.string.cancel, (dialog, which) -> selectedRemote = null)
+                .setPositiveButton(R.string.select, (dialog, which) -> {
+                    if (selectedRemote == null) {
+                        Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
+                        setRemote();
+                    } else {
+                        setPath();
                     }
                 })
-                .setPositiveButton(R.string.select, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (selectedRemote == null) {
-                            Toasty.info(context, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
-                            setRemote();
-                        } else {
-                            setPath();
-                        }
-                    }
-                })
-                .setSingleChoiceItems(options, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedRemote = remotes.get(which);
-                    }
-                })
+                .setSingleChoiceItems(options, -1, (dialog, which) -> selectedRemote = remotes.get(which))
                 .show();
     }
 

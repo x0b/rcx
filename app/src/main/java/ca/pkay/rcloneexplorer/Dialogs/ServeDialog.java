@@ -63,12 +63,7 @@ public class ServeDialog extends DialogFragment {
         ((TextInputLayout) view.findViewById(R.id.text_input_layout_password)).setHint("Password");
 
         builder.setTitle(R.string.serve_dialog_title);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sendCallback();
-            }
-        });
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> sendCallback());
 
         builder.setNegativeButton(R.string.cancel, null);
 
