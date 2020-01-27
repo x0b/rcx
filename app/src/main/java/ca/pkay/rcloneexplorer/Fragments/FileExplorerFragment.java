@@ -16,6 +16,7 @@ import android.os.Parcel;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -1970,9 +1971,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         @Override
         protected Void doInBackground(FileItem... fileItems) {
+            if(context == null) {
+                Log.w(TAG, "doInBackground: could not start stream, context is invalid");
+                return null;
+            }
             FileItem fileItem = fileItems[0];
-
-            Intent serveIntent = new Intent(getContext(), StreamingService.class);
+            Intent serveIntent = new Intent(context, StreamingService.class);
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
