@@ -16,6 +16,7 @@ import android.os.Parcel;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
@@ -77,6 +79,7 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -98,6 +101,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                                                 SortDialog.OnClickListener,
                                                                 ServeDialog.Callback {
 
+    private static final String TAG = "FileExplorerFragment";
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private static final int FILE_PICKER_UPLOAD_RESULT = 186;
@@ -154,6 +158,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private boolean goToDefaultSet;
     private Context context;
     private String thumbnailServerAuth;
+    private int thumbnailServerPort;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -737,6 +742,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
         serveIntent.putExtra(ThumbnailsLoadingService.HIDDEN_PATH, thumbnailServerAuth);
+        serveIntent.putExtra(ThumbnailsLoadingService.SERVER_PORT, thumbnailServerPort);
         context.startService(serveIntent);
         isThumbnailsServiceRunning = true;
     }
@@ -746,6 +752,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         byte[] values = new byte[16];
         random.nextBytes(values);
         thumbnailServerAuth = Base64.encodeToString(values, Base64.NO_PADDING | Base64.NO_WRAP | Base64.URL_SAFE);
+        thumbnailServerPort = allocatePort(29179, true);
+    }
+
+    private static int allocatePort(int port, boolean allocateFallback) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            serverSocket.setReuseAddress(true);
+            return serverSocket.getLocalPort();
+        } catch (IOException e) {
+            if (allocateFallback) {
+                return allocatePort(0, false);
+            }
+        }
+        throw new IllegalStateException("No port available");
     }
 
     private void searchClicked() {
@@ -1301,7 +1320,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     @Override
     public String[] getThumbnailServerParams() {
-        return new String[]{thumbnailServerAuth};
+        return new String[]{thumbnailServerAuth + '/' + remote.getName(), String.valueOf(thumbnailServerPort)};
     }
 
     private void showFileMenu(View view, final FileItem fileItem) {
@@ -1896,15 +1915,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(Boolean status) {
             super.onPostExecute(status);
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                try {
-                    loadingDialog.dismiss();
-                } catch (NullPointerException e) {
-                    return;
-                }
-            }
+            Dialogs.dismissSilently(loadingDialog);
             if (!status) {
                 return;
             }
@@ -1960,9 +1971,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         @Override
         protected Void doInBackground(FileItem... fileItems) {
+            if(context == null) {
+                Log.w(TAG, "doInBackground: could not start stream, context is invalid");
+                return null;
+            }
             FileItem fileItem = fileItems[0];
-
-            Intent serveIntent = new Intent(getContext(), StreamingService.class);
+            Intent serveIntent = new Intent(context, StreamingService.class);
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
@@ -2016,13 +2030,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 retries--;
             }
 
-            if (loadingDialog != null) {
-                if (loadingDialog.isStateSaved()) {
-                    loadingDialog.dismissAllowingStateLoss();
-                } else if(loadingDialog.isAdded()){
-                    loadingDialog.dismiss();
-                }
-            }
+            Dialogs.dismissSilently(loadingDialog);
             tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
             return null;
         }
@@ -2074,13 +2082,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if (loadingDialog != null) {
-                if (loadingDialog.isStateSaved()) {
-                    loadingDialog.dismissAllowingStateLoss();
-                } else {
-                    loadingDialog.dismiss();
-                }
-            }
+            Dialogs.dismissSilently(loadingDialog);
 
             if (s == null) {
                 Toasty.error(context, getString(R.string.error_generating_link), Toast.LENGTH_SHORT, true).show();
@@ -2106,11 +2108,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
-            }
+            Dialogs.dismissSilently(loadingDialog);
         }
     }
 }

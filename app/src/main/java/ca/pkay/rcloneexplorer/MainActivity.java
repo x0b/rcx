@@ -35,6 +35,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
-        if (appUpdates) {
+        if ("rcloneExplorer".equals(BuildConfig.FLAVOR) && appUpdates) {
             checkForUpdate(false);
         }
 
@@ -611,7 +612,7 @@ public class MainActivity extends AppCompatActivity
             updateLastUpdateRequest();
             long publishedAt = getLastPublishTimestamp(response);
             // Since the app is not published immediately during build, 15 minutes are added
-            long publishBarrier = publishedAt + 1000 * 60 * 15;
+            long publishBarrier = publishedAt - 1000 * 60 * 15;
             if(BuildConfig.BUILD_TIME < publishBarrier) {
                 Log.i(TAG, "onResponse: App is not up-to-date");
                 handler.obtainMessage(MainActivity.UPDATE_AVAILABLE).sendToTarget();
@@ -683,11 +684,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            if (loadingDialog.isStateSaved()) {
-                loadingDialog.dismissAllowingStateLoss();
-            } else {
-                loadingDialog.dismiss();
-            }
+            Dialogs.dismissSilently(loadingDialog);
             if (!success) {
                 Toasty.error(context, getString(R.string.copying_rclone_config_fail), Toast.LENGTH_LONG, true).show();
                 return;
@@ -738,7 +735,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
-            loadingDialog.dismiss();
+            Dialogs.dismissSilently(loadingDialog);
             if (!success) {
                 Toasty.error(context, getString(R.string.error_unlocking_config), Toast.LENGTH_LONG, true).show();
                 askForConfigPassword();

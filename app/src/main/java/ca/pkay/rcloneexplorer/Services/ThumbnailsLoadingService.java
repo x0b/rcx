@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.Services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -10,8 +11,11 @@ import ca.pkay.rcloneexplorer.Rclone;
 
 public class ThumbnailsLoadingService extends IntentService {
 
+    private static final String TAG = "ThumbnailsLoadingSvc";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.ThumbnailsLoadingService.REMOTE_ARG";
     public static final String HIDDEN_PATH = "ca.pkay.rcexplorer.ThumbnailsLoadingService.HIDDEN_PATH";
+    public static final String SERVER_PORT = "ca.pkay.rcexplorer.ThumbnailsLoadingService.PORT";
+
     private Rclone rclone;
     private Process process;
 
@@ -32,8 +36,10 @@ public class ThumbnailsLoadingService extends IntentService {
         }
 
         RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
-        String hiddenPath = "/" + intent.getStringExtra(HIDDEN_PATH);
-        process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, 29179, false, null, null, remote, "", hiddenPath);
+        String hiddenPath = "/" + intent.getStringExtra(HIDDEN_PATH) + '/' + remote.getName();
+        int serverPort = intent.getIntExtra(SERVER_PORT, 29179);
+        Log.d(TAG, "onHandleIntent: hiddenPath=" + hiddenPath);
+        process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, serverPort, false, null, null, remote, "", hiddenPath);
         if (process != null) {
             try {
                 if(PreferenceManager.getDefaultSharedPreferences(this).

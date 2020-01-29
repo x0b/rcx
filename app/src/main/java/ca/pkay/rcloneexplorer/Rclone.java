@@ -917,7 +917,15 @@ public class Rclone {
 
     public boolean copyConfigFile(Uri uri) throws IOException {
         String appsFileDir = context.getFilesDir().getPath();
-        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        InputStream inputStream;
+        // The exact cause of the NPE is unknown, but the effect is the same
+        // - the copy process has failed, therefore bubble an IOException
+        // for handling at the appropriate layers.
+        try {
+            inputStream = context.getContentResolver().openInputStream(uri);
+        } catch(NullPointerException e) {
+            throw new IOException(e);
+        }
         File tempFile = new File(appsFileDir, "rclone.conf-tmp");
         File configFile = new File(appsFileDir, "rclone.conf");
         FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
