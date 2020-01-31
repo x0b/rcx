@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Rclone Explorer (x0b build)</string>
-    <string name="app_short_name">Rclone…(x0b)</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="app_name" translatable="false">Rclone Explorer (x0b build)</string>
+    <string name="app_short_name" translatable="false">Rclone…(x0b)</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -33,10 +33,10 @@
     <string name="star_on_github">Star on GitHub</string>
     <string name="report_a_bug">Report a bug</string>
     <string name="author">Original Author</string>
-    <string name="author_name">Patryk Kaczmarkiewicz</string>
+    <string name="author_name" translatable="false">Patryk Kaczmarkiewicz</string>
     <string name="follow_on_github">Follow on GitHub</string>
     <string name="maintainer">Maintainer</string>
-    <string name="maintainer_name">x0b &lt;github.com/x0b&gt;</string>
+    <string name="maintainer_name" translatable="false">x0b &lt;github.com/x0b&gt;</string>
     <string name="empty_folder">The folder is empty</string>
     <string name="ooops">Ooops!</string>
     <string name="no_config_found">No configuration found, please import or add remote</string>
@@ -50,11 +50,11 @@
     <string name="select">Select</string>
     <string name="app_icon">App Icon</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="github_app_url">https://github.com/x0b/rcloneExplorer</string>
-    <string name="github_issue_url">https://github.com/x0b/rcloneExplorer/issues/new?title=Bug%20Report&amp;label=app%20issue%20link&amp;body=</string>
-    <string name="github_issue_template" tools:ignore="TypographyDashes">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
-    <string name="github_author_url">https://github.com/kaczmarkiewiczp</string>
-    <string name="github_maintainer_url">https://github.com/x0b</string>
+    <string name="github_app_url" translatable="false">https://github.com/x0b/rcloneExplorer</string>
+    <string name="github_issue_url" translatable="false">https://github.com/x0b/rcloneExplorer/issues/new?title=Bug%20Report&amp;label=app%20issue%20link&amp;body=</string>
+    <string name="github_issue_template" tools:ignore="TypographyDashes" translatable="false">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
+    <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
+    <string name="github_maintainer_url" translatable="false">https://github.com/x0b</string>
     <string name="about_check_updates">Check</string>
     <string name="replace_config_file_question">Replace current configuration file?</string>
     <string name="config_file_lost_statement">Your current configuration will be lost</string>
@@ -98,8 +98,8 @@
     <string name="filename">Filename</string>
     <string name="modified_time">Modified time</string>
     <string name="size">Size</string>
-    <string name="md5">MD5</string>
-    <string name="sha1">SHA1</string>
+    <string name="md5" translatable="false">MD5</string>
+    <string name="sha1" translatable="false">SHA1</string>
     <string name="tap_to_calculate">Tap to calculate</string>
     <string name="calculating">Calculating</string>
     <string name="hash_error">ERROR</string>
@@ -137,26 +137,26 @@
     <string name="restart_required">App restart is required</string>
     <string name="select_primary_color">Select a primary color</string>
     <string name="select_accent_color">Select an accent color</string>
-    <string name="title_activity_about_libs">AboutLibsActivity</string>
+    <string name="title_activity_about_libs" translatable="false">AboutLibsActivity</string>
     <string name="app_icon_made_by">App icon made by</string>
-    <string name="smashicons">Smashicons</string>
+    <string name="smashicons" translatable="false">Smashicons</string>
     <string name="from">from</string>
-    <string name="flaticon">Flaticon</string>
-    <string name="pref_key_stream_max">pref_key_stream_max</string>
-    <string name="pref_key_logs">pref_key_logs</string>
-    <string name="pref_key_color_primary">pref_key_color_primary</string>
-    <string name="pref_key_color_accent">pref_key_color_accent</string>
-    <string name="pref_key_dark_theme">pref_key_dark_theme</string>
-    <string name="pref_key_app_updates">pref_key_app_updates</string>
-    <string name="pref_key_app_updates_beta">pref_key_app_updates_beta</string>
-    <string name="pref_key_crash_reports">pref_key_crash_reports</string>
-    <string name="pref_key_show_thumbnails">pref_key_show_thumbnails</string>
-    <string name="pref_key_thumbnail_size_limit">thumbnail_max_size</string>
-    <string name="pref_key_wifi_only_transfers">pref_key_wifi_only_transfers</string>
-    <string name="pref_key_version_code">pref_key_version_code</string>
-    <string name="pref_key_version_name">pref_key_version_name</string>
-    <string name="pref_key_enable_saf">pref_key_enable_saf</string>
-    <string name="pref_key_enable_vcp">pref_key_enable_vcp</string>
+    <string name="flaticon" translatable="false">Flaticon</string>
+    <string name="pref_key_stream_max" translatable="false">pref_key_stream_max</string>
+    <string name="pref_key_logs" translatable="false">pref_key_logs</string>
+    <string name="pref_key_color_primary" translatable="false">pref_key_color_primary</string>
+    <string name="pref_key_color_accent" translatable="false">pref_key_color_accent</string>
+    <string name="pref_key_dark_theme" translatable="false">pref_key_dark_theme</string>
+    <string name="pref_key_app_updates" translatable="false">pref_key_app_updates</string>
+    <string name="pref_key_app_updates_beta" translatable="false">pref_key_app_updates_beta</string>
+    <string name="pref_key_crash_reports" translatable="false">pref_key_crash_reports</string>
+    <string name="pref_key_show_thumbnails" translatable="false">pref_key_show_thumbnails</string>
+    <string name="pref_key_thumbnail_size_limit" translatable="false">thumbnail_max_size</string>
+    <string name="pref_key_wifi_only_transfers" translatable="false">pref_key_wifi_only_transfers</string>
+    <string name="pref_key_version_code" translatable="false">pref_key_version_code</string>
+    <string name="pref_key_version_name" translatable="false">pref_key_version_name</string>
+    <string name="pref_key_enable_saf" translatable="false">pref_key_enable_saf</string>
+    <string name="pref_key_enable_vcp" translatable="false">pref_key_enable_vcp</string>
     <string name="file_access">File Access</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color">Primary Color</string>
@@ -164,17 +164,17 @@
     <string name="dark_theme">Dark theme</string>
     <string name="transfer_only_on_wifi">Transfer files only over Wi-Fi</string>
     <string name="transfer_only_on_wifi_summary">Uploading and downloading of files will be cancelled when not on Wi-Fi</string>
-    <string name="pref_key_use_proxy">use_proxy</string>
-    <string name="pref_key_proxy_host">proxy_host</string>
-    <string name="pref_key_proxy_port">proxy_port</string>
-    <string name="pref_key_proxy_protocol">proxy_protocol</string>
-    <string name="pref_key_no_proxy_hosts">no_proxy_hosts</string>
+    <string name="pref_key_use_proxy" translatable="false">use_proxy</string>
+    <string name="pref_key_proxy_host" translatable="false">proxy_host</string>
+    <string name="pref_key_proxy_port" translatable="false">proxy_port</string>
+    <string name="pref_key_proxy_protocol" translatable="false">proxy_protocol</string>
+    <string name="pref_key_no_proxy_hosts" translatable="false">no_proxy_hosts</string>
     <string name="pref_use_proxy_title">Use Proxy</string>
     <string name="pref_use_proxy_summary">Use proxy for all supported data transfers (HTTP, HTTPS)</string>
     <string name="pref_proxy_protocol">Proxy Protocol</string>
     <string name="pref_proxy_protocol_dlg_title">Select Protocol</string>
-    <string name="pref_proxy_protocol_http_value">http</string>
-    <string name="pref_proxy_protocol_https_value">https</string>
+    <string name="pref_proxy_protocol_http_value" translatable="false">http</string>
+    <string name="pref_proxy_protocol_https_value" translatable="false">https</string>
     <string name="pref_proxy_host">Proxy Host</string>
     <string name="pref_proxy_host_dlg_title">Enter Proxy IP or domain</string>
     <string name="pref_proxy_port">Proxy Port</string>
@@ -194,10 +194,10 @@
     <string name="app_not_configured">Rclone Explorer is not configured</string>
     <string name="open_app_to_configure">Please open the app to set it up first</string>
     <string name="error_retrieving_files">Error retrieving files</string>
-    <string name="background_service_broadcast">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST</string>
-    <string name="background_service_broadcast_data_remote">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_REMOTE</string>
-    <string name="background_service_broadcast_data_path">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH</string>
-    <string name="background_service_broadcast_data_path2">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH2</string>
+    <string name="background_service_broadcast" translatable="false">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST</string>
+    <string name="background_service_broadcast_data_remote" translatable="false">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_REMOTE</string>
+    <string name="background_service_broadcast_data_path" translatable="false">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH</string>
+    <string name="background_service_broadcast_data_path2" translatable="false">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST_DATA_PATH2</string>
     <string name="background_service_notification_channel_description">Background service for possibly long running tasks like Move and Delete</string>
     <string name="sync_service_notification_channel_description">Background service for sync</string>
     <string name="moving_info">Moving…</string>
@@ -263,8 +263,8 @@
     <string name="webdav_pass_hint">Password</string>
     <string name="provider_webdav">Webdav</string>
     <string name="error_creating_remote">Error creating remote</string>
-    <string name="ftp_default_port">21</string>
-    <string name="sftp_default_port">22</string>
+    <string name="ftp_default_port" translatable="false">21</string>
+    <string name="sftp_default_port" translatable="false">22</string>
     <string name="remote_creation_success">Remote created successfully</string>
     <string name="next">Next</string>
     <string name="leave_blank_normally">Leave blank normally</string>
@@ -311,8 +311,8 @@
     <string name="no_remotes">There are no remotes</string>
     <string name="choose_dir">Choose directory</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
-    <string name="firebase_msg_app_updates_topic">app_updates</string>
-    <string name="firebase_msg_beta_app_updates_topic">beta_app_updates</string>
+    <string name="firebase_msg_app_updates_topic" translatable="false">app_updates</string>
+    <string name="firebase_msg_beta_app_updates_topic" translatable="false">beta_app_updates</string>
     <string name="app_update_notification_title">App update available on Github</string>
     <string name="app_update_notification_beta">App update available on Github</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
@@ -343,13 +343,13 @@
     <string name="unpin_from_the_top">Unpin</string>
     <string name="pin_to_drawer">Pin to drawer</string>
     <string name="unpin_from_drawer">Unpin from drawer</string>
-    <string name="shared_preferences_pinned_remotes">shared_preferences_pinned_remotes</string>
-    <string name="shared_preferences_drawer_pinned_remotes">shared_preferences_drawer_pinned_remotes</string>
-    <string name="app_latest_release_url">https://github.com/x0b/rcloneExplorer/releases/latest</string>
-    <string name="app_relase_api_url">https://api.github.com/repos/x0b/rcloneExplorer/releases/latest</string>
-    <string name="app_pre_release_api_url">https://api.github.com/repos/x0b/rcloneExplorer/releases</string>
-    <string name="pref_key_update_release_version">github_release_version</string>
-    <string name="pref_key_update_last_check">last_update_check</string>
+    <string name="shared_preferences_pinned_remotes" translatable="false">shared_preferences_pinned_remotes</string>
+    <string name="shared_preferences_drawer_pinned_remotes" translatable="false">shared_preferences_drawer_pinned_remotes</string>
+    <string name="app_latest_release_url" translatable="false">https://github.com/x0b/rcloneExplorer/releases/latest</string>
+    <string name="app_relase_api_url" translatable="false">https://api.github.com/repos/x0b/rcloneExplorer/releases/latest</string>
+    <string name="app_pre_release_api_url" translatable="false">https://api.github.com/repos/x0b/rcloneExplorer/releases</string>
+    <string name="pref_key_update_release_version" translatable="false">github_release_version</string>
+    <string name="pref_key_update_last_check" translatable="false">last_update_check</string>
     <string name="experimental_features">Experimental Features</string>
     <string name="show_thumbnails">Show thumbnails</string>
     <string name="pref_thumbnails_size_title">Max. file size for thumbnails</string>
@@ -372,8 +372,8 @@
     <string name="set_default_for_all_sftp_ssh_remotes">Set default for all SFTP/SSH remotes</string>
     <string name="sftp_home">home</string>
     <string name="sftp_root">root</string>
-    <string name="pref_key_go_to_default_set">pref_key_go_to_default_set</string>
-    <string name="pref_key_start_at_root">pref_key_start_at_root</string>
+    <string name="pref_key_go_to_default_set" translatable="false">pref_key_go_to_default_set</string>
+    <string name="pref_key_start_at_root" translatable="false">pref_key_start_at_root</string>
     <string name="drive_scope_title">Google Drive Scope</string>
     <string name="menu_select_storage">Storage</string>
     <string name="select_storage">Select Storage</string>
@@ -381,7 +381,7 @@
     <string name="app_shortcuts_settings_dialog_title">Application Shortcuts</string>
     <string name="settings_header_general">General</string>
     <string name="app_shortcuts_settings">Application Shortcuts</string>
-    <string name="shared_preferences_app_shortcuts">shared_preferences_app_shortcuts</string>
+    <string name="shared_preferences_app_shortcuts" translatable="false">shared_preferences_app_shortcuts</string>
     <string name="app_shortcuts_max_toast">Maximum of 4 shortcuts allowed</string>
     <string name="remote_not_found">Remote not found</string>
     <string name="add_to_home_screen">Add to home screen</string>
@@ -401,7 +401,7 @@
     <string name="logging_settings_icon_content_description">Logging settings icon</string>
     <string name="file_access_settings_icon_content_description">File access settings icon</string>
     <string name="hidden_remotes">Hidden remotes</string>
-    <string name="shared_preferences_hidden_remotes">shared_preferences_hidden_remotes</string>
+    <string name="shared_preferences_hidden_remotes" translatable="false">shared_preferences_hidden_remotes</string>
     <string name="select_remotes_to_hide">Select remotes to hide</string>
     <string name="allow_remote_access">Allow remote access</string>
     <string name="authentication">Authentication</string>
