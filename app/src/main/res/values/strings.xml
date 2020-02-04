@@ -320,6 +320,7 @@
     <string name="app_updates_notifications">Get notified about app updates</string>
     <string name="beta_app_updates_notifications">Get notified about pre-release versions</string>
     <string name="delete_remote_title">Delete remote?</string>
+    <string name="rename_remote">Rename Remote</string>
     <string name="empty_trash">Empty trash</string>
     <string name="trash_emptied">Trash emptied</string>
     <string name="error_emptying_trash">Error emptying trash</string>
@@ -405,6 +406,8 @@
     <string name="hidden_remotes">Hidden remotes</string>
     <string name="shared_preferences_hidden_remotes" translatable="false">shared_preferences_hidden_remotes</string>
     <string name="select_remotes_to_hide">Select remotes to hide</string>
+    <string name="pref_key_renamed_remotes" translatable="false">renamed_remotes</string>
+    <string name="pref_key_renamed_remote_prefix" translatable="false">remote_name_%1$s</string>
     <string name="allow_remote_access">Allow remote access</string>
     <string name="authentication">Authentication</string>
     <string name="optional">Optional</string>

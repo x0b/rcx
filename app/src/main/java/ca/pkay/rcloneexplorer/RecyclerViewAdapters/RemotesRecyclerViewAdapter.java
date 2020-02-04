@@ -45,12 +45,12 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        String remoteName = remotes.get(position).getName();
-        boolean isPinned = remotes.get(position).isPinned();
-        holder.remoteName = remoteName;
-        holder.tvName.setText(remoteName);
+        RemoteItem item = remotes.get(position);
+        boolean isPinned = item.isPinned();
+        holder.remoteName = item.getName();
+        holder.tvName.setText(item.getDisplayName());
 
-        int icon = remotes.get(position).getRemoteIcon();
+        int icon = item.getRemoteIcon();
         holder.ivIcon.setImageDrawable(view.getResources().getDrawable(icon));
 
         if (isPinned) {

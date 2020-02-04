@@ -121,12 +121,13 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
             return;
         }
 
+        RemoteItem.prepareDisplay(context, configuredRemotes);
+        configuredRemotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[configuredRemotes.size()];
         int i = 0;
         for (RemoteItem remote : configuredRemotes) {
-            options[i++] = remote.getName();
+            options[i++] = remote.getDisplayName();
         }
-        Arrays.sort(options);
 
         AlertDialog.Builder builder;
         if (isDarkTheme) {

@@ -215,21 +215,22 @@ public class GeneralSettingsFragment extends Fragment {
 
         Rclone rclone = new Rclone(context);
         final ArrayList<RemoteItem> remotes = new ArrayList<>(rclone.getRemotes());
-        Collections.sort(remotes);
+        RemoteItem.prepareDisplay(context, remotes);
+        remotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         final CharSequence[] options = new CharSequence[remotes.size()];
         int i = 0;
         for (RemoteItem remoteItem : remotes) {
-            options[i++] = remoteItem.getName();
+            options[i++] = remoteItem.getDisplayName();
         }
 
         final ArrayList<String> userSelected = new ArrayList<>();
         boolean[] checkedItems = new boolean[options.length];
         i = 0;
-        for (CharSequence cs : options) {
-            String s = cs.toString();
+        for (RemoteItem item : remotes) {
+            String s = item.getName().toString();
             String hash = AppShortcutsHelper.getUniqueIdFromString(s);
             if (appShortcuts.contains(hash)) {
-                userSelected.add(cs.toString());
+                userSelected.add(item.getName().toString());
                 checkedItems[i] = true;
             }
             i++;
