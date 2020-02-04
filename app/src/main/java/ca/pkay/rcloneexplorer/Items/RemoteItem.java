@@ -12,6 +12,7 @@ import io.github.x0b.safdav.file.SafConstants;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
@@ -66,6 +67,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private String typeReadable;
     private boolean isCrypt;
     private boolean isAlias;
+    private boolean isPathAlias;
     private boolean isCache;
     private boolean isPinned;
     private boolean isDrawerPinned;
@@ -87,6 +89,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         isCache = in.readByte() != 0;
         isPinned = in.readByte() != 0;
         isDrawerPinned = in.readByte() != 0;
+        isPathAlias = in.readByte() != 0;
     }
 
     public static final Creator<RemoteItem> CREATOR = new Creator<RemoteItem>() {
@@ -177,6 +180,17 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public RemoteItem setIsAlias(boolean isAlias) {
         this.isAlias = isAlias;
         return this;
+    }
+
+    /**
+     * If the remote is an alias to a local path like /storage/c0ffe.
+     */
+    public boolean isPathAlias() {
+        return isPathAlias;
+    }
+
+    public void setIsPathAlias(boolean pathAlias) {
+        isPathAlias = pathAlias;
     }
 
     public boolean isCache() {
@@ -375,12 +389,17 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         } else if (!this.isPinned && remoteItem.isPinned) {
             return 1;
         }
-        return name.toLowerCase().compareTo(remoteItem.getName().toLowerCase());
+        return getDisplayName().toLowerCase().compareTo(remoteItem.getDisplayName().toLowerCase());
     }
 
     @Override
     public boolean equals(Object obj) {
         return obj instanceof RemoteItem && ((RemoteItem) obj).getName().equals(this.name) && ((RemoteItem) obj).getType() == this.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
     }
 
     @Override
@@ -399,5 +418,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         dest.writeByte((byte) (isCache ? 1 : 0));
         dest.writeByte((byte) (isPinned ? 1 : 0));
         dest.writeByte((byte) (isDrawerPinned ? 1 : 0));
+        dest.writeByte((byte) (isPathAlias ? 1 : 0));
     }
 }
