@@ -4,16 +4,18 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
@@ -147,9 +149,8 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        requestPermissions();
-
         rclone = new Rclone(this);
+        requestPermissions();
 
         findViewById(R.id.locked_config_btn).setOnClickListener(v -> askForConfigPassword());
 
@@ -261,6 +262,17 @@ public class MainActivity extends AppCompatActivity
                     e.printStackTrace();
                     Toasty.error(this, getString(R.string.error_exporting_config_file), Toast.LENGTH_SHORT, true).show();
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0; i < permissions.length; i++) {
+            switch (permissions[i]) {
+                case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                    // add/remove path aliases, depending on availability
+                    new RefreshLocalAliases().execute();
             }
         }
     }
@@ -473,6 +485,13 @@ public class MainActivity extends AppCompatActivity
     public void requestPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
+        } else {
+            boolean refreshLocalAliases = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
+            if (refreshLocalAliases) {
+                FLog.d(TAG, "Reloading local path aliases");
+                new RefreshLocalAliases().execute();
+            }
         }
     }
 
@@ -704,6 +723,117 @@ public class MainActivity extends AppCompatActivity
                 pinRemotesToDrawer();
                 startRemotesFragment();
             }
+        }
+    }
+
+    private class RefreshLocalAliases extends AsyncTask<Void, Void, Boolean> {
+
+        private LoadingDialog loadingDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            View v = findViewById(R.id.locked_config);
+            if (v != null) {
+                v.setVisibility(View.GONE);
+            }
+            loadingDialog = new LoadingDialog()
+                    .setTitle(R.string.refreshing_local_alias_remotes)
+                    .setCanCancel(false);
+            loadingDialog.show(getSupportFragmentManager(), "loading dialog");
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... aVoid) {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            Set<String> generated = pref.getStringSet(getString(R.string.pref_key_local_alias_remotes), new HashSet<>());
+            for(String remote : generated) {
+                rclone.deleteRemote(remote);
+            }
+            File[] dirs = context.getExternalFilesDirs(null);
+            for(File file : dirs) {
+                // May be null if the path is currently not available
+                if (null == file) {
+                    continue;
+                }
+                if (file.getPath().contains(BuildConfig.APPLICATION_ID)) {
+                    try {
+                        File root = getVolumeRoot(file);
+                        if (root.canRead()) {
+                            addLocalRemote(root);
+                        }
+                    } catch (NullPointerException | IOException e) {
+                        // ignored, this is not a valid file
+                        FLog.w(TAG, "doInBackground: could not read file", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        private File getVolumeRoot(File file) {
+            String path = file.getAbsolutePath();
+            int levelsUp = 0;
+            int index = path.length();
+            while(levelsUp++ <= 3) {
+                index = path.lastIndexOf('/', index-1);
+            }
+            return new File(path.substring(0, index));
+        }
+
+        private void addLocalRemote(File root) throws IOException {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            String name = root.getCanonicalPath();
+            String id = UUID.randomUUID().toString();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                StorageManager storageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
+                StorageVolume storageVolume = storageManager.getStorageVolume(root);
+                name = storageVolume.getDescription(context);
+                if (null != storageVolume.getUuid()) {
+                    id = storageVolume.getUuid();
+                }
+            }
+
+            String path = root.getAbsolutePath();
+            ArrayList<String> options = new ArrayList<>();
+            options.add(id);
+            options.add("alias");
+            options.add("remote");
+            options.add(path);
+            FLog.d(TAG, "Adding local remote [%s] remote = %s", id, path);
+            Process process = rclone.configCreate(options);
+            try {
+                process.waitFor();
+                if (process.exitValue() != 0) {
+                    Log.w(TAG, "addLocalRemote: process error");
+                    return;
+                }
+            } catch (InterruptedException e) {
+                Log.e(TAG, "addLocalRemote: process error", e);
+                return;
+            }
+            Set<String> renamedRemotes = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
+            Set<String> pinnedRemotes = pref.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
+            Set<String> generatedRemotes = pref.getStringSet(getString(R.string.pref_key_local_alias_remotes), new HashSet<>());
+            renamedRemotes.add(id);
+            pinnedRemotes.add(id);
+            generatedRemotes.add(id);
+            pref.edit()
+                    .putStringSet(getString(R.string.pref_key_renamed_remotes), renamedRemotes)
+                    .putString(getString(R.string.pref_key_renamed_remote_prefix, id), name)
+                    .putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes)
+                    .putStringSet(getString(R.string.pref_key_local_alias_remotes), generatedRemotes)
+                    .apply();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            Dialogs.dismissSilently(loadingDialog);
+            AppShortcutsHelper.removeAllAppShortcuts(context);
+            AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
+            pinRemotesToDrawer();
+            startRemotesFragment();
         }
     }
 

@@ -183,7 +183,7 @@ public class Rclone {
             remoteAndPath += "/";
         }
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isCrypt() && !remote.isAlias() && !remote.isCache())) {
-            remoteAndPath += getLocalRemotePathPrefix(context) + "/";
+            remoteAndPath += getLocalRemotePathPrefix(remote, context) + "/";
         }
         if (path.compareTo("//" + remote.getName()) != 0) {
             remoteAndPath += path;
@@ -193,11 +193,19 @@ public class Rclone {
             safDAVServer = SafAccessProvider.getServer(context);
         }
 
-        String[] command = createCommandWithOptions("lsjson", remoteAndPath);
+        String[] command;
+        if (remote.isRemoteType(RemoteItem.LOCAL) || remote.isPathAlias()) {
+            // ignore .android_secure errors
+            // ref: https://github.com/rclone/rclone/issues/3179
+            command = createCommandWithOptions("--ignore-errors", "lsjson", remoteAndPath);
+        } else {
+            command = createCommandWithOptions("lsjson", remoteAndPath);
+        }
         String[] env = getRcloneEnv();
         JSONArray results;
         Process process;
         try {
+            FLog.d(TAG, "getDirectoryContent[ENV]: %s", Arrays.toString(env));
             process = Runtime.getRuntime().exec(command, env);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -208,7 +216,8 @@ public class Rclone {
             }
 
             process.waitFor();
-            if (process.exitValue() != 0) {
+            // For local/alias remotes, exit(6) is not a fatal error.
+            if (process.exitValue() != 0 && (process.exitValue() != 6 || !remote.isRemoteType(RemoteItem.LOCAL, RemoteItem.ALIAS))) {
                 logErrorOutput(process);
                 return null;
             }
@@ -366,6 +375,7 @@ public class Rclone {
 
                     if (remote.startsWith("/")) { // local remote
                         remoteItem.setType("local");
+                        remoteItem.setIsPathAlias(true);
                         return remoteItem;
                     } else {
                         int index = remote.indexOf(":");
@@ -442,7 +452,7 @@ public class Rclone {
                          @Nullable String password, @NonNull RemoteItem remote, @Nullable String servePath,
                          @Nullable String baseUrl) {
         String remoteName = remote.getName();
-        String localRemotePath = (remote.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(context)  + "/" : "";
+        String localRemotePath = (remote.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remote, context)  + "/" : "";
         String path = (servePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + servePath;
         String address;
         String commandProtocol;
@@ -503,7 +513,7 @@ public class Rclone {
     public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection) {
         String[] command;
         String remoteName = remoteItem.getName();
-        String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(context)  + "/" : "";
+        String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remoteItem, context)  + "/" : "";
         String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
 
         if (syncDirection == 1) {
@@ -530,7 +540,7 @@ public class Rclone {
 
         remoteFilePath = remote.getName() + ":";
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            remoteFilePath += getLocalRemotePathPrefix(context)  + "/";
+            remoteFilePath += getLocalRemotePathPrefix(remote, context)  + "/";
         }
         remoteFilePath += downloadItem.getPath();
 
@@ -557,7 +567,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -590,7 +600,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -615,7 +625,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -646,7 +656,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -669,7 +679,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -708,7 +718,7 @@ public class Rclone {
 
     public String link(RemoteItem remote, String filePath) {
         String linkPath = remote.getName() + ":";
-        linkPath += (remote.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(context) + "/" : "";
+        linkPath += (remote.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remote, context) + "/" : "";
         if (!filePath.equals("//" + remote.getName())) {
             linkPath += filePath;
         }
@@ -740,7 +750,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -774,7 +784,7 @@ public class Rclone {
         String localRemotePath;
 
         if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(context) + "/";
+            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
         } else {
             localRemotePath = "";
         }
@@ -1093,7 +1103,16 @@ public class Rclone {
         outputStream.close();
     }
 
-    public static String getLocalRemotePathPrefix(Context context) {
+    /**
+     * Prefixes local remotes with a base path on the primary external storage.
+     * @param item
+     * @param context
+     * @return
+     */
+    public static String getLocalRemotePathPrefix(RemoteItem item, Context context) {
+        if (item.isPathAlias()) {
+            return "";
+        }
         // lower version boundary check if legacy external storage = false
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             File extDir = context.getExternalFilesDir(null);

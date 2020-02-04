@@ -43,6 +43,8 @@ public class FileAccessSettingsFragment extends Fragment {
     private Button addPermissionBtn;
     private RecyclerView listView;
     private View addButtonContainer;
+    private View refreshLaContainer;
+    private Switch refreshLaSwitch;
     private Rclone rclone;
 
     public static FileAccessSettingsFragment newInstance() {
@@ -93,18 +95,24 @@ public class FileAccessSettingsFragment extends Fragment {
         safEnabledSwitch = view.findViewById(R.id.enable_saf_switch);
         fileAccessAll = view.findViewById(R.id.file_access_settings_all);
         addPermissionBtn = view.findViewById(R.id.permission_add_button);
+        refreshLaContainer = view.findViewById(R.id.enable_refresh_la_container);
+        refreshLaSwitch = view.findViewById(R.id.enable_refresh_la_switch);
     }
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean safEnabled = sharedPreferences.getBoolean(getString(R.string.pref_key_enable_saf), false);
         safEnabledSwitch.setChecked(safEnabled);
+        boolean refreshLaEnabled = sharedPreferences.getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
+        refreshLaSwitch.setChecked(refreshLaEnabled);
     }
 
     private void setClickListeners() {
         safEnabledView.setOnClickListener(v -> safEnabledSwitch.setChecked(!safEnabledSwitch.isChecked()));
         safEnabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setSafEnabled(isChecked));
         addPermissionBtn.setOnClickListener(v -> addRoot());
+        refreshLaContainer.setOnClickListener(v -> refreshLaSwitch.setChecked(!refreshLaSwitch.isChecked()));
+        refreshLaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setRefreshLa(isChecked));
     }
 
     private void setSafEnabled(boolean isChecked) {
@@ -121,6 +129,11 @@ public class FileAccessSettingsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_enable_saf), isChecked);
         editor.apply();
+    }
+
+    private void setRefreshLa(boolean isChecked) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        pref.edit().putBoolean(getString(R.string.pref_key_refresh_local_aliases), isChecked).apply();
     }
 
     private void createSafRemote() {
