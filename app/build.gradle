@@ -19,10 +19,13 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "java.lang.long", "BUILD_TIME", "0L"
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
         }
@@ -117,6 +120,10 @@ dependencies {
     // SAF/WebDAV
     implementation project(':safdav')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    // Java 8+ library support
+    // TODO: replace with coreLibraryDesugar once available
+    implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.1'
+    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.1'
     // TEST
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.3.0-alpha02'

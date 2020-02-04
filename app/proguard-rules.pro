@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# don't change names - this is open source anyways, and the biggest size
+# contributor are native libs which we can't shrink.
+-dontobfuscate
+
+# ignore okhttp conscrypt warning
+-dontwarn okhttp3.internal.platform.ConscryptPlatform
