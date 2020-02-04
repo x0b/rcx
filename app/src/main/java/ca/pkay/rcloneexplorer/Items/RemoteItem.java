@@ -103,6 +103,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             case DROPBOX:
             case B2:
             case HUBIC:
+            case GOOGLE_PHOTOS:
                 return false;
             default:
                 return true;
