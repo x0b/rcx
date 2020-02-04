@@ -68,11 +68,8 @@ Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version (1.10.1)
- * **Fix:** Thubnails not loading after device rotation
- * **Fix:** Crash when importing rclone config
- * **Fix:** Crash when dismissing invalid dialog
- * **Fix:** Crash when streaming starting stream
+#### Current Version (1.10.2)
+ * **Fix:** Crash when opening file
 
 #### Next minor version
 - Bug fixes

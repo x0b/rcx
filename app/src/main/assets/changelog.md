@@ -1,3 +1,8 @@
+### 1.10.2
+* **Fix:** Crash when opening file
+
+***
+
 ### 1.10.1
 * **Fix:** Thubnails not loading after device rotation
 * **Fix:** Crash when importing rclone config
