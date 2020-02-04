@@ -50,7 +50,7 @@ public class AppShortcutsHelper {
             intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
 
             ShortcutInfo shortcut = new ShortcutInfo.Builder(context, id)
-                    .setShortLabel(remoteItem.getName())
+                    .setShortLabel(remoteItem.getDisplayName())
                     .setIcon(Icon.createWithResource(context, AppShortcutsHelper.getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
                     .setIntent(intent)
                     .build();
@@ -163,7 +163,7 @@ public class AppShortcutsHelper {
         intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
 
         ShortcutInfo shortcut = new ShortcutInfo.Builder(context, id)
-                .setShortLabel(remoteItem.getName())
+                .setShortLabel(remoteItem.getDisplayName())
                 .setIcon(Icon.createWithResource(context, AppShortcutsHelper.getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
                 .setIntent(intent)
                 .build();
@@ -183,7 +183,7 @@ public class AppShortcutsHelper {
         intent.putExtra(APP_SHORTCUT_REMOTE_NAME, remoteItem.getName());
 
         ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(context, id)
-                .setShortLabel(remoteItem.getName())
+                .setShortLabel(remoteItem.getDisplayName())
                 .setIcon(IconCompat.createWithResource(context, AppShortcutsHelper.getRemoteIcon(remoteItem.getType(), remoteItem.isCrypt())))
                 .setIntent(intent)
                 .build();

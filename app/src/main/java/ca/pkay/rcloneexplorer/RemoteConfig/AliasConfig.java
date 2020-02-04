@@ -22,7 +22,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -128,12 +130,13 @@ public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnD
             return;
         }
 
+        RemoteItem.prepareDisplay(context, remotes);
+        remotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {
-            options[i++] = remote.getName();
+            options[i++] = remote.getDisplayName();
         }
-        Arrays.sort(options);
 
         AlertDialog.Builder builder;
         if (isDarkTheme) {

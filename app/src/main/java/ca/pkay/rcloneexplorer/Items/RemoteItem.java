@@ -1,11 +1,18 @@
 package ca.pkay.rcloneexplorer.Items;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
-
+import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.R;
 import io.github.x0b.safdav.file.SafConstants;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
@@ -57,6 +64,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private boolean isCache;
     private boolean isPinned;
     private boolean isDrawerPinned;
+    private String displayName;
 
     public RemoteItem(String name, String type) {
         this.name = name;
@@ -66,6 +74,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     private RemoteItem(Parcel in) {
         name = in.readString();
+        displayName = in.readString();
         type = in.readInt();
         typeReadable = in.readString();
         isCrypt = in.readByte() != 0;
@@ -181,6 +190,27 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             }
         }
         return isSameType;
+    }
+
+    public String getDisplayName() {
+        return displayName != null ? displayName : name;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public static List<RemoteItem> prepareDisplay(Context context, List<RemoteItem> items) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> renamedRemotes = pref.getStringSet(context.getString(R.string.pref_key_renamed_remotes), new HashSet<>());
+        for(RemoteItem item : items) {
+            if(renamedRemotes.contains(item.name)) {
+                String displayName = pref.getString(
+                        context.getString(R.string.pref_key_renamed_remote_prefix, item.name), item.name);
+                item.displayName = displayName;
+            }
+        }
+        return items;
     }
 
     private int getTypeFromString(String type) {
@@ -316,6 +346,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(displayName);
         dest.writeInt(type);
         dest.writeString(typeReadable);
         dest.writeByte((byte) (isCrypt ? 1 : 0));

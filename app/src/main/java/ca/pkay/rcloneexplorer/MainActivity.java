@@ -63,9 +63,13 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
@@ -346,9 +350,18 @@ public class MainActivity extends AppCompatActivity
 
         List<RemoteItem> remoteItems = rclone.getRemotes();
         Collections.sort(remoteItems);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> renamedRemotes = sharedPreferences.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
+        for(RemoteItem item : remoteItems) {
+            if(renamedRemotes.contains(item.getName())) {
+                String displayName = sharedPreferences.getString(
+                        getString(R.string.pref_key_renamed_remote_prefix, item.getName()), item.getName());
+                item.setDisplayName(displayName);
+            }
+        }
         for (RemoteItem remoteItem : remoteItems) {
             if (remoteItem.isDrawerPinned()) {
-                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getName());
+                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getDisplayName());
                 drawerPinnedRemoteIds.put(availableDrawerPinnedRemoteId, remoteItem);
                 availableDrawerPinnedRemoteId++;
                 menuItem.setIcon(remoteItem.getRemoteIcon());

@@ -288,12 +288,13 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
             return;
         }
 
+        RemoteItem.prepareDisplay(context, remotes);
+        remotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {
-            options[i++] = remote.getName();
+            options[i++] = remote.getDisplayName();
         }
-        Arrays.sort(options);
         
         AlertDialog.Builder builder;
         if (isDarkTheme) {
