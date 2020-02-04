@@ -109,76 +109,59 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
             return;
         }
 
-        String s = RemotesConfigList.providers.get(provider);
-        String title;
+        String s = getResources().getStringArray(R.array.provider_ids)[provider];
+        String title = getResources().getStringArray(R.array.provider_names)[provider];
         switch (s) {
             case "B2":
                 fragment = B2Config.newInstance();
-                title = "Backblaze B2";
                 break;
             case "BOX":
                 fragment = BoxConfig.newInstance();
-                title = "Box";
                 break;
             case "FTP":
                 fragment = FtpConfig.newInstance();
-                title = "FTP";
                 break;
             case "HTTP":
                 fragment = HttpConfig.newInstance();
-                title = "HTTP";
                 break;
             case "DROPBOX":
                 fragment = DropboxConfig.newInstance();
-                title = "Dropbox";
                 break;
             case "HUBIC":
                 fragment = HubicConfig.newInstance();
-                title = "Hubic";
                 break;
             case "PCLOUD":
                 fragment = PcloudConfig.newInstance();
-                title = "Pcloud";
                 break;
             case "SFTP":
                 fragment = SftpConfig.newInstance();
-                title = "SFTP/SSH";
                 break;
             case "YANDEX":
                 fragment = YandexConfig.newInstance();
-                title = "Yandex";
                 break;
             case "WEBDAV":
                 fragment = WebdavConfig.newInstance();
-                title = "Webdav";
                 break;
             case "ONEDRIVE":
                 fragment = OneDriveConfig.newInstance();
-                title = "Microsoft OneDrive";
                 break;
             case "ALIAS":
                 fragment = AliasConfig.newInstance();
-                title = "Alias";
                 break;
             case "CRYPT":
                 fragment = CryptConfig.newInstance();
-                title = "Crypt";
                 break;
             case "QINGSTOR":
                 fragment = QingstorConfig.newInstance();
-                title = "QingStor";
                 break;
             case "AZUREBLOB":
                 fragment = Azureblob.newInstance();
-                title = "Microsoft Azure Blob Storage";
                 break;
             case "CACHE":
                 fragment = CacheConfig.newInstance();
-                title = "Cache";
                 break;
             case "LOCAL":
                 fragment = LocalConfig.newInstance();
-                title = "Local";
                 break;
             case "DRIVE":
                 fragment = DriveConfig.newInstance();

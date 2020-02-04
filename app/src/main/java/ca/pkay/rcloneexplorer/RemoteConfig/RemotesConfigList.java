@@ -1,20 +1,24 @@
 package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import ca.pkay.rcloneexplorer.R;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java9.util.stream.IntStream;
 
 public class RemotesConfigList extends Fragment {
 
@@ -22,7 +26,7 @@ public class RemotesConfigList extends Fragment {
         void onProviderSelected(int provider);
     }
 
-    public static final ArrayList<String> providers = new ArrayList<>(Arrays.asList("DRIVE", "LOCAL", "CACHE", "AZUREBLOB", "QINGSTOR", "ALIAS", "CRYPT", "ONEDRIVE", "WEBDAV", "B2", "BOX", "FTP", "HTTP", "HUBIC", "PCLOUD", "SFTP", "YANDEX", "DROPBOX", "UNION"));
+    public List<String> providers;
     private int[] selected = {-1};
     private RadioButton lastSelected;
     private ProviderSelectedListener listener;
@@ -36,6 +40,7 @@ public class RemotesConfigList extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getContext();
+        providers = Arrays.asList(getResources().getStringArray(R.array.provider_ids));
     }
 
     @Nullable
@@ -81,160 +86,26 @@ public class RemotesConfigList extends Fragment {
         });
         view.findViewById(R.id.next).setOnClickListener(v -> listener.onProviderSelected(selected[0]));
 
-        View providerBox = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerBox.findViewById(R.id.provider_tv)).setText(R.string.provider_box);
-        providerBox.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "BOX");
-        });
+        final String[] ids = getResources().getStringArray(R.array.provider_ids);
+        String[] names = getResources().getStringArray(R.array.provider_names);
+        String[] summaries = getResources().getStringArray(R.array.provider_summaries);
+        TypedArray icons = getResources().obtainTypedArray(R.array.provider_icons);
 
-        View providerB2 = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerB2.findViewById(R.id.provider_tv)).setText(R.string.provider_b2);
-        providerB2.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "B2");
-        });
+        Integer[] sorted = IntStream.range(0, ids.length).boxed().toArray(Integer[]::new);
+        Arrays.sort(sorted, (i, j) -> names[i].compareToIgnoreCase(names[j]));
 
-        View providerDropbox = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerDropbox.findViewById(R.id.provider_tv)).setText(R.string.provider_dropbox);
-        providerDropbox.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "DROPBOX");
-        });
-
-        View providerFTP = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerFTP.findViewById(R.id.provider_tv)).setText(R.string.provider_ftp);
-        providerFTP.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "FTP");
-        });
-
-        View providerHTTP = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerHTTP.findViewById(R.id.provider_tv)).setText(R.string.provider_http);
-        providerHTTP.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "HTTP");
-        });
-
-        View providerHubic = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerHubic.findViewById(R.id.provider_tv)).setText(R.string.provider_hubic);
-        providerHubic.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "HUBIC");
-        });
-
-        View providerPcloud = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerPcloud.findViewById(R.id.provider_tv)).setText(R.string.provider_pcloud);
-        providerPcloud.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "PCLOUD");
-        });
-
-        View providerSFTP = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerSFTP.findViewById(R.id.provider_tv)).setText(R.string.provider_sftp);
-        providerSFTP.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "SFTP");
-        });
-
-        View providerYandex = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerYandex.findViewById(R.id.provider_tv)).setText(R.string.provider_yandex);
-        providerYandex.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "YANDEX");
-        });
-
-        View providerWebdav = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerWebdav.findViewById(R.id.provider_tv)).setText(R.string.provider_webdav);
-        providerWebdav.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "WEBDAV");
-        });
-
-        View providerOneDrive = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerOneDrive.findViewById(R.id.provider_tv)).setText(R.string.provider_onedrive);
-        providerOneDrive.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "ONEDRIVE");
-        });
-
-        View providerAlias = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerAlias.findViewById(R.id.provider_tv)).setText(R.string.provider_alias);
-        providerAlias.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "ALIAS");
-        });
-
-        View providerCrypt = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerCrypt.findViewById(R.id.provider_tv)).setText(R.string.provider_crypt);
-        providerCrypt.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "CRYPT");
-        });
-
-        View providerQingstor = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerQingstor.findViewById(R.id.provider_tv)).setText(R.string.provider_qingstor);
-        providerQingstor.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "QINGSTOR");
-        });
-
-        View providerAzureblob = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerAzureblob.findViewById(R.id.provider_tv)).setText(R.string.provider_azureblob);
-        providerAzureblob.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "AZUREBLOB");
-        });
-
-        View providerCache = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerCache.findViewById(R.id.provider_tv)).setText(R.string.provider_cache);
-        providerCache.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "CACHE");
-        });
-
-        View providerLocal = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerLocal.findViewById(R.id.provider_tv)).setText(R.string.provider_local);
-        providerLocal.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "LOCAL");
-        });
-
-        View providerDrive = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerDrive.findViewById(R.id.provider_tv)).setText(R.string.provider_drive);
-        providerDrive.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "DRIVE");
-        });
-
-        View providerUnion = View.inflate(context, R.layout.config_list_item_template, null);
-        ((TextView)providerUnion.findViewById(R.id.provider_tv)).setText(R.string.provider_union);
-        providerUnion.findViewById(R.id.provider).setOnClickListener(v -> {
-            RadioButton rb = v.findViewById(R.id.provider_rb);
-            setSelected(rb, "UNION");
-        });
-
-        listContent.addView(providerAlias);
-        listContent.addView(providerB2);
-        listContent.addView(providerBox);
-        listContent.addView(providerCache);
-        listContent.addView(providerCrypt);
-        listContent.addView(providerDrive);
-        listContent.addView(providerDropbox);
-        listContent.addView(providerFTP);
-        listContent.addView(providerHubic);
-        listContent.addView(providerHTTP);
-        listContent.addView(providerLocal);
-        listContent.addView(providerAzureblob);
-        // Disabled due to https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/246
-        // waiting for upstream to implement auto-config
-        // listContent.addView(providerOneDrive);
-        listContent.addView(providerPcloud);
-        listContent.addView(providerQingstor);
-        listContent.addView(providerSFTP);
-        listContent.addView(providerWebdav);
-        listContent.addView(providerYandex);
-        listContent.addView(providerUnion);
+        for (int i = 0, itemsLength = ids.length; i < itemsLength; i++) {
+            int j = sorted[i];
+            View provider = View.inflate(context, R.layout.config_list_item_template, null);
+            ((TextView) provider.findViewById(R.id.provider_tv)).setText(names[j]);
+            ((TextView) provider.findViewById(R.id.provider_summary)).setText(summaries[j]);
+            ((ImageView) provider.findViewById(R.id.providerIcon)).setImageDrawable(icons.getDrawable(j));
+            final String providerId = ids[j];
+            provider.findViewById(R.id.provider).setOnClickListener(v -> {
+                RadioButton rb = v.findViewById(R.id.provider_rb);
+                setSelected(rb, providerId);
+            });
+            listContent.addView(provider);
+        }
     }
 }
-

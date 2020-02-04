@@ -268,7 +268,7 @@
     <string name="remote_creation_success">Remote created successfully</string>
     <string name="next">Next</string>
     <string name="leave_blank_normally">Leave blank normally</string>
-    <string name="title_activity_remote_config">Configure</string>
+    <string name="title_activity_remote_config">Select type</string>
     <string name="provider_onedrive">Microsoft OneDrive</string>
     <string name="onedrive_client_id_hint">Microsoft Client ID</string>
     <string name="onedrive_client_secret_hint">Microsoft Client Secret</string>
