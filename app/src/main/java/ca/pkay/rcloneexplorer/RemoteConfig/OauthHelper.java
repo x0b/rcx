@@ -4,7 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import androidx.browser.customtabs.CustomTabsIntent;
+import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.Rclone;
+import es.dmoral.toasty.Toasty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 public class OauthHelper {
 
     private static final String TAG = "OAuthHelper";
+    private static final String regex = "go to the following link: ([^\\s]+)";
 
     /**
      * Save the options in the rclone config file and start the OAuth authentication process
@@ -45,7 +48,6 @@ public class OauthHelper {
      * tab for the user. Note: this consumes the processes InputStream (stdout).
      */
     public static class UrlAuthThread extends Thread {
-        private static final String regex = "If your browser doesn't open automatically go to the following link: ([^\\s]+)";
         private static final Pattern pattern = Pattern.compile(regex, 0);
 
         private static final String TAG = "UrlAuthThread";
@@ -77,7 +79,59 @@ public class OauthHelper {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "doInBackground: could not read auth url", e);
+                process.destroy();
             }
+        }
+    }
+
+    private static class OauthAction implements InteractiveRunner.Action {
+
+        private static final Pattern pattern = Pattern.compile(regex, 0);
+        private Context context;
+
+        public OauthAction(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void onTrigger(String cliBuffer) {
+            Matcher matcher = pattern.matcher(cliBuffer);
+            if (matcher.find()) {
+                String url = matcher.group(1);
+
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(context, Uri.parse(url));
+            } else {
+                Log.w(TAG, "onTrigger: could not extract auth URL from buffer: " + cliBuffer);
+            }
+        }
+
+        @Override
+        public String getInput() {
+            return "";
+        }
+    }
+
+    public static class InitOauthStep extends InteractiveRunner.Step {
+        private static final String TRIGGER = "Log in and authorize rclone for access";
+
+        public InitOauthStep(Context context) {
+            super(TRIGGER,  new OauthHelper.OauthAction(context));
+        }
+    }
+
+    public static class OauthFinishStep extends InteractiveRunner.Step {
+
+        private static final String TRIGGER = "Got code\n";
+
+        public OauthFinishStep() {
+            super(TRIGGER, new InteractiveRunner.StringAction(""));
+        }
+
+        @Override
+        public long getTimeout() {
+            return 5 * 60 * 1000L;
         }
     }
 }
