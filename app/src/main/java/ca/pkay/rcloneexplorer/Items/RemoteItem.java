@@ -124,6 +124,26 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         }
     }
 
+    public boolean isOAuth() {
+        switch (type) {
+            case HUBIC:
+            case PCLOUD:
+            case PREMIUMIZEME:
+            case BOX:
+            case PUTIO:
+            case SHAREFILE:
+            case ONEDRIVE:
+            case YANDEX:
+            case AMAZON_DRIVE:
+            case GOOGLE_PHOTOS:
+            case GOOGLE_DRIVE:
+            case GOOGLE_CLOUD_STORAGE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public String getName() {
         return name;
     }

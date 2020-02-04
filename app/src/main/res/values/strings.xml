@@ -429,4 +429,12 @@
     <string name="saf_uri_permission_no_support">Third party not yet supported. Open an issue with the affected app name.</string>
     <string name="virtual_content_provider_summary">%1$d Remotes available</string>
     <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>
+    <string name="remote_properties_remote_name">Remote name</string>
+    <string name="remote_properties_storage_usage">Storage usage</string>
+    <string name="remote_properties_storage_stats">%1$s / %2$s used (%3$s free)</string>
+    <string name="remote_properties_storage_used">%1$s used</string>
+    <string name="remote_properties_about_failed">Unauthorized or not supported</string>
+    <string name="remote_properties_authorization">Authorization</string>
+    <string name="remote_properties_authorize_tap">Tap to renew</string>
+    <string name="rclone_get_about_failed">Error retrieving storage statistics</string>
 </resources>
