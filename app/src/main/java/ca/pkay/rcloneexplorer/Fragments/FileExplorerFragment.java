@@ -45,6 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ca.pkay.rcloneexplorer.BreadcrumbView;
+import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
@@ -1919,7 +1920,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!status) {
                 return;
             }
-            Uri sharedFileUri = FileProvider.getUriForFile(context, "ca.pkay.rcloneexplorer.x0b.fileprovider", new File(fileLocation));
+            Uri sharedFileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", new File(fileLocation));
             Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
 
             if (openAs == OPEN_AS_TEXT) {
