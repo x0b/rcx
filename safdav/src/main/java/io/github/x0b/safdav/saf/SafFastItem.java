@@ -15,7 +15,6 @@ import java.util.TimeZone;
 
 public class SafFastItem implements SafItem {
 
-    // TODO: figure out if this is useful, especially for child accessing child elements vs. memory overhead
     private final Uri uri;
     private final String name;
     private final String contentType;
@@ -24,7 +23,6 @@ public class SafFastItem implements SafItem {
     private final boolean isCollection;
     private final List<? extends SafItem> items;
 
-    // TODO: figure out if thread safety is required
     private static final SimpleDateFormat rfc1123;
     private static final SimpleDateFormat rfc3339;
 
@@ -67,12 +65,16 @@ public class SafFastItem implements SafItem {
 
     @Override
     public String getLastModified() {
-        return rfc1123.format(new Date(lastModified));
+        synchronized (rfc1123) {
+            return rfc1123.format(new Date(lastModified));
+        }
     }
 
     @Override
     public String getCreationDate() {
-        return rfc3339.format(new Date(lastModified));
+        synchronized (rfc3339) {
+            return rfc3339.format(new Date(lastModified));
+        }
     }
 
     @Override

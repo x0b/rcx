@@ -1,3 +1,38 @@
+### 1.11.0
+* **New:** Mega.nz config
+* **New:** Google Photos config
+* **New:** Renaming remotes
+* **New:** DLNA serving
+* **New:** Automatically manage alias remotes for local drives
+* **New:** Show storage usage (rclone about)
+* **New:** Reauthorize OAuth remotes
+* **New:** Rclone 1.51.0
+* **New:** Settings shortcut
+* **New:** Android R support (preliminary)
+* **Fix:** OneDrive configuration
+* **Fix:** Streams now only start if available, otherwise fail loudly
+* **Internal**
+   * Java 8 and Stream support
+   * Rclone source build
+   * Improved logging
+   * InteractiveRunner Framework
+   * Moved strings to external resource for translation
+   
+***
+
+### 1.11.0
+* **New:** Mega.nz config
+* **New:** Google Photos config
+* **New:** Renaming remotes
+* **New:** DLNA serving
+* **New:** Automatically manage alias remotes for local drives
+* **New:** 
+* **Internal**
+   * Java 8 and Stream support
+   * Rclone source build
+   * Improved logging
+   * InteractiveRunner Framework
+
 ### 1.10.2
 * **Fix:** Crash when opening file
 

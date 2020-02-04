@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- overwritten during runtime, only for designing in tools -->
+        <item name="textColorPrimary">#212121</item>
+        <item name="textColorSecondary">#757575</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

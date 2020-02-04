@@ -103,14 +103,6 @@ public class DropboxConfig extends Fragment {
             }
         });
 
-        // TODO: remove 1.9.4
-        view.findViewById(R.id.launch_browser).setOnClickListener(v -> {
-            String url = "http://127.0.0.1:53682/auth";
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(context, Uri.parse(url));
-        });
-
         view.findViewById(R.id.cancel_auth).setOnClickListener(v -> {
             if (authTask != null) {
                 authTask.cancel(true);
