@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
+import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -24,8 +25,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import es.dmoral.toasty.Toasty;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OneDriveConfig extends Fragment {
 
@@ -39,9 +41,6 @@ public class OneDriveConfig extends Fragment {
     private EditText remoteName;
     private EditText clientId;
     private EditText clientSecret;
-    private RadioButton personalAccountType;
-    private RadioButton businessAccountType;
-    private String selectedAccountType;
 
     public OneDriveConfig() {}
 
@@ -103,45 +102,9 @@ public class OneDriveConfig extends Fragment {
         clientSecret = clientSecretTemplate.findViewById(R.id.edit_text);
         clientSecretTemplate.findViewById(R.id.helper_text).setVisibility(View.VISIBLE);
 
-        View accountTypeTemplate = View.inflate(context, R.layout.config_form_template_onedrive_type, null);
-        accountTypeTemplate.setPadding(0, 0, 0, padding);
-        formContent.addView(accountTypeTemplate);
-        personalAccountType = accountTypeTemplate.findViewById(R.id.rb_onedrive_personal_account);
-        personalAccountType.setChecked(true);
-        selectedAccountType = "p";
-        businessAccountType = accountTypeTemplate.findViewById(R.id.rb_onedrive_business_account);
-
-        accountTypeTemplate.findViewById(R.id.onedrive_personal_account_view).setOnClickListener(v -> {
-            personalAccountType.setChecked(true);
-            businessAccountType.setChecked(false);
-            selectedAccountType = "p";
-        });
-        accountTypeTemplate.findViewById(R.id.onedrive_business_account_view).setOnClickListener(v -> {
-            businessAccountType.setChecked(true);
-            personalAccountType.setChecked(false);
-            selectedAccountType = "b";
-        });
-
         view.findViewById(R.id.next).setOnClickListener(v -> setUpRemote());
 
         view.findViewById(R.id.cancel).setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().finish();
-            }
-        });
-
-        // TODO: remove 1.9.4
-        view.findViewById(R.id.launch_browser).setOnClickListener(v -> {
-            String url = "http://127.0.0.1:53682/auth";
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(context, Uri.parse(url));
-        });
-
-        view.findViewById(R.id.cancel_auth).setOnClickListener(v -> {
-            if (authTask != null) {
-                authTask.cancel(true);
-            }
             if (getActivity() != null) {
                 getActivity().finish();
             }
@@ -193,32 +156,50 @@ public class OneDriveConfig extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            process = rclone.configCreate(options);
-
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            OutputStream outputStream = process.getOutputStream();
-            try {
-                outputStream.write((selectedAccountType + "\n").getBytes());
-                outputStream.flush();
+                process = rclone.configInteractive();
             } catch (IOException e) {
-                Log.e(TAG, "ConfigCreate/doInBackground: ", e);
                 return false;
             }
 
-            Thread authThread = new OauthHelper.UrlAuthThread(process, context);
-            authThread.start();
+            String name = options.get(0);
+            String clientId = "";
+            String clientSecret = "";
+            if(options.size() >= 3) {
+                clientId = options.get(1);
+                clientSecret = options.get(2);
+            }
+
+            // recipe definition
+            InteractiveRunner.Step start = new InteractiveRunner.Step("s/q>", new InteractiveRunner.StringAction("n"));
+            start.addFollowing("name> ", name)
+                    .addFollowing(new OneDriveSelectionStep())
+                    .addFollowing("client_id>", clientId)
+                    .addFollowing("client_secret>", clientSecret)
+                    .addFollowing("y/n> ", "n")
+                    .addFollowing("y/n> ", "y")
+                    .addFollowing(new OauthHelper.InitOauthStep(context))
+                    .addFollowing(new OauthHelper.OauthFinishStep())
+                    .addFollowing("Your choice> ", "1")
+                    .addFollowing("Chose drive to use:> ", "0")
+                    .addFollowing("y/n> ", "y")
+                    .addFollowing("y/e/d> ", "y")
+                    .addFollowing("e/n/d/r/c/s/q> ", "q");
+
+            InteractiveRunner.ErrorHandler errorHandler = exception -> {
+                Log.e(TAG, "onError: The recipe is probably bad.", exception);
+                process.destroy();
+            };
+
+            InteractiveRunner interactiveRunner = new InteractiveRunner(start, errorHandler, process);
+            interactiveRunner.runSteps();
+
             try {
                 process.waitFor();
             } catch (InterruptedException e) {
-                authThread.interrupt();
                 Log.e(TAG, "doInBackground: ", e);
             }
-            return process.exitValue() == 0;
+            return 0 == process.exitValue();
         }
 
         @Override
@@ -241,6 +222,31 @@ public class OneDriveConfig extends Fragment {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+        }
+    }
+
+    private static class OneDriveSelectionStep extends InteractiveRunner.Step {
+
+        private static final String regex = "(\\d+) \\/ Microsoft OneDrive";
+        private static final Pattern pattern = Pattern.compile(regex, 0);
+
+        public OneDriveSelectionStep() {
+            super("Microsoft OneDrive", new InteractiveRunner.Action() {
+                private String selection = "23";
+
+                @Override
+                public void onTrigger(String cliBuffer) {
+                    Matcher matcher = pattern.matcher(cliBuffer);
+                    if (matcher.find()) {
+                        selection = matcher.group(1);
+                    }
+                }
+
+                @Override
+                public String getInput() {
+                    return selection;
+                }
+            });
         }
     }
 }

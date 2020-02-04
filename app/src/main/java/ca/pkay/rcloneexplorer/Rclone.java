@@ -401,6 +401,12 @@ public class Rclone {
         }
     }
 
+    public Process configInteractive() throws IOException {
+        String[] command = createCommand("config");
+        String[] environment = getRcloneEnv();
+        return Runtime.getRuntime().exec(command, environment);
+    }
+
     public void deleteRemote(String remoteName) {
         String[] command = createCommandWithOptions("config", "delete", remoteName);
         Process process;
