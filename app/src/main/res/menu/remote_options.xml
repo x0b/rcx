@@ -18,6 +18,10 @@
         android:title="@string/delete" />
 
     <item
+            android:id="@+id/action_remote_properties"
+            android:title="@string/properties" />
+
+    <item
         android:id="@+id/action_add_to_home_screen"
         android:title="@string/add_to_home_screen" />
 </menu>

@@ -829,6 +829,103 @@ public class Rclone {
         return version[1];
     }
 
+    public Process reconnectRemote(RemoteItem remoteItem) {
+        String remoteName = remoteItem.getName() + ':';
+        String[] command = createCommand("config", "reconnect", remoteName);
+
+        try {
+            return Runtime.getRuntime().exec(command, getRcloneEnv());
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public AboutResult aboutRemote(RemoteItem remoteItem) {
+        String remoteName = remoteItem.getName() + ':';
+        String[] command = createCommand("about", "--json", remoteName);
+        StringBuilder output = new StringBuilder();
+        AboutResult stats;
+        Process process;
+        JSONObject aboutJSON;
+
+        try {
+            process = Runtime.getRuntime().exec(command, getRcloneEnv());
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line);
+                }
+            }
+            process.waitFor();
+            if (0 != process.exitValue()) {
+                Log.e(TAG, "aboutRemote: rclone error, exit(" + process.exitValue() + ')');
+                Log.e(TAG, "aboutRemote: " + output);
+                logErrorOutput(process);
+                return new AboutResult();
+            }
+
+            aboutJSON = new JSONObject(output.toString());
+        } catch (IOException | InterruptedException | JSONException e) {
+            Log.e(TAG, "aboutRemote: unexpected error", e);
+            return new AboutResult();
+        }
+
+        try {
+            stats = new AboutResult(
+                    aboutJSON.opt("used") != null ? aboutJSON.getLong("used") : -1,
+                    aboutJSON.opt("total") != null ? aboutJSON.getLong("total") : -1,
+                    aboutJSON.opt("free") != null ? aboutJSON.getLong("free") : -1,
+                    aboutJSON.opt("trashed") != null ? aboutJSON.getLong("trashed") : -1
+            );
+        } catch (JSONException e) {
+            Log.e(TAG, "aboutRemote: JSON format error ", e);
+            return new AboutResult();
+        }
+
+        return stats;
+    }
+
+    public class AboutResult {
+        private final long used;
+        private final long total;
+        private final long free;
+        private final long trashed;
+        private boolean failed;
+
+        public AboutResult(long used, long total, long free, long trashed) {
+            this.used = used;
+            this.total = total;
+            this.free = free;
+            this.trashed = trashed;
+            this.failed = false;
+        }
+
+        public AboutResult () {
+            this(-1, -1, -1,  -1);
+            this.failed = true;
+        }
+
+        public long getUsed() {
+            return used;
+        }
+
+        public long getTotal() {
+            return total;
+        }
+
+        public long getFree() {
+            return free;
+        }
+
+        public long getTrashed() {
+            return trashed;
+        }
+
+        public boolean hasFailed(){
+            return failed;
+        }
+    }
+
     public Boolean isConfigEncrypted() {
         if (!isConfigFileCreated()) {
             return false;

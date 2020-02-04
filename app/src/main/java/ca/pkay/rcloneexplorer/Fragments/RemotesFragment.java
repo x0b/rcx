@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -26,6 +25,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
+import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
@@ -241,6 +241,9 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         popupMenu.getMenuInflater().inflate(R.menu.remote_options, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
+                case R.id.action_remote_properties:
+                    showRemotePropertiesDialog(remoteItem);
+                    break;
                 case R.id.action_delete:
                     deleteRemote(remoteItem);
                     break;
@@ -320,6 +323,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
         }
         return remotes;
+    }
+
+    private void showRemotePropertiesDialog(RemoteItem remoteItem) {
+        RemotePropertiesDialog dialog = RemotePropertiesDialog.newInstance(remoteItem, isDarkTheme);
+        if (getFragmentManager() != null) {
+            dialog.show(getChildFragmentManager(), "remote properties");
+        }
     }
 
     private void showHiddenRemotesDialog() {
