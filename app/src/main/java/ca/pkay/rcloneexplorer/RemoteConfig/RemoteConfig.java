@@ -182,7 +182,9 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
                 break;
             case "DRIVE":
                 fragment = DriveConfig.newInstance();
-                title = "Drive";
+                break;
+            case "GOOGLE_PHOTOS":
+                fragment = GooglePhotosConfig.newInstance();
                 break;
             case "UNION":
                 fragment = UnionConfig.newInstance();
