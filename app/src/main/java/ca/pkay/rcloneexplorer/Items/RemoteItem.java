@@ -20,41 +20,46 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
      * A remote of type SAFW, a virtual WebDAV remote made backed by Storage
      * Access Framework (SAF).
      */
-    public final static int SAFW = -10;
+    public static final int SAFW = -10;
 
-    public final static int ALIAS = 10;
-    public final static int AMAZON_DRIVE = 11;
-    public final static int AZUREBLOB = 12;
-    public final static int B2 = 13;
-    public final static int BOX = 14;
-    public final static int CRYPT = 15;
-    public final static int CACHE = 16;
-    public final static int GOOGLE_DRIVE = 17;
-    public final static int DROPBOX = 18;
-    public final static int FICHIER = 19;
-    public final static int FTP = 20;
-    public final static int GOOGLE_CLOUD_STORAGE = 21;
-    public final static int GOOGLE_PHOTOS = 22;
-    public final static int HTTP = 23;
-    public final static int SWIFT = 24;
-    public final static int HUBIC = 25;
-    public final static int JOTTACLOUD = 26;
-    public final static int KOOFR = 27;
-    public final static int LOCAL = 28;
-    public final static int MEGA = 29;
-    public final static int ONEDRIVE = 30;
-    public final static int OPENDRIVE = 31;
-    public final static int PCLOUD = 32;
-    public final static int QINGSTOR = 33;
-    public final static int S3 = 34;
-    public final static int SFTP = 35;
-    public final static int UNION = 36;
-    public final static int WEBDAV = 37;
-    public final static int YANDEX = 38;
-    public final static int SHAREFILE = 39;
-    public final static int MAILRU = 40;
-    public final static int PUTIO = 41;
-    public final static int PREMIUMIZEME = 42;
+    // All recognized remote types. Must correspond to the numbering when
+    // running rclone config (for remotes that can only be configured
+    // interactively).
+    // Updated to: rclone 1.50.2
+    public static final int FICHIER = 1;
+    public static final int ALIAS = 2;
+    public static final int AMAZON_DRIVE = 3;
+    public static final int S3 = 4;
+    public static final int B2 = 5;
+    public static final int BOX = 6;
+    public static final int CACHE = 7;
+    public static final int SHAREFILE = 8;
+    public static final int DROPBOX = 9;
+    public static final int CRYPT = 10;
+    public static final int FTP = 11;
+    public static final int GOOGLE_CLOUD_STORAGE = 12;
+    public static final int GOOGLE_DRIVE = 13;
+    public static final int GOOGLE_PHOTOS = 14;
+    public static final int HUBIC = 15;
+    public static final int JOTTACLOUD = 16;
+    public static final int KOOFR = 17;
+    public static final int LOCAL = 18;
+    public static final int MAILRU = 19;
+    public static final int MEGA = 20;
+    public static final int AZUREBLOB = 21;
+    public static final int ONEDRIVE = 22;
+    public static final int OPENDRIVE = 23;
+    public static final int SWIFT = 24;
+    public static final int PCLOUD = 25;
+    public static final int PUTIO = 26;
+    public static final int QINGSTOR = 27;
+    public static final int SFTP = 28;
+    public static final int CHUNKER = 29;
+    public static final int UNION = 30;
+    public static final int WEBDAV = 31;
+    public static final int YANDEX = 32;
+    public static final int HTTP = 33;
+    public static final int PREMIUMIZEME = 34;
 
     private String name;
     private int type;
@@ -229,6 +234,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                 return BOX;
             case "cache":
                 return CACHE;
+            case "chunker":
+                return CHUNKER;
             case "crypt":
                 return CRYPT;
             case "dropbox":
@@ -297,6 +304,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                     return R.drawable.ic_tablet_cellphone;
                 case RemoteItem.AMAZON_DRIVE:
                     return R.drawable.ic_amazon;
+                case RemoteItem.AZUREBLOB:
+                    return R.drawable.ic_azure_storage_blob_logo;
+                case RemoteItem.B2:
+                    return R.drawable.ic_backblaze_b2_black;
                 case RemoteItem.GOOGLE_DRIVE:
                     return R.drawable.ic_google_drive;
                 case RemoteItem.DROPBOX:
@@ -305,8 +316,16 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                     return R.drawable.ic_google;
                 case RemoteItem.GOOGLE_PHOTOS:
                     return R.drawable.ic_google_photos;
+                case RemoteItem.HUBIC:
+                    return R.drawable.ic_hubic_black;
+                case RemoteItem.KOOFR:
+                    return R.drawable.ic_koofr;
+                case RemoteItem.MEGA:
+                    return R.drawable.ic_mega_logo_black;
                 case RemoteItem.ONEDRIVE:
                     return R.drawable.ic_onedrive;
+                case RemoteItem.OPENDRIVE:
+                    return R.drawable.ic_open_drive;
                 case RemoteItem.S3:
                     return R.drawable.ic_amazon;
                 case RemoteItem.BOX:
@@ -315,8 +334,14 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                     return R.drawable.ic_terminal;
                 case RemoteItem.LOCAL:
                     return R.drawable.ic_tablet_cellphone;
+                case RemoteItem.PCLOUD:
+                    return R.drawable.ic_pcloud;
                 case RemoteItem.UNION:
                     return R.drawable.ic_union_24dp;
+                case RemoteItem.WEBDAV:
+                    return R.drawable.ic_webdav;
+                case RemoteItem.YANDEX:
+                    return R.drawable.ic_yandex_mono;
                 default:
                     return R.drawable.ic_cloud;
             }

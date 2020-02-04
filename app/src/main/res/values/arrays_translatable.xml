@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="provider_names">
+        <item>Box</item>
+        <item>Backblaze B2</item>
+        <item>Dropbox</item>
+        <item>FTP</item>
+        <item>HTTP</item>
+        <item>HubiC</item>
+        <item>pCloud</item>
+        <item>SFTP</item>
+        <item>Yandex Disk</item>
+        <item>WebDAV</item>
+        <item>Microsoft OneDrive</item>
+        <item>Alias</item>
+        <item>Crypt</item>
+        <item>QingCloud QingStor</item>
+        <item>Microsoft Azure Blob Storage</item>
+        <item>Cache</item>
+        <item>Local</item>
+        <item>Google Drive</item>
+        <item>Google Photos</item>
+        <item>Union</item>
+        <item>Mega</item>
+    </array>
+
+    <array name="provider_summaries">
+        <item>Cloud file storage</item>
+        <item>Cloud file storage</item>
+        <item>Cloud file storage</item>
+        <item>File server access</item>
+        <item>HTTP server access</item>
+        <item>Cloud file storage</item>
+        <item>Cloud file storage</item>
+        <item>SFTP server access</item>
+        <item>Cloud file storage</item>
+        <item>WebDAV server access</item>
+        <item>Cloud file storage</item>
+        <item>Set a new name for a remote or path</item>
+        <item>Encrypt files in any remote</item>
+        <item>Cloud object storage</item>
+        <item>Cloud object storage</item>
+        <item>Cache files locally for faster access</item>
+        <item>Access the (emulated) SD card</item>
+        <item>Cloud file storage</item>
+        <item>Cloud Photo Storage</item>
+        <item>Merge multiple remotes into one</item>
+        <item>Cloud file storage</item>
+    </array>
+</resources>
