@@ -186,7 +186,9 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
                 break;
             case "UNION":
                 fragment = UnionConfig.newInstance();
-                title = "Union";
+                break;
+            case "MEGA":
+                fragment = MegaConfig.newInstance();
                 break;
             default:
                 return;

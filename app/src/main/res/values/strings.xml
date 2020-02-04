@@ -273,6 +273,8 @@
     <string name="onedrive_client_id_hint">Microsoft Client ID</string>
     <string name="onedrive_client_secret_hint">Microsoft Client Secret</string>
     <string name="onedrive_account_type">OneDrive account type</string>
+    <string name="provider_mega_config_user">Mega username</string>
+    <string name="provider_mega_config_password">Mega password</string>
     <string name="personal_account_type">Personal account</string>
     <string name="business_account_type">Business account</string>
     <string name="alias_remote_hint">Click to select remote or path to alias</string>
