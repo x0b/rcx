@@ -45,6 +45,7 @@ public class Rclone {
     public static final int SERVE_PROTOCOL_HTTP = 1;
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
+    public static final int SERVE_PROTOCOL_DLNA = 4;
     private static SafDAVServer safDAVServer;
     private Context context;
     private String rclone;
@@ -464,6 +465,9 @@ public class Rclone {
             case SERVE_PROTOCOL_FTP:
                 commandProtocol = "ftp";
                 break;
+            case SERVE_PROTOCOL_DLNA:
+                commandProtocol = "dlna";
+                break;
             default:
                 commandProtocol = "webdav";
         }
@@ -495,11 +499,7 @@ public class Rclone {
         String[] env = getRcloneEnv();
         String[] command = params.toArray(new String[0]);
         try {
-            if (protocol == SERVE_PROTOCOL_WEBDAV) {
-                return Runtime.getRuntime().exec(command, env);
-            } else {
-                return Runtime.getRuntime().exec(command, env);
-            }
+            return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

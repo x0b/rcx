@@ -29,6 +29,7 @@ public class StreamingService extends IntentService {
     public static final int SERVE_HTTP = 11;
     public static final int SERVE_WEBDAV = 12;
     public static final int SERVE_FTP = 13;
+    public static final int SERVE_DLNA = 14;
     private final String CHANNEL_ID = "ca.pkay.rcexplorer.streaming_channel";
     private final String CHANNEL_NAME = "Streaming service";
     private final int PERSISTENT_NOTIFICATION_ID = 179;
@@ -92,6 +93,9 @@ public class StreamingService extends IntentService {
                 break;
             case SERVE_WEBDAV:
                 runningProcess = rclone.serve(Rclone.SERVE_PROTOCOL_WEBDAV, 8080, allowRemoteAccess, authenticationUsername, authenticationPassword, remote, servePath);
+                break;
+            case SERVE_DLNA:
+                runningProcess = rclone.serve(Rclone.SERVE_PROTOCOL_DLNA, 8080, allowRemoteAccess, authenticationUsername, authenticationPassword, remote, servePath);
                 break;
             case SERVE_HTTP:
             default:

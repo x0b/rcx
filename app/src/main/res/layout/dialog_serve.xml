@@ -17,6 +17,22 @@
         android:orientation="vertical" >
 
         <RadioButton
+                android:id="@+id/radio_ftp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:textColor="?attr/textColorPrimary"
+                android:text="@string/provider_ftp"/>
+
+        <RadioButton
+                android:id="@+id/radio_dlna"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:textColor="?attr/textColorPrimary"
+                android:text="@string/serve_dlna"/>
+
+        <RadioButton
             android:id="@+id/radio_http"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,14 +40,6 @@
             android:textColor="?attr/textColorPrimary"
             android:checked="true"
             android:text="@string/provider_http" />
-
-        <RadioButton
-            android:id="@+id/radio_ftp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textColor="?attr/textColorPrimary"
-            android:text="@string/provider_ftp"/>
 
         <RadioButton
             android:id="@+id/radio_webdav"

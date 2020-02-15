@@ -244,6 +244,7 @@
     <string name="ftp_pass_hint">FTP password</string>
     <string name="provider_ftp">FTP</string>
     <string name="provider_http">HTTP</string>
+    <string name="serve_dlna">DLNA</string>
     <string name="url_hint">URL of http host to connect to</string>
     <string name="hubic_client_id_hint">Hubic Client ID</string>
     <string name="hubic_client_secret_hint">Hubic Client Secret</string>
