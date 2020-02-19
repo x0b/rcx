@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -23,7 +22,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.InitOauthStep;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.OauthFinishStep;
-import java9.util.concurrent.CompletableFuture;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 public class RemotePropertiesDialog extends DialogFragment {
 
@@ -245,7 +244,7 @@ public class RemotePropertiesDialog extends DialogFragment {
                 }
 
                 ErrorHandler errorHandler = e -> {
-                    Log.e(TAG, "onError: The recipe is probably bad.", e);
+                    FLog.e(TAG, "onError: The recipe is probably bad.", e);
                     process.destroy();
                 };
 
@@ -255,7 +254,7 @@ public class RemotePropertiesDialog extends DialogFragment {
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
-                    Log.e(TAG, "doInBackground: ", e);
+                    FLog.e(TAG, "doInBackground: ", e);
                 }
             }
             return null;

@@ -11,10 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
 public class ActivityHelper {
@@ -34,7 +34,7 @@ public class ActivityHelper {
     public static void tryStartActivityForResult(Fragment fragment, Intent intent, int requestCode) {
         try {
             if(!fragment.isAdded()) {
-                Log.w(TAG, "tryStartActivityForResult: fragment is not attached, can't start");
+                FLog.w(TAG, "tryStartActivityForResult: fragment is not attached, can't start");
                 return;
             }
             fragment.startActivityForResult(intent, requestCode);

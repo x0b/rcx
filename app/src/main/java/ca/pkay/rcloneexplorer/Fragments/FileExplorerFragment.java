@@ -16,7 +16,6 @@ import android.os.Parcel;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,6 +69,7 @@ import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import ca.pkay.rcloneexplorer.util.FLog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
@@ -1910,7 +1910,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Void doInBackground(FileItem... fileItems) {
             if(context == null) {
-                Log.w(TAG, "doInBackground: could not start stream, context is invalid");
+                FLog.w(TAG, "doInBackground: could not start stream, context is invalid");
                 return null;
             }
             FileItem fileItem = fileItems[0];

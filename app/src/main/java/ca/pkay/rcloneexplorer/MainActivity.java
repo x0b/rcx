@@ -17,7 +17,6 @@ import android.os.Message;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +44,7 @@ import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
+import ca.pkay.rcloneexplorer.util.FLog;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
@@ -577,14 +577,14 @@ public class MainActivity extends AppCompatActivity
         // only check if not disabled
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         if(!force && !sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true)){
-            Log.i(TAG, "checkForUpdate: Not checking, updates are disabled");
+            FLog.i(TAG, "checkForUpdate: Not checking, updates are disabled");
             return;
         }
         // only check if the last check was >6 hours ago
         long lastUpdateCheck = sharedPreferences.getLong(context.getString(R.string.pref_key_update_last_check), 0);
         long now = System.currentTimeMillis();
         if(lastUpdateCheck + 1000 * 60 * 60 * 6 > now){
-            Log.i(TAG, "checkForUpdate: recent check to new, not checking for updates");
+            FLog.i(TAG, "checkForUpdate: recent check to new, not checking for updates");
             return;
         }
 
@@ -616,7 +616,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void onFailure(@NotNull Call call, @NotNull IOException e) {
-            Log.w(TAG, "onFailure: Update check failed", e);
+            FLog.w(TAG, "onFailure: Update check failed", e);
             updateLastUpdateRequest();
         }
 
@@ -627,10 +627,10 @@ public class MainActivity extends AppCompatActivity
             // Since the app is not published immediately during build, 15 minutes are added
             long publishBarrier = publishedAt - 1000 * 60 * 15;
             if(BuildConfig.BUILD_TIME < publishBarrier) {
-                Log.i(TAG, "onResponse: App is not up-to-date");
+                FLog.i(TAG, "onResponse: App is not up-to-date");
                 handler.obtainMessage(MainActivity.UPDATE_AVAILABLE).sendToTarget();
             } else {
-                Log.i(TAG, "onResponse: App is up-to-date");
+                FLog.i(TAG, "onResponse: App is up-to-date");
             }
         }
 
@@ -656,9 +656,9 @@ public class MainActivity extends AppCompatActivity
                         publishedAt = parser.parse(json.getString("published_at")).getTime();
                     }
                 } catch (JSONException e) {
-                    Log.e(TAG, "Update check failed: JSON error", e);
+                    FLog.e(TAG, "Update check failed: JSON error", e);
                 } catch (ParseException e) {
-                    Log.e(TAG, "Update check failed: time format error", e);
+                    FLog.e(TAG, "Update check failed: time format error", e);
                 }
                 return publishedAt;
             }
@@ -801,11 +801,11 @@ public class MainActivity extends AppCompatActivity
             try {
                 process.waitFor();
                 if (process.exitValue() != 0) {
-                    Log.w(TAG, "addLocalRemote: process error");
+                    FLog.w(TAG, "addLocalRemote: process error");
                     return;
                 }
             } catch (InterruptedException e) {
-                Log.e(TAG, "addLocalRemote: process error", e);
+                FLog.e(TAG, "addLocalRemote: process error", e);
                 return;
             }
             Set<String> renamedRemotes = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
