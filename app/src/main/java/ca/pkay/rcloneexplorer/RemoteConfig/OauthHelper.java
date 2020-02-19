@@ -2,10 +2,10 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import androidx.browser.customtabs.CustomTabsIntent;
 import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
 import java.io.BufferedReader;
@@ -38,7 +38,7 @@ public class OauthHelper {
             process.waitFor();
         } catch (InterruptedException e) {
             authThread.interrupt();
-            Log.e(TAG, "createOptionsWithOauth: aborted", e);
+            FLog.e(TAG, "createOptionsWithOauth: aborted", e);
         }
         return 0 == process.exitValue();
     }
@@ -78,7 +78,7 @@ public class OauthHelper {
                     }
                 }
             } catch (IOException e) {
-                Log.e(TAG, "doInBackground: could not read auth url", e);
+                FLog.e(TAG, "doInBackground: could not read auth url", e);
                 process.destroy();
             }
         }
@@ -103,7 +103,7 @@ public class OauthHelper {
                 CustomTabsIntent customTabsIntent = builder.build();
                 customTabsIntent.launchUrl(context, Uri.parse(url));
             } else {
-                Log.w(TAG, "onTrigger: could not extract auth URL from buffer: " + cliBuffer);
+                FLog.w(TAG, "onTrigger: could not extract auth URL from buffer: %s", cliBuffer);
             }
         }
 

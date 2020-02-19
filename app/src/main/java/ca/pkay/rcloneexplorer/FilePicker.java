@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import ca.pkay.rcloneexplorer.util.FLog;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.io.File;
@@ -41,6 +41,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
     public static final String FILE_PICKER_PICK_DESTINATION_TYPE = "ca.pkay.rcexplorer.FILE_PICKER_PICK_DEST_TYPE";
     public static final String FILE_PICKER_RESULT = "ca.pkay.rcexplorer.FILE_PICKER_RESULT";
+    private static final String TAG = "FilePicker";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FilePicker.PATH";
     private final String SAVED_DESTINATION_PICKER_TYPE = "ca.pkay.rcexplorer.FilePicker.DESTINATION_PICKER_TYPE";
@@ -334,7 +335,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             try {
                 switchStorage(userSelected[0]);
             } catch (IOException e) {
-                Log.e("FilePicker", "Path not accessible", e);
+                FLog.e(TAG, "Path not accessible", e);
             }
         });
 
@@ -535,7 +536,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                     storageDirectories.add(directory.getCanonicalPath());
                 }
             } catch (IOException | SecurityException | NullPointerException e) {
-                Log.i("FilePicker", "File discovery exception ", e);
+                FLog.i(TAG, "File discovery exception ", e);
             }
         }
 

@@ -1,6 +1,5 @@
 package ca.pkay.rcloneexplorer;
 
-import android.util.Log;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import ca.pkay.rcloneexplorer.util.FLog;

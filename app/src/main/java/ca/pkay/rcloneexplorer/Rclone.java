@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -13,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.SafDAVServer;
@@ -165,12 +165,12 @@ public class Rclone {
                 stringBuilder.append(line).append("\n");
             }
         } catch (InterruptedIOException iioe) {
-            Log.i(TAG, "logErrorOutput: process died while reading. Log may be incomplete.");
+            FLog.i(TAG, "logErrorOutput: process died while reading. Log may be incomplete.");
         } catch (IOException e) {
             if("Stream closed".equals(e.getMessage())) {
-                Log.d(TAG, "logErrorOutput: could not read stderr, process stream is already closed");
+                FLog.d(TAG, "logErrorOutput: could not read stderr, process stream is already closed");
             } else {
-                Log.e(TAG, "logErrorOutput: ", e);
+                FLog.e(TAG, "logErrorOutput: ", e);
             }
             return;
         }
@@ -227,7 +227,7 @@ public class Rclone {
             results = new JSONArray(outputStr);
 
         } catch (IOException | InterruptedException | JSONException e) {
-            Log.e(TAG, "getDirectoryContent: Could not get folder content", e);
+            FLog.e(TAG, "getDirectoryContent: Could not get folder content", e);
             return null;
         }
 
@@ -868,15 +868,15 @@ public class Rclone {
             }
             process.waitFor();
             if (0 != process.exitValue()) {
-                Log.e(TAG, "aboutRemote: rclone error, exit(" + process.exitValue() + ')');
-                Log.e(TAG, "aboutRemote: " + output);
+                FLog.e(TAG, "aboutRemote: rclone error, exit(%d)", process.exitValue());
+                FLog.e(TAG, "aboutRemote: ", output);
                 logErrorOutput(process);
                 return new AboutResult();
             }
 
             aboutJSON = new JSONObject(output.toString());
         } catch (IOException | InterruptedException | JSONException e) {
-            Log.e(TAG, "aboutRemote: unexpected error", e);
+            FLog.e(TAG, "aboutRemote: unexpected error", e);
             return new AboutResult();
         }
 
@@ -888,7 +888,7 @@ public class Rclone {
                     aboutJSON.opt("trashed") != null ? aboutJSON.getLong("trashed") : -1
             );
         } catch (JSONException e) {
-            Log.e(TAG, "aboutRemote: JSON format error ", e);
+            FLog.e(TAG, "aboutRemote: JSON format error ", e);
             return new AboutResult();
         }
 

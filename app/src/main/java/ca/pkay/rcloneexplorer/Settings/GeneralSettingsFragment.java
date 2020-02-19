@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -31,6 +30,7 @@ import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
 public class GeneralSettingsFragment extends Fragment {
@@ -411,7 +411,7 @@ public class GeneralSettingsFragment extends Fragment {
             try {
                 port = Integer.parseInt(portString);
             } catch (NumberFormatException e) {
-                Log.e(TAG, "showProxyPortMenu: invalid port", e);
+                FLog.e(TAG, "showProxyPortMenu: invalid port", e);
                 return;
             }
             pref.edit().putInt(getString(R.string.pref_key_proxy_port), port).apply();
@@ -450,7 +450,7 @@ public class GeneralSettingsFragment extends Fragment {
                 sizeMb = Double.parseDouble(sizeString);
                 size1 = (long)(sizeMb * 1024 * 1024);
             } catch (NumberFormatException e) {
-                Log.e(TAG, "showThumbnailSizeDialog: invalid size", e);
+                FLog.e(TAG, "showThumbnailSizeDialog: invalid size", e);
                 return;
             }
             pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size1).apply();

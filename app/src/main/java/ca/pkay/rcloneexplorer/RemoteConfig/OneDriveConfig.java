@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 import com.google.android.material.textfield.TextInputLayout;
 import es.dmoral.toasty.Toasty;
 
@@ -187,7 +187,7 @@ public class OneDriveConfig extends Fragment {
                     .addFollowing("e/n/d/r/c/s/q> ", "q");
 
             InteractiveRunner.ErrorHandler errorHandler = exception -> {
-                Log.e(TAG, "onError: The recipe is probably bad.", exception);
+                FLog.e(TAG, "onError: The recipe is probably bad.", exception);
                 process.destroy();
             };
 
@@ -197,7 +197,7 @@ public class OneDriveConfig extends Fragment {
             try {
                 process.waitFor();
             } catch (InterruptedException e) {
-                Log.e(TAG, "doInBackground: ", e);
+                FLog.e(TAG, "doInBackground: ", e);
             }
             return 0 == process.exitValue();
         }
