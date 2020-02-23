@@ -1,0 +1,14 @@
+task buildNative(type: Exec) {
+    inputs.dir("$projectDir/src/")
+    outputs.dir("$projectDir/../app/lib/")
+    executable = 'python'
+    args = ['-u', './build-rclone.py']
+}
+
+/**
+ * Use separate task instead of standard clean(), so these folders aren't deleted by `gradle clean`.
+ */
+task cleanNative(type: Delete) {
+    delete "$projectDir/../app/lib/"
+    delete "gobuild"
+}
