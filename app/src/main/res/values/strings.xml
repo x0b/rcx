@@ -287,11 +287,23 @@
     <string name="select_path_to_alias">Select path to Alias</string>
     <string name="select_path_to_crypt">Select path to Encrypt</string>
     <string name="webdav_spinner_prompt">Name of the Webdav service</string>
-    <string name="filename_encryption_spinner_prompt">How to encrypt the filenames</string>
+    <string-array name="filename_encryption_spinner_values" translatable="false">
+        <item>How to encrypt the filenames</item>
+        <item>Off</item>
+        <item>Standard</item>
+        <item>Obfuscate</item>
+    </string-array>
+    <string-array name="filename_encryption_spinner_labels">
+        <item>How to encrypt the filenames</item>
+        <item>Off</item>
+        <item>Standard</item>
+        <item>Obfuscate</item>
+    </string-array>
     <string name="directory_name_encryption_hint">Directory name encryption</string>
     <string name="crypt_pass_hint">Password for encryption</string>
     <string name="crypt_pass2_hint">Password for salt</string>
     <string name="crypt_pass2_helper_text">Optional but recommended</string>
+    <string name="crypt_config_error_no_remotes">There are no remotes</string>
     <string name="qingstor_access_key_hint">QingStor Access Key ID</string>
     <string name="qingstor_secret_access_key_hint">QingStor Secret Access Key (password)</string>
     <string name="qingstor_endpoint_hint">Enter an enpoint URL to connection QingStor API</string>
@@ -443,4 +455,19 @@
     <string name="remote_properties_authorization">Authorization</string>
     <string name="remote_properties_authorize_tap">Tap to renew</string>
     <string name="rclone_get_about_failed">Error retrieving storage statistics</string>
+    <string-array name="serve_options" translatable="false">
+        <item>HTTP</item>
+        <item>WebDAV</item>
+    </string-array>
+    <string-array name="sync_direction_options">
+        <item>Sync local to remote</item>
+        <item>Sync remote to local</item>
+    </string-array>
+    <string name="name_will_be_deleted">%1$s will be deleted</string>
+    <plurals name="delete_x_items">
+        <item quantity="one">Delete %1$d item</item>
+        <item quantity="other">Delete %1$d items</item>
+    </plurals>
+    <string name="move_operation_failed">Move operation failed</string>
+    <string name="sync_operation_failed">Sync operation failed</string>
 </resources>

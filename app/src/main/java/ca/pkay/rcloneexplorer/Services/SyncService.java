@@ -152,7 +152,7 @@ public class SyncService extends IntentService {
         if (transferOnWiFiOnly && connectivityChanged) {
             showConnectivityChangedNotification();
         } else if (currentProcess == null || currentProcess.exitValue() != 0) {
-            String errorTitle = "Sync operation failed";
+            String errorTitle = getString(R.string.sync_operation_failed);
             int notificationId = (int)System.currentTimeMillis();
             showFailedNotification(errorTitle, title, notificationId);
         }
