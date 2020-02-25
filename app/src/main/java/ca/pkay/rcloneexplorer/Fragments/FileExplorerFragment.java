@@ -1288,7 +1288,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     showOpenAsDialog(fileItem);
                     break;
                 case R.id.action_serve:
-                    String[] serveOptions = new String[] {"HTTP", "Webdav"};
+                    String[] serveOptions = getResources().getStringArray(R.array.serve_options);
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setItems(serveOptions, (dialog, which) -> {
                         Intent intent = new Intent(getContext(), StreamingService.class);
@@ -1411,7 +1411,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        String[] options = new String[] {"Sync local to remote", "Sync remote to local"};
+        String[] options = getResources().getStringArray(R.array.sync_direction_options);
         builder.setTitle(R.string.select_sync_direction);
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
@@ -1454,9 +1454,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void deleteFiles(final List<FileItem> deleteList) {
-        String title = "Delete " + deleteList.size();
-        final String content = (deleteList.size() == 1) ? deleteList.get(0).getName() + " will be deleted" : "";
-        title += (deleteList.size() > 1) ? " items?" : " item?";
+        String title = getResources().getQuantityString(R.plurals.delete_x_items, deleteList.size(), deleteList.size());
         AlertDialog.Builder builder;
         if (isDarkTheme) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
@@ -1477,8 +1475,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     }
                     Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
                 });
-        if (!content.trim().isEmpty()) {
-            builder.setMessage(content);
+        if(deleteList.size() == 1) {
+            builder.setMessage(getString(R.string.name_will_be_deleted, deleteList.get(0).getName()));
         }
         builder.create().show();
     }

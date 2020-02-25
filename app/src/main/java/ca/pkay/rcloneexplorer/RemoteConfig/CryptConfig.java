@@ -213,7 +213,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         formContent.addView(spinnerTemplate);
         filenameEncryption = spinnerTemplate.findViewById(R.id.spinner);
         spinnerLine = spinnerTemplate.findViewById(R.id.spinner_line);
-        String[] options = new String[]{getString(R.string.filename_encryption_spinner_prompt), "Off", "Standard", "Obfuscate"};
+        String[] options = getResources().getStringArray(R.array.filename_encryption_spinner_labels);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.spinner_dropdown_item, options) {
             @Override
             public boolean isEnabled(int position) {
@@ -284,7 +284,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
     private void setRemote() {
         final List<RemoteItem> remotes = rclone.getRemotes();
         if (remotes.isEmpty()) {
-            Toasty.info(context, "There are no remotes", Toast.LENGTH_SHORT, true).show();
+            Toasty.info(context, getString(R.string.crypt_config_error_no_remotes), Toast.LENGTH_SHORT, true).show();
             return;
         }
 
@@ -338,7 +338,8 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         String name = remoteName.getText().toString();
         String passString = password.getText().toString();
         String pass2String = password2.getText().toString();
-        String filenameEncryptionString = filenameEncryption.getSelectedItem().toString();
+        String[] encOptions = getResources().getStringArray(R.array.filename_encryption_spinner_values);
+        String filenameEncryptionString = encOptions[filenameEncryption.getSelectedItemPosition()];
         boolean error = false;
 
         if (name.trim().isEmpty()) {
@@ -352,7 +353,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
             remoteSelectorLine.setBackgroundColor(Color.parseColor("#B14525"));
             error = true;
         }
-        if (filenameEncryptionString.equals(getString(R.string.filename_encryption_spinner_prompt))) {
+        if (filenameEncryption.getSelectedItemPosition() < 1) {
             spinnerLine.setBackgroundColor(Color.parseColor("#B14525"));
             error = true;
         }

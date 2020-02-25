@@ -89,7 +89,7 @@ public class MoveService extends IntentService {
 
         if (currentProcess == null || currentProcess.exitValue() != 0) {
             rclone.logErrorOutput(currentProcess);
-            String errorTitle = "Move operation failed";
+            String errorTitle = getString(R.string.move_operation_failed);
             String errorContent = moveItem.getName();
             int notificationId = (int)System.currentTimeMillis();
             showFailedNotification(errorTitle, errorContent, notificationId);
