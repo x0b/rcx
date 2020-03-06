@@ -11,7 +11,7 @@ Additionally, these people have contributed towards making rcloneExplorer better
 
 ## License
     
-    Copyright (C) 2018-2019 x0b <github.com/x0b>
+    Copyright (C) 2018-2020 x0b <github.com/x0b>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
