@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,8 +35,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
-
-
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -52,6 +51,7 @@ import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import es.dmoral.toasty.Toasty;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity   extends AppCompatActivity
                             implements  NavigationView.OnNavigationItemSelectedListener,
@@ -95,6 +95,7 @@ public class MainActivity   extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
         if (enableCrashReports) {
+            Fabric.with(this, new Crashlytics());
         }
 
         applyTheme();
@@ -127,6 +128,7 @@ public class MainActivity   extends AppCompatActivity
 
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), false);
         if (appUpdates) {
+            FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.firebase_msg_app_updates_topic));
         }
 
         Intent intent = getIntent();
