@@ -15,4 +15,9 @@
     <item
         android:id="@+id/action_copy_id_task"
         android:title="@string/copy_taskid" />
+    <item
+        android:id="@+id/action_add_to_home_screen"
+        android:title="@string/pin_to_dektop" />
+
+
 </menu>
