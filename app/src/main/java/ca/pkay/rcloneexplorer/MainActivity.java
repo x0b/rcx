@@ -752,6 +752,10 @@ public class MainActivity extends AppCompatActivity
             }
             File[] dirs = context.getExternalFilesDirs(null);
             for(File file : dirs) {
+                // May be null if the path is currently not available
+                if (null == file) {
+                    continue;
+                }
                 if (file.getPath().contains(BuildConfig.APPLICATION_ID)) {
                     try {
                         File root = getVolumeRoot(file);
