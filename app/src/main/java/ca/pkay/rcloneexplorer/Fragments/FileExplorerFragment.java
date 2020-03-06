@@ -75,11 +75,15 @@ import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
 import es.dmoral.toasty.Toasty;
+import java9.util.stream.Collectors;
+import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.security.SecureRandom;
@@ -1942,33 +1946,50 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
             }
 
+            OkHttpClient client = new OkHttpClient.Builder().build();
+            Request request = new Request.Builder().url(uri.toString()).head().build();
             int code = -1;
-            HttpURLConnection connection;
 
-            int retries = 10;
+            int retries = 120;
+            boolean available = false;
             while (retries > 0) {
                 try {
                     URL checkUrl = new URL(uri.toString());
-                    connection = (HttpURLConnection) checkUrl.openConnection();
-                    code = connection.getResponseCode();
+                    FLog.v(TAG, "doInBackground: GET %s", checkUrl.toString());
+                    Response response = client.newCall(request).execute();
+                    code = response.code();
+
+                    if(BuildConfig.DEBUG) {
+                        Map<String, List<String>> headerFields =  response.headers().toMultimap();
+                        String headers = StreamSupport.stream(headerFields.keySet())
+                                .map(k -> k + '=' + headerFields.get(k))
+                                .collect(Collectors.joining(",", "{", "}"));
+                        FLog.v(TAG, "doInBackground: Response %s", headers);
+                    }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FLog.v(TAG, "doInBackground: Server not (yet) online");
                 }
 
                 if (code == 200) {
+                    available = true;
                     break;
                 }
 
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(250);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    // ignored
                 }
                 retries--;
             }
 
-            Dialogs.dismissSilently(loadingDialog);
-            tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
+            if(available) {
+                Dialogs.dismissSilently(loadingDialog);
+                tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
+            } else {
+                Toasty.error(context, getString(R.string.streaming_task_failed), Toast.LENGTH_LONG, true);
+                context.stopService(serveIntent);
+            }
             return null;
         }
     }
