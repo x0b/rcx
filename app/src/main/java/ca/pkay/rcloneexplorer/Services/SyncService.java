@@ -250,7 +250,7 @@ public class SyncService extends IntentService {
         createSummaryNotificationForFailed();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setSmallIcon(R.drawable.ic_notification_error)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setGroup(OPERATION_FAILED_GROUP)
@@ -264,7 +264,7 @@ public class SyncService extends IntentService {
     private void showSuccessNotification(String content, int notificationId) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification_success)
                 .setContentTitle(getString(R.string.operation_success))
                 .setContentText(content)
                 .setGroup(OPERATION_SUCCESS)

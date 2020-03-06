@@ -13,7 +13,7 @@
             android:title="@string/remotes" />
         <item
             android:id="@+id/nav_tasks"
-            android:icon="@drawable/ic_about"
+            android:icon="@drawable/ic_notification_sync"
             android:title="@string/tasks" />
     </group>
 
