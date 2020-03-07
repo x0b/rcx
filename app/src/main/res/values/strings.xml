@@ -467,8 +467,7 @@
     <string name="name_will_be_deleted">%1$s will be deleted</string>
     <plurals name="delete_x_items">
         <item quantity="one">Delete %1$d item</item>
-        <item quantity="many">Delete %1$d items</item>
-        <item quantity="zero">Delete %1$d item</item>
+        <item quantity="other">Delete %1$d items</item>
     </plurals>
     <string name="move_operation_failed">Move operation failed</string>
     <string name="sync_operation_failed">Sync operation failed</string>
