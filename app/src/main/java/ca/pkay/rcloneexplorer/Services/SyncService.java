@@ -301,7 +301,7 @@ public class SyncService extends IntentService {
                         .setContentTitle(getString(R.string.operation_failed))
                         //set content text to support devices running API level < 24
                         .setContentText(getString(R.string.operation_failed))
-                        .setSmallIcon(android.R.drawable.stat_sys_warning)
+                        .setSmallIcon(R.drawable.ic_notification_error)
                         .setGroup(OPERATION_FAILED_GROUP)
                         .setGroupSummary(true)
                         .setAutoCancel(true)
@@ -317,7 +317,7 @@ public class SyncService extends IntentService {
                         .setContentTitle(getString(R.string.operation_success))
                         //set content text to support devices running API level < 24
                         .setContentText(getString(R.string.operation_success))
-                        .setSmallIcon(R.drawable.ic_notification)
+                        .setSmallIcon(R.drawable.ic_notification_success)
                         .setGroup(OPERATION_SUCCESS_GROUP)
                         .setGroupSummary(true)
                         .setAutoCancel(true)

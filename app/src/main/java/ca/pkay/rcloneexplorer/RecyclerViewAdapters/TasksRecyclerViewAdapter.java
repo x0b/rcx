@@ -173,7 +173,6 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
                         break;
                     case R.id.action_add_to_home_screen:
-                        Log.e("1234", "pintohome");
                         createShortcut(context, task);
                         break;
                     default:
