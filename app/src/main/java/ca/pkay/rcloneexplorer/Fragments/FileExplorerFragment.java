@@ -1860,6 +1860,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!status) {
                 return;
             }
+            if (null == context) {
+                FLog.e(TAG, "Cannot provide file %s using dead context", fileLocation);
+                return;
+            }
             Uri sharedFileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", new File(fileLocation));
             Intent intent = new Intent(Intent.ACTION_VIEW, sharedFileUri);
 
