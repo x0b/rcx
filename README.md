@@ -48,7 +48,8 @@ Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version (1.11.0-pre1)
+#### Current Version (1.11.0-pre2)
+##### Improvements
 * Mega.nz config
 * Google Photos config
 * Renaming remotes
@@ -59,9 +60,11 @@ Note that these plans are subject to change and might not materialize completely
 * Rclone 1.51.0
 * Settings shortcut
 * Android R support (preliminary)
+##### Fixes
 * OneDrive configuration
 * Streams now only start if available, otherwise fail loudly
-* **Internal**
+* Crash when opening file
+##### Internal
    * Java 8 and Stream support
    * Rclone source build
    * Improved logging

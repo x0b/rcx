@@ -11,6 +11,7 @@
 * **New:** Android R support (preliminary)
 * **Fix:** OneDrive configuration
 * **Fix:** Streams now only start if available, otherwise fail loudly
+* **Fix:** Crash when opening file
 * **Internal**
    * Java 8 and Stream support
    * Rclone source build
