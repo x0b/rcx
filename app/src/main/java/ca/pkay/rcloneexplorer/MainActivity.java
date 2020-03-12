@@ -833,7 +833,9 @@ public class MainActivity extends AppCompatActivity
             AppShortcutsHelper.removeAllAppShortcuts(context);
             AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
             pinRemotesToDrawer();
-            startRemotesFragment();
+            if (!isFinishing() && !isDestroyed()) {
+                startRemotesFragment();
+            }
         }
     }
 
