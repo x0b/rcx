@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "217521118387",
+    "firebase_url": "https://rcx-dummy-firebase.firebaseio.com",
+    "project_id": "rcx-dummy-firebase",
+    "storage_bucket": "rcx-dummy-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217521118387:android:d2b07fb552555dc63364c6",
+        "android_client_info": {
+          "package_name": "io.github.x0b.rcx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "217521118387-i3bpgnf6r49cncnrp735tbhsfa1pdfa3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT_2Y6vh3XpFaSHne8lymmpajRwrtaAcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "217521118387-i3bpgnf6r49cncnrp735tbhsfa1pdfa3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
