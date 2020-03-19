@@ -1,0 +1,37 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+      id: go
+    - name: Build rclone
+      run: ./gradlew buildNative -p rclone
+    - name: Apply dummy Google Services
+      run: git cherry-pick -n google-services && git reset HEAD && git checkout HEAD -- .gitignore
+    - name: Build app
+      run: ./gradlew assembleRcxDebug
+    - name: Upload APK
+      uses: actions/upload-artifact@v2-preview
+      with:
+        name: universal.apk
+        path: app/build/outputs/apk/rcx/debug/app-rcx-universal-debug.apk
