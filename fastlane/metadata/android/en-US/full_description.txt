@@ -1,0 +1,19 @@
+RCX helps you to mange your files, everywhere you go, on your local device or on most cloud providers.
+ 
+<b>File Management</b> 
+You can list, view, download, upload, move, rename, delete files and folders
+
+<b>Streaming</b>
+Stream media files, serve files and directories over FTP, HTTP, WebDAV or DLNA
+
+<b>Material Design</b>
+Supports dark theme, custom primary and accent colors
+
+<b>Access almost everything</b>
+Supports Storage Access Framework (SAF) for SD card and USB device access, regular storage devices and of course any cloud compatible with rclone.
+
+<b>Runs on almost everything</b>
+All architectures (runs on ARM, ARM64, x86 and x64 devices, Android 7+ / 5+)
+ 
+
+
