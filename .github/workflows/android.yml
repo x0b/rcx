@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - '*'
-    tags:
-      - '*'
   pull_request:
 
 jobs:
@@ -26,12 +24,10 @@ jobs:
       id: go
     - name: Build rclone
       run: ./gradlew buildNative -p rclone
-    - name: Apply dummy Google Services
-      run: git cherry-pick -n google-services && git reset HEAD && git checkout HEAD -- .gitignore
     - name: Build app
-      run: ./gradlew assembleRcxDebug
+      run: ./gradlew assembleOssDebug
     - name: Upload APK
       uses: actions/upload-artifact@v2-preview
       with:
         name: universal.apk
-        path: app/build/outputs/apk/rcx/debug/app-rcx-universal-debug.apk
+        path: app/build/outputs/apk/oss/debug/app-oss-universal-debug.apk

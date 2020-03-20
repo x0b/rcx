@@ -44,11 +44,10 @@ import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
+import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
-import io.fabric.sdk.android.Fabric;
 import io.github.x0b.rfc3339parser.Rfc3339Parser;
 import io.github.x0b.rfc3339parser.Rfc3339Strict;
 import okhttp3.Call;
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
         if (enableCrashReports) {
-            Fabric.with(this, new Crashlytics());
+            CrashLogger.initCrashLogging(this);
         }
 
         applyTheme();
