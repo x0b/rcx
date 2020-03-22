@@ -17,6 +17,7 @@ import android.os.Message;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,6 +51,7 @@ import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.rfc3339parser.Rfc3339Parser;
 import io.github.x0b.rfc3339parser.Rfc3339Strict;
+import java9.util.stream.Stream;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -65,6 +67,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -271,7 +274,10 @@ public class MainActivity extends AppCompatActivity
             switch (permissions[i]) {
                 case Manifest.permission.WRITE_EXTERNAL_STORAGE:
                     // add/remove path aliases, depending on availability
-                    new RefreshLocalAliases().execute();
+                    RefreshLocalAliases refresh = new RefreshLocalAliases();
+                    if (refresh.isRequired()) {
+                        refresh.execute();
+                    }
             }
         }
     }
@@ -489,7 +495,10 @@ public class MainActivity extends AppCompatActivity
                     .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
             if (refreshLocalAliases) {
                 FLog.d(TAG, "Reloading local path aliases");
-                new RefreshLocalAliases().execute();
+                RefreshLocalAliases refresh = new RefreshLocalAliases();
+                if (refresh.isRequired()) {
+                    refresh.execute();
+                }
             }
         }
     }
@@ -711,6 +720,7 @@ public class MainActivity extends AppCompatActivity
             editor.remove(getString(R.string.shared_preferences_pinned_remotes));
             editor.remove(getString(R.string.shared_preferences_drawer_pinned_remotes));
             editor.remove(getString(R.string.shared_preferences_hidden_remotes));
+            editor.remove(getString(R.string.pref_key_accessible_storage_locations));
             editor.apply();
 
             if (rclone.isConfigEncrypted()) {
@@ -728,6 +738,31 @@ public class MainActivity extends AppCompatActivity
     private class RefreshLocalAliases extends AsyncTask<Void, Void, Boolean> {
 
         private LoadingDialog loadingDialog;
+
+        protected boolean isRequired() {
+            String[] externalVolumes = null;
+            String persisted = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(getString(R.string.pref_key_accessible_storage_locations), null);
+            if(null != persisted) {
+                externalVolumes = persisted.split("\\|");
+            }
+            String[] current = Stream.of(context.getExternalFilesDirs(null))
+                    .filter(f -> f != null)
+                    .map(f -> f.getAbsolutePath())
+                    .toArray(String[]::new);
+
+            if(Arrays.deepEquals(externalVolumes, current)) {
+                FLog.d(TAG, "Storage volumes not changed, no refresh required");
+                return false;
+            } else {
+                FLog.d(TAG, "Storage volumnes changed, refresh required");
+                externalVolumes = current;
+                persisted = TextUtils.join("|", current);
+                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                        .putString(getString(R.string.pref_key_accessible_storage_locations), persisted).apply();
+                return true;
+            }
+        }
 
         @Override
         protected void onPreExecute() {

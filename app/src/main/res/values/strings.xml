@@ -473,4 +473,5 @@
     <string name="sync_operation_failed">Sync operation failed</string>
     <string name="pref_open_all_files_setting_label">Grant MANAGE_EXTERNAL_STORAGE permission</string>
     <string name="pref_open_all_files_setting_summary">EXPERIMENTAL: Only works on Android R (Android 11)</string>
+    <string name="pref_key_accessible_storage_locations" translatable="false">accessible_storage_locations</string>
 </resources>
