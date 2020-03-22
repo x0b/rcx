@@ -141,6 +141,9 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             case GOOGLE_PHOTOS:
             case GOOGLE_DRIVE:
             case GOOGLE_CLOUD_STORAGE:
+            case DROPBOX:
+            case JOTTACLOUD:
+            case MAILRU:
                 return true;
             default:
                 return false;
