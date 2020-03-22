@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -735,6 +736,8 @@ public class MainActivity extends AppCompatActivity
 
     private class RefreshLocalAliases extends AsyncTask<Void, Void, Boolean> {
 
+        private String EMULATED = "5d44cd8d-397c-4107-b79b-17f2b6a071e8";
+
         private LoadingDialog loadingDialog;
 
         protected boolean isRequired() {
@@ -779,9 +782,15 @@ public class MainActivity extends AppCompatActivity
         protected Boolean doInBackground(Void... aVoid) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             Set<String> generated = pref.getStringSet(getString(R.string.pref_key_local_alias_remotes), new HashSet<>());
+            Set<String> renamed = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
+            SharedPreferences.Editor editor = pref.edit();
             for(String remote : generated) {
                 rclone.deleteRemote(remote);
+                renamed.remove(remote);
+                editor.remove(getString(R.string.pref_key_renamed_remote_prefix, remote));
             }
+            editor.putStringSet(getString(R.string.pref_key_renamed_remotes), renamed);
+            editor.apply();
             File[] dirs = context.getExternalFilesDirs(null);
             for(File file : dirs) {
                 // May be null if the path is currently not available
@@ -816,7 +825,7 @@ public class MainActivity extends AppCompatActivity
         private void addLocalRemote(File root) throws IOException {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             String name = root.getCanonicalPath();
-            String id = UUID.randomUUID().toString();
+            String id = Environment.isExternalStorageEmulated(root) ? EMULATED : UUID.randomUUID().toString();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 StorageManager storageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
                 StorageVolume storageVolume = storageManager.getStorageVolume(root);
