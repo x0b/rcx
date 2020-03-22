@@ -166,13 +166,11 @@ public class MainActivity extends AppCompatActivity
 
         int lastVersionCode = sharedPreferences.getInt(getString(R.string.pref_key_version_code), -1);
         String lastVersionName = sharedPreferences.getString(getString(R.string.pref_key_version_name), "");
-        int currentVersionCode = BuildConfig.VERSION_CODE;
+        int currentVersionCode = BuildConfig.VERSION_CODE / 10; // drop ABI flag digit
         String currentVersionName = BuildConfig.VERSION_NAME;
 
         if (lastVersionCode < currentVersionCode || !lastVersionName.equals(currentVersionName)) {
-            // In version code 24 there were changes to app shortcuts
-            // Remove this in the long future
-            if (lastVersionCode <= 23) {
+            if (lastVersionCode == 9) {
                 AppShortcutsHelper.removeAllAppShortcuts(this);
                 AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
             }

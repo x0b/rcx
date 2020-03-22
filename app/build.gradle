@@ -14,7 +14,7 @@ android {
         applicationId 'io.github.x0b.rcx'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 10
+        versionCode 100 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.11.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,6 +47,8 @@ android {
         }
         // OSS build
         oss {
+            dimension 'edition'
+            buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
         }
     }
 
@@ -68,7 +70,7 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
             output.versionCodeOverride =
-                    project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) + android.defaultConfig.versionCode * 10
+                    project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0) + android.defaultConfig.versionCode
         }
     }
     compileOptions {
