@@ -14,8 +14,8 @@ android {
         applicationId 'io.github.x0b.rcx'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 100 // last digit is reserved for ABI, only ever end on 0!
-        versionName '1.11.0'
+        versionCode 120 // last digit is reserved for ABI, only ever end on 0!
+        versionName '1.11.1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

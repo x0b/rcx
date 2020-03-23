@@ -11,7 +11,7 @@ Features
 Cloud Access | 256 Bit AES Encryption | Integrated Experience
 :-----:|:--------------:|:-----------:
 <img src="https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="192" /> | <img src="https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/locked-padlock.png?raw=true" alt="256 Bit AES End-to-End Encryption" width="144" /> | <img src="https://github.com/x0b/rcloneExplorer/blob/master-x0b/docs/smartphone.png?raw=true" alt="Integrated Experience" width="176"/>
-Use your cloud storage like a local folder | Keep your files private on any cloud provider with crypt remotes | Don't give up features or comfort just because it runs on a phone.
+Use your cloud storage like a local folder. | Keep your files private on any cloud provider with crypt remotes. | Don't give up features or comfort just because it runs on a phone.
 
 - **File Management** (list, view, download, upload, move, rename, delete files and folders)
 - **Streaming** (Stream media files, serve files and directories over FTP, HTTP, WebDAV or DLNA)
@@ -29,7 +29,7 @@ Manage Storage|Upload Files|Explore Files|Manage Files
 
 Installation
 ------------
-Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. You can also [register for the closed Google Play testing group](https://forms.gle/5jLYhZwafx7nEfi16).
+Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest) of the signed APK and install it on your phone. You can also [register for the closed Google Play testing group](https://forms.gle/5jLYhZwafx7nEfi16), the [Google Play Beta](https://play.google.com/apps/testing/io.github.x0b.rcx), or in the near future, F-Droid.
 
 | CPU architecture | Where to find | APK identifier |
 |:---|:--|:---:|
@@ -38,7 +38,7 @@ Grab the [latest version](https://github.com/x0b/rcloneExplorer/releases/latest)
 |Intel/AMD 32 Bit | some TV boxes and tablets | ```x86``` |
 |Intel/AMD 64 Bit | some emulators | ```x86_64``` |
 
-If you don't know which version to pick use ```rcloneExplorer-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any CTS phone, tablet or TV with Android 5 or newer, but is only tested on Android 7 and newer.
+If you don't know which version to pick use ```rcx-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any CTS phone, tablet or TV with Android 5 or newer, but is only tested on Android 7 and newer.
 
 Usage
 ------------
@@ -48,28 +48,16 @@ Roadmap
 ------------
 Note that these plans are subject to change and might not materialize completely or at all.
 
-#### Current Version (1.11.0)
-##### Improvements
-* Mega.nz config
-* Google Photos config
-* Renaming remotes
-* DLNA serving
-* Automatically manage alias remotes for local drives
-* Show storage usage (rclone about) ([kaczmarkiewiczp#196](https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/196))
-* Reauthorize OAuth remotes ([#6](https://github.com/x0b/rcloneExplorer/issues/6))
-* Rclone 1.51.0
-* Settings shortcut
-* Android R support (preliminary)
+#### Current Version (1.11.1)
 ##### Fixes
-* OneDrive configuration
-* Streams now only start if available, otherwise fail loudly
-* Crash when opening file
-##### Internal
-   * Java 8 and Stream support
-   * Rclone source build
-   * Improved logging
-   * InteractiveRunner Framework
-   * Moved strings to external resource for translation
+ * Local drives refreshing when nothing changed
+ * Local drives not cleaning up properly
+ * Renamed and generated remote names
+ * OAuth flag missing for Dropbox, Jottacloud and Mail.ru
+ * SD card SAF access errors being ignored
+ * Crash when streaming file fails
+ * Crash when having local drives enabled
+ * Crash when picking files for upload (Huawei only)
 
 #### Next minor version
 - Bug fixes
@@ -82,7 +70,6 @@ Note that these plans are subject to change and might not materialize completely
 #### Next year
 - Configuration encryption ([#12](https://github.com/x0b/rcloneExplorer/issues/12))
 - Reasonably regular updates of rclone
-- Play store and F-Droid availability ([kaczmarkiewiczp#192](https://github.com/kaczmarkiewiczp/rcloneExplorer/issues/197))
 
 Known Issues
 ------------
