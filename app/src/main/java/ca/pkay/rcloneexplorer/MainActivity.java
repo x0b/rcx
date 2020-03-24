@@ -875,7 +875,11 @@ public class MainActivity extends AppCompatActivity
             AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
             pinRemotesToDrawer();
             if (!isFinishing() && !isDestroyed()) {
-                startRemotesFragment();
+                try {
+                    startRemotesFragment();
+                } catch (IllegalStateException e) {
+                    FLog.e(TAG, "Could not refresh remotes, UI reference not valid", e);
+                }
             }
         }
     }
