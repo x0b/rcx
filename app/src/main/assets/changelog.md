@@ -1,3 +1,15 @@
+### 1.11.1
+* **Fix:** Local drives refreshing when nothing changed
+* **Fix:** Local drives not cleaning up properly
+* **Fix:** Renamed and generated remote names
+* **Fix:** OAuth flag missing for Dropbox, Jottacloud and Mail.ru
+* **Fix:** SD card SAF access errors being ignored
+* **Fix:** Crash when streaming file fails
+* **Fix:** Crash when having local drives enabled
+* **Fix:** Crash when picking files for upload (Huawei only)
+
+***
+
 ### 1.11.0
 * **New:** Mega.nz config
 * **New:** Google Photos config

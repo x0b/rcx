@@ -273,8 +273,8 @@ public class SafDAVServer extends NanoHTTPD {
             return notFound("onMkCol");
         } catch (ItemExistsException e) {
             return notAllowed("onMkCol");
-        } catch(SecurityException e){
-            forbidden("onMkCol");
+        } catch(SecurityException | IllegalStateException e){
+            return forbidden("onMkCol");
         }
         return created("onMkCol");
     }

@@ -1,7 +1,12 @@
-def repository = 'github.com/rclone/rclone'
+// Rclone version - any git reference (tag, branch, hash) should work
 def buildTag = 'v1.51.0'
 
+//
+// DO NOT EDIT ANYTHING BELOW
+//
 import java.nio.file.Paths
+def repository = 'github.com/rclone/rclone'
+def goPath = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
 def osName = System.properties['os.name'].toLowerCase()
 def osArch = System.properties['os.arch']
 def String os
@@ -25,7 +30,7 @@ task fetchRclone(type: Exec) {
 
 task checkoutRclone(type: Exec) {
     dependsOn fetchRclone
-    workingDir Paths.get(System.getenv('GOPATH'), "src/${repository}".split('/'))
+    workingDir Paths.get(goPath, "src/${repository}".split('/'))
     commandLine 'git', 'checkout', buildTag
 }
 
@@ -49,7 +54,7 @@ task buildArm(type: Exec) {
     environment 'GOARCH', 'arm'
     environment 'GOARM', '7'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-v', '-tags', 'linux', '-o', '../app/lib/armeabi-v7a/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/armeabi-v7a/librclone.so', repository
 }
 
 task buildArm64(type: Exec) {
@@ -61,7 +66,7 @@ task buildArm64(type: Exec) {
     environment 'GOOS', 'android'
     environment 'GOARCH', 'arm64'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-v', '-tags', 'linux', '-o', '../app/lib/arm64-v8a/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/arm64-v8a/librclone.so', repository
 }
 
 task buildx86(type: Exec) {
@@ -73,7 +78,7 @@ task buildx86(type: Exec) {
     environment 'GOOS', 'android'
     environment 'GOARCH', '386'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-v', '-tags', 'linux', '-o', '../app/lib/x86/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86/librclone.so', repository
 }
 
 task buildx64(type: Exec) {
@@ -85,7 +90,7 @@ task buildx64(type: Exec) {
     environment 'GOOS', 'android'
     environment 'GOARCH', 'amd64'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-v', '-tags', 'linux', '-o', '../app/lib/x86_64/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86_64/librclone.so', repository
 }
 
 task buildNative {

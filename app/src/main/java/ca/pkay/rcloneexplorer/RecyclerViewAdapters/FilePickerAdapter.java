@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import ca.pkay.rcloneexplorer.Items.FileItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -71,7 +72,7 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
 
             holder.fileSize.setText(sizeToHumanReadable(file.length()));
 
-            String mimeType = URLConnection.guessContentTypeFromName(file.getPath());
+            String mimeType = FileItem.getMimeType("application/octet-stream", file.getPath());
             if (mimeType != null && (mimeType.startsWith("image") || mimeType.startsWith("video"))) {
                 RequestOptions glideOption = new RequestOptions()
                         .centerCrop()

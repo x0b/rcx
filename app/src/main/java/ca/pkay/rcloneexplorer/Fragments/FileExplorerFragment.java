@@ -1886,12 +1886,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class StreamTask extends AsyncTask<FileItem, Void, Void> {
+    private class StreamTask extends AsyncTask<FileItem, Void, Boolean> {
 
+        private static final String TAG = "StreamTask";
         public static final int OPEN_AS_VIDEO = 0;
         public static final int OPEN_AS_AUDIO = 1;
         private int openAs;
         private LoadingDialog loadingDialog;
+        private Intent serveIntent;
+        private FileItem fileItem;
+        private Intent intent;
 
         StreamTask() {
             this(-1);
@@ -1915,13 +1919,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         @Override
-        protected Void doInBackground(FileItem... fileItems) {
+        protected Boolean doInBackground(FileItem... fileItems) {
             if(context == null) {
                 FLog.w(TAG, "doInBackground: could not start stream, context is invalid");
-                return null;
+                return false;
             }
-            FileItem fileItem = fileItems[0];
-            Intent serveIntent = new Intent(context, StreamingService.class);
+            fileItem = fileItems[0];
+            serveIntent = new Intent(context, StreamingService.class);
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
@@ -1932,7 +1936,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .appendPath(fileItem.getName())
                     .build();
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent = new Intent(Intent.ACTION_VIEW);
 
             // open as takes precedence
             if (openAs == OPEN_AS_VIDEO) {
@@ -1986,15 +1990,18 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
                 retries--;
             }
+            return available;
+        }
 
-            if(available) {
-                Dialogs.dismissSilently(loadingDialog);
+        @Override
+        protected void onPostExecute(Boolean success) {
+            Dialogs.dismissSilently(loadingDialog);
+            if(success) {
                 tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
             } else {
-                Toasty.error(context, getString(R.string.streaming_task_failed), Toast.LENGTH_LONG, true);
+                Toasty.error(context, getString(R.string.streaming_task_failed), Toast.LENGTH_LONG, true).show();
                 context.stopService(serveIntent);
             }
-            return null;
         }
     }
 

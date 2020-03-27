@@ -53,6 +53,7 @@ public class ShareRemotesFragment extends Fragment {
         ((FragmentActivity) context).setTitle(getString(R.string.remotes_toolbar_title));
         Rclone rclone = new Rclone(getContext());
         remotes = rclone.getRemotes();
+        RemoteItem.prepareDisplay(getContext(), remotes);
         Collections.sort(remotes);
     }
 

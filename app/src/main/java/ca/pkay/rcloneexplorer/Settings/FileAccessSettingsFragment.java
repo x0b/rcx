@@ -140,7 +140,8 @@ public class FileAccessSettingsFragment extends Fragment {
 
     private void setRefreshLa(boolean isChecked) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        pref.edit().putBoolean(getString(R.string.pref_key_refresh_local_aliases), isChecked).apply();
+        pref.edit().putBoolean(getString(R.string.pref_key_refresh_local_aliases), isChecked)
+                .remove(getString(R.string.pref_key_accessible_storage_locations)).apply();
     }
 
     private void openAndroidRAllFilesSettings() {

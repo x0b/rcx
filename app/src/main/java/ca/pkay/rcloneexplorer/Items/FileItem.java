@@ -104,7 +104,7 @@ public class FileItem implements Parcelable {
         return isDir;
     }
 
-    private String getMimeType(String mimeType, String path) {
+    public static String getMimeType(String mimeType, String path) {
         if ("application/octet-stream".equals(mimeType)) {
             String extension = MimeTypeMap.getFileExtensionFromUrl(path);
             if ((extension == null || "".equals(extension)) && path.lastIndexOf('.') < path.length() + 1) {
