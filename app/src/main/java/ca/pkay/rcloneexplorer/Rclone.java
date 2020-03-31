@@ -312,7 +312,7 @@ public class Rclone {
 
                 RemoteItem newRemote = new RemoteItem(key, type);
                 if (type.equals("crypt") || type.equals("alias") || type.equals("cache")) {
-                    newRemote = getRemoteType(remotesJSON, newRemote, key);
+                    newRemote = getRemoteType(remotesJSON, newRemote, key, 8);
                     if (newRemote == null) {
                         Toasty.error(context, context.getResources().getString(R.string.error_retrieving_remote, key), Toast.LENGTH_SHORT, true).show();
                         continue;
@@ -336,7 +336,7 @@ public class Rclone {
         return remoteItemList;
     }
 
-    private RemoteItem getRemoteType(JSONObject remotesJSON, RemoteItem remoteItem, String remoteName) {
+    private RemoteItem getRemoteType(JSONObject remotesJSON, RemoteItem remoteItem, String remoteName, int maxDepth) {
         Iterator<String> iterator = remotesJSON.keys();
 
         while (iterator.hasNext()) {
@@ -368,7 +368,7 @@ public class Rclone {
                         recurse = false;
                 }
 
-                if (recurse) {
+                if (recurse && maxDepth > 0) {
                     String remote = remoteJSON.getString("remote");
                     if (remote == null || (!remote.contains(":") && !remote.startsWith("/"))) {
                         return null;
@@ -381,7 +381,7 @@ public class Rclone {
                     } else {
                         int index = remote.indexOf(":");
                         remote = remote.substring(0, index);
-                        return getRemoteType(remotesJSON, remoteItem, remote);
+                        return getRemoteType(remotesJSON, remoteItem, remote, --maxDepth);
                     }
                 }
                 remoteItem.setType(type);
