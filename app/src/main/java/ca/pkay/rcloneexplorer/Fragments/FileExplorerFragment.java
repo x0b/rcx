@@ -1995,6 +1995,18 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         @Override
         protected void onPostExecute(Boolean success) {
+            if (!isRunning) {
+                // TODO: restructure user flow
+                //       1) Start the host service and display a notification
+                //          "Loading file for streaming"
+                //       2) If the stream becomes available, set notification
+                //          intent to start stream
+                //          a) The user has not navigated away -> invoke Intent
+                //          b) The user has navigated away -> Send an intent to
+                //             the service to update its notification
+                FLog.w(TAG, "Streaming failed: user navigated away before stream could load");
+                return;
+            }
             Dialogs.dismissSilently(loadingDialog);
             if(success) {
                 tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
