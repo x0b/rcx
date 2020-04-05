@@ -1796,7 +1796,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         private void cancelProcess() {
-            process.destroy();
+            if (null != process) {
+                process.destroy();
+            }
         }
 
         @Override
