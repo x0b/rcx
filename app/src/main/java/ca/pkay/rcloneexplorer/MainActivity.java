@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivityForResult(settingsIntent, SETTINGS_CODE);
+                tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
                 break;
             case R.id.nav_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
@@ -475,7 +475,7 @@ public class MainActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
 
-        startActivityForResult(intent, READ_REQUEST_CODE);
+        tryStartActivityForResult(this, intent, READ_REQUEST_CODE);
     }
 
     public void exportConfigFile() {
