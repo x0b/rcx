@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivityForResult(settingsIntent, SETTINGS_CODE);
+                tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
                 break;
             case R.id.nav_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
@@ -475,7 +475,7 @@ public class MainActivity extends AppCompatActivity
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
 
-        startActivityForResult(intent, READ_REQUEST_CODE);
+        tryStartActivityForResult(this, intent, READ_REQUEST_CODE);
     }
 
     public void exportConfigFile() {
@@ -768,6 +768,11 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(isFinishing() || isDestroyed()) {
+                FLog.w(TAG, "Invalid state, stopping drive refresh");
+                cancel(true);
+                return;
+            }
             View v = findViewById(R.id.locked_config);
             if (v != null) {
                 v.setVisibility(View.GONE);
@@ -780,6 +785,9 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Boolean doInBackground(Void... aVoid) {
+            if (isCancelled()) {
+                return null;
+            }
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             Set<String> generated = pref.getStringSet(getString(R.string.pref_key_local_alias_remotes), new HashSet<>());
             Set<String> renamed = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
