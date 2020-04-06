@@ -15,8 +15,8 @@ android {
         applicationId 'io.github.x0b.rcx'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 120 // last digit is reserved for ABI, only ever end on 0!
-        versionName '1.11.1'
+        versionCode 140 // last digit is reserved for ABI, only ever end on 0!
+        versionName '1.11.2'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -49,7 +49,7 @@ android {
         // OSS build
         oss {
             dimension 'edition'
-            buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
+            buildConfigField "java.lang.long", "BUILD_TIME", "0L"
         }
     }
 

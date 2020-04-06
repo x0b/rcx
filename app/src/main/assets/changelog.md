@@ -1,3 +1,11 @@
+### 1.11.2
+* **Fix:** Crash after granting storage permission
+* **Fix:** Crash when canceling loading early
+* **Fix:** Crash when importing config on device without ACTION_OPEN_DOCUMENT
+* **Fix:** Crash when stream is detected as failed
+* **Fix:** Crash when reading circular dependent config
+* **Fix:** Crash reporting not working
+
 ### 1.11.1
 * **Fix:** Local drives refreshing when nothing changed
 * **Fix:** Local drives not cleaning up properly
