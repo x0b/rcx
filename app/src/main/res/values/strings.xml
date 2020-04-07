@@ -474,4 +474,6 @@
     <string name="pref_open_all_files_setting_label">Grant MANAGE_EXTERNAL_STORAGE permission</string>
     <string name="pref_open_all_files_setting_summary">EXPERIMENTAL: Only works on Android R (Android 11)</string>
     <string name="pref_key_accessible_storage_locations" translatable="false">accessible_storage_locations</string>
+    <string name="no_app_found_for_this_link">No app found for this link</string>
+    <string name="documentsui_missing">System component for files (com.android.documentsui) missing</string>
 </resources>

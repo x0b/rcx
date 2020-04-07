@@ -158,7 +158,7 @@ public class FileAccessSettingsFragment extends Fragment {
     public void addRoot() {
         Intent treeOpenIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         treeOpenIntent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        startActivityForResult(treeOpenIntent, onDocumentTreeOpened);
+        tryStartActivityForResult(this, treeOpenIntent, onDocumentTreeOpened);
     }
 
     @Override

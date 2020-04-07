@@ -26,20 +26,20 @@ public class ActivityHelper {
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            showErrorToast(context);
+            showErrorToast(context, intent);
         }
     }
 
     @SuppressLint("CheckResult")
     public static void tryStartActivityForResult(Fragment fragment, Intent intent, int requestCode) {
         try {
-            if(!fragment.isAdded()) {
+            if (!fragment.isAdded()) {
                 FLog.w(TAG, "tryStartActivityForResult: fragment is not attached, can't start");
                 return;
             }
             fragment.startActivityForResult(intent, requestCode);
         } catch (ActivityNotFoundException e) {
-            showErrorToast(fragment.getContext());
+            showErrorToast(fragment.getContext(), intent);
         }
     }
 
@@ -47,17 +47,35 @@ public class ActivityHelper {
         try {
             activity.startActivityForResult(intent, requestCode);
         } catch (ActivityNotFoundException e) {
-            showErrorToast(activity);
+            showErrorToast(activity, intent);
         }
     }
 
-    private static void showErrorToast(final Context context) {
+    private static boolean requiresDocumentsUI(Intent intent) {
+        if (null == intent || null == intent.getAction()) {
+            return false;
+        }
+        switch (intent.getAction()) {
+            case Intent.ACTION_GET_CONTENT:
+            case Intent.ACTION_CREATE_DOCUMENT:
+            case Intent.ACTION_OPEN_DOCUMENT:
+            case Intent.ACTION_OPEN_DOCUMENT_TREE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static void showErrorToast(final Context context, Intent intent) {
         Looper main = Looper.getMainLooper();
-        if(main.equals(Looper.myLooper())){
-            Toasty.error(context, "No app found for this link", Toast.LENGTH_LONG, true).show();
+        String errorMessage = requiresDocumentsUI(intent) ?
+                context.getString(R.string.documentsui_missing) :
+                context.getString(R.string.no_app_found_for_this_link);
+        Toast errorToast = Toasty.error(context, errorMessage, Toast.LENGTH_LONG, true);
+        if (main.equals(Looper.myLooper())) {
+            errorToast.show();
         } else {
-            new Handler(main).post(() ->
-               Toasty.error(context, "No app found for this link", Toast.LENGTH_LONG, true).show());
+            new Handler(main).post(errorToast::show);
         }
     }
 
