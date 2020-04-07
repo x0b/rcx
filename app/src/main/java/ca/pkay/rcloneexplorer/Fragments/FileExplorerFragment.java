@@ -96,6 +96,7 @@ import java.util.Stack;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartService;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
@@ -525,7 +526,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(UploadService.LOCAL_PATH_ARG, uploadFile);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
                 intent.putExtra(UploadService.REMOTE_ARG, remote);
-                context.startService(intent);
+                tryStartService(context, intent);
             }
         } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT) {
             if (resultCode != FragmentActivity.RESULT_OK) {
@@ -540,7 +541,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 intent.putExtra(DownloadService.DOWNLOAD_ITEM_ARG, downloadItem);
                 intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
                 intent.putExtra(DownloadService.REMOTE_ARG, remote);
-                context.startService(intent);
+                tryStartService(context, intent);
             }
             downloadList.clear();
         } else if (requestCode == FILE_PICKER_SYNC_RESULT && resultCode == FragmentActivity.RESULT_OK) {
@@ -550,7 +551,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
             intent.putExtra(SyncService.SYNC_DIRECTION_ARG, syncDirection);
             intent.putExtra(SyncService.REMOTE_PATH_ARG, syncRemotePath);
-            context.startService(intent);
+            tryStartService(context, intent);
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);
@@ -684,7 +685,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             default:
                 return;
         }
-        context.startService(intent);
+        tryStartService(context, intent);
     }
 
     private void emptyTrash() {
@@ -738,7 +739,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
         serveIntent.putExtra(ThumbnailsLoadingService.HIDDEN_PATH, thumbnailServerAuth);
         serveIntent.putExtra(ThumbnailsLoadingService.SERVER_PORT, thumbnailServerPort);
-        context.startService(serveIntent);
+        tryStartService(context, serveIntent);
         isThumbnailsServiceRunning = true;
     }
 
@@ -961,7 +962,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             intent.putExtra(MoveService.MOVE_DEST_PATH, directoryObject.getCurrentPath());
             intent.putExtra(MoveService.MOVE_ITEM, moveItem);
             intent.putExtra(MoveService.PATH, path2);
-            context.startService(intent);
+            tryStartService(context, intent);
         }
         Toasty.info(context, getString(R.string.moving_info), Toast.LENGTH_SHORT, true).show();
         moveList.clear();
@@ -1313,7 +1314,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                             default:
                                 return;
                         }
-                        context.startService(intent);
+                        tryStartService(context, intent);
                     });
                     builder.setTitle(R.string.pick_a_protocol);
                     builder.show();
@@ -1476,7 +1477,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                         intent.putExtra(DeleteService.REMOTE_ARG, remote);
                         intent.putExtra(DeleteService.DELETE_ITEM, deleteItem);
                         intent.putExtra(DeleteService.PATH, directoryObject.getCurrentPath());
-                        context.startService(intent);
+                        tryStartService(context, intent);
                     }
                     Toasty.info(context, getString(R.string.deleting_info), Toast.LENGTH_SHORT, true).show();
                 });
@@ -1931,7 +1932,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
-            context.startService(serveIntent);
+            tryStartService(context, serveIntent);
 
             Uri uri = Uri.parse("http://127.0.0.1:8080")
                     .buildUpon()

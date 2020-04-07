@@ -33,6 +33,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartService;
 
 public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
                                                                     ShareFragment.OnShareDestinationSelected {
@@ -190,7 +191,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                 intent.putExtra(UploadService.LOCAL_PATH_ARG, uploadFile);
                 intent.putExtra(UploadService.UPLOAD_PATH_ARG, path);
                 intent.putExtra(UploadService.REMOTE_ARG, remote);
-                startService(intent);
+                tryStartService(context, intent);
             }
             finish();
         }
