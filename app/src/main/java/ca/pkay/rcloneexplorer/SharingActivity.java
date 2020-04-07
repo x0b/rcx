@@ -31,6 +31,7 @@ import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
 public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
@@ -198,6 +199,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
     @SuppressLint("StaticFieldLeak")
     private class CopyFile extends AsyncTask<Void, Void, Boolean> {
 
+        private static final String TAG = "SharingActvty/CopyFile";
         private Context context;
         private ArrayList<Uri> uris;
 
@@ -214,8 +216,14 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            boolean success = true;
             for (Uri uri : uris) {
                 String fileName;
+                if (null == uri.getScheme() || null == uri.getPath()) {
+                    FLog.w(TAG, "Can't copy invalid uri %s", uri);
+                    success = false;
+                    continue;
+                }
                 if (uri.getScheme().equals("content")) {
                     Cursor returnCursor = getContentResolver().query(uri, null, null, null, null);
                     if (returnCursor == null) {
@@ -250,11 +258,11 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                     fileOutputStream.flush();
                     fileOutputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FLog.e(TAG, "Copy error ", e);
                     return false;
                 }
             }
-            return true;
+            return success;
         }
 
         @Override
