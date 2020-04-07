@@ -768,7 +768,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(isFinishing() || isDestroyed()) {
+            if(isFinishing() || isDestroyed() || getSupportFragmentManager().isStateSaved()) {
                 FLog.w(TAG, "Invalid state, stopping drive refresh");
                 cancel(true);
                 return;
