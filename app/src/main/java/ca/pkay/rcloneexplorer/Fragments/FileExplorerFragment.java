@@ -1379,7 +1379,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         directoryObject.setPath(path);
         //noinspection StatementWithEmptyBody
-        while (!pathStack.pop().equals(path)) {
+        while (!pathStack.empty() && !pathStack.pop().equals(path)) {
             // pop stack until we find path
         }
         breadcrumbView.removeCrumbsUpTo(path);
