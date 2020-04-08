@@ -3,8 +3,9 @@ package ca.pkay.rcloneexplorer.Database.xml;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

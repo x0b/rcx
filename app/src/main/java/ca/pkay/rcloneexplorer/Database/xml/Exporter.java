@@ -5,8 +5,8 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
+import androidx.core.app.ActivityCompat;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
