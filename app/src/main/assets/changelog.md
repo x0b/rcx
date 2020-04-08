@@ -1,3 +1,13 @@
+### 1.11.3
+* **Fix:** Crash when selecting "Add Storage" on TVs and other devices
+* **Fix:** Crash when sharing file to rcx contains garbage data
+* **Fix:** Crash when using thumbnails
+* **Fix:** Crash after granting storage permission, part II
+* **Fix:** Crash when navigation gets confused
+* **Fix:** Crash when creating config for meta-remotes
+
+***
+
 ### 1.11.2
 * **Fix:** Crash after granting storage permission
 * **Fix:** Crash when canceling loading early
@@ -5,6 +15,8 @@
 * **Fix:** Crash when stream is detected as failed
 * **Fix:** Crash when reading circular dependent config
 * **Fix:** Crash reporting not working
+
+***
 
 ### 1.11.1
 * **Fix:** Local drives refreshing when nothing changed

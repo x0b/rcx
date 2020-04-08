@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -131,7 +132,7 @@ public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnD
         }
 
         RemoteItem.prepareDisplay(context, remotes);
-        remotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
+        Collections.sort(remotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {

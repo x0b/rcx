@@ -24,6 +24,7 @@ import es.dmoral.toasty.Toasty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnDestinationSelectedListener {
@@ -122,7 +123,7 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
         }
 
         RemoteItem.prepareDisplay(context, configuredRemotes);
-        configuredRemotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
+        Collections.sort(configuredRemotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[configuredRemotes.size()];
         int i = 0;
         for (RemoteItem remote : configuredRemotes) {

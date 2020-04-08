@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Dialogs.NumberPickerDialog;
@@ -286,7 +287,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
             return;
         }
         RemoteItem.prepareDisplay(context, remotes);
-        remotes.sort((a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
+        Collections.sort(remotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {
