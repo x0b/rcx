@@ -220,7 +220,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             boolean success = true;
             for (Uri uri : uris) {
                 String fileName;
-                if (null == uri.getScheme() || null == uri.getPath()) {
+                if (null == uri || null == uri.getScheme() || null == uri.getPath()) {
                     FLog.w(TAG, "Can't copy invalid uri %s", uri);
                     success = false;
                     continue;
