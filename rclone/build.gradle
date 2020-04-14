@@ -1,11 +1,11 @@
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.51.0'
+def buildTag = 'rcx-master'
 
 //
 // DO NOT EDIT ANYTHING BELOW
 //
 import java.nio.file.Paths
-def repository = 'github.com/rclone/rclone'
+def repository = 'github.com/x0b/rclone'
 def goPath = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
 def osName = System.properties['os.name'].toLowerCase()
 def osArch = System.properties['os.arch']
@@ -28,8 +28,14 @@ task fetchRclone(type: Exec) {
     commandLine 'go', 'get', '-d', repository
 }
 
-task checkoutRclone(type: Exec) {
+task updateLocalRclone(type: Exec) {
     dependsOn fetchRclone
+    workingDir Paths.get(goPath, "src/${repository}".split('/'))
+    commandLine 'git', 'fetch'
+}
+
+task checkoutRclone(type: Exec) {
+    dependsOn updateLocalRclone
     workingDir Paths.get(goPath, "src/${repository}".split('/'))
     commandLine 'git', 'checkout', buildTag
 }
@@ -54,7 +60,8 @@ task buildArm(type: Exec) {
     environment 'GOARCH', 'arm'
     environment 'GOARM', '7'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/armeabi-v7a/librclone.so', repository
+    environment 'CGO_LDFLAGS', "-fuse-ld=gold -s -w"
+    commandLine 'go', 'build', '-tags', 'linux', '-trimpath', '-o', '../app/lib/armeabi-v7a/librclone.so', repository
 }
 
 task buildArm64(type: Exec) {
@@ -66,7 +73,21 @@ task buildArm64(type: Exec) {
     environment 'GOOS', 'android'
     environment 'GOARCH', 'arm64'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/arm64-v8a/librclone.so', repository
+    environment 'CGO_LDFLAGS', "-fuse-ld=gold -s -w"
+    commandLine 'go', 'build', '-tags', 'linux', '-trimpath', '-v', '-o', '../app/lib/arm64-v8a/librclone.so', repository
+}
+
+task buildPluginArm64(type: Exec) {
+    dependsOn checkoutRclone
+    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
+    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'aarch64-linux-android21-clang')
+    environment 'CC', crossCompiler
+    environment 'CC_FOR_TARGET', crossCompiler
+    environment 'GOOS', 'android'
+    environment 'GOARCH', 'arm64'
+    environment 'CGO_ENABLED', '1'
+    environment 'CGO_LDFLAGS', "-fuse-ld=gold -s -w"
+    commandLine 'C:\\sdev\\golang-go\\bin\\go', 'build', '-tags', 'linux', '-buildmode', 'c-shared', '-trimpath', '-v', '-o', '../app/lib/arm64-v8a/librcloneplugin_minimal.so', 'github.com/x0b'
 }
 
 task buildx86(type: Exec) {
@@ -78,7 +99,8 @@ task buildx86(type: Exec) {
     environment 'GOOS', 'android'
     environment 'GOARCH', '386'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86/librclone.so', repository
+    environment 'CGO_LDFLAGS', "-fuse-ld=gold -s -w"
+    commandLine 'go', 'build', '-tags', 'linux', '-trimpath', '-o', '../app/lib/x86/librclone.so', repository
 }
 
 task buildx64(type: Exec) {
@@ -90,7 +112,8 @@ task buildx64(type: Exec) {
     environment 'GOOS', 'android'
     environment 'GOARCH', 'amd64'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86_64/librclone.so', repository
+    environment 'CGO_LDFLAGS', "-fuse-ld=gold -s -w"
+    commandLine 'go', 'build', '-tags', 'linux', '-trimpath', '-o', '../app/lib/x86_64/librclone.so', repository
 }
 
 task buildNative {

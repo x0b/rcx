@@ -17,6 +17,7 @@ android {
         targetSdkVersion 29
         versionCode 170 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.11.4'
+        resConfigs "en" // restrict lang to english only to save bytes
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

@@ -7,7 +7,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.0'
+        classpath 'com.android.tools.build:gradle:3.6.2'
 
         if (!getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains("oss")) {
             classpath 'com.google.gms:google-services:4.3.3' // google-services plugin
