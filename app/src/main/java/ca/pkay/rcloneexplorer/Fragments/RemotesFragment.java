@@ -197,7 +197,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     private void refreshFragment() {
-        if (getFragmentManager() == null) {
+        if (getFragmentManager() == null || isStateSaved()) {
             return;
         }
 
@@ -501,17 +501,19 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         builder.setTitle(R.string.delete_remote_title);
         builder.setMessage(remoteItem.getDisplayName());
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setPositiveButton(R.string.delete, (dialog, which) -> new DeleteRemote(remoteItem).execute());
+        builder.setPositiveButton(R.string.delete, (dialog, which) -> new DeleteRemote(context, remoteItem).execute());
         builder.show();
     }
 
     @SuppressLint("StaticFieldLeak")
     private class DeleteRemote extends AsyncTask<Void, Void, Void> {
 
-        private RemoteItem remoteItem;
+        private final RemoteItem remoteItem;
+        private final Context context;
 
-        DeleteRemote(RemoteItem remoteItem) {
+        public DeleteRemote(Context context, RemoteItem remoteItem) {
             this.remoteItem = remoteItem;
+            this.context = context.getApplicationContext();
         }
 
         @Override
