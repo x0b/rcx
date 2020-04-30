@@ -37,10 +37,10 @@ import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.TaskStartService;
 import es.dmoral.toasty.Toasty;
 
-public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
+public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder> {
 
 
-    private static String clipboardID="rclone_explorer_task_id";
+    private static final String clipboardID = "rclone_explorer_task_id";
 
     private List<Task> tasks;
     private View view;
@@ -66,33 +66,42 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         holder.taskName.setText(remoteName);
 
-        RemoteItem remote = new RemoteItem(selectedTask.getRemote_id(), String.valueOf(selectedTask.getRemote_type()));
+        RemoteItem remote = new RemoteItem(selectedTask.getRemoteId(), String.valueOf(selectedTask.getRemoteType()));
 
         holder.taskIcon.setImageDrawable(view.getResources().getDrawable(remote.getRemoteIcon()));
 
         int direction = selectedTask.getDirection();
 
-        if(direction == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE || direction == SyncDirectionObject.COPY_LOCAL_TO_REMOTE){
+        // TODO: This currently displays the technical name, not the display name
+        if (direction == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE || direction == SyncDirectionObject.COPY_LOCAL_TO_REMOTE) {
             holder.fromID.setVisibility(View.GONE);
-            holder.fromPath.setText(selectedTask.getLocal_path());
+            holder.fromPath.setText(selectedTask.getLocalPath());
 
-            holder.toID.setText(String.format("@%s", selectedTask.getRemote_id()));
-            holder.toPath.setText(selectedTask.getRemote_path());
+            holder.toID.setText(String.format("@%s", selectedTask.getRemoteId()));
+            holder.toPath.setText(selectedTask.getRemotePath());
         }
 
-        if(direction == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL || direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL){
-            holder.fromID.setText(String.format("@%s", selectedTask.getRemote_id()));
-            holder.fromPath.setText(selectedTask.getRemote_path());
+        if (direction == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL || direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL) {
+            holder.fromID.setText(String.format("@%s", selectedTask.getRemoteId()));
+            holder.fromPath.setText(selectedTask.getRemotePath());
 
             holder.toID.setVisibility(View.GONE);
-            holder.toPath.setText(selectedTask.getLocal_path());
+            holder.toPath.setText(selectedTask.getLocalPath());
         }
 
-        switch (direction){
-            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL: holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync)); break;
-            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE: holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy)); break;
-            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL: holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy)); break;
-            default: holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync)); break;
+        switch (direction) {
+            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync));
+                break;
+            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy));
+                break;
+            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy));
+                break;
+            default:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync));
+                break;
         }
 
         holder.fileOptions.setOnClickListener(new View.OnClickListener() {
@@ -110,22 +119,22 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     public void setList(ArrayList<Task> data) {
-        tasks=data;
+        tasks = data;
         notifyDataSetChanged();
     }
 
-    private void startTask(Task task){
-        String path = task.getLocal_path();
-        RemoteItem ri = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
+    private void startTask(Task task) {
+        String path = task.getLocalPath();
+        RemoteItem ri = new RemoteItem(task.getRemoteId(), task.getRemoteType());
         Intent intent = new Intent(context, SyncService.class);
         intent.putExtra(SyncService.REMOTE_ARG, ri);
         intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
         intent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
-        intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
+        intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
         context.startService(intent);
     }
 
-    private void editTask(Task task){
+    private void editTask(Task task) {
         new TaskDialog(context, this, task).show();
     }
 
@@ -210,19 +219,19 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         }
     }
 
-    private static void createShortcut(Context c, Task t) {
+    private static void createShortcut(Context c, Task task) {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
 
 
             Intent i = new Intent(c, TaskStartService.class);
-            i.putExtra("task", t.getId());
+            i.putExtra("task", task.getId());
             i.setAction(TaskStartService.TASK_ACTION);
 
-            ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(t.getId()))
-                    .setShortLabel(t.getTitle())
-                    .setLongLabel(t.getRemote_path())
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(task.getId()))
+                    .setShortLabel(task.getTitle())
+                    .setLongLabel(task.getRemotePath())
                     .setIcon(Icon.createWithResource(c, R.mipmap.ic_launcher))
                     .setIntent(i)
                     .build();

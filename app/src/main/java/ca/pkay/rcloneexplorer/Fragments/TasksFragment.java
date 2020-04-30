@@ -176,7 +176,7 @@ public class TasksFragment extends Fragment {
                     }
 
                     for(Task t: importedList){
-                        dbHandler.createEntry(t);
+                        dbHandler.createTask(t);
                     }
 
                     recyclerViewAdapter.setList((ArrayList<Task>) dbHandler.getAllTasks());

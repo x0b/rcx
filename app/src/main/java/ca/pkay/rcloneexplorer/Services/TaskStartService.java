@@ -5,15 +5,15 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.content.Context;
-import android.os.Build;
-import android.util.Log;
+  import android.os.Build;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
-import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 
 /**
@@ -25,13 +25,14 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
  */
 public class TaskStartService extends IntentService {
 
-    public static String TASK_ACTION= "START_TASK";
-    private static String EXTRA_TASK_ID= "task";
-    private static String EXTRA_TASK_SILENT= "notification";
+    private static final String TAG = "TaskStartService";
+    public static final String TASK_ACTION = "START_TASK";
+    private static final String EXTRA_TASK = "task";
+    private static final String EXTRA_TASK_SILENT = "notification";
 
     public TaskStartService() {
-        super("TaskStartService");
-        Log.e("Service", "Start service intent!");
+        super(TAG);
+        FLog.v(TAG, "Start service intent!");
     }
 
     @Override
@@ -41,33 +42,31 @@ public class TaskStartService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (action.equals(TASK_ACTION)) {
-                DatabaseHandler db = new DatabaseHandler(this);
-                for (Task task: db.getAllTasks()){
-                    if(task.getId()==intent.getIntExtra(EXTRA_TASK_ID, -1)){
-                        String path = task.getLocal_path();
+    protected void onHandleIntent(@Nullable Intent intent) {
+        if (null == intent) {
+            return;
+        }
+        if (TASK_ACTION.equals(intent.getAction()) && null != intent.getExtras()) {
+            Task task = intent.getParcelableExtra(EXTRA_TASK);
+            if (null == task) {
+                return;
+            }
+            String path = task.getLocalPath();
 
-                        boolean silentRun =intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
+            boolean silentRun = intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
 
-                        RemoteItem remoteItem = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
-                        Intent taskIntent = new Intent();
-                        taskIntent.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
-
-                        taskIntent.putExtra(SyncService.REMOTE_ARG, remoteItem);
-                        taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
-                        taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
-                        taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
-                        taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(taskIntent);
-                        }else {
-                            startService(taskIntent);
-                        }
-                    }
-                }
+            RemoteItem remoteItem = new RemoteItem(task.getRemoteId(), task.getRemoteType());
+            Intent taskIntent = new Intent();
+            taskIntent.setClass(getApplicationContext(), SyncService.class);
+            taskIntent.putExtra(SyncService.REMOTE_ARG, remoteItem);
+            taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
+            taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
+            taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
+            taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(taskIntent);
+            } else {
+                startService(taskIntent);
             }
         }
     }
@@ -79,10 +78,11 @@ public class TaskStartService extends IntentService {
     private void createPersistentNotification() {
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "task_intent_notification";
+            // TODO i10n
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel for intent notifications", NotificationManager.IMPORTANCE_DEFAULT);
 
-            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-
+            NotificationManagerCompat.from(this).createNotificationChannel(channel);
+            // TODO: create meaningful notification
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
 
             startForeground(1, notification);

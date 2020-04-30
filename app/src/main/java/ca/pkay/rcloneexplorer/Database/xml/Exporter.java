@@ -60,9 +60,9 @@ public class Exporter {
             Element em = document.createElement("task");
             em.appendChild(createChild(document, "id", String.valueOf(task.getId())));
             em.appendChild(createChild(document, "name", task.getTitle()));
-            em.appendChild(createChild(document, "remote_name", task.getRemote_id()));
-            em.appendChild(createChild(document, "remote_path", task.getRemote_path()));
-            em.appendChild(createChild(document, "local_path", task.getLocal_path()));
+            em.appendChild(createChild(document, "remote_name", task.getRemoteId()));
+            em.appendChild(createChild(document, "remote_path", task.getRemotePath()));
+            em.appendChild(createChild(document, "local_path", task.getLocalPath()));
             em.appendChild(createChild(document, "sync_direction", String.valueOf(task.getDirection())));
             rootElement.appendChild(em);
         }
