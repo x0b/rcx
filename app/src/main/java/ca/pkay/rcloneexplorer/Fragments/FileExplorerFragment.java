@@ -571,12 +571,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
-        if (remote.isCrypt()) {
+        if (!remote.hasLinkSupport()) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
         if (!remote.isRemoteType(RemoteItem.SFTP)) {
             menu.findItem(R.id.action_go_to).setVisible(false);
         }
+        if (!remote.hasSyncSupport()) {
+            menu.findItem(R.id.action_sync).setVisible(false);
+        }
+
         menu.findItem(R.id.action_wrap_filenames).setChecked(true);
 
         if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
@@ -1351,11 +1355,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             popupMenu.getMenu().findItem(R.id.action_sync).setVisible(false);
         }
-        if (remote.isCrypt()) {
+        if (!remote.hasSyncSupport()) {
+            // TODO: remove once destination sync is added.
+            popupMenu.getMenu().findItem(R.id.action_sync).setVisible(false);
+        }
+        if (!remote.hasLinkSupport()) {
             popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
         }
-        if (remote.isCrypt()) {
-            popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
+        if (remote.isRemoteType(RemoteItem.LOCAL, RemoteItem.SAFW) || remote.isPathAlias()) {
+            // TODO: replace with .setTitle(copy) once destination copy is added
+            popupMenu.getMenu().findItem(R.id.action_download).setVisible(false);
         }
     }
 

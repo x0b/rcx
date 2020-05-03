@@ -150,6 +150,21 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         }
     }
 
+    public boolean hasLinkSupport(){
+        if (isRemoteType(CRYPT, LOCAL, SAFW) || isPathAlias) {
+            return false;
+        }
+        return true;
+    }
+
+    // TODO: check callers once destination sync is added
+    public boolean hasSyncSupport() {
+        if (isRemoteType(LOCAL, SAFW) || isPathAlias) {
+            return false;
+        }
+        return true;
+    }
+
     public String getName() {
         return name;
     }
