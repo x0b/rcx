@@ -17,13 +17,23 @@ public class Task implements Parcelable {
     public static final String COLUMN_NAME_LOCAL_PATH = "local_path";
     public static final String COLUMN_NAME_SYNC_DIRECTION = "direction";
 
+    @JsonProperty("id")
     private Long id;
+    @JsonProperty("name")
     private String title = "";
+    @JsonProperty("remoteName")
     private String remoteId = "";
+    @JsonProperty("remoteType")
     private String remoteType = "";
+    @JsonProperty("remotePath")
     private String remotePath = "";
+    @JsonProperty("localPath")
     private String localPath = "";
+    @JsonProperty("syncDirection")
     private int direction = 0;
+
+    private Task() {
+    }
 
     public Task(Long id) {
         this.id = id;

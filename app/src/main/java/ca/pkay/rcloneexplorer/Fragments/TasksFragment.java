@@ -11,37 +11,37 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.xml.sax.SAXException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import javax.xml.parsers.ParserConfigurationException;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
-import ca.pkay.rcloneexplorer.Database.xml.Exporter;
-import ca.pkay.rcloneexplorer.Database.xml.Importer;
 import ca.pkay.rcloneexplorer.Dialogs.TaskDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
-import es.dmoral.toasty.Toasty;
+import ca.pkay.rcloneexplorer.util.FLog;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
+
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
 public class TasksFragment extends Fragment {
 
+    private static final String TAG = "TasksFragment";
+    private static final int EXPORT_TASKS_REQUEST_CODE = 211;
+    private static final int IMPORT_TASKS_REQUEST_CODE = 221;
     private TasksRecyclerViewAdapter recyclerViewAdapter;
-    private Activity filePickerActivity;
-
 
     public TasksFragment() {
         // Required empty public constructor
@@ -108,84 +108,76 @@ public class TasksFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_import:
-                if(Importer.getFilePermission(getActivity())){
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("text/xml");
-                    startActivityForResult(intent, Importer.READ_REQUEST_CODE);
-                }
+                startImport();
                 break;
             case R.id.action_export:
-                Exporter.export(getActivity());
+                startExport();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        Activity activity = getActivity();
-        Context context = getContext();
+    private void startImport() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        tryStartActivityForResult(this, intent, IMPORT_TASKS_REQUEST_CODE);
+    }
 
-        if(activity==null){
-            Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
+    public void startExport() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+        intent.putExtra(Intent.EXTRA_TITLE, "tasks.json");
+        tryStartActivityForResult(this, intent, EXPORT_TASKS_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @NonNull Intent resultData) {
+        Context context = getContext();
+        if (resultCode != Activity.RESULT_OK || null == resultData.getData() || null == context) {
             return;
         }
 
         switch (requestCode){
-            case Importer.PERM_REQUEST_CODE:
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("text/xml");
-                startActivityForResult(intent, Importer.READ_REQUEST_CODE);
+            case IMPORT_TASKS_REQUEST_CODE:
+                importTasks(context, resultData.getData());
                 break;
-            case Importer.READ_REQUEST_CODE:
-                try {
-                    String importedData="";
-                    if (resultCode == Activity.RESULT_OK) {
-
-                        Uri uri = null;
-                        if (resultData != null) {
-                            uri = resultData.getData();
-
-                            if(uri==null){
-                                Toasty.error(context, context.getResources().getString(R.string.importer_no_file_selected), Toast.LENGTH_SHORT, true).show();
-                                return;
-                            }
-
-                            InputStream in =  activity.getContentResolver().openInputStream(uri);
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                            StringBuilder out = new StringBuilder();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                out.append(line);
-                            }
-
-                            reader.close();
-                            if (in != null) {
-                                in.close();
-                            }
-                            importedData = out.toString();
-                        }
-                    }
-
-                    ArrayList<Task> importedList = Importer.createTasklist(importedData);
-                    DatabaseHandler dbHandler = new DatabaseHandler(context);
-                    for (Task t : dbHandler.getAllTasks()){
-                        dbHandler.deleteEntry(t.getId());
-                    }
-
-                    for(Task t: importedList){
-                        dbHandler.createTask(t);
-                    }
-
-                    recyclerViewAdapter.setList((ArrayList<Task>) dbHandler.getAllTasks());
-
-                } catch (IOException | SAXException | ParserConfigurationException e) {
-                    e.printStackTrace();
-                }
-
+            case EXPORT_TASKS_REQUEST_CODE:
+                exportTasks(context, resultData.getData());
                 break;
+        }
+    }
+
+    private void importTasks(@NonNull Context context, @NonNull Uri uri) {
+        try (InputStream in = context.getContentResolver().openInputStream(uri)) {
+            if (null == in) {
+                return;
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            ArrayList<Task> tasks = mapper.readValue(in, new TypeReference<ArrayList<Task>>(){});
+            DatabaseHandler handler = new DatabaseHandler(context);
+            handler.deleteAll();
+            for (Task task : tasks) {
+                handler.createTask(task);
+            }
+            recyclerViewAdapter.setList((ArrayList<Task>) handler.getAllTasks());
+        } catch (IOException e) {
+            FLog.e(TAG, "importTasks: Couldn't import tasks", e);
+        }
+    }
+
+    private void exportTasks (@NonNull Context context, @NonNull Uri uri) {
+        try(OutputStream out = context.getContentResolver().openOutputStream(uri)) {
+            if (null == out) {
+                return;
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            DatabaseHandler handler = new DatabaseHandler(context);
+            mapper.writeValue(out, handler.getAllTasks());
+        } catch (IOException e) {
+            FLog.e(TAG, "Error exporting tasks ", e);
         }
     }
 }

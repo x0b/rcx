@@ -116,7 +116,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String selection = Task.COLUMN_NAME_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
         return db.delete(Task.TABLE_NAME, selection, selectionArgs);
+    }
 
+    public void deleteAll () {
+        SQLiteDatabase database = getReadableDatabase();
+        database.delete(Task.TABLE_NAME, null, null);
     }
 
 }
