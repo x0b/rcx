@@ -1,6 +1,7 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -1974,8 +1975,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             boolean available = false;
             while (retries > 0) {
                 try {
-                    URL checkUrl = new URL(uri.toString());
-                    FLog.v(TAG, "doInBackground: GET %s", checkUrl.toString());
+                    FLog.v(TAG, "doInBackground: HEAD %s", uri.toString());
                     Response response = client.newCall(request).execute();
                     code = response.code();
 
@@ -2021,7 +2021,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
             Dialogs.dismissSilently(loadingDialog);
             if(success) {
-                tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
+                Activity activity = getActivity();
+                if (null == activity) {
+                    return;
+                }
+                tryStartActivityForResult(activity, intent, STREAMING_INTENT_RESULT);
             } else {
                 Toasty.error(context, getString(R.string.streaming_task_failed), Toast.LENGTH_LONG, true).show();
                 context.stopService(serveIntent);
