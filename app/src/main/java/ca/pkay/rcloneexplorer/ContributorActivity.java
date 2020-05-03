@@ -4,7 +4,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import us.feras.mdv.MarkdownView;
+import ca.pkay.rcloneexplorer.util.MarkdownView;
 
 
 public class ContributorActivity extends AppCompatActivity {
@@ -23,7 +23,7 @@ public class ContributorActivity extends AppCompatActivity {
         }
 
         MarkdownView markdownView = findViewById(R.id.markdownView);
-        markdownView.loadMarkdownFile("file:///android_asset/contributors.md");
+        markdownView.loadAsset("contributors.md");
     }
 
     @Override

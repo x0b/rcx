@@ -1691,7 +1691,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
     }
-    
+
     @SuppressLint("StaticFieldLeak")
     private class RenameFileTask extends AsyncTask<String, Void, Boolean> {
 
