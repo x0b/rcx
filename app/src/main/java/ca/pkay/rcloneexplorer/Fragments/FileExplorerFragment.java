@@ -2089,7 +2089,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             LinkDialog linkDialog = new LinkDialog()
                     .isDarkTheme(isDarkTheme)
                     .setLinkUrl(s);
-            if (getFragmentManager() != null) {
+            if (getFragmentManager() != null && !getChildFragmentManager().isStateSaved()) {
                 linkDialog.show(getChildFragmentManager(), "link dialog");
             }
 
