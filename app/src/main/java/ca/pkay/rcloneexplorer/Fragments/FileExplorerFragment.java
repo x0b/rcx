@@ -1,6 +1,7 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -571,12 +572,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!remote.hasTrashCan()) {
             menu.findItem(R.id.action_empty_trash).setVisible(false);
         }
-        if (remote.isCrypt()) {
+        if (!remote.hasLinkSupport()) {
             menu.findItem(R.id.action_link).setVisible(false);
         }
         if (!remote.isRemoteType(RemoteItem.SFTP)) {
             menu.findItem(R.id.action_go_to).setVisible(false);
         }
+        if (!remote.hasSyncSupport()) {
+            menu.findItem(R.id.action_sync).setVisible(false);
+        }
+
         menu.findItem(R.id.action_wrap_filenames).setChecked(true);
 
         if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
@@ -1351,11 +1356,16 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         } else {
             popupMenu.getMenu().findItem(R.id.action_sync).setVisible(false);
         }
-        if (remote.isCrypt()) {
+        if (!remote.hasSyncSupport()) {
+            // TODO: remove once destination sync is added.
+            popupMenu.getMenu().findItem(R.id.action_sync).setVisible(false);
+        }
+        if (!remote.hasLinkSupport()) {
             popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
         }
-        if (remote.isCrypt()) {
-            popupMenu.getMenu().findItem(R.id.action_link).setVisible(false);
+        if (remote.isRemoteType(RemoteItem.LOCAL, RemoteItem.SAFW) || remote.isPathAlias()) {
+            // TODO: replace with .setTitle(copy) once destination copy is added
+            popupMenu.getMenu().findItem(R.id.action_download).setVisible(false);
         }
     }
 
@@ -1691,7 +1701,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
     }
-    
+
     @SuppressLint("StaticFieldLeak")
     private class RenameFileTask extends AsyncTask<String, Void, Boolean> {
 
@@ -1965,8 +1975,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             boolean available = false;
             while (retries > 0) {
                 try {
-                    URL checkUrl = new URL(uri.toString());
-                    FLog.v(TAG, "doInBackground: GET %s", checkUrl.toString());
+                    FLog.v(TAG, "doInBackground: HEAD %s", uri.toString());
                     Response response = client.newCall(request).execute();
                     code = response.code();
 
@@ -2012,7 +2021,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
             Dialogs.dismissSilently(loadingDialog);
             if(success) {
-                tryStartActivityForResult(FileExplorerFragment.this, intent, STREAMING_INTENT_RESULT);
+                Activity activity = getActivity();
+                if (null == activity) {
+                    return;
+                }
+                tryStartActivityForResult(activity, intent, STREAMING_INTENT_RESULT);
             } else {
                 Toasty.error(context, getString(R.string.streaming_task_failed), Toast.LENGTH_LONG, true).show();
                 context.stopService(serveIntent);
@@ -2076,7 +2089,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             LinkDialog linkDialog = new LinkDialog()
                     .isDarkTheme(isDarkTheme)
                     .setLinkUrl(s);
-            if (getFragmentManager() != null) {
+            if (getFragmentManager() != null && !getChildFragmentManager().isStateSaved()) {
                 linkDialog.show(getChildFragmentManager(), "link dialog");
             }
 

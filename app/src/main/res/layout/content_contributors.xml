@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<us.feras.mdv.MarkdownView
+<ca.pkay.rcloneexplorer.util.MarkdownView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -9,4 +9,4 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".ContributorActivity"
         tools:showIn="@layout/activity_contributors" >
-</us.feras.mdv.MarkdownView>
+</ca.pkay.rcloneexplorer.util.MarkdownView>

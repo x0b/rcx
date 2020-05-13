@@ -3,8 +3,10 @@ name: Android CI
 on:
   push:
     branches:
-      - '*'
+      - 'dev'
   pull_request:
+    branches-ignore:
+      - 'dev'
 
 jobs:
   build:
@@ -22,6 +24,9 @@ jobs:
       with:
         go-version: 1.14
       id: go
+    # https://github.com/actions/virtual-environments/issues/578
+    - name: Fix missing NDK dependency
+      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;20.0.5594570"
     - name: Build rclone
       run: ./gradlew buildNative -p rclone
     - name: Build app

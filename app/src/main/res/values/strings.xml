@@ -422,7 +422,7 @@
     <string name="select_remotes_to_hide">Select remotes to hide</string>
     <string name="pref_key_renamed_remotes" translatable="false">renamed_remotes</string>
     <string name="pref_key_renamed_remote_prefix" translatable="false">remote_name_%1$s</string>
-    <string name="allow_remote_access">Allow remote access</string>
+    <string name="allow_remote_access">Allow access from other devices</string>
     <string name="pref_key_local_alias_remotes" translatable="false">local_alias_remotes</string>
     <string name="pref_key_refresh_local_aliases" translatable="false">refresh_local_aliases</string>
     <string name="refreshing_local_alias_remotes">Refreshing local alias remotes...</string>
