@@ -1971,9 +1971,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             Request request = new Request.Builder().url(uri.toString()).head().build();
             int code = -1;
 
-            int retries = 120;
+            long waitTime = 30 * 1000;
             boolean available = false;
-            while (retries > 0) {
+            while (waitTime > 0) {
+                long waitStart = System.nanoTime();
                 try {
                     FLog.v(TAG, "doInBackground: HEAD %s", uri.toString());
                     Response response = client.newCall(request).execute();
@@ -1994,13 +1995,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     available = true;
                     break;
                 }
-
                 try {
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
                     // ignored
                 }
-                retries--;
+                long waitEnd = System.nanoTime();
+                long actualWait = (waitEnd - waitStart) / 1000000;
+                waitTime -= actualWait;
             }
             return available;
         }
