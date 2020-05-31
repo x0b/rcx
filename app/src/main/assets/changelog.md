@@ -1,3 +1,21 @@
+### 1.12.0-pre1
+* **New:** Support for translations, with German as test language
+* **New:** Support for rclone rcd
+* **New:** Support for accessing cloud files from other apps (SAF provider)
+* **Fix:** Streaming getting stuck after failure
+* **Fix:** Local storage spaces not refreshing after changing storage permissions
+* **Fix:** Crash when trying to stop failed Streaming
+* **Fix:** Crash when lifecycle event occurs while creating link
+* **Fix:** Crash receiving file via Sharing with missing data
+* **Fix:** Crash when trying to authenticate an OAuth remote
+* **Fix:** Crash when setting up local remote
+* **Fix:** Crash when deleting remote
+* **Fix:** Crash after refreshing directory
+* **Fix:** Crash when trying to access SAF content
+* **Fix:** Crash when updating local storage devices when discovering invalid or unknown devices
+
+***
+
 ### 1.11.4
 * **Fix:** Crash when sharing file to rcx contains garbage data, part II
 * **Fix:** Crash when deleting remotes

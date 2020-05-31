@@ -1,5 +1,5 @@
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'rcx-master'
+def buildTag = '6296c5bd04bf967e437b90b73bb95a15874ef271'
 
 //
 // DO NOT EDIT ANYTHING BELOW
