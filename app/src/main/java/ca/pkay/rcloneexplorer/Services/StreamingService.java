@@ -121,7 +121,9 @@ public class StreamingService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        runningProcess.destroy();
+        if (null != runningProcess) {
+            runningProcess.destroy();
+        }
     }
 
     private void setNotificationChannel() {
