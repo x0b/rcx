@@ -2079,24 +2079,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String link) {
             Dialogs.dismissSilently(loadingDialog);
+            if (null == getContext()) {
+                return;
+            }
 
-            if (s == null) {
+            if (link == null) {
                 Toasty.error(context, getString(R.string.error_generating_link), Toast.LENGTH_SHORT, true).show();
                 return;
             }
 
             LinkDialog linkDialog = new LinkDialog()
                     .isDarkTheme(isDarkTheme)
-                    .setLinkUrl(s);
+                    .setLinkUrl(link);
             if (getFragmentManager() != null && !getChildFragmentManager().isStateSaved()) {
                 linkDialog.show(getChildFragmentManager(), "link dialog");
             }
 
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clipData = ClipData.newPlainText("Copied link", s);
+            ClipData clipData = ClipData.newPlainText("Copied link", link);
             if (clipboardManager == null) {
                 return;
             }
