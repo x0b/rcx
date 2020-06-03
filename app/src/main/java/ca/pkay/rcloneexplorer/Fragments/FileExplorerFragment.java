@@ -1938,13 +1938,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return false;
             }
             fileItem = fileItems[0];
+            int port = allocatePort(8080, true);
             serveIntent = new Intent(context, StreamingService.class);
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
+            serveIntent.putExtra(StreamingService.SERVE_PORT, port);
             tryStartService(context, serveIntent);
 
-            Uri uri = Uri.parse("http://127.0.0.1:8080")
+            Uri uri = Uri.parse("http://127.0.0.1:" + port)
                     .buildUpon()
                     .appendPath(fileItem.getName())
                     .build();

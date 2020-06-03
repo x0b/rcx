@@ -63,7 +63,7 @@
     <string name="download_service_notification_description">File downloads</string>
     <string name="download_service_notification_title">Download</string>
     <string name="streaming_service_notification_title">Streaming Service</string>
-    <string name="streaming_service_notification_content">Serving on http://127.0.0.1:8080</string>
+    <string name="streaming_service_notification_content">Serving on http://127.0.0.1:%1$d</string>
     <string name="streaming_service_notification_channel_description">Streaming service</string>
     <string name="streaming_task_failed">Could not stream file</string>
     <string name="upload_service_notification_title">Upload</string>
