@@ -130,7 +130,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
+        boolean enableCrashReports = sharedPreferences.getBoolean(
+                getString(R.string.pref_key_crash_reports),
+                getResources().getBoolean(R.bool.default_crash_log_enable));
         if (enableCrashReports) {
             CrashLogger.initCrashLogging(this);
         }

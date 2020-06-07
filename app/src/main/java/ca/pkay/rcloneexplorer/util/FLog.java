@@ -11,6 +11,11 @@ import java.util.IllegalFormatException;
  */
 public abstract class FLog {
 
+    private static final String PATTERN_PATH = "/";
+    private static final String REPLACE_PATH = "***anonymized_path***";
+    private static final String PATTERN_URI = "content://";
+    private static final String REPLACE_URI = "***anonymized_uri***";
+
     private static final FLog logger;
     /**
      * Use this log tag to set a lower than default (<=INFO) log tag for all
@@ -58,15 +63,43 @@ public abstract class FLog {
         }
     }
 
-    public static void e(String tag, String s, Object... args) {
-        if (logger.isLoggable(tag, Log.ERROR)) {
-            Log.e(tag, applyFormatting(s, args));
+    private static final class LoggedError extends Throwable {
+
+        public LoggedError() {
+            super();
+            removeLogTrace();
+        }
+
+        private void removeLogTrace() {
+            StackTraceElement[] traces = getStackTrace();
+            // The constuructor is called indirectly, i.e. rewind by 2
+            int trim = 1;
+            if (traces.length > trim) {
+                StackTraceElement[] trimmed = new StackTraceElement[traces.length - trim];
+                for (int i = trim; i < traces.length; i++) {
+                    trimmed[i - trim] = traces[i];
+                }
+                setStackTrace(trimmed);
+            }
         }
     }
 
-    public static void e(String tag, String message, Throwable e, Object... args) {
+    // Callers must ensure that any potentially tainted in formatting args
+    // is filtered by anonymizeArgument()
+    public static void e(String tag, String message, Object... args) {
+        CrashLogger.logNonFatal(tag, applyAnonimizedFormatting(message, args), new LoggedError());
         if (logger.isLoggable(tag, Log.ERROR)) {
-            Log.e(tag, applyFormatting(message, args), e);
+            Log.e(tag, applyFormatting(message, args));
+        }
+    }
+
+    // Callers must ensure that any potentially tainted in formatting args
+    // is filtered by anonymizeArgument()
+    public static void e(String tag, String message, Throwable e, Object... args) {
+        String formatted = applyFormatting(message, args);
+        CrashLogger.logNonFatal(tag, applyAnonimizedFormatting(message, args), e);
+        if (logger.isLoggable(tag, Log.ERROR)) {
+            Log.e(tag, formatted, e);
         }
     }
 
@@ -87,7 +120,28 @@ public abstract class FLog {
         }
     }
 
-    private static final class DevLogger extends FLog {
+    private static String applyAnonimizedFormatting(String message, Object[] args) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof String) {
+                args[i] = anonymizeArgument((String) args[i]);
+            }
+        }
+        return applyFormatting(message, args);
+    }
+
+    // Ensure regulatory compliance by removing any potentially tainted data.
+    private static String anonymizeArgument (String arg) {
+        // Anonymize file paths (may contain private data in file names)
+        if (arg.startsWith(PATTERN_PATH)) {
+            return REPLACE_PATH;
+        // Anonymize content uris (may contain private data in uri)
+        } else if (arg.startsWith(PATTERN_URI)) {
+            return REPLACE_URI;
+        }
+        return arg;
+    }
+
+    static final class DevLogger extends FLog {
 
         @Override
         boolean isLoggable(String tag, int level) {
@@ -95,7 +149,7 @@ public abstract class FLog {
         }
     }
 
-    private static final class ProdLogger extends FLog {
+    static final class ProdLogger extends FLog {
 
         @Override
         boolean isLoggable(String tag, int level) {
