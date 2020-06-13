@@ -1849,7 +1849,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    FLog.e(TAG, "DownloadAndOpen/doInBackground: error waiting for process", e);
                     return false;
                 }
             }

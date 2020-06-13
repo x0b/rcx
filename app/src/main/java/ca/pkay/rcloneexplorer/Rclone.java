@@ -226,7 +226,10 @@ public class Rclone {
             String outputStr = output.toString();
             results = new JSONArray(outputStr);
 
-        } catch (IOException | InterruptedException | JSONException e) {
+        } catch (InterruptedException e) {
+            FLog.d(TAG, "getDirectoryContent: Aborted refreshing folder");
+            return null;
+        } catch (IOException | JSONException e) {
             FLog.e(TAG, "getDirectoryContent: Could not get folder content", e);
             return null;
         }
@@ -254,7 +257,7 @@ public class Rclone {
                 FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, mimeType, fileIsDir);
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "getDirectoryContent: Could not decode JSON", e);
                 return null;
             }
         }
@@ -288,7 +291,7 @@ public class Rclone {
 
             remotesJSON = new JSONObject(output.toString());
         } catch (IOException | InterruptedException | JSONException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "getRemotes: error retrieving remotes", e);
             return new ArrayList<>();
         }
 
@@ -329,13 +332,15 @@ public class Rclone {
 
                 remoteItemList.add(newRemote);
             } catch (JSONException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "getRemotes: error decoding remotes", e);
+                return new ArrayList<>();
             }
         }
 
         return remoteItemList;
     }
 
+    @Nullable
     private RemoteItem getRemoteType(JSONObject remotesJSON, RemoteItem remoteItem, String remoteName, int maxDepth) {
         Iterator<String> iterator = remotesJSON.keys();
 
@@ -387,13 +392,14 @@ public class Rclone {
                 remoteItem.setType(type);
                 return remoteItem;
             } catch (JSONException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "getRemoteType: error decoding remote type", e);
             }
         }
 
         return null;
     }
 
+    @Nullable
     public Process configCreate(List<String> options) {
         String[] command = createCommand("config", "create");
         String[] opt = options.toArray(new String[0]);
@@ -407,7 +413,7 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(commandWithOptions);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "configCreate: error starting rclone", e);
             return null;
         }
     }
@@ -426,7 +432,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "deleteRemote: error starting rclone", e);
         }
     }
 
@@ -444,7 +450,8 @@ public class Rclone {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             return  reader.readLine();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "obscure: error starting rclone", e);
+            // TODO: guard callers against null result
             return null;
         }
     }
@@ -501,7 +508,8 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "serve: error starting rclone", e);
+            // todo: guard callers against null result
             return null;
         }
     }
@@ -528,7 +536,7 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "sync: error starting rclone", e);
             return null;
         }
     }
@@ -555,7 +563,7 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "downloadFile: error starting rclone", e);
             return null;
         }
     }
@@ -587,7 +595,7 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "uploadFile: error starting rclone", e);
             return null;
         }
 
@@ -616,7 +624,7 @@ public class Rclone {
         try {
             process = Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "deleteItems: error starting rclone", e);
         }
         return process;
     }
@@ -641,7 +649,7 @@ public class Rclone {
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "makeDirectory: error running rclone", e);
             return false;
         }
         return true;
@@ -668,7 +676,7 @@ public class Rclone {
         try {
             process = Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "moveTo: error starting rclone", e);
         }
 
         return process;
@@ -696,7 +704,7 @@ public class Rclone {
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "moveTo: error running rclone", e);
             return false;
         }
         return true;
@@ -710,7 +718,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "emptyTrashCan: error running rclone", e);
         }
 
         return process != null && process.exitValue() == 0;
@@ -738,7 +746,7 @@ public class Rclone {
              return reader.readLine();
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "link: error running rclone", e);
             if (process != null) {
                 logErrorOutput(process);
             }
@@ -775,7 +783,7 @@ public class Rclone {
                 return split[0];
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "calculateMD5: error running rclone", e);
             return context.getString(R.string.hash_error);
         }
     }
@@ -809,7 +817,7 @@ public class Rclone {
                 return split[0];
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "calculateSHA1: error running rclone", e);
             return context.getString(R.string.hash_error);
         }
     }
@@ -831,7 +839,7 @@ public class Rclone {
                 result.add(line);
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "getRcloneVersion: error running rclone", e);
             return "-1";
         }
 
@@ -946,7 +954,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "Error running rclone %s", e, Arrays.toString(command));
             return false;
         }
         return process.exitValue() != 0;
@@ -960,7 +968,7 @@ public class Rclone {
         try {
             process = Runtime.getRuntime().exec(command, environmentalVars);
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "decryptConfig: error running rclone", e);
             return false;
         }
 
@@ -972,14 +980,14 @@ public class Rclone {
                 result.add(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "decryptConfig: error copying rclone stdout", e);
             return false;
         }
 
         try {
             process.waitFor();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "decryptConfig: error waiting for rclone", e);
             return false;
         }
 
@@ -1003,7 +1011,7 @@ public class Rclone {
             fileOutputStream.flush();
             fileOutputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            FLog.e(TAG, "decryptConfig: error reading stdout", e);
             return false;
         }
         return true;

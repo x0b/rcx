@@ -39,6 +39,7 @@ import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartService;
 public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
                                                                     ShareFragment.OnShareDestinationSelected {
 
+    private static final String TAG = "SharingActivity";
     private boolean isDarkTheme;
     private Fragment fragment;
     private ArrayList<String> uploadList;
@@ -176,7 +177,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    FLog.e(TAG, "UploadTask/doInBackground: error waiting for data", e);
                 }
             }
             return null;

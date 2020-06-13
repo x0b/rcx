@@ -32,6 +32,9 @@ public class OauthHelper {
      **/
     public static boolean createOptionsWithOauth(ArrayList<String> options, Rclone rclone, Context context) {
         Process process = rclone.configCreate(options);
+        if (null == process) {
+            return false;
+        }
         Thread authThread = new OauthHelper.UrlAuthThread(process, context);
         authThread.start();
         try {

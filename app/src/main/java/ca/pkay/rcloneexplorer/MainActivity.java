@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity
                 try {
                     rclone.exportConfigFile(uri);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FLog.e(TAG, "Could not export config file to %s", e, uri);
                     Toasty.error(this, getString(R.string.error_exporting_config_file), Toast.LENGTH_SHORT, true).show();
                 }
             }
@@ -853,6 +853,9 @@ public class MainActivity extends AppCompatActivity
             options.add(path);
             FLog.d(TAG, "Adding local remote [%s] remote = %s", id, path);
             Process process = rclone.configCreate(options);
+            if (null == process) {
+                return;
+            }
             try {
                 process.waitFor();
                 if (process.exitValue() != 0) {

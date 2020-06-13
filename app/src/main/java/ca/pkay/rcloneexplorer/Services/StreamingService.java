@@ -15,10 +15,12 @@ import ca.pkay.rcloneexplorer.BroadcastReceivers.ServeCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 
 public class StreamingService extends IntentService {
 
+    private static final String TAG = "StreamingService";
     public static final String SERVE_PATH_ARG = "ca.pkay.rcexplorer.streaming_service.arg1";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.streaming_service.arg2";
     public static final String SHOW_NOTIFICATION_TEXT = "ca.pkay.rcexplorer.streaming_service.arg3";
@@ -109,7 +111,7 @@ public class StreamingService extends IntentService {
             try {
                 runningProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
 

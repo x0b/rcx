@@ -53,7 +53,7 @@ public class ThumbnailsLoadingService extends IntentService {
                 }
                 process.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
     }

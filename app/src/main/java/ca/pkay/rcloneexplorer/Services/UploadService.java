@@ -28,10 +28,12 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 
 public class UploadService extends IntentService {
 
+    private static final String TAG = "UploadService";
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
@@ -142,13 +144,13 @@ public class UploadService extends IntentService {
                     updateNotification(uploadFileName, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
             }
 
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
 

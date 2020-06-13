@@ -35,6 +35,10 @@ public class RemoteConfigHelper {
     public static void setupAndWait(Context context, ArrayList<String> options) {
         Rclone rclone = new Rclone(context);
         Process process = rclone.configCreate(options);
+        if (null == process) {
+            Toasty.error(context, context.getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
+            return;
+        }
         int exitCode;
         while (true) {
             try {
