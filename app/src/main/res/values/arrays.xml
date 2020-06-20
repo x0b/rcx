@@ -6,6 +6,11 @@
         <item>socks5</item>
     </array>
 
+    <array name="locales">
+        <item>en-US</item>
+        <item>de-DE</item>
+    </array>
+
     <array name="provider_ids">
         <item>BOX</item>
         <item>B2</item>

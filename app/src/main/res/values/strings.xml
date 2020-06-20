@@ -181,6 +181,10 @@
     <string name="pref_proxy_port">Proxy Port</string>
     <string name="pref_proxy_port_dlg_title">Enter Proxy port</string>
     <string name="pref_proxy_exclude">Exclude from Proxy</string>
+    <string name="pref_locale">Language</string>
+    <string name="pref_locale_dlg_title">Select Language</string>
+    <string name="pref_locale_restart_notice">Language will change once the app is restarted</string>
+    <string name="pref_key_locale" translatable="false">locale</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="use_logs">Log Rclone errors</string>
     <string name="use_logs_summary">Errors will be logged to a local file</string>
