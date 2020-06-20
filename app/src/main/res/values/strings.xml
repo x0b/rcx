@@ -435,6 +435,9 @@
     <string name="authentication">Authentication</string>
     <string name="optional">Optional</string>
     <string name="serve_dialog_title">Serve a remote</string>
+    <string name="serve_dialog_remote_notice_enabled">The current directory will be visible to the local network (TVs, media players).</string>
+    <string name="serve_dialog_remote_notice_disabled">Files will only be available to other apps on this device.</string>
+    <string name="pref_choice_serve_dialog_allow_ext" translatable="false">choice_serve_allow_ext</string>
     <string name="config_use_external_question">Import found configuration?</string>
     <string name="config_import_external_explain">Automatically import from %1$s</string>
     <string name="pref_header_file_access">File Access</string>
