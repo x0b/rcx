@@ -1,37 +1,51 @@
-// Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.51.0'
-
-//
-// DO NOT EDIT ANYTHING BELOW
-//
 import java.nio.file.Paths
+
 def repository = 'github.com/rclone/rclone'
 def goPath = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
-def osName = System.properties['os.name'].toLowerCase()
-def osArch = System.properties['os.arch']
-def String os
-if (osName.contains('windows')) {
-    if(osArch.equals('amd64')) {
-        os = "windows-x86_64"
-    } else if (osArch.equals('x86')) {
-        os = "windows"
+
+def getCrossCompiler(bin) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def ndkDir = properties.getProperty('ndk.dir')
+
+    def osName = System.properties['os.name'].toLowerCase()
+    def osArch = System.properties['os.arch']
+    def os
+    if (osName.contains('windows')) {
+        if(osArch.equals('amd64')) {
+            os = "windows-x86_64"
+        } else if (osArch.equals('x86')) {
+            os = "windows"
+        }
+    } else if (osName.contains("linux")) {
+        os = "linux-x86_64"
+    } else if (osName.contains('mac')) {
+        os = "darwin-x86_64"
+    } else {
+        throw new GradleException("Unsupported OS.")
     }
-} else if (osName.contains("linux")) {
-    os = "linux-x86_64"
-} else if (osName.contains('mac')) {
-    os = "darwin-x86_64"
+
+    return Paths.get(
+        ndkDir,
+        'toolchains',
+        'llvm',
+        'prebuilt',
+        os,
+        'bin',
+        bin
+    )
 }
 
 task fetchRclone(type: Exec) {
-    mkdir "gopath"
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
+    mkdir goPath
+    environment 'GOPATH', goPath
     commandLine 'go', 'get', '-d', repository
 }
 
 task checkoutRclone(type: Exec) {
     dependsOn fetchRclone
     workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'git', 'checkout', buildTag
+    commandLine 'git', 'checkout', RCLONE_VERSION
 }
 
 task cleanNative {
@@ -46,8 +60,8 @@ task cleanNative {
 
 task buildArm(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'armv7a-linux-androideabi21-clang')
+    environment 'GOPATH', goPath
+    def crossCompiler = getCrossCompiler('armv7a-linux-androideabi21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
@@ -59,8 +73,8 @@ task buildArm(type: Exec) {
 
 task buildArm64(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'aarch64-linux-android21-clang')
+    environment 'GOPATH', goPath
+    def crossCompiler = getCrossCompiler('aarch64-linux-android21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
@@ -71,8 +85,8 @@ task buildArm64(type: Exec) {
 
 task buildx86(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'i686-linux-android21-clang')
+    environment 'GOPATH', goPath
+    def crossCompiler = getCrossCompiler('i686-linux-android21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
@@ -83,8 +97,8 @@ task buildx86(type: Exec) {
 
 task buildx64(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'x86_64-linux-android21-clang')
+    environment 'GOPATH', goPath
+    def crossCompiler = getCrossCompiler('x86_64-linux-android21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
@@ -94,13 +108,10 @@ task buildx64(type: Exec) {
 }
 
 task buildNative {
-    dependsOn fetchRclone
-    dependsOn checkoutRclone
     dependsOn buildArm
     dependsOn buildArm64
     dependsOn buildx86
     dependsOn buildx64
 }
 
-buildNative.mustRunAfter(buildArm, buildArm64, buildx86, buildx64)
 defaultTasks 'buildNative'

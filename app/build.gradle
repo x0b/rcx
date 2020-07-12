@@ -1,20 +1,28 @@
 apply plugin: 'com.android.application'
-if (!getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains("oss")) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'com.google.firebase.crashlytics'
+
+for (String taskName : getGradle().getStartParameter().getTaskNames()) {
+    if (taskName.endsWith('RcxDebug') || taskName.endsWith('RcxRelease')) {
+        apply plugin: 'com.google.gms.google-services'
+        apply plugin: 'com.google.firebase.crashlytics'
+        break
+    }
 }
 
 android {
+    gradle.projectsEvaluated {
+        preBuild.dependsOn(':rclone:buildNative')
+    }
+
     signingConfigs {
         github_x0b {
             keyAlias 'github_x0b'
         }
     }
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId 'io.github.x0b.rcx'
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 170 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.11.4'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -78,6 +86,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion '30.0.1'
 }
 
 repositories {
