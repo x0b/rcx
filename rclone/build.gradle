@@ -1,13 +1,47 @@
 import java.nio.file.Paths
 
-def repository = 'github.com/rclone/rclone'
-def goPath = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
+def RCLONE_VERSION = project.properties['io.github.x0b.rcx.rCloneVersion']
+def RCLONE_REPOSITORY = 'github.com/rclone/rclone'
+def GO_PATH = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
+
+def findSdkDir() {
+    def androidHome = System.getenv('ANDROID_HOME')
+    if (androidHome != null) {
+        return androidHome
+    }
+
+    def localPropertiesFile = project.rootProject.file('local.properties')
+    if (localPropertiesFile.exists()) {
+        Properties properties = new Properties()
+        properties.load(localPropertiesFile.newDataInputStream())
+        def sdkDir = properties.get('sdk.dir')
+        if (sdkDir != null) {
+            return sdkDir
+        }
+    }
+
+    throw GradleException(
+        "Couldn't locate your android SDK location. Make sure to set sdk.dir property "
+        + "in your local.properties at the root of the project or set ANDROID_HOME "
+        + "environment variable"
+    )
+}
+
+def findNdkDir() {
+    def ndkVersion = project.properties['io.github.x0b.rcx.ndkVersion']
+    def sdkDir = findSdkDir()
+    def ndkPath = Paths.get(sdkDir, 'ndk', ndkVersion).resolve().toAbsolutePath()
+    if (!ndkPath.toFile().exists()) {
+        throw new GradleException(
+            "Couldn't find a ndk-bundle in " + ndkPath.toString() + ". Make sure it is installed " +
+            "by running the command 'sdkmanager \"ndk;" + ndkVersion + "\"."
+        )
+    }
+    return ndkPath.toString()
+}
 
 def getCrossCompiler(bin) {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    def ndkDir = properties.getProperty('ndk.dir')
-
+    def ndkDir = findNdkDir()
     def osName = System.properties['os.name'].toLowerCase()
     def osArch = System.properties['os.arch']
     def os
@@ -36,31 +70,35 @@ def getCrossCompiler(bin) {
     )
 }
 
+def getLibrclone(arch) {
+    return Paths.get('..', 'app', 'lib', arch, 'librclone.so').toString()
+}
+
 task fetchRclone(type: Exec) {
-    mkdir goPath
-    environment 'GOPATH', goPath
-    commandLine 'go', 'get', '-d', repository
+    mkdir GO_PATH
+    environment 'GOPATH', GO_PATH
+    commandLine 'go', 'get', '-d', RCLONE_REPOSITORY
 }
 
 task checkoutRclone(type: Exec) {
     dependsOn fetchRclone
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
+    workingDir Paths.get(GO_PATH, 'src', RCLONE_REPOSITORY)
     commandLine 'git', 'checkout', RCLONE_VERSION
 }
 
 task cleanNative {
     enabled = false
     doLast {
-        delete '../app/lib/armeabi-v7a/librclone.so'
-        delete '../app/lib/arm64-v8a/librclone.so'
-        delete '../app/lib/x86/librclone.so'
-        delete '../app/lib/x86_64/librclone.so'
+        delete getLibrclone('armeabi-v7a')
+        delete getLibrclone('arm64-v8a')
+        delete getLibrclone('x86')
+        delete getLibrclone('x86_64')
     }
 }
 
 task buildArm(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', goPath
+    environment 'GOPATH', GO_PATH
     def crossCompiler = getCrossCompiler('armv7a-linux-androideabi21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
@@ -68,43 +106,43 @@ task buildArm(type: Exec) {
     environment 'GOARCH', 'arm'
     environment 'GOARM', '7'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/armeabi-v7a/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone('armeabi-v7a'), RCLONE_REPOSITORY
 }
 
 task buildArm64(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', goPath
+    environment 'GOPATH', GO_PATH
     def crossCompiler = getCrossCompiler('aarch64-linux-android21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
     environment 'GOARCH', 'arm64'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/arm64-v8a/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone('arm64-v8a'), RCLONE_REPOSITORY
 }
 
 task buildx86(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', goPath
+    environment 'GOPATH', GO_PATH
     def crossCompiler = getCrossCompiler('i686-linux-android21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
     environment 'GOARCH', '386'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone('x86'), RCLONE_REPOSITORY
 }
 
 task buildx64(type: Exec) {
     dependsOn checkoutRclone
-    environment 'GOPATH', goPath
+    environment 'GOPATH', GO_PATH
     def crossCompiler = getCrossCompiler('x86_64-linux-android21-clang')
     environment 'CC', crossCompiler
     environment 'CC_FOR_TARGET', crossCompiler
     environment 'GOOS', 'android'
     environment 'GOARCH', 'amd64'
     environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86_64/librclone.so', repository
+    commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone('x86_64'), RCLONE_REPOSITORY
 }
 
 task buildNative {

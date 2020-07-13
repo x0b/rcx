@@ -1,8 +1,5 @@
 name: Android CI
 
-env:
-  NDK_VERSION: "21.3.6528147"
-
 on:
   push:
     branches:
@@ -26,12 +23,11 @@ jobs:
       with:
         go-version: 1.14
       id: go
-    - name: Install NDK
-      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;${NDK_VERSION}"
-    - name: Configure local.properties
+    - name: Configure Android SDK
       run: |
-        echo "sdk.dir=${ANDROID_HOME}" >> local.properties
-        echo "ndk.dir=${ANDROID_HOME}/ndk/${NDK_VERSION}" >> local.properties
+        BUILD_TOOLS_VERSION="$(grep -E "^io\.github\.x0b\.rcx\.buildToolsVersion=" gradle.properties | cut -d'=' -f2)"
+        NDK_VERSION="$(grep -E "^io\.github\.x0b\.rcx\.ndkVersion=" gradle.properties | cut -d'=' -f2)"
+        yes | sudo "${ANDROID_HOME}/tools/bin/sdkmanager" "build-tools;${BUILD_TOOLS_VERSION}" "ndk;${NDK_VERSION}"
     - name: Build app
       run: ./gradlew assembleOssDebug
     - name: Upload APK

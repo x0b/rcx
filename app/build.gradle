@@ -13,6 +13,9 @@ android {
         preBuild.dependsOn(':rclone:buildNative')
     }
 
+    buildToolsVersion project.properties['io.github.x0b.rcx.buildToolsVersion']
+    ndkVersion project.properties['io.github.x0b.rcx.ndkVersion']
+
     signingConfigs {
         github_x0b {
             keyAlias 'github_x0b'
@@ -87,7 +90,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '30.0.1'
 }
 
 repositories {
