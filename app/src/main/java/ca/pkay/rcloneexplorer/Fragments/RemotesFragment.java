@@ -33,7 +33,6 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
-import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 import java.util.ArrayList;

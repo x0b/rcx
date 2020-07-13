@@ -63,6 +63,17 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
+        <provider
+            android:name=".SAFProvider.SAFProvider"
+            android:authorities="${applicationId}.documents"
+            android:grantUriPermissions="true"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"

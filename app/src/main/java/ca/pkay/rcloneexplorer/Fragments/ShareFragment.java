@@ -513,7 +513,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath(), startAtRoot);
+            fileItemList = rclone.ls(remote, directoryObject.getCurrentPath(), startAtRoot);
             return fileItemList;
         }
 

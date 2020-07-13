@@ -452,7 +452,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath(), startAtRoot);
+            fileItemList = rclone.ls(remote, directoryObject.getCurrentPath(), startAtRoot);
             return fileItemList;
         }
 
