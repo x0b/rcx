@@ -18,6 +18,8 @@ import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.SafDAVServer;
 import io.github.x0b.safdav.file.SafConstants;
+
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -406,7 +408,6 @@ public class Rclone {
         System.arraycopy(command, 0, commandWithOptions, 0, command.length);
 
         System.arraycopy(opt, 0, commandWithOptions, command.length, opt.length);
-
 
         try {
             return Runtime.getRuntime().exec(commandWithOptions);
@@ -1146,6 +1147,67 @@ public class Rclone {
         inputStream.close();
         outputStream.flush();
         outputStream.close();
+    }
+
+    public boolean renameRemote(String remoteName, String newName) {
+        // RClone uses this library to parse its config file: https://github.com/unknwon/goconfig
+        // It's very similar to the INI syntax, where section corresponds to a
+        // remote. Sections can contain any unicode character except for line
+        // breaks and are completely unescaped.
+
+        boolean found = false;
+        String searchedLine = "[" + remoteName + "]";
+        File file = new File(rcloneConf);
+        List<String> configContent;
+        List<String> newConfigContent;
+
+        try {
+            configContent = FileUtils.readLines(file, "UTF-8");
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't parse RClone config.", e);
+            return false;
+        }
+
+        newConfigContent = new ArrayList<>(configContent.size());
+        for (String line : configContent) {
+            if (line.trim().equals(searchedLine)) {
+                newConfigContent.add("[" + newName + "]");
+                found = true;
+            }
+            else {
+                newConfigContent.add(line);
+            }
+        }
+
+        if (!found) {
+            return false;
+        }
+
+        try {
+            FileUtils.writeLines(file, newConfigContent);
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't write RClone config.", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public String getUniqueRemoteName(String desiredName) {
+        List<RemoteItem> remotes = getRemotes();
+        Set<String> remoteNames = new HashSet<>(remotes.size());
+        for (RemoteItem remoteItem : remotes) {
+            remoteNames.add(remoteItem.getName());
+        }
+        if (!remoteNames.contains(desiredName)) {
+            return desiredName;
+        }
+        for (int i = 1;;++i) {
+            String remoteName = desiredName + " " + i;
+            if (!remoteNames.contains(remoteName)) {
+                return remoteName;
+            }
+        }
     }
 
     /**

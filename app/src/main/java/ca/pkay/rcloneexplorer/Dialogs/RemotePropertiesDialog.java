@@ -90,7 +90,7 @@ public class RemotePropertiesDialog extends DialogFragment {
         LayoutInflater inflater = ((FragmentActivity) context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_remote_properties, null);
 
-        ((TextView) view.findViewById(R.id.remote_name)).setText(remote.getDisplayName());
+        ((TextView) view.findViewById(R.id.remote_name)).setText(remote.getName());
 
         View storageContainer = view.findViewById(R.id.remote_storage_container);
         remoteStorageStats = view.findViewById(R.id.remote_storage_stats);

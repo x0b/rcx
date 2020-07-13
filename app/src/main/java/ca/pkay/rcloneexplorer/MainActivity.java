@@ -366,18 +366,9 @@ public class MainActivity extends AppCompatActivity
 
         List<RemoteItem> remoteItems = rclone.getRemotes();
         Collections.sort(remoteItems);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> renamedRemotes = sharedPreferences.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
-        for(RemoteItem item : remoteItems) {
-            if(renamedRemotes.contains(item.getName())) {
-                String displayName = sharedPreferences.getString(
-                        getString(R.string.pref_key_renamed_remote_prefix, item.getName()), item.getName());
-                item.setDisplayName(displayName);
-            }
-        }
         for (RemoteItem remoteItem : remoteItems) {
             if (remoteItem.isDrawerPinned()) {
-                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getDisplayName());
+                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getName());
                 drawerPinnedRemoteIds.put(availableDrawerPinnedRemoteId, remoteItem);
                 availableDrawerPinnedRemoteId++;
                 menuItem.setIcon(remoteItem.getRemoteIcon());
@@ -735,9 +726,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class RefreshLocalAliases extends AsyncTask<Void, Void, Boolean> {
-
-        private String EMULATED = "5d44cd8d-397c-4107-b79b-17f2b6a071e8";
-
         private LoadingDialog loadingDialog;
 
         protected boolean isRequired() {
@@ -790,14 +778,10 @@ public class MainActivity extends AppCompatActivity
             }
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             Set<String> generated = pref.getStringSet(getString(R.string.pref_key_local_alias_remotes), new HashSet<>());
-            Set<String> renamed = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
             SharedPreferences.Editor editor = pref.edit();
             for(String remote : generated) {
                 rclone.deleteRemote(remote);
-                renamed.remove(remote);
-                editor.remove(getString(R.string.pref_key_renamed_remote_prefix, remote));
             }
-            editor.putStringSet(getString(R.string.pref_key_renamed_remotes), renamed);
             editor.apply();
             File[] dirs = context.getExternalFilesDirs(null);
             for(File file : dirs) {
@@ -833,23 +817,22 @@ public class MainActivity extends AppCompatActivity
         private void addLocalRemote(File root) throws IOException {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             String name = root.getCanonicalPath();
-            String id = Environment.isExternalStorageEmulated(root) ? EMULATED : UUID.randomUUID().toString();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 StorageManager storageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
                 StorageVolume storageVolume = storageManager.getStorageVolume(root);
-                name = storageVolume.getDescription(context);
-                if (null != storageVolume.getUuid()) {
-                    id = storageVolume.getUuid();
+                String description = storageVolume != null ? storageVolume.getDescription(context) : null;
+                if (description != null) {
+                    name = rclone.getUniqueRemoteName(description);
                 }
             }
 
             String path = root.getAbsolutePath();
             ArrayList<String> options = new ArrayList<>();
-            options.add(id);
+            options.add(name);
             options.add("alias");
             options.add("remote");
             options.add(path);
-            FLog.d(TAG, "Adding local remote [%s] remote = %s", id, path);
+            FLog.d(TAG, "Adding local remote [%s] remote = %s", name, path);
             Process process = rclone.configCreate(options);
             try {
                 process.waitFor();
@@ -861,15 +844,11 @@ public class MainActivity extends AppCompatActivity
                 FLog.e(TAG, "addLocalRemote: process error", e);
                 return;
             }
-            Set<String> renamedRemotes = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
             Set<String> pinnedRemotes = pref.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
             Set<String> generatedRemotes = pref.getStringSet(getString(R.string.pref_key_local_alias_remotes), new HashSet<>());
-            renamedRemotes.add(id);
-            pinnedRemotes.add(id);
-            generatedRemotes.add(id);
+            pinnedRemotes.add(name);
+            generatedRemotes.add(name);
             pref.edit()
-                    .putStringSet(getString(R.string.pref_key_renamed_remotes), renamedRemotes)
-                    .putString(getString(R.string.pref_key_renamed_remote_prefix, id), name)
                     .putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), pinnedRemotes)
                     .putStringSet(getString(R.string.pref_key_local_alias_remotes), generatedRemotes)
                     .apply();

@@ -302,7 +302,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private List<RemoteItem> filterRemotes() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
-        Set<String> renamedRemotes = sharedPreferences.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
         remotes = rclone.getRemotes();
         if (hiddenRemotes != null && !hiddenRemotes.isEmpty()) {
             ArrayList<RemoteItem> toBeHidden = new ArrayList<>();
@@ -314,13 +313,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             remotes.removeAll(toBeHidden);
         }
         Collections.sort(remotes);
-        for(RemoteItem item : remotes) {
-            if(renamedRemotes.contains(item.getName())) {
-                String displayName = sharedPreferences.getString(
-                        getString(R.string.pref_key_renamed_remote_prefix, item.getName()), item.getName());
-                item.setDisplayName(displayName);
-            }
-        }
         return remotes;
     }
 
@@ -469,21 +461,14 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             builder = new AlertDialog.Builder(context);
         }
 
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final EditText remoteNameEdit = new EditText(context);
-        String initialText = remoteItem.getDisplayName();
+        String initialText = remoteItem.getName();
         remoteNameEdit.setText(initialText);
         builder.setView(remoteNameEdit);
         builder.setNegativeButton(R.string.cancel, null);
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
-            String displayName = remoteNameEdit.getText().toString();
-            Set<String> renamedRemotes = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
-            renamedRemotes.add(remoteItem.getName());
-            pref.edit()
-                    .putString(getString(R.string.pref_key_renamed_remote_prefix, remoteItem.getName()), displayName)
-                    .putStringSet(getString(R.string.pref_key_renamed_remotes), renamedRemotes)
-                .apply();
-            remoteItem.setDisplayName(displayName);
+            String newName = remoteNameEdit.getText().toString();
+            rclone.renameRemote(remoteItem.getName(), newName);
             refreshRemotes();
         });
         builder.setTitle(R.string.rename_remote);
@@ -498,7 +483,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.delete_remote_title);
-        builder.setMessage(remoteItem.getDisplayName());
+        builder.setMessage(remoteItem.getName());
         builder.setNegativeButton(R.string.cancel, null);
         builder.setPositiveButton(R.string.delete, (dialog, which) -> new DeleteRemote(context, remoteItem).execute());
         builder.show();

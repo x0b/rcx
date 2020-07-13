@@ -249,27 +249,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return isSameType;
     }
 
-    public String getDisplayName() {
-        return displayName != null ? displayName : name;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public static List<RemoteItem> prepareDisplay(Context context, List<RemoteItem> items) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> renamedRemotes = pref.getStringSet(context.getString(R.string.pref_key_renamed_remotes), new HashSet<>());
-        for(RemoteItem item : items) {
-            if(renamedRemotes.contains(item.name)) {
-                String displayName = pref.getString(
-                        context.getString(R.string.pref_key_renamed_remote_prefix, item.name), item.name);
-                item.displayName = displayName;
-            }
-        }
-        return items;
-    }
-
     private int getTypeFromString(String type) {
         switch (type) {
             case SafConstants.SAF_REMOTE_NAME:
@@ -407,7 +386,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         } else if (!this.isPinned && remoteItem.isPinned) {
             return 1;
         }
-        return getDisplayName().toLowerCase().compareTo(remoteItem.getDisplayName().toLowerCase());
+
+        String self = getName().toLowerCase();
+        String other = remoteItem.getName().toLowerCase();
+        return self.compareTo(other);
     }
 
     @Override
