@@ -29,6 +29,10 @@ android {
         versionCode 170 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.11.4'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        def documentsAuthority = applicationId + '.documents'
+        manifestPlaceholders = [documentsAuthority: documentsAuthority]
+        buildConfigField "String", "DOCUMENTS_AUTHORITY", "\"${documentsAuthority}\""
     }
 
     buildTypes {

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
+import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -297,6 +299,12 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         if (null != recyclerViewAdapter) {
             recyclerViewAdapter.newData(remotes);
         }
+        refreshSAFRoots();
+    }
+
+    private void refreshSAFRoots() {
+        Uri rootsUri = DocumentsContract.buildRootsUri(BuildConfig.DOCUMENTS_AUTHORITY);
+        context.getContentResolver().notifyChange(rootsUri, null);
     }
 
     private List<RemoteItem> filterRemotes() {

@@ -65,7 +65,7 @@
 
         <provider
             android:name=".SAFProvider.SAFProvider"
-            android:authorities="${applicationId}.documents"
+            android:authorities="${documentsAuthority}"
             android:grantUriPermissions="true"
             android:exported="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">
