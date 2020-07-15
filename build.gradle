@@ -11,7 +11,7 @@ buildscript {
 
         for (String taskName : getGradle().getStartParameter().getTaskNames()) {
             if (taskName.endsWith('RcxDebug') || taskName.endsWith('RcxRelease')) {
-                classpath 'com.google.gms:google-services:4.3.3' // google-services plugin
+                classpath 'com.google.gms:google-services:4.3.3'
                 classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta03'
                 break
             }
