@@ -293,7 +293,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {
-            options[i++] = remote.getName();
+            options[i++] = remote.getDisplayName();
         }
         
         AlertDialog.Builder builder;

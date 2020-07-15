@@ -126,7 +126,7 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
         String[] options = new String[configuredRemotes.size()];
         int i = 0;
         for (RemoteItem remote : configuredRemotes) {
-            options[i++] = remote.getName();
+            options[i++] = remote.getDisplayName();
         }
 
         AlertDialog.Builder builder;

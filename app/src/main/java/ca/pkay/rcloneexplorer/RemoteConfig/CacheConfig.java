@@ -290,7 +290,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {
-            options[i++] = remote.getName();
+            options[i++] = remote.getDisplayName();
         }
 
         AlertDialog.Builder builder;

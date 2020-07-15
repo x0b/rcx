@@ -219,7 +219,7 @@ public class GeneralSettingsFragment extends Fragment {
         final CharSequence[] options = new CharSequence[remotes.size()];
         int i = 0;
         for (RemoteItem remoteItem : remotes) {
-            options[i++] = remoteItem.getName();
+            options[i++] = remoteItem.getDisplayName();
         }
 
         final ArrayList<String> userSelected = new ArrayList<>();

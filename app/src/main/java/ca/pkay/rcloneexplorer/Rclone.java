@@ -19,7 +19,6 @@ import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.SafDAVServer;
 import io.github.x0b.safdav.file.SafConstants;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1184,23 +1183,6 @@ public class Rclone {
                 renamedRemotes
             )
             .apply();
-    }
-
-    public String getUniqueRemoteName(String desiredName) {
-        List<RemoteItem> remotes = getRemotes();
-        Set<String> remoteNames = new HashSet<>(remotes.size());
-        for (RemoteItem remoteItem : remotes) {
-            remoteNames.add(remoteItem.getName());
-        }
-        if (!remoteNames.contains(desiredName)) {
-            return desiredName;
-        }
-        for (int i = 1;;++i) {
-            String remoteName = desiredName + " " + i;
-            if (!remoteNames.contains(remoteName)) {
-                return remoteName;
-            }
-        }
     }
 
     /**
