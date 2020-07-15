@@ -8,11 +8,17 @@ for (String taskName : getGradle().getStartParameter().getTaskNames()) {
     }
 }
 
-android {
-    gradle.projectsEvaluated {
-        preBuild.dependsOn(':rclone:buildNative')
+tasks.whenTaskAdded { task ->
+    // We defer the build of rclone just before the assemble stage of the
+    // main app, so that Android Studio displays a convenient clickable
+    // error message that allows to install the proper NDK version
+    // directly from the SDK manager.
+    if (task.name.startsWith('assemble')) {
+        task.dependsOn(':rclone:buildNative')
     }
+}
 
+android {
     buildToolsVersion project.properties['io.github.x0b.rcx.buildToolsVersion']
     ndkVersion project.properties['io.github.x0b.rcx.ndkVersion']
 
