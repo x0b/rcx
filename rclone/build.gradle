@@ -83,7 +83,7 @@ task fetchRclone(type: Exec) {
 task checkoutRclone(type: Exec) {
     dependsOn fetchRclone
     workingDir Paths.get(GO_PATH, 'src', RCLONE_REPOSITORY)
-    commandLine 'git', 'checkout', RCLONE_VERSION
+    commandLine 'git', 'checkout', 'v' + RCLONE_VERSION
 }
 
 task cleanNative {
