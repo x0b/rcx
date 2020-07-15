@@ -157,7 +157,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         breadcrumbView = ((FragmentActivity)context).findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
-        breadcrumbView.addCrumb(remote.getName(), "//" + remote.getName());
+        breadcrumbView.addCrumb(remote.getDisplayName(), "//" + remote.getName());
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);

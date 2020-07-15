@@ -303,7 +303,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         breadcrumbView = ((FragmentActivity) context).findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
-        breadcrumbView.addCrumb(remote.getName(), "//" + remoteName);
+        breadcrumbView.addCrumb(remote.getDisplayName(), "//" + remoteName);
         if (savedInstanceState != null) {
             if (!directoryObject.getCurrentPath().equals("//" + remoteName)) {
                 breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
@@ -935,7 +935,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (!moveStartPath.equals("//" + remoteName)) {
                 breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
             }
-            breadcrumbView.addCrumb(remote.getName(), "//" + remoteName);
+            breadcrumbView.addCrumb(remote.getDisplayName(), "//" + remoteName);
             moveStartPath = null;
         }
     }

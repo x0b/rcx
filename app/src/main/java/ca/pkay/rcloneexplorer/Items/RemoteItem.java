@@ -73,8 +73,9 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private boolean isDrawerPinned;
     private String displayName;
 
-    public RemoteItem(String name, String type) {
+    public RemoteItem(String name, String displayName, String type) {
         this.name = name;
+        this.displayName = displayName;
         this.typeReadable = type;
         this.type = getTypeFromString(type);
     }
@@ -168,6 +169,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public String getName() {
         return name;
     }
+
+    public String getDisplayName() { return displayName; }
 
     public int getType() {
         return type;
@@ -387,8 +390,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             return 1;
         }
 
-        String self = getName().toLowerCase();
-        String other = remoteItem.getName().toLowerCase();
+        String self = getDisplayName().toLowerCase();
+        String other = remoteItem.getDisplayName().toLowerCase();
         return self.compareTo(other);
     }
 

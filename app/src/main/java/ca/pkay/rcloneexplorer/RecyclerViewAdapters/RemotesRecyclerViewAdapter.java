@@ -48,7 +48,7 @@ public class RemotesRecyclerViewAdapter extends RecyclerView.Adapter<RemotesRecy
         RemoteItem item = remotes.get(position);
         boolean isPinned = item.isPinned();
         holder.remoteName = item.getName();
-        holder.tvName.setText(item.getName());
+        holder.tvName.setText(item.getDisplayName());
 
         int icon = item.getRemoteIcon();
         holder.ivIcon.setImageDrawable(view.getResources().getDrawable(icon));

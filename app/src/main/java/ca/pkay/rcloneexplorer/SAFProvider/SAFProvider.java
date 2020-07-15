@@ -88,7 +88,7 @@ public final class SAFProvider extends DocumentsProvider {
 
             final MatrixCursor.RowBuilder row = result.newRow();
             row.add(DocumentsContract.Root.COLUMN_ROOT_ID, rcxUri);
-            row.add(DocumentsContract.Root.COLUMN_SUMMARY, remote.getName());
+            row.add(DocumentsContract.Root.COLUMN_SUMMARY, remote.getDisplayName());
             row.add(
                 DocumentsContract.Root.COLUMN_FLAGS,
                 DocumentsContract.Root.FLAG_SUPPORTS_CREATE

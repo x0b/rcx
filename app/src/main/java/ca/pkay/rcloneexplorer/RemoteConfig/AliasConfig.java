@@ -131,7 +131,7 @@ public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnD
             return;
         }
 
-        Collections.sort(remotes, (a, b) -> a.getName().compareTo(b.getName()));
+        Collections.sort(remotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[remotes.size()];
         int i = 0;
         for (RemoteItem remote : remotes) {

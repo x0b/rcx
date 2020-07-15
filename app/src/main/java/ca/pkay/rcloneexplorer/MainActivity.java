@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -176,10 +175,6 @@ public class MainActivity extends AppCompatActivity
                 AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
             }
 
-            // FIXME (2020-07-15) migration code that will be safe to remove once all clients have
-            //  updated to a newer version.
-            migrateRenamedRemotes();
-
             startRemotesFragment();
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -210,26 +205,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
-    }
-
-    private void migrateRenamedRemotes() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Set<String> renamedRemotes = sharedPreferences.getStringSet(
-            getString(R.string.pref_key_renamed_remotes),
-            new HashSet<>()
-        );
-        for(String oldName : renamedRemotes) {
-            String key = getString(R.string.pref_key_renamed_remote_prefix, oldName);
-            String newName = sharedPreferences.getString(key, null);
-            if (newName == null) {
-                continue;
-            }
-            rclone.renameRemote(oldName, newName);
-            editor.remove(key);
-        }
-        editor.remove(getString(R.string.pref_key_renamed_remotes));
-        editor.apply();
     }
 
     @Override
@@ -392,7 +367,7 @@ public class MainActivity extends AppCompatActivity
         Collections.sort(remoteItems);
         for (RemoteItem remoteItem : remoteItems) {
             if (remoteItem.isDrawerPinned()) {
-                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getName());
+                MenuItem menuItem = subMenu.add(R.id.nav_pinned, availableDrawerPinnedRemoteId, Menu.NONE, remoteItem.getDisplayName());
                 drawerPinnedRemoteIds.put(availableDrawerPinnedRemoteId, remoteItem);
                 availableDrawerPinnedRemoteId++;
                 menuItem.setIcon(remoteItem.getRemoteIcon());

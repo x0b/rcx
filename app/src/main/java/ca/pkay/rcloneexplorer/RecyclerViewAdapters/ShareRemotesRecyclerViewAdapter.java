@@ -40,7 +40,7 @@ public class ShareRemotesRecyclerViewAdapter extends RecyclerView.Adapter<ShareR
         String remoteName = remotes.get(position).getName();
         boolean isPinned = remotes.get(position).isPinned();
         holder.remoteName = remoteName;
-        holder.tvName.setText(remotes.get(position).getName());
+        holder.tvName.setText(remotes.get(position).getDisplayName());
 
         int icon = remotes.get(position).getRemoteIcon();
         holder.ivIcon.setImageDrawable(view.getResources().getDrawable(icon));

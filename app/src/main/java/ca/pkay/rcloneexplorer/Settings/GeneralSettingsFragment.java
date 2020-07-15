@@ -215,7 +215,7 @@ public class GeneralSettingsFragment extends Fragment {
 
         Rclone rclone = new Rclone(context);
         final ArrayList<RemoteItem> remotes = new ArrayList<>(rclone.getRemotes());
-        Collections.sort(remotes, (a, b) -> a.getName().compareTo(b.getName()));
+        Collections.sort(remotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         final CharSequence[] options = new CharSequence[remotes.size()];
         int i = 0;
         for (RemoteItem remoteItem : remotes) {

@@ -273,8 +273,18 @@ public class Rclone {
         Process process;
         JSONObject remotesJSON;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<>());
-        Set<String> favoriteRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
+        Set<String> pinnedRemotes = sharedPreferences.getStringSet(
+            context.getString(R.string.shared_preferences_pinned_remotes),
+            new HashSet<>()
+        );
+        Set<String> favoriteRemotes = sharedPreferences.getStringSet(
+            context.getString(R.string.shared_preferences_drawer_pinned_remotes),
+            new HashSet<>()
+        );
+        Set<String> renamedRemotes = sharedPreferences.getStringSet(
+            context.getString(R.string.pref_key_renamed_remotes),
+            new HashSet<>()
+        );
 
         try {
             process = Runtime.getRuntime().exec(command);
@@ -316,7 +326,15 @@ public class Rclone {
                     }
                 }
 
-                RemoteItem newRemote = new RemoteItem(key, type);
+                String displayName = key;
+                if (renamedRemotes.contains(key)) {
+                      displayName = sharedPreferences.getString(
+                          context.getString(R.string.pref_key_renamed_remote_prefix, key),
+                          key
+                      );
+                }
+
+                RemoteItem newRemote = new RemoteItem(key, displayName, type);
                 if (type.equals("crypt") || type.equals("alias") || type.equals("cache")) {
                     newRemote = getRemoteType(remotesJSON, newRemote, key, 8);
                     if (newRemote == null) {
@@ -1149,48 +1167,23 @@ public class Rclone {
         outputStream.close();
     }
 
-    public boolean renameRemote(String remoteName, String newName) {
-        // RClone uses this library to parse its config file: https://github.com/unknwon/goconfig
-        // It's very similar to the INI syntax, where section corresponds to a
-        // remote. Sections can contain any unicode character except for line
-        // breaks and are completely unescaped.
-
-        boolean found = false;
-        String searchedLine = "[" + remoteName + "]";
-        File file = new File(rcloneConf);
-        List<String> configContent;
-        List<String> newConfigContent;
-
-        try {
-            configContent = FileUtils.readLines(file, "UTF-8");
-        } catch (IOException e) {
-            Log.e(TAG, "Couldn't parse RClone config.", e);
-            return false;
-        }
-
-        newConfigContent = new ArrayList<>(configContent.size());
-        for (String line : configContent) {
-            if (line.trim().equals(searchedLine)) {
-                newConfigContent.add("[" + newName + "]");
-                found = true;
-            }
-            else {
-                newConfigContent.add(line);
-            }
-        }
-
-        if (!found) {
-            return false;
-        }
-
-        try {
-            FileUtils.writeLines(file, newConfigContent);
-        } catch (IOException e) {
-            Log.e(TAG, "Couldn't write RClone config.", e);
-            return false;
-        }
-
-        return true;
+    public void renameRemote(String remoteName, String displayName) {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final Set<String> renamedRemotes = pref.getStringSet(
+            context.getString(R.string.pref_key_renamed_remotes),
+            new HashSet<>()
+        );
+        renamedRemotes.add(remoteName);
+        pref.edit()
+            .putString(
+                context.getString(R.string.pref_key_renamed_remote_prefix, remoteName),
+                displayName
+            )
+            .putStringSet(
+                context.getString(R.string.pref_key_renamed_remotes),
+                renamedRemotes
+            )
+            .apply();
     }
 
     public String getUniqueRemoteName(String desiredName) {

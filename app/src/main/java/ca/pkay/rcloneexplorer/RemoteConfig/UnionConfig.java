@@ -122,7 +122,7 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
             return;
         }
 
-        Collections.sort(configuredRemotes, (a, b) -> a.getName().compareTo(b.getName()));
+        Collections.sort(configuredRemotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[configuredRemotes.size()];
         int i = 0;
         for (RemoteItem remote : configuredRemotes) {

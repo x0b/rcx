@@ -462,7 +462,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         }
 
         final EditText remoteNameEdit = new EditText(context);
-        String initialText = remoteItem.getName();
+        String initialText = remoteItem.getDisplayName();
         remoteNameEdit.setText(initialText);
         builder.setView(remoteNameEdit);
         builder.setNegativeButton(R.string.cancel, null);
@@ -483,7 +483,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             builder = new AlertDialog.Builder(context);
         }
         builder.setTitle(R.string.delete_remote_title);
-        builder.setMessage(remoteItem.getName());
+        builder.setMessage(remoteItem.getDisplayName());
         builder.setNegativeButton(R.string.cancel, null);
         builder.setPositiveButton(R.string.delete, (dialog, which) -> new DeleteRemote(context, remoteItem).execute());
         builder.show();
