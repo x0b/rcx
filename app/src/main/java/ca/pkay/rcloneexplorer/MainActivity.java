@@ -176,6 +176,10 @@ public class MainActivity extends AppCompatActivity
                 AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
             }
 
+            // FIXME (2020-07-15) migration code that will be safe to remove once all clients have
+            //  updated to a newer version.
+            migrateRenamedRemotes();
+
             startRemotesFragment();
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -206,6 +210,26 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+    }
+
+    private void migrateRenamedRemotes() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Set<String> renamedRemotes = sharedPreferences.getStringSet(
+            getString(R.string.pref_key_renamed_remotes),
+            new HashSet<>()
+        );
+        for(String oldName : renamedRemotes) {
+            String key = getString(R.string.pref_key_renamed_remote_prefix, oldName);
+            String newName = sharedPreferences.getString(key, null);
+            if (newName == null) {
+                continue;
+            }
+            rclone.renameRemote(oldName, newName);
+            editor.remove(key);
+        }
+        editor.remove(getString(R.string.pref_key_renamed_remotes));
+        editor.apply();
     }
 
     @Override
