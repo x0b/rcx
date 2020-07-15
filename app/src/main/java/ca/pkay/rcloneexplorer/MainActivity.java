@@ -73,7 +73,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
@@ -175,13 +174,13 @@ public class MainActivity extends AppCompatActivity
                 AppShortcutsHelper.populateAppShortcuts(this, rclone.getRemotes());
             }
 
-            startRemotesFragment();
-
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(getString(R.string.pref_key_version_code), currentVersionCode);
             editor.putString(getString(R.string.pref_key_version_name), currentVersionName);
             editor.apply();
-        } else if (rclone.isConfigEncrypted()) {
+        }
+
+        if (rclone.isConfigEncrypted()) {
             askForConfigPassword();
         } else if (savedInstanceState != null) {
             fragment = getSupportFragmentManager().findFragmentByTag(FILE_EXPLORER_FRAGMENT_TAG);
