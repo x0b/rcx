@@ -43,6 +43,7 @@ import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
+import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
@@ -340,6 +341,9 @@ public class MainActivity extends AppCompatActivity
                     Toasty.info(this,  getString(R.string.no_config_found), Toast.LENGTH_SHORT, true).show();
                 }
                 break;
+            case R.id.nav_tasks:
+                startTasksFragment();
+                break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
@@ -353,6 +357,19 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startTasksFragment() {
+        fragment = TasksFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+            fragmentManager.popBackStack();
+        }
+
+        if (!isFinishing()) {
+            fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commitAllowingStateLoss();
+        }
     }
 
     private void pinRemotesToDrawer() {

@@ -1,4 +1,6 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+ext {
+    ANDROID_HOME = '/home/felix/Android/Sdk'
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
 

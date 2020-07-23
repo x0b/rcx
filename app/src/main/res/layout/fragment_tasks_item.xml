@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="?selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/taskIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/remote_icon"
+            android:tint="?attr/iconTint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_cloud" />
+
+        <TextView
+            android:id="@+id/taskName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="?attr/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/taskIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Google Drive" />
+
+        <TextView
+            android:id="@+id/fromLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="From:"
+            app:layout_constraintStart_toEndOf="@+id/task_sync_direction"
+            app:layout_constraintTop_toTopOf="@+id/task_sync_direction" />
+
+        <TextView
+            android:id="@+id/fromID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fromid"
+            app:layout_constraintStart_toEndOf="@+id/fromPath"
+            app:layout_constraintTop_toTopOf="@+id/fromLabel" />
+
+        <TextView
+            android:id="@+id/fromPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="fromPath"
+            app:layout_constraintStart_toEndOf="@+id/fromLabel"
+            app:layout_constraintTop_toTopOf="@+id/fromLabel" />
+
+        <TextView
+            android:id="@+id/toLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="To:"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/fromLabel"
+            app:layout_constraintTop_toBottomOf="@+id/fromLabel" />
+
+        <TextView
+            android:id="@+id/toID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="toid"
+            app:layout_constraintStart_toEndOf="@+id/toPath"
+            app:layout_constraintTop_toTopOf="@+id/toLabel" />
+
+        <TextView
+            android:id="@+id/toPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="toPath"
+            app:layout_constraintStart_toStartOf="@+id/fromPath"
+            app:layout_constraintTop_toTopOf="@+id/toLabel" />
+
+        <ImageButton
+            android:id="@+id/file_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/file_options_content_description"
+            android:paddingStart="16dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="26dp"
+            android:src="@drawable/ic_more_vert"
+            android:tint="?attr/iconTint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/task_sync_direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/sync"
+            app:layout_constraintStart_toStartOf="@+id/taskName"
+            app:layout_constraintTop_toBottomOf="@+id/taskName" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
