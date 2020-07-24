@@ -10,9 +10,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -192,16 +195,17 @@ public class SyncService extends IntentService {
         WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 
         if (wifiMgr == null) {
+            Log.e("wifi", "is null");
             return false;
         }
 
         if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
-
-            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-
-            return wifiInfo.getNetworkId() != -1;
+            // WifiManager requires location access. This is not available, so we query the metered instead.
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            return !cm.isActiveNetworkMetered();
         }
         else {
+            Log.e("wifi", "is off");
             return false; // Wi-Fi adapter is OFF
         }
     }
