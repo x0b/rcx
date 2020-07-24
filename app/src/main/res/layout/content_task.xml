@@ -66,25 +66,25 @@
                 android:layout_marginEnd="15dp"
                 android:text="@string/task_edit_label_remote" />
 
-            <EditText
-                android:id="@+id/task_remote_path_textfield"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp"
-                android:autofillHints=""
-                android:hint="@string/task_edit_hint_remote"
-                android:inputType="" />
-
             <Spinner
                 android:id="@+id/task_remote_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp" />
+                android:layout_marginBottom="5dp"/>
+
+            <EditText
+                android:id="@+id/task_remote_path_textfield"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="5dp"
+                android:hint="@string/task_edit_hint_remote"
+                android:inputType="" />
 
             <TextView
                 android:id="@+id/label_direction"

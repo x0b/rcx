@@ -1,5 +1,9 @@
 package ca.pkay.rcloneexplorer;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -7,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.documentfile.provider.DocumentFile;
 
 import android.util.Log;
 import android.view.View;
@@ -15,12 +20,16 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.Services.SyncService;
 
 public class TaskActivity extends AppCompatActivity {
 
@@ -29,6 +38,20 @@ public class TaskActivity extends AppCompatActivity {
     private Rclone rcloneInstance;
     private Task existingTask;
     private DatabaseHandler dbHandler;
+    final private int REQUEST_CODE_FP_LOCAL = 500;
+    private Uri sdCardUri;
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_FP_LOCAL:
+                EditText tv_local = findViewById(R.id.task_local_path_textfield);
+                tv_local.setText(data.getStringExtra(FilePicker.FILE_PICKER_RESULT));
+                break;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +72,7 @@ public class TaskActivity extends AppCompatActivity {
             }
         }
 
+        final Context c = this.getApplicationContext();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +85,21 @@ public class TaskActivity extends AppCompatActivity {
                 }
             }
         });
+
+        EditText tv_local = findViewById(R.id.task_local_path_textfield);
+        tv_local.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    Intent intent = new Intent(c, FilePicker.class);
+                    intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
+                    startActivityForResult(intent, REQUEST_CODE_FP_LOCAL);
+                }
+            }
+        });
+
+
+
         rcloneInstance = new Rclone(this);
 
         Spinner remoteDropdown = findViewById(R.id.task_remote_spinner);

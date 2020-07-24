@@ -11,6 +11,10 @@
             android:id="@+id/nav_remotes"
             android:icon="@drawable/ic_cloud"
             android:title="@string/remotes" />
+        <item
+            android:id="@+id/nav_tasks"
+            android:icon="@drawable/ic_notification_sync"
+            android:title="@string/tasks" />
     </group>
 
     <item
@@ -44,11 +48,6 @@
                     android:id="@+id/nav_export"
                     android:icon="@drawable/ic_export"
                     android:title="@string/export_rclone_config" />
-
-                <item
-                    android:id="@+id/nav_tasks"
-                    android:icon="@drawable/ic_notification_sync"
-                    android:title="@string/tasks" />
 
                 <item
                     android:id="@+id/nav_settings"

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="ca.pkay.rcloneexplorer">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ca.pkay.rcloneexplorer">
 
-    <uses-feature android:name="android.software.leanback" android:required="false"/>
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,16 +18,20 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-            android:networkSecurityConfig="@xml/network_security_config"
-            android:requestLegacyExternalStorage="true"
-            tools:ignore="GoogleAppIndexingWarning"
-            tools:targetApi="29">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="29">
+        <activity
+            android:name=".TaskActivity"
+            android:label="@string/title_activity_task"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_short_name"
@@ -31,6 +39,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
@@ -43,9 +52,9 @@
         <service android:name=".Services.DeleteService" />
         <service android:name=".Services.MoveService" />
         <service android:name=".Services.SyncService" />
-        <service android:name=".Services.TaskStartService"
-            android:exported="true">
-        </service>
+        <service
+            android:name=".Services.TaskStartService"
+            android:exported="true"></service>
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
@@ -54,7 +63,9 @@
         <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
         <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
 
-        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -86,11 +97,11 @@
             android:parentActivityName=".AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-                android:name=".Settings.SettingsActivity"
-                android:label="@string/title_activity_settings"
-                android:theme="@style/AppTheme.NoActionBar"
-                tools:ignore="InnerclassSeparator"
-                android:exported="false">
+            android:name=".Settings.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="InnerclassSeparator">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
             </intent-filter>
@@ -98,35 +109,47 @@
         <activity
             android:name=".SharingActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
@@ -137,7 +160,6 @@
             android:name=".RemoteConfig.RemoteConfig"
             android:label="@string/title_activity_remote_config"
             android:theme="@style/AppTheme.NoActionBar" />
-
     </application>
 
 </manifest>
