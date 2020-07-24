@@ -29,12 +29,12 @@ import java.util.List;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
-import ca.pkay.rcloneexplorer.Dialogs.TaskDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.TaskStartService;
+import ca.pkay.rcloneexplorer.TaskActivity;
 import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
@@ -126,7 +126,9 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private void editTask(Task task){
-        new TaskDialog(context, this, task).show();
+        Intent intent = new Intent(context, TaskActivity.class);
+        intent.putExtra(TaskActivity.ID_EXTRA, task.getId());
+        context.startActivity(intent);
     }
 
 

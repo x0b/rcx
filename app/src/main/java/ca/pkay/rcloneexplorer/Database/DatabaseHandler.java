@@ -77,6 +77,53 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+    public Task getTask(Long id){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                Task.COLUMN_NAME_ID,
+                Task.COLUMN_NAME_TITLE,
+                Task.COLUMN_NAME_REMOTE_ID,
+                Task.COLUMN_NAME_REMOTE_TYPE,
+                Task.COLUMN_NAME_REMOTE_PATH,
+                Task.COLUMN_NAME_LOCAL_PATH,
+                Task.COLUMN_NAME_SYNC_DIRECTION
+        };
+
+        String selection = Task.COLUMN_NAME_ID + " LIKE ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        String sortOrder = Task.COLUMN_NAME_ID + " ASC";
+
+        Cursor cursor = db.query(
+                Task.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+
+        List<Task> results = new ArrayList<>();
+        while(cursor.moveToNext()) {
+
+            Task task = new Task(cursor.getLong(0));
+            task.setTitle(cursor.getString(1));
+            task.setRemote_id(cursor.getString(2));
+            task.setRemote_type(cursor.getInt(3));
+            task.setRemote_path(cursor.getString(4));
+            task.setLocal_path(cursor.getString(5));
+            task.setDirection(cursor.getInt(6));
+
+            results.add(task);
+        }
+        cursor.close();
+
+        return results.get(0);
+
+    }
+
     public Task createEntry(Task taskToStore){
         SQLiteDatabase db = getWritableDatabase();
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,9 +31,9 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Database.xml.Exporter;
 import ca.pkay.rcloneexplorer.Database.xml.Importer;
-import ca.pkay.rcloneexplorer.Dialogs.TaskDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.TaskActivity;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -42,6 +41,7 @@ public class TasksFragment extends Fragment {
 
     private TasksRecyclerViewAdapter recyclerViewAdapter;
     private Activity filePickerActivity;
+    private View fragmentView;
 
 
     public TasksFragment() {
@@ -60,27 +60,16 @@ public class TasksFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_tasks, container, false);
-
-        final Context context = view.getContext();
-
-        RecyclerView recyclerView =  view.findViewById(R.id.task_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setItemAnimator(new LandingAnimator());
-
-        final DatabaseHandler dbHandler = new DatabaseHandler(context);
-
-        recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), context);
-        recyclerView.setAdapter(recyclerViewAdapter);
-
+        fragmentView = view;
+        populateTaskList(fragmentView);
 
         view.findViewById(R.id.newTask).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new TaskDialog(context, recyclerViewAdapter).show();
+                Intent intent = new Intent(view.getContext(), TaskActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -88,14 +77,9 @@ public class TasksFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onResume() {
+        super.onResume();
+        populateTaskList(fragmentView);
     }
 
     @Override
@@ -123,6 +107,17 @@ public class TasksFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    private void populateTaskList(View v){
+        Context c = v.getContext();
+        DatabaseHandler dbHandler = new DatabaseHandler(c);
+
+        RecyclerView recyclerView =  v.findViewById(R.id.task_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(c));
+        recyclerView.setItemAnimator(new LandingAnimator());
+
+        recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), c);
+        recyclerView.setAdapter(recyclerViewAdapter);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         Activity activity = getActivity();

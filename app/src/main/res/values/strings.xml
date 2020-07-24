@@ -52,7 +52,7 @@
     <string name="no_internet_connection">No internet connection</string>
     <string name="github_app_url" translatable="false">https://github.com/x0b/rcloneExplorer</string>
     <string name="github_issue_url" translatable="false">https://github.com/x0b/rcloneExplorer/issues/new?title=Bug%20Report&amp;label=app%20issue%20link&amp;body=</string>
-    <string name="github_issue_template" tools:ignore="TypographyDashes" translatable="false">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
+    <string name="github_issue_template" translatable="false" tools:ignore="TypographyDashes">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
     <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
     <string name="github_maintainer_url" translatable="false">https://github.com/x0b</string>
     <string name="about_check_updates">Check</string>
@@ -505,4 +505,19 @@
     <string name="operation_success">Sync was successful</string>
     <string name="notification_sync_failed">Sync operation failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
+    <string name="title_activity_task">TaskActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="task_edit_label_name">Name:</string>
+    <string name="task_edit_label_local">local:</string>
+    <string name="task_edit_label_remote">Remote:</string>
+    <string name="task_edit_label_direction">Direction:</string>
+    <string name="task_edit_hint_title">Title of Task</string>
+    <string name="task_edit_hint_local">Local Path</string>
+    <string name="task_edit_hint_remote">Remote Path</string>
 </resources>
