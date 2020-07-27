@@ -528,26 +528,26 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            Set<String> pinnedRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<>());
+            Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<>());
             if (pinnedRemotes.contains(remoteItem.getName())) {
                 pinnedRemotes.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<>(pinnedRemotes));
+                editor.putStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<>(pinnedRemotes));
                 editor.apply();
             }
 
-            Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
+            Set<String> hiddenRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
             if (hiddenRemotes.contains(remoteItem.getName())) {
                 hiddenRemotes.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>(hiddenRemotes));
+                editor.putStringSet(context.getString(R.string.shared_preferences_hidden_remotes), new HashSet<>(hiddenRemotes));
                 editor.apply();
             }
 
             AppShortcutsHelper.removeAppShortcut(context, remoteItem.getName());
 
-            Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
+            Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
             if (drawerPinnedRemote.contains(remoteItem.getName())) {
                 drawerPinnedRemote.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>(pinnedRemotes));
+                editor.putStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>(pinnedRemotes));
                 editor.apply();
                 pinToDrawerListener.removeRemoteFromNavDrawer();
             }
