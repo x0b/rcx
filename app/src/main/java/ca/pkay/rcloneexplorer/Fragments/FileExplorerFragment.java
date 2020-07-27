@@ -1669,6 +1669,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
+            if (null == getContext()) {
+                FLog.w(TAG, "FetchDirectoryContent/onPostExecute: discarding refresh");
+                return;
+            }
             if (fileItems == null) {
                 if (silentFetch) {
                     return;
