@@ -840,13 +840,22 @@ public class MainActivity extends AppCompatActivity
         private void addLocalRemote(File root) throws IOException {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             String name = root.getCanonicalPath();
-            String id = Environment.isExternalStorageEmulated(root) ? EMULATED : UUID.randomUUID().toString();
+            String id = UUID.randomUUID().toString();
+            try {
+                if (Environment.isExternalStorageEmulated(root)) {
+                    id = EMULATED;
+                }
+            } catch (IllegalArgumentException e) {
+                FLog.e(TAG, "RefreshLocalAliases/addLocalRemote: %s is not a valid path", e, name);
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 StorageManager storageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
                 StorageVolume storageVolume = storageManager.getStorageVolume(root);
-                name = storageVolume.getDescription(context);
-                if (null != storageVolume.getUuid()) {
-                    id = storageVolume.getUuid();
+                if (null != storageVolume) {
+                    name = storageVolume.getDescription(context);
+                    if (null != storageVolume.getUuid()) {
+                        id = storageVolume.getUuid();
+                    }
                 }
             }
 
