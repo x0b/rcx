@@ -1,10 +1,27 @@
 apply plugin: 'com.android.application'
-if (!getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains("oss")) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'com.google.firebase.crashlytics'
+
+for (String taskName : getGradle().getStartParameter().getTaskNames()) {
+    if (taskName.endsWith('RcxDebug') || taskName.endsWith('RcxRelease')) {
+        apply plugin: 'com.google.gms.google-services'
+        apply plugin: 'com.google.firebase.crashlytics'
+        break
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    // We defer the build of rclone just before the assemble stage of the
+    // main app, so that Android Studio displays a convenient clickable
+    // error message that allows to install the proper NDK version
+    // directly from the SDK manager.
+    if (task.name.startsWith('assemble')) {
+        task.dependsOn(':rclone:buildNative')
+    }
 }
 
 android {
+    buildToolsVersion project.properties['io.github.x0b.rcx.buildToolsVersion']
+    ndkVersion project.properties['io.github.x0b.rcx.ndkVersion']
+
     signingConfigs {
         github_x0b {
             keyAlias 'github_x0b'
@@ -18,6 +35,10 @@ android {
         versionCode 170 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.11.4'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        def documentsAuthority = applicationId + '.documents'
+        manifestPlaceholders = [documentsAuthority: documentsAuthority]
+        buildConfigField "String", "DOCUMENTS_AUTHORITY", "\"${documentsAuthority}\""
     }
 
     buildTypes {
@@ -63,10 +84,11 @@ android {
     }
 
     project.ext.versionCodes = [
-            'armeabi-v7a': 6,
-            'arm64-v8a': 7,
-            'x86': 8,
-            'x86_64': 9]
+        'armeabi-v7a': 6,
+        'arm64-v8a': 7,
+        'x86': 8,
+        'x86_64': 9
+    ]
 
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->

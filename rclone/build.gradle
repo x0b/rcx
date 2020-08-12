@@ -1,106 +1,151 @@
-// Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.51.0'
-
-//
-// DO NOT EDIT ANYTHING BELOW
-//
 import java.nio.file.Paths
-def repository = 'github.com/rclone/rclone'
-def goPath = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
-def osName = System.properties['os.name'].toLowerCase()
-def osArch = System.properties['os.arch']
-def String os
-if (osName.contains('windows')) {
-    if(osArch.equals('amd64')) {
-        os = "windows-x86_64"
-    } else if (osArch.equals('x86')) {
-        os = "windows"
+
+ext {
+    NDK_VERSION = project.properties['io.github.x0b.rcx.ndkVersion']
+    RCLONE_VERSION = project.properties['io.github.x0b.rcx.rCloneVersion']
+    RCLONE_MODULE = 'github.com/rclone/rclone'
+    CACHE_PATH = Paths.get(projectDir.absolutePath, 'cache').toAbsolutePath().toString()
+    GOPATH = Paths.get(CACHE_PATH, "gopath").toString()
+}
+
+def findSdkDir() {
+    def androidHome = System.getenv('ANDROID_HOME')
+    if (androidHome != null) {
+        return androidHome
     }
-} else if (osName.contains("linux")) {
-    os = "linux-x86_64"
-} else if (osName.contains('mac')) {
-    os = "darwin-x86_64"
+
+    def localPropertiesFile = project.rootProject.file('local.properties')
+    if (localPropertiesFile.exists()) {
+        Properties properties = new Properties()
+        properties.load(localPropertiesFile.newDataInputStream())
+        def sdkDir = properties.get('sdk.dir')
+        if (sdkDir != null) {
+            return sdkDir
+        }
+    }
+
+    throw GradleException(
+        "Couldn't locate your android SDK location. Make sure to set sdk.dir property "
+        + "in your local.properties at the root of the project or set ANDROID_HOME "
+        + "environment variable"
+    )
 }
 
-task fetchRclone(type: Exec) {
-    mkdir "gopath"
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    commandLine 'go', 'get', '-d', repository
+def findNdkDir() {
+    def sdkDir = findSdkDir()
+    def ndkPath = Paths.get(sdkDir, 'ndk', NDK_VERSION).resolve().toAbsolutePath()
+    if (!ndkPath.toFile().exists()) {
+        throw new GradleException(String.format(
+            "Couldn't find a ndk bundle in %s. Make sure that you have the proper "
+            + "version installed in Android Studio's SDK Manager or that you have "
+            + "run \"%s 'ndk;%s'\".",
+            ndkPath.toString(),
+            Paths.get(sdkDir, 'tools', 'bin', 'sdkmanager').toString(),
+            NDK_VERSION
+        ))
+    }
+    return ndkPath.toString()
 }
 
-task checkoutRclone(type: Exec) {
-    dependsOn fetchRclone
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'git', 'checkout', buildTag
+def getCrossCompiler(bin) {
+    def osName = System.properties['os.name'].toLowerCase()
+    def osArch = System.properties['os.arch']
+    def os
+    if (osName.contains('windows')) {
+        if(osArch.equals('amd64')) {
+            os = "windows-x86_64"
+        } else if (osArch.equals('x86')) {
+            os = "windows"
+        }
+    } else if (osName.contains("linux")) {
+        os = "linux-x86_64"
+    } else if (osName.contains('mac')) {
+        os = "darwin-x86_64"
+    } else {
+        throw new GradleException("Unsupported OS.")
+    }
+
+    return Paths.get(
+        findNdkDir(),
+        'toolchains',
+        'llvm',
+        'prebuilt',
+        os,
+        'bin',
+        bin
+    )
+}
+
+def getLibrclone(arch) {
+    return Paths.get('..', 'app', 'lib', arch, 'librclone.so').toString()
+}
+
+def buildRclone(compiler, arch, abi, env = [:]) {
+    return {
+        doLast {
+            exec {
+                environment 'GOPATH', GOPATH
+                def crossCompiler = getCrossCompiler(compiler)
+                environment 'CC', crossCompiler
+                environment 'CC_FOR_TARGET', crossCompiler
+                environment 'GOOS', 'android'
+                environment 'GOARCH', arch
+                environment 'CGO_ENABLED', '1'
+                env.each {entry -> environment "$entry.key", "$entry.value"}
+                workingDir CACHE_PATH
+                commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone(abi), RCLONE_MODULE
+            }
+        }
+    }
+}
+
+task createRcloneModule(type: Exec) {
+    // We create a fake go module as it's the only way to checkout
+    // a specific tag.
+    onlyIf { !Paths.get(CACHE_PATH, 'go.mod').toFile().exists() }
+    mkdir CACHE_PATH
+    workingDir CACHE_PATH
+    environment 'GOPATH', GOPATH
+    commandLine 'go', 'mod', 'init', 'rclone'
+}
+
+task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
+    workingDir CACHE_PATH
+    environment 'GOPATH', GOPATH
+    commandLine 'go', 'get', '-v', '-d', "${RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
 
 task cleanNative {
     enabled = false
     doLast {
-        delete '../app/lib/armeabi-v7a/librclone.so'
-        delete '../app/lib/arm64-v8a/librclone.so'
-        delete '../app/lib/x86/librclone.so'
-        delete '../app/lib/x86_64/librclone.so'
+        delete getLibrclone('armeabi-v7a')
+        delete getLibrclone('arm64-v8a')
+        delete getLibrclone('x86')
+        delete getLibrclone('x86_64')
     }
 }
 
-task buildArm(type: Exec) {
-    dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'armv7a-linux-androideabi21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', 'arm'
-    environment 'GOARM', '7'
-    environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/armeabi-v7a/librclone.so', repository
+task buildArm(dependsOn: checkoutRclone) {
+    configure buildRclone('armv7a-linux-androideabi21-clang', 'arm', 'armeabi-v7a', ['GOARM': '7'])
 }
 
-task buildArm64(type: Exec) {
-    dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'aarch64-linux-android21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', 'arm64'
-    environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/arm64-v8a/librclone.so', repository
+task buildArm64(dependsOn: checkoutRclone) {
+    configure buildRclone('aarch64-linux-android21-clang', 'arm64', 'arm64-v8a')
 }
 
-task buildx86(type: Exec) {
-    dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'i686-linux-android21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', '386'
-    environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86/librclone.so', repository
+task buildx86(dependsOn: checkoutRclone) {
+    configure buildRclone('i686-linux-android21-clang', '386', 'x86')
 }
 
-task buildx64(type: Exec) {
-    dependsOn checkoutRclone
-    environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk-bundle', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'x86_64-linux-android21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', 'amd64'
-    environment 'CGO_ENABLED', '1'
-    commandLine 'go', 'build', '-tags', 'linux', '-o', '../app/lib/x86_64/librclone.so', repository
+task buildx64(dependsOn: checkoutRclone) {
+    configure buildRclone('x86_64-linux-android21-clang', 'amd64', 'x86_64')
 }
 
 task buildNative {
-    dependsOn fetchRclone
-    dependsOn checkoutRclone
     dependsOn buildArm
     dependsOn buildArm64
     dependsOn buildx86
     dependsOn buildx64
 }
 
-buildNative.mustRunAfter(buildArm, buildArm64, buildx86, buildx64)
 defaultTasks 'buildNative'

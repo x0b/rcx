@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.SafDAVServer;
 import io.github.x0b.safdav.file.SafConstants;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +48,9 @@ public class Rclone {
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
     public static final int SERVE_PROTOCOL_DLNA = 4;
+    private static final String[] COMMON_TRANSFER_OPTIONS = new String[] {
+        "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE"
+    };
     private static SafDAVServer safDAVServer;
     private Context context;
     private String rclone;
@@ -178,7 +183,7 @@ public class Rclone {
     }
 
     @Nullable
-    public List<FileItem> getDirectoryContent(RemoteItem remote, String path, boolean startAtRoot) {
+    public List<FileItem> ls(RemoteItem remote, String path, boolean startAtRoot) {
         String remoteAndPath = remote.getName() + ":";
         if (startAtRoot) {
             remoteAndPath += "/";
@@ -254,7 +259,7 @@ public class Rclone {
                 FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, mimeType, fileIsDir);
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Runtime error.", e);
                 return null;
             }
         }
@@ -267,8 +272,18 @@ public class Rclone {
         Process process;
         JSONObject remotesJSON;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<>());
-        Set<String> favoriteRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
+        Set<String> pinnedRemotes = sharedPreferences.getStringSet(
+            context.getString(R.string.shared_preferences_pinned_remotes),
+            new HashSet<>()
+        );
+        Set<String> favoriteRemotes = sharedPreferences.getStringSet(
+            context.getString(R.string.shared_preferences_drawer_pinned_remotes),
+            new HashSet<>()
+        );
+        Set<String> renamedRemotes = sharedPreferences.getStringSet(
+            context.getString(R.string.pref_key_renamed_remotes),
+            new HashSet<>()
+        );
 
         try {
             process = Runtime.getRuntime().exec(command);
@@ -288,7 +303,7 @@ public class Rclone {
 
             remotesJSON = new JSONObject(output.toString());
         } catch (IOException | InterruptedException | JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return new ArrayList<>();
         }
 
@@ -310,7 +325,15 @@ public class Rclone {
                     }
                 }
 
-                RemoteItem newRemote = new RemoteItem(key, type);
+                String displayName = key;
+                if (renamedRemotes.contains(key)) {
+                      displayName = sharedPreferences.getString(
+                          context.getString(R.string.pref_key_renamed_remote_prefix, key),
+                          key
+                      );
+                }
+
+                RemoteItem newRemote = new RemoteItem(key, displayName, type);
                 if (type.equals("crypt") || type.equals("alias") || type.equals("cache")) {
                     newRemote = getRemoteType(remotesJSON, newRemote, key, 8);
                     if (newRemote == null) {
@@ -329,7 +352,7 @@ public class Rclone {
 
                 remoteItemList.add(newRemote);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Runtime error.", e);
             }
         }
 
@@ -387,7 +410,7 @@ public class Rclone {
                 remoteItem.setType(type);
                 return remoteItem;
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Runtime error.", e);
             }
         }
 
@@ -403,11 +426,10 @@ public class Rclone {
 
         System.arraycopy(opt, 0, commandWithOptions, command.length, opt.length);
 
-
         try {
             return Runtime.getRuntime().exec(commandWithOptions);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return null;
         }
     }
@@ -426,7 +448,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
         }
     }
 
@@ -444,7 +466,7 @@ public class Rclone {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             return  reader.readLine();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return null;
         }
     }
@@ -501,7 +523,7 @@ public class Rclone {
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return null;
         }
     }
@@ -516,81 +538,122 @@ public class Rclone {
         String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remoteItem, context)  + "/" : "";
         String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
 
+        List<String> opts = new ArrayList<>(Arrays.asList("sync"));
         if (syncDirection == 1) {
-            command = createCommandWithOptions("sync", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+            opts.addAll(Arrays.asList(localPath, remotePath));
         } else if (syncDirection == 2) {
-            command = createCommandWithOptions("sync", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+            opts.addAll(Arrays.asList(remotePath, localPath));
         } else {
             return null;
         }
+        opts.addAll(Arrays.asList(COMMON_TRANSFER_OPTIONS));
+        command = createCommandWithOptions(opts.toArray(new String[0]));
 
         String[] env = getRcloneEnv();
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return null;
         }
     }
 
+    private String buildRemoteFilePath(RemoteItem remote, String path) {
+        String remoteFilePath = remote.getName() + ":";
+        if (remote.isRemoteType(RemoteItem.LOCAL) && !remote.isAlias() && !remote.isCrypt() && !remote.isCache()) {
+            remoteFilePath += getLocalRemotePathPrefix(remote, context) + "/";
+        }
+        remoteFilePath += path;
+        return remoteFilePath;
+    }
+
     public Process downloadFile(RemoteItem remote, FileItem downloadItem, String downloadPath) {
         String[] command;
-        String remoteFilePath;
         String localFilePath;
-
-        remoteFilePath = remote.getName() + ":";
-        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            remoteFilePath += getLocalRemotePathPrefix(remote, context)  + "/";
-        }
-        remoteFilePath += downloadItem.getPath();
+        String remoteFilePath = buildRemoteFilePath(remote, downloadItem.getPath());
 
         if (downloadItem.isDir()) {
             localFilePath = downloadPath + "/" + downloadItem.getName();
         } else {
             localFilePath = downloadPath;
         }
-        command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+
+        List<String> opts = new ArrayList<>(
+            Arrays.asList("copy", remoteFilePath, localFilePath)
+        );
+        opts.addAll(Arrays.asList(COMMON_TRANSFER_OPTIONS));
+        command = createCommandWithOptions(opts.toArray(new String[0]));
 
         String[] env = getRcloneEnv();
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return null;
         }
     }
 
-    public Process uploadFile(RemoteItem remote, String uploadPath, String uploadFile) {
-        String remoteName = remote.getName();
-        String path;
+    public Process catFile(RemoteItem remote, String path) {
         String[] command;
-        String localRemotePath;
+        String remoteFilePath = buildRemoteFilePath(remote, path);
 
-        if (remote.isRemoteType(RemoteItem.LOCAL) && (!remote.isAlias() && !remote.isCrypt() && !remote.isCache())) {
-            localRemotePath = getLocalRemotePathPrefix(remote, context) + "/";
-        } else {
-            localRemotePath = "";
-        }
-
-        File file = new File(uploadFile);
-        if (file.isDirectory()) {
-            int index = uploadFile.lastIndexOf('/');
-            String dirName = uploadFile.substring(index + 1);
-            path = (uploadPath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath + dirName : remoteName + ":" + localRemotePath + uploadPath + "/" + dirName;
-        } else {
-            path = (uploadPath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + uploadPath;
-        }
-
-        command = createCommandWithOptions("copy", uploadFile, path, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+        List<String> opts = new ArrayList<>(Arrays.asList("cat", remoteFilePath));
+        opts.addAll(Arrays.asList(COMMON_TRANSFER_OPTIONS));
+        command = createCommandWithOptions(opts.toArray(new String[0]));
 
         String[] env = getRcloneEnv();
         try {
             return Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return null;
         }
+    }
 
+    public Process uploadFile(RemoteItem remote, String uploadPath, String fileToUpload) {
+        String remoteName = remote.getName();
+        String[] command;
+        String path = uploadPath.equals("//" + remoteName)
+            ? buildRemoteFilePath(remote, "")
+            : buildRemoteFilePath(remote, uploadPath);
+
+        File file = new File(fileToUpload);
+        if (file.isDirectory()) {
+            int index = fileToUpload.lastIndexOf('/');
+            String dirName = fileToUpload.substring(index + 1);
+            path += "/" + dirName;
+        }
+
+        List<String> opts = new ArrayList<>(
+            Arrays.asList("copy", fileToUpload, path)
+        );
+        opts.addAll(Arrays.asList(COMMON_TRANSFER_OPTIONS));
+        command = createCommandWithOptions(opts.toArray(new String[0]));
+
+        String[] env = getRcloneEnv();
+        try {
+            return Runtime.getRuntime().exec(command, env);
+        } catch (IOException e) {
+            Log.e(TAG, "Runtime error.", e);
+            return null;
+        }
+    }
+
+    public Process rCatFile(RemoteItem remote, String uploadPath) {
+        String[] command;
+        String remoteFilePath = buildRemoteFilePath(remote, uploadPath);
+
+        List<String> opts = new ArrayList<>(Arrays.asList("rcat", remoteFilePath));
+        opts.addAll(Arrays.asList(COMMON_TRANSFER_OPTIONS));
+        command = createCommandWithOptions(opts.toArray(new String[0]));
+
+        String[] env = getRcloneEnv();
+        try {
+            return Runtime.getRuntime().exec(command, env);
+        } catch (IOException e) {
+            Log.e(TAG, "Runtime error.", e);
+            return null;
+        }
     }
 
     public Process deleteItems(RemoteItem remote, FileItem deleteItem) {
@@ -616,7 +679,7 @@ public class Rclone {
         try {
             process = Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
         }
         return process;
     }
@@ -641,7 +704,7 @@ public class Rclone {
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
         return true;
@@ -668,7 +731,7 @@ public class Rclone {
         try {
             process = Runtime.getRuntime().exec(command, env);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
         }
 
         return process;
@@ -696,7 +759,7 @@ public class Rclone {
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
         return true;
@@ -710,7 +773,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command, env);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
         }
 
         return process != null && process.exitValue() == 0;
@@ -738,7 +801,7 @@ public class Rclone {
              return reader.readLine();
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             if (process != null) {
                 logErrorOutput(process);
             }
@@ -775,7 +838,7 @@ public class Rclone {
                 return split[0];
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return context.getString(R.string.hash_error);
         }
     }
@@ -809,7 +872,7 @@ public class Rclone {
                 return split[0];
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return context.getString(R.string.hash_error);
         }
     }
@@ -831,7 +894,7 @@ public class Rclone {
                 result.add(line);
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return "-1";
         }
 
@@ -946,7 +1009,7 @@ public class Rclone {
             process = Runtime.getRuntime().exec(command);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
         return process.exitValue() != 0;
@@ -960,7 +1023,7 @@ public class Rclone {
         try {
             process = Runtime.getRuntime().exec(command, environmentalVars);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
 
@@ -972,14 +1035,14 @@ public class Rclone {
                 result.add(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
 
         try {
             process.waitFor();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
 
@@ -1003,7 +1066,7 @@ public class Rclone {
             fileOutputStream.flush();
             fileOutputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Runtime error.", e);
             return false;
         }
         return true;
@@ -1101,6 +1164,25 @@ public class Rclone {
         inputStream.close();
         outputStream.flush();
         outputStream.close();
+    }
+
+    public void renameRemote(String remoteName, String displayName) {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final Set<String> renamedRemotes = pref.getStringSet(
+            context.getString(R.string.pref_key_renamed_remotes),
+            new HashSet<>()
+        );
+        renamedRemotes.add(remoteName);
+        pref.edit()
+            .putString(
+                context.getString(R.string.pref_key_renamed_remote_prefix, remoteName),
+                displayName
+            )
+            .putStringSet(
+                context.getString(R.string.pref_key_renamed_remotes),
+                renamedRemotes
+            )
+            .apply();
     }
 
     /**

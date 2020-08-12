@@ -10,25 +10,26 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: set up JDK 1.8
+    - name: set up JDK
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Set up Go 1.14
+    - name: Set up Go
       uses: actions/setup-go@v1
       with:
         go-version: 1.14
       id: go
-    # https://github.com/actions/virtual-environments/issues/578
-    - name: Fix missing NDK dependency
-      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;20.0.5594570"
-    - name: Build rclone
-      run: ./gradlew buildNative -p rclone
+    - name: Configure Android SDK
+      run: |
+        BUILD_TOOLS_VERSION="$(grep -E "^io\.github\.x0b\.rcx\.buildToolsVersion=" gradle.properties | cut -d'=' -f2)"
+        NDK_VERSION="$(grep -E "^io\.github\.x0b\.rcx\.ndkVersion=" gradle.properties | cut -d'=' -f2)"
+
+        yes | sudo "${ANDROID_HOME}/tools/bin/sdkmanager" --licenses
+        sudo "${ANDROID_HOME}/tools/bin/sdkmanager" "build-tools;${BUILD_TOOLS_VERSION}" "ndk;${NDK_VERSION}"
     - name: Build app
       run: ./gradlew assembleOssDebug
     - name: Upload APK

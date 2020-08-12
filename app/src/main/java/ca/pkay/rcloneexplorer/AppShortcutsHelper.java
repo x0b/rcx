@@ -42,7 +42,6 @@ public class AppShortcutsHelper {
         Set<String> shortcutSet = new HashSet<>();
         List<ShortcutInfo> shortcutInfoList = new ArrayList<>();
 
-        RemoteItem.prepareDisplay(context, remotes);
         for (RemoteItem remoteItem : remotes) {
             String id = getUniqueIdFromString(remoteItem.getName());
 

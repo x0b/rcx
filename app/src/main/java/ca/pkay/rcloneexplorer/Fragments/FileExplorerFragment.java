@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -86,7 +85,6 @@ import okhttp3.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1659,7 +1657,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected List<FileItem> doInBackground(Void... voids) {
             List<FileItem> fileItemList;
-            fileItemList = rclone.getDirectoryContent(remote, directoryObject.getCurrentPath(), startAtRoot);
+            fileItemList = rclone.ls(remote, directoryObject.getCurrentPath(), startAtRoot);
             return fileItemList;
         }
 

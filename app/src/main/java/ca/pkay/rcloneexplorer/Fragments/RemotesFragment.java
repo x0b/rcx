@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
+import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -33,7 +35,6 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
-import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 import java.util.ArrayList;
@@ -298,12 +299,17 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         if (null != recyclerViewAdapter) {
             recyclerViewAdapter.newData(remotes);
         }
+        refreshSAFRoots();
+    }
+
+    private void refreshSAFRoots() {
+        Uri rootsUri = DocumentsContract.buildRootsUri(BuildConfig.DOCUMENTS_AUTHORITY);
+        context.getContentResolver().notifyChange(rootsUri, null);
     }
 
     private List<RemoteItem> filterRemotes() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
-        Set<String> renamedRemotes = sharedPreferences.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
         remotes = rclone.getRemotes();
         if (hiddenRemotes != null && !hiddenRemotes.isEmpty()) {
             ArrayList<RemoteItem> toBeHidden = new ArrayList<>();
@@ -315,13 +321,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             remotes.removeAll(toBeHidden);
         }
         Collections.sort(remotes);
-        for(RemoteItem item : remotes) {
-            if(renamedRemotes.contains(item.getName())) {
-                String displayName = sharedPreferences.getString(
-                        getString(R.string.pref_key_renamed_remote_prefix, item.getName()), item.getName());
-                item.setDisplayName(displayName);
-            }
-        }
         return remotes;
     }
 
@@ -470,21 +469,14 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             builder = new AlertDialog.Builder(context);
         }
 
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final EditText remoteNameEdit = new EditText(context);
         String initialText = remoteItem.getDisplayName();
         remoteNameEdit.setText(initialText);
         builder.setView(remoteNameEdit);
         builder.setNegativeButton(R.string.cancel, null);
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
-            String displayName = remoteNameEdit.getText().toString();
-            Set<String> renamedRemotes = pref.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
-            renamedRemotes.add(remoteItem.getName());
-            pref.edit()
-                    .putString(getString(R.string.pref_key_renamed_remote_prefix, remoteItem.getName()), displayName)
-                    .putStringSet(getString(R.string.pref_key_renamed_remotes), renamedRemotes)
-                .apply();
-            remoteItem.setDisplayName(displayName);
+            String newName = remoteNameEdit.getText().toString();
+            rclone.renameRemote(remoteItem.getName(), newName);
             refreshRemotes();
         });
         builder.setTitle(R.string.rename_remote);

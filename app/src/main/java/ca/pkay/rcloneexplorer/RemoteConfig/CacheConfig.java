@@ -286,7 +286,6 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
             Toasty.info(context, getString(R.string.no_remotes), Toast.LENGTH_SHORT, true).show();
             return;
         }
-        RemoteItem.prepareDisplay(context, remotes);
         Collections.sort(remotes, (a, b) -> a.getDisplayName().compareTo(b.getDisplayName()));
         String[] options = new String[remotes.size()];
         int i = 0;

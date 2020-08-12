@@ -73,8 +73,9 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     private boolean isDrawerPinned;
     private String displayName;
 
-    public RemoteItem(String name, String type) {
+    public RemoteItem(String name, String displayName, String type) {
         this.name = name;
+        this.displayName = displayName;
         this.typeReadable = type;
         this.type = getTypeFromString(type);
     }
@@ -169,6 +170,8 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return name;
     }
 
+    public String getDisplayName() { return displayName; }
+
     public int getType() {
         return type;
     }
@@ -247,27 +250,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
             }
         }
         return isSameType;
-    }
-
-    public String getDisplayName() {
-        return displayName != null ? displayName : name;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public static List<RemoteItem> prepareDisplay(Context context, List<RemoteItem> items) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> renamedRemotes = pref.getStringSet(context.getString(R.string.pref_key_renamed_remotes), new HashSet<>());
-        for(RemoteItem item : items) {
-            if(renamedRemotes.contains(item.name)) {
-                String displayName = pref.getString(
-                        context.getString(R.string.pref_key_renamed_remote_prefix, item.name), item.name);
-                item.displayName = displayName;
-            }
-        }
-        return items;
     }
 
     private int getTypeFromString(String type) {
@@ -407,7 +389,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         } else if (!this.isPinned && remoteItem.isPinned) {
             return 1;
         }
-        return getDisplayName().toLowerCase().compareTo(remoteItem.getDisplayName().toLowerCase());
+
+        String self = getDisplayName().toLowerCase();
+        String other = remoteItem.getDisplayName().toLowerCase();
+        return self.compareTo(other);
     }
 
     @Override
