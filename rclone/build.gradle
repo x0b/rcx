@@ -3,8 +3,9 @@ import java.nio.file.Paths
 ext {
     NDK_VERSION = project.properties['io.github.x0b.rcx.ndkVersion']
     RCLONE_VERSION = project.properties['io.github.x0b.rcx.rCloneVersion']
-    RCLONE_REPOSITORY = 'github.com/rclone/rclone'
-    GO_PATH = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
+    RCLONE_MODULE = 'github.com/rclone/rclone'
+    CACHE_PATH = Paths.get(projectDir.absolutePath, 'cache').toAbsolutePath().toString()
+    GOPATH = Paths.get(CACHE_PATH, "gopath").toString()
 }
 
 def findSdkDir() {
@@ -83,7 +84,7 @@ def buildRclone(compiler, arch, abi, env = [:]) {
     return {
         doLast {
             exec {
-                environment 'GOPATH', GO_PATH
+                environment 'GOPATH', GOPATH
                 def crossCompiler = getCrossCompiler(compiler)
                 environment 'CC', crossCompiler
                 environment 'CC_FOR_TARGET', crossCompiler
@@ -91,21 +92,27 @@ def buildRclone(compiler, arch, abi, env = [:]) {
                 environment 'GOARCH', arch
                 environment 'CGO_ENABLED', '1'
                 env.each {entry -> environment "$entry.key", "$entry.value"}
-                commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone(abi), RCLONE_REPOSITORY
+                workingDir CACHE_PATH
+                commandLine 'go', 'build', '-tags', 'linux', '-o', getLibrclone(abi), RCLONE_MODULE
             }
         }
     }
 }
 
-task fetchRclone(type: Exec) {
-    mkdir GO_PATH
-    environment 'GOPATH', GO_PATH
-    commandLine 'go', 'get', '-d', RCLONE_REPOSITORY
+task createRcloneModule(type: Exec) {
+    // We create a fake go module as it's the only way to checkout
+    // a specific tag.
+    onlyIf { !Paths.get(CACHE_PATH, 'go.mod').toFile().exists() }
+    mkdir CACHE_PATH
+    workingDir CACHE_PATH
+    environment 'GOPATH', GOPATH
+    commandLine 'go', 'mod', 'init', 'rclone'
 }
 
-task checkoutRclone(type: Exec, dependsOn: fetchRclone) {
-    workingDir Paths.get(GO_PATH, 'src', *RCLONE_REPOSITORY.split('/'))
-    commandLine 'git', 'checkout', 'v' + RCLONE_VERSION
+task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
+    workingDir CACHE_PATH
+    environment 'GOPATH', GOPATH
+    commandLine 'go', 'get', '-v', '-d', "${RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
 
 task cleanNative {

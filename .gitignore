@@ -2,6 +2,9 @@
 *.apk
 *.ap_
 
+# Built libraries
+*.so
+
 # Files for the ART/Dalvik VM
 *.dex
 
