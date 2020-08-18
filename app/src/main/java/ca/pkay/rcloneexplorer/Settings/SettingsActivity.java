@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.Settings;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import ca.pkay.rcloneexplorer.ActivityHelper;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 
 public class SettingsActivity extends AppCompatActivity implements  SettingsFragment.OnSettingCategorySelectedListener,
                                                                     LookAndFeelSettingsFragment.OnThemeHasChanged {
@@ -19,6 +21,11 @@ public class SettingsActivity extends AppCompatActivity implements  SettingsFrag
     private final String SAVED_THEME_CHANGE = "ca.pkay.rcexplorer.SettingsActivity.OUTSTATE_THEME_CHANGED";
     private final String SAVED_FRAGMENT = "ca.pkay.rcexplorer.SettingsActivity.RESTORE_FRAGMENT";
     private boolean themeHasChanged;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

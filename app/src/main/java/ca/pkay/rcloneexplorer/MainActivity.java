@@ -211,6 +211,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         pinRemotesToDrawer();

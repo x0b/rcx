@@ -46,6 +46,11 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
     private boolean isDataReady;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityHelper.applyTheme(this);
