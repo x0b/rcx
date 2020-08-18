@@ -308,7 +308,9 @@
     <string name="cache_size">Cache-Größe</string>
     <string name="selected_cache_size">Cache-Größe: %1$s</string>
     <string name="send_anonymous_crash_reports">Anonyme Absturzberichte senden</string>
-    <string name="pref_crash_report_summary">Einen Bericht senden, wenn die App abstürzt. Dies hilft der Entwicklung mit technischen Details und enthält keine persönlichen Informationen. Daten werden an Fabric Crashlytics gesendet (<a href="https://docs.fabric.io/android/fabric/data-privacy.html&#35;crashlytics">Datenschutzerklärung</a>).</string>
+    <string name="pref_crash_report_summary">(i) Bericht wird an Microsoft Appcenter gesendet</string>
+    <string name="pref_send_test_report_title">Test-Fehlerbericht senden</string>
+    <string name="pref_send_test_report_summary">Tested die Fehlerberichterstattung</string>
     <string name="pin_to_the_top">Oben anheften</string>
     <string name="unpin_from_the_top">Von oben lösen</string>
     <string name="pin_to_drawer">Im Navigationsbereich anheften</string>

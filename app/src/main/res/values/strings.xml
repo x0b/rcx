@@ -360,6 +360,8 @@
     <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
     <string name="pref_crash_report_summary">(i) New crash logging using app center.</string>
+    <string name="pref_send_test_report_title">Send Test Report</string>
+    <string name="pref_send_test_report_summary">Sends a test report to the crash logger</string>
     <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
     <string name="pin_to_drawer">Pin to drawer</string>
