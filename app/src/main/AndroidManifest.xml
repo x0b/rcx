@@ -45,6 +45,9 @@
         <service android:name=".Services.DeleteService" />
         <service android:name=".Services.MoveService" />
         <service android:name=".Services.SyncService" />
+        <service
+                android:name=".Services.RcdService"
+                android:foregroundServiceType="dataSync"/>
 
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
@@ -52,6 +55,7 @@
         <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
         <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
         <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
+        <receiver android:name=".Services.RcdService$RcdServiceAction"/>
 
         <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
 

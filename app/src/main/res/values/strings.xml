@@ -66,6 +66,7 @@
     <string name="streaming_service_notification_content">Serving on http://127.0.0.1:%1$d</string>
     <string name="streaming_service_notification_channel_description">Streaming service</string>
     <string name="streaming_task_failed">Could not stream file</string>
+    <string name="rcd_service_notification_channel_description">Background Service</string>
     <string name="upload_service_notification_title">Upload</string>
     <string name="upload_complete">Upload complete</string>
     <string name="upload_service_notification_channel_description">File uploads</string>
@@ -493,4 +494,10 @@
     <string name="pref_key_accessible_storage_locations" translatable="false">accessible_storage_locations</string>
     <string name="no_app_found_for_this_link">No app found for this link</string>
     <string name="documentsui_missing">System component for files (com.android.documentsui) missing</string>
+    <string name="rcd_service_notification_running_in_background">Rclone is running in background</string>
+    <string name="rcd_service_notification_no_active_jobs">No active jobs.</string>
+    <string name="rcd_service_notification_btn_stop_all">Stop All</string>
+    <string name="rcd_service_notification_stats_template">Running: %1$d, Finished: %2$d, Failed: %3$d</string>
+    <string name="pref_key_rcd_user" translatable="false">rcd_user</string>
+    <string name="pref_key_rcd_pass" translatable="false">rcd_pass</string>
 </resources>

@@ -411,4 +411,9 @@
     <string name="pref_open_all_files_setting_summary">EXPERIMENTEL: Funktioniert nur auf Android R (Android 11)</string>
     <string name="no_app_found_for_this_link">Keine App für diesen Link gefunden</string>
     <string name="documentsui_missing">Systemkomponente für Dateien (com.android.documentsui) fehlt</string>
+    <string name="rcd_service_notification_running_in_background">Rclone wird im Hintergrund ausgeführt</string>
+    <string name="rcd_service_notification_no_active_jobs">Keine Aufgaben aktiv</string>
+    <string name="rcd_service_notification_btn_stop_all">Alles beenden</string>
+    <string name="rcd_service_notification_stats_template">Laufend: %1$d, Beendet: %2$d, Fehlgeschlagen: %3$d</string>
+    <string name="rcd_service_notification_channel_description">Hintergrunddienst</string>
 </resources>
