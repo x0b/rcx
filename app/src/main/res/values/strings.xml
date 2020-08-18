@@ -143,6 +143,14 @@
     <string name="smashicons" translatable="false">Smashicons</string>
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
+    <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
+    <string name="intro_welcome_title">Welcome</string>
+    <string name="intro_welcome_description">RCX manages your files, whether they are stored on your device or online in the cloud. Check out the documentation at x0b.github.io/docs for more information.</string>
+    <string name="intro_storage_title">Storage access required</string>
+    <string name="intro_storage_description">RCX uses rclone, and we need your permission to access files. First, please allow storage access.</string>
+    <string name="intro_community_title">Community</string>
+    <string name="intro_community_description">RCX is developed by and for its community. Please contribute by allowing error reports.</string>
+    <string name="intro_community_switch">Send error logs </string>
     <string name="pref_key_stream_max" translatable="false">pref_key_stream_max</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_color_primary" translatable="false">pref_key_color_primary</string>

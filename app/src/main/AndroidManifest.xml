@@ -24,6 +24,8 @@
             android:requestLegacyExternalStorage="true"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="29">
+        <activity android:name=".OnboardingActivity">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_short_name"

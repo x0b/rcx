@@ -26,6 +26,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
+    private static final int ONBOARDING_REQUEST = 93;
     private static final int UPDATE_AVAILABLE = 201;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
@@ -137,6 +139,10 @@ public class MainActivity extends AppCompatActivity
             CrashLogger.initCrashLogging(this);
         }
 
+        if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
+            startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
+        }
+
         applyTheme();
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
@@ -155,7 +161,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         rclone = new Rclone(this);
-        requestPermissions();
 
         findViewById(R.id.locked_config_btn).setOnClickListener(v -> askForConfigPassword());
 
@@ -208,6 +213,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        requestPermissions();
     }
 
     @Override
@@ -271,6 +282,8 @@ public class MainActivity extends AppCompatActivity
                     Toasty.error(this, getString(R.string.error_exporting_config_file), Toast.LENGTH_SHORT, true).show();
                 }
             }
+        } else if (requestCode == ONBOARDING_REQUEST) {
+            new RefreshLocalAliases().execute();
         }
     }
 
@@ -494,17 +507,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
-        } else {
-            boolean refreshLocalAliases = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
-            if (refreshLocalAliases) {
-                FLog.d(TAG, "Reloading local path aliases");
-                RefreshLocalAliases refresh = new RefreshLocalAliases();
-                if (refresh.isRequired()) {
-                    refresh.execute();
-                }
+        boolean refreshLocalAliases = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
+        if (refreshLocalAliases) {
+            FLog.d(TAG, "Reloading local path aliases");
+            RefreshLocalAliases refresh = new RefreshLocalAliases();
+            if (refresh.isRequired()) {
+                refresh.execute();
             }
         }
     }
@@ -747,6 +756,16 @@ public class MainActivity extends AppCompatActivity
 
         private LoadingDialog loadingDialog;
 
+        private boolean isPermissable(File file) {
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                return Environment.isExternalStorageLegacy(file);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                return Environment.isExternalStorageManager(file);
+            } else {
+                return true;
+            }
+        }
+
         protected boolean isRequired() {
             String[] externalVolumes = null;
             String persisted = PreferenceManager.getDefaultSharedPreferences(context)
@@ -756,7 +775,8 @@ public class MainActivity extends AppCompatActivity
             }
             String[] current = Stream.of(context.getExternalFilesDirs(null))
                     .filter(f -> f != null)
-                    .map(f -> f.getAbsolutePath())
+                    .filter(this::isPermissable)
+                    .map(File::getAbsolutePath)
                     .toArray(String[]::new);
 
             if(Arrays.deepEquals(externalVolumes, current)) {
