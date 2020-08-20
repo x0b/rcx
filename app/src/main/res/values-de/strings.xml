@@ -409,6 +409,14 @@
     <string name="sync_operation_failed">Fehler bei der Synchronisation</string>
     <string name="pref_open_all_files_setting_label">MANAGE_EXTERNAL_STORAGE Berechtigung erteilen</string>
     <string name="pref_open_all_files_setting_summary">EXPERIMENTEL: Funktioniert nur auf Android R (Android 11)</string>
+    <string name="pref_saf_vcp_local_pretend_enable">Als “local” deklarieren</string>
+    <string name="pref_saf_vcp_local_pretend_summary">Einige Apps (z.B. Google Docs) zeigen RCX sonst nicht an.</string>
+    <string name="pref_saf_vcp_grant_all_enable">Jeder App Zugriff auf Remotes geben</string>
+    <string name="pref_saf_vcp_grant_all_summary">ACHTUNG: Jede App kann damit jeden Pfad deiner Remotes lesen und schreiben.</string>
+    <string name="virtual_content_provider_exception_advice">Prüfe die Netzwerkverbindung</string>
+    <string name="virtual_content_provider_exception_error">Technische Info: %1$s</string>
+    <string name="virtual_content_provider_service_error">Verbindungsfehler zum Hintergrunddienst. Beenden erzwingen und erneut versuchen.</string>
+    <string name="virtual_content_provider_no_remotes">Keine Remotes konfiguriert. Öffne RCX und füge Remotes hinzu.</string>
     <string name="no_app_found_for_this_link">Keine App für diesen Link gefunden</string>
     <string name="documentsui_missing">Systemkomponente für Dateien (com.android.documentsui) fehlt</string>
     <string name="rcd_service_notification_running_in_background">Rclone wird im Hintergrund ausgeführt</string>

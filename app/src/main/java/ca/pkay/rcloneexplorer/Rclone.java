@@ -710,6 +710,42 @@ public class Rclone {
         return true;
     }
 
+    public InputStream downloadToPipe(String rclonePath) throws IOException {
+        String[] command = createCommandWithOptions("cat", rclonePath);
+        String[] env = getRcloneEnv();
+        final Process process = Runtime.getRuntime().exec(command, env);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    process.waitFor();
+                    logErrorOutput(process);
+                } catch (InterruptedException e) {
+                    FLog.e(TAG, "downloadToPipe: error waiting for process", e);
+                }
+            }
+        }.start();
+        return process.getInputStream();
+    }
+
+    public OutputStream uploadFromPipe(String rclonePath) throws IOException {
+        String[] command = createCommandWithOptions("rcat", rclonePath, "--streaming-upload-cutoff", "500K");
+        String[] env = getRcloneEnv();
+        final Process process = Runtime.getRuntime().exec(command, env);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    process.waitFor();
+                    logErrorOutput(process);
+                } catch (InterruptedException e) {
+                    FLog.e(TAG, "uploadFromPipe: error waiting for process", e);
+                }
+            }
+        }.start();
+        return process.getOutputStream();
+    }
+
     public boolean emptyTrashCan(String remote) {
         String[] command = createCommandWithOptions("cleanup", remote + ":");
         Process process = null;

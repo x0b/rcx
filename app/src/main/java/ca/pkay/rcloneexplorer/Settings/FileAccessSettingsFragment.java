@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +24,11 @@ import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
+import ca.pkay.rcloneexplorer.Services.RcdService;
+import ca.pkay.rcloneexplorer.VirtualContentProvider;
 import es.dmoral.toasty.Toasty;
-import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.file.SafConstants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
@@ -43,6 +42,10 @@ public class FileAccessSettingsFragment extends Fragment {
     private ViewGroup fileAccessAll;
     private View safEnabledView;
     private Switch safEnabledSwitch;
+    private View vcpEnabledContainer;
+    private Switch vcpEnabledSwitch;
+    private View vcpDeclareLocalContainer;
+    private Switch vcpDeclareLocalSwitch;
     private PermissionListAdapter permissionList;
     private Button addPermissionBtn;
     private RecyclerView listView;
@@ -50,6 +53,8 @@ public class FileAccessSettingsFragment extends Fragment {
     private View refreshLaContainer;
     private Switch refreshLaSwitch;
     private View openAllFilesPerm;
+    private View vcpGrantAllContainer;
+    private Switch vcpGrantAllSwitch;
     private Rclone rclone;
 
     public static FileAccessSettingsFragment newInstance() {
@@ -103,6 +108,12 @@ public class FileAccessSettingsFragment extends Fragment {
         refreshLaContainer = view.findViewById(R.id.enable_refresh_la_container);
         refreshLaSwitch = view.findViewById(R.id.enable_refresh_la_switch);
         openAllFilesPerm = view.findViewById(R.id.open_all_files_setting_container);
+        vcpEnabledContainer = view.findViewById(R.id.enable_saf_vcp_view);
+        vcpEnabledSwitch = view.findViewById(R.id.enable_saf_vcp_switch);
+        vcpDeclareLocalContainer = view.findViewById(R.id.vcp_declare_local_container);
+        vcpDeclareLocalSwitch = view.findViewById(R.id.vcp_declare_local_switch);
+        vcpGrantAllContainer = view.findViewById(R.id.vcp_grant_all_container);
+        vcpGrantAllSwitch = view.findViewById(R.id.vcp_grant_all_switch);
     }
 
     private void setDefaultStates() {
@@ -111,6 +122,16 @@ public class FileAccessSettingsFragment extends Fragment {
         safEnabledSwitch.setChecked(safEnabled);
         boolean refreshLaEnabled = sharedPreferences.getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
         refreshLaSwitch.setChecked(refreshLaEnabled);
+        if(!safEnabled) {
+            listView.setVisibility(View.GONE);
+            addButtonContainer.setVisibility(View.GONE);
+        }
+        boolean vcpEnabled = sharedPreferences.getBoolean(getString(R.string.pref_key_enable_vcp), false);
+        vcpEnabledSwitch.setChecked(vcpEnabled);
+        boolean vcpDeclareLocal = sharedPreferences.getBoolean(getString(R.string.pref_key_vcp_declare_local), true);
+        vcpDeclareLocalSwitch.setChecked(vcpDeclareLocal);
+        boolean vcpGrantAll = sharedPreferences.getBoolean(getString(R.string.pref_key_vcp_grant_all), false);
+        vcpGrantAllSwitch.setChecked(vcpGrantAll);
     }
 
     private void setClickListeners() {
@@ -120,6 +141,12 @@ public class FileAccessSettingsFragment extends Fragment {
         refreshLaContainer.setOnClickListener(v -> refreshLaSwitch.setChecked(!refreshLaSwitch.isChecked()));
         refreshLaSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setRefreshLa(isChecked));
         openAllFilesPerm.setOnClickListener(v -> openAndroidRAllFilesSettings());
+        vcpEnabledContainer.setOnClickListener(v -> vcpEnabledSwitch.setChecked(!vcpEnabledSwitch.isChecked()));
+        vcpEnabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setVcpEnabled(isChecked));
+        vcpDeclareLocalContainer.setOnClickListener(v -> vcpDeclareLocalSwitch.setChecked(!vcpDeclareLocalSwitch.isChecked()));
+        vcpDeclareLocalSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setDeclareLocalEnabled(isChecked));
+        vcpGrantAllContainer.setOnClickListener(v -> vcpGrantAllSwitch.setChecked(!vcpGrantAllSwitch.isChecked()));
+        vcpGrantAllSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setGrantAllEnabled(isChecked));
     }
 
     private void setSafEnabled(boolean isChecked) {
@@ -149,6 +176,31 @@ public class FileAccessSettingsFragment extends Fragment {
         Intent intent = new Intent("android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION");
         intent.setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
         tryStartActivityForResult(this, intent, onAllFilesSettingOpened);
+    }
+
+    private void setVcpEnabled(boolean isChecked) {
+        if (!isChecked) {
+            Intent stopIntent = new Intent(context, RcdService.class);
+            stopIntent.setAction(RcdService.ACTION_STOP_FOREGROUND);
+            context.startService(stopIntent);
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_enable_vcp), isChecked).apply();
+        Uri rootUri = VirtualContentProvider.getRootUri();
+        context.getContentResolver().notifyChange(rootUri, null);
+    }
+
+    private void setDeclareLocalEnabled(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_vcp_declare_local), isChecked).apply();
+    }
+
+    private void setGrantAllEnabled(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_vcp_grant_all), isChecked).apply();
     }
 
     private void createSafRemote() {
@@ -183,7 +235,7 @@ public class FileAccessSettingsFragment extends Fragment {
     private void onTreeResult(int resultCode, Intent data) {
         if (Activity.RESULT_OK == resultCode) {
             Uri uri = data.getData();
-            if (null == uri || uri.getAuthority().equals("io.github.x0b.safdav")) {
+            if (null == uri || uri.getAuthority().equals(BuildConfig.VCP_AUTHORITY)) {
                 Toasty.error(context, getString(R.string.saf_uri_permission_error), Toast.LENGTH_LONG, true).show();
                 return;
             }

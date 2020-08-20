@@ -21,6 +21,7 @@ android {
         resConfigs "en", "de" // restrict to used languages
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"e99b882f-5004-419e-e448-fc73611c7ef9\""
+        buildConfigField "java.lang.String", "VCP_AUTHORITY", "\"" + applicationId + ".vcp\"";
     }
 
     buildTypes {

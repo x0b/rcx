@@ -166,7 +166,9 @@
     <string name="pref_key_version_code" translatable="false">pref_key_version_code</string>
     <string name="pref_key_version_name" translatable="false">pref_key_version_name</string>
     <string name="pref_key_enable_saf" translatable="false">pref_key_enable_saf</string>
-    <string name="pref_key_enable_vcp" translatable="false">pref_key_enable_vcp</string>
+    <string name="pref_key_enable_vcp" translatable="false">vcp_enable</string>
+    <string name="pref_key_vcp_declare_local" translatable="false">vcp_declare_local</string>
+    <string name="pref_key_vcp_grant_all" translatable="false">vcp_grant_all</string>
     <string name="file_access">File Access</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color">Primary Color</string>
@@ -459,13 +461,21 @@
     <string name="pref_saf_permission_label_external">External Storage (%1$s)</string>
     <string name="pref_saf_virtual_content_provider_enable">Enable Content Provider Preview</string>
     <string name="pref_saf_virtual_content_provider_summary">EXPERIMENTAL: Allows you to grant other apps access to rclone remotes</string>
+    <string name="pref_saf_vcp_local_pretend_enable">Declare as local provider</string>
+    <string name="pref_saf_vcp_local_pretend_summary">Some apps (e.g. Google docs) otherwise can\'t access files</string>
+    <string name="pref_saf_vcp_grant_all_enable">All any app to access your remotes</string>
+    <string name="pref_saf_vcp_grant_all_summary">WARNING: This will allow any app to read and write any path on any configured remote.</string>
     <string name="saf_uri_permission_added">Storage added</string>
     <string name="saf_uri_permission_cancelled">Permission Cancelled</string>
     <string name="saf_uri_permission_error">Invalid permission - can not access storage</string>
     <string name="saf_uri_permission_already_added">Storage or a subfolder is already added</string>
     <string name="saf_uri_permission_no_support">Third party not yet supported. Open an issue with the affected app name.</string>
     <string name="virtual_content_provider_summary">%1$d Remotes available</string>
+    <string name="virtual_content_provider_exception_advice">Check your network connection</string>
+    <string name="virtual_content_provider_exception_error">Support info: \n%1$s</string>
     <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>
+    <string name="virtual_content_provider_service_error">Rclone service connection failure. Force stop and retry.</string>
+    <string name="virtual_content_provider_no_remotes">No remotes configured. Open RCX to add a storage location.</string>
     <string name="remote_properties_remote_name">Remote name</string>
     <string name="remote_properties_storage_usage">Storage usage</string>
     <string name="remote_properties_storage_stats">%1$s / %2$s used (%3$s free)</string>

@@ -33,6 +33,16 @@ public abstract class SingleRootProvider extends DocumentsProvider {
             DocumentsContract.Document.COLUMN_LAST_MODIFIED,
     };
 
+    protected static final String[] DEFAULT_REMOTE_PROJECTION = new String[]{
+            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            DocumentsContract.Document.COLUMN_MIME_TYPE,
+            DocumentsContract.Document.COLUMN_FLAGS,
+            DocumentsContract.Document.COLUMN_SIZE,
+            DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+            DocumentsContract.Document.COLUMN_ICON
+    };
+
     private final String rootId;
     private final String rootDocId;
 
