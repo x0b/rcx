@@ -10,8 +10,8 @@
     <string name="title_activity_contributors">Lizenz</string>
     <string name="remotes">Remotes</string>
     <string name="settings">Einstellungen</string>
-    <string name="import_rclone_config">Rclone-Konfiguration importieren</string>
-    <string name="export_rclone_config">Rclone-Konfiguration exportieren</string>
+    <string name="import_rclone_config">Importieren</string>
+    <string name="export_rclone_config">Exportieren</string>
     <string name="about">Info</string>
     <string name="sort">Sortieren</string>
     <string name="select_all">Alle auswählen</string>
@@ -54,7 +54,7 @@
     <string name="download_service_notification_description">Datei-Downloads</string>
     <string name="download_service_notification_title">Download</string>
     <string name="streaming_service_notification_title">Streaming-Dienst</string>
-    <string name="streaming_service_notification_content">Streaming-Server auf http://127.0.0.1:8080</string>
+    <string name="streaming_service_notification_content">Streaming-Server auf http://127.0.0.1:%1$d</string>
     <string name="streaming_service_notification_channel_description">Streaming-Dienst</string>
     <string name="streaming_task_failed">Laden der Datei fehlgeschlagen</string>
     <string name="upload_service_notification_title">Upload</string>
@@ -424,4 +424,6 @@
     <string name="rcd_service_notification_btn_stop_all">Alles beenden</string>
     <string name="rcd_service_notification_stats_template">Laufend: %1$d, Beendet: %2$d, Fehlgeschlagen: %3$d</string>
     <string name="rcd_service_notification_channel_description">Hintergrunddienst</string>
+    <string name="serve_dialog_remote_notice_enabled">Der aktuelle Ordner wird im Netzwerk sichtbar (für TVs, Media Player)</string>
+    <string name="serve_dialog_remote_notice_disabled">Datein sind nur für andere Apps auf diesem Gerät sichtbar.</string>
 </resources>
