@@ -191,7 +191,13 @@ public class Rclone {
         }
         // if SAFW, start emulation server
         if(remote.isRemoteType(RemoteItem.SAFW) && path.equals("//" + remote.getName()) && safDAVServer == null){
-            safDAVServer = SafAccessProvider.getServer(context);
+            try {
+                safDAVServer = SafAccessProvider.getServer(context);
+            } catch (IOException e) {
+                // TODO: Provide port checking / alt port functionality
+                FLog.e(TAG, "Cannot connect to SAF DAV emulation server");
+                return null;
+            }
         }
 
         String[] command;
