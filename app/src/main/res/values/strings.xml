@@ -510,4 +510,7 @@
     <string name="rcd_service_notification_stats_template">Running: %1$d, Finished: %2$d, Failed: %3$d</string>
     <string name="pref_key_rcd_user" translatable="false">rcd_user</string>
     <string name="pref_key_rcd_pass" translatable="false">rcd_pass</string>
+    <string name="report_collection_title">Bug report</string>
+    <string name="report_collection_collecting">Collecting data for bug report</string>
+    <string name="report_collection_stop_collection">Stop collection</string>
 </resources>

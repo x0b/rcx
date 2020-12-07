@@ -144,6 +144,44 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?attr/dividerColor"/>
+
+        <RelativeLayout
+            android:id="@+id/start_report_collection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:orientation="vertical" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColorPrimary"
+                    android:textStyle="bold"
+                    android:text="Collect Bug Report"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColorSecondary"
+                    android:text="Tap to start data collection, then try to reproduce issue and stop collection."/>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

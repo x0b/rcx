@@ -13,9 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.util.CrashLogger;
+import ca.pkay.rcloneexplorer.Services.ReportService;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
@@ -27,6 +26,7 @@ public class LoggingSettingsFragment extends Fragment {
     private View crashReportsElement;
     private Switch crashReportsSwitch;
     private View testReportElement;
+    private View startCollectionElement;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,6 +71,7 @@ public class LoggingSettingsFragment extends Fragment {
         crashReportsElement = view.findViewById(R.id.crash_reporting);
         crashReportsSwitch = view.findViewById(R.id.crash_reporting_switch);
         testReportElement = view.findViewById(R.id.send_test_report);
+        startCollectionElement = view.findViewById(R.id.start_report_collection);
     }
 
     private void setDefaultStates() {
@@ -94,6 +95,9 @@ public class LoggingSettingsFragment extends Fragment {
                 "/storage/0/private.file",
                 "content://authority/private.file",
                 "Non-filterd argument"));
+        startCollectionElement.setOnClickListener(v -> {
+            ReportService.startCollection(context, ReportService.RCLONE_LOGS | ReportService.LOGCAT);
+        });
     }
 
     private void onUseLogsClicked(boolean isChecked) {
