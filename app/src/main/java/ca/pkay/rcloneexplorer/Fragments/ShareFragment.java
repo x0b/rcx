@@ -213,11 +213,15 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     @Override
     public void onDetach() {
         super.onDetach();
-        fetchDirectoryTask.cancel(true);
-        breadcrumbView.clearCrumbs();
-        breadcrumbView.setVisibility(View.GONE);
-        ((FragmentActivity) context).setTitle(originalToolbarTitle);
-        isRunning = false;
+        if(isRunning) {
+            if (null != fetchDirectoryTask) {
+                fetchDirectoryTask.cancel(true);
+            }
+            breadcrumbView.clearCrumbs();
+            breadcrumbView.setVisibility(View.GONE);
+            ((FragmentActivity) context).setTitle(originalToolbarTitle);
+            isRunning = false;
+        }
         context = null;
     }
 
