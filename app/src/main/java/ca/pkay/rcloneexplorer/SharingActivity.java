@@ -233,7 +233,12 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                     continue;
                 }
 
-                fileName = resolveName(uri);
+                try {
+                    fileName = resolveName(uri);
+                } catch (SecurityException e) {
+                    success = false;
+                    continue;
+                }
                 // todo: encrypt external cache
                 File cacheDir = getExternalCacheDir();
                 File outFile = new File(cacheDir, fileName);
@@ -269,9 +274,8 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             List<String> segments = uri.getPathSegments();
             if (segments.size() >= 1) {
                 return segments.get(segments.size() - 1);
-            } else {
-                return "unnamed";
             }
+            return "unnamed";
         }
 
         @Override
