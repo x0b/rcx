@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -69,10 +70,9 @@ public class OauthHelper {
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.find()) {
                         String url = matcher.group(1);
-
-                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                        CustomTabsIntent customTabsIntent = builder.build();
-                        customTabsIntent.launchUrl(context, Uri.parse(url));
+                        if (url != null) {
+                            launchBrowser(context, url);
+                        }
 
                         // Do NOT break here, or the stream will be closed.
                         // When rclone then tries to write to the stream, it will receive SIGPIPE
@@ -84,6 +84,19 @@ public class OauthHelper {
                 FLog.e(TAG, "doInBackground: could not read auth url", e);
                 process.destroy();
             }
+        }
+    }
+
+    static void launchBrowser(@NonNull Context context, @NonNull String url) {
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        try {
+            customTabsIntent.launchUrl(context, Uri.parse(url));
+        } catch (SecurityException e) {
+            // This happens if a buggy third party component is registered for
+            // browser intents with a non-exported activity.
+            // TODO: Fix this for Android TV
+            FLog.e(TAG, "Could not launch browser", e);
         }
     }
 
@@ -101,10 +114,9 @@ public class OauthHelper {
             Matcher matcher = pattern.matcher(cliBuffer);
             if (matcher.find()) {
                 String url = matcher.group(1);
-
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(context, Uri.parse(url));
+                if (url != null) {
+                    launchBrowser(context, url);
+                }
             } else {
                 FLog.w(TAG, "onTrigger: could not extract auth URL from buffer: %s", cliBuffer);
             }
