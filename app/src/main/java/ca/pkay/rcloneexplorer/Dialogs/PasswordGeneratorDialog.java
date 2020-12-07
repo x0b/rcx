@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -26,6 +27,7 @@ import ca.pkay.rcloneexplorer.R;
 public class PasswordGeneratorDialog extends DialogFragment {
 
     private final int MIN_PASSWORD_LENGTH = 4;
+    private final int DEFAULT_PASSWORD_LENGTH = 16;
     private final int MAX_PASSWORD_LENGTH = 128;
     private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.PasswordGeneratorDialog.IS_DARK_THEME";
     private final String SAVED_GENERATED_PASSWORD = "ca.pkay.rcexplorer.PasswordGeneratorDialog.GENERATED_PASSWORD";
@@ -85,8 +87,9 @@ public class PasswordGeneratorDialog extends DialogFragment {
         checkBoxNumbers = view.findViewById(R.id.checkbox_numbers);
         checkBoxSpecialChars = view.findViewById(R.id.checkbox_special_chars);
 
-        passwordLength.setText(String.valueOf(MIN_PASSWORD_LENGTH));
+        passwordLength.setText(String.valueOf(DEFAULT_PASSWORD_LENGTH));
 
+        seekBar.setProgress(DEFAULT_PASSWORD_LENGTH);
         seekBar.setMax(MAX_PASSWORD_LENGTH);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -158,48 +161,32 @@ public class PasswordGeneratorDialog extends DialogFragment {
     }
 
     private void generatePassword() {
-        ArrayList<String> password = new ArrayList<>();
-        int arraySize;
-        int randomIndex;
-        Random random = new SecureRandom();
-        int length = Integer.parseInt(passwordLength.getText().toString());
-
         if (!checkBoxLowerCase.isChecked() && !checkBoxUpperCase.isChecked() && !checkBoxNumbers.isChecked() && !checkBoxSpecialChars.isChecked()) {
             generatedPassword = "";
             passwordDisplay.setText("");
             return;
         }
 
-        while (password.size() < length) {
-            if (checkBoxLowerCase.isChecked()) {
-                arraySize = lowerCase.length;
-                randomIndex = random.nextInt(arraySize);
-                password.add(lowerCase[randomIndex]);
-            }
-
-            if (checkBoxUpperCase.isChecked()) {
-                arraySize = upperCase.length;
-                randomIndex = random.nextInt(arraySize);
-                password.add(upperCase[randomIndex]);
-            }
-
-            if (checkBoxNumbers.isChecked()) {
-                arraySize = numbers.length;
-                randomIndex = random.nextInt(arraySize);
-                password.add(numbers[randomIndex]);
-            }
-
-            if (checkBoxSpecialChars.isChecked()) {
-                arraySize = specialChars.length;
-                randomIndex = random.nextInt(arraySize);
-                password.add(specialChars[randomIndex]);
-            }
+        ArrayList<String> charPool = new ArrayList<>();
+        if (checkBoxLowerCase.isChecked()) {
+            charPool.addAll(Arrays.asList(lowerCase));
+        }
+        if (checkBoxUpperCase.isChecked()) {
+            charPool.addAll(Arrays.asList(upperCase));
+        }
+        if (checkBoxNumbers.isChecked()) {
+            charPool.addAll(Arrays.asList(numbers));
+        }
+        if (checkBoxSpecialChars.isChecked()) {
+            charPool.addAll(Arrays.asList(specialChars));
         }
 
-        Collections.shuffle(password);
+        int length = Integer.parseInt(passwordLength.getText().toString());
+        ArrayList<String> password = new ArrayList<>();
+        SecureRandom random = new SecureRandom();
 
-        while (password.size() > length) {
-            password.remove(0);
+        while (password.size() < length) {
+            password.add(charPool.get(random.nextInt(charPool.size())));
         }
 
         generatedPassword = TextUtils.join("", password);
