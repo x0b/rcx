@@ -268,7 +268,10 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             String[] projection = {OpenableColumns.DISPLAY_NAME};
             try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
                 if (null != cursor && cursor.moveToFirst()) {
-                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    String name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    if (null != name) {
+                        return name;
+                    }
                 }
             }
             List<String> segments = uri.getPathSegments();
