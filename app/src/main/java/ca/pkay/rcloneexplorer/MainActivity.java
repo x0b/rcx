@@ -283,7 +283,10 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         } else if (requestCode == ONBOARDING_REQUEST) {
-            new RefreshLocalAliases().execute();
+            RefreshLocalAliases refresh = new RefreshLocalAliases();
+            if(refresh.isRequired()) {
+                refresh.execute();
+            }
         }
     }
 
@@ -775,6 +778,7 @@ public class MainActivity extends AppCompatActivity
             }
             String[] current = Stream.of(context.getExternalFilesDirs(null))
                     .filter(f -> f != null)
+                    .map(this::getRootOrSelf)
                     .filter(this::isPermissable)
                     .map(File::getAbsolutePath)
                     .toArray(String[]::new);
@@ -837,6 +841,8 @@ public class MainActivity extends AppCompatActivity
                         File root = getVolumeRoot(file);
                         if (root.canRead()) {
                             addLocalRemote(root);
+                        } else if (file.canRead()){
+                            addLocalRemote(file);
                         }
                     } catch (NullPointerException | IOException e) {
                         // ignored, this is not a valid file
@@ -845,6 +851,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             return null;
+        }
+
+        private File getRootOrSelf(File file) {
+            File root = getVolumeRoot(file);
+            if (root.canRead()) {
+                return root;
+            } else {
+                return file;
+            }
         }
 
         private File getVolumeRoot(File file) {
