@@ -181,6 +181,9 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
             if (cursor.moveToNext()) {
                 final String documentId = cursor.getString(0);
                 String mimeType = cursor.getString(2);
+                if (null == mimeType) {
+                    mimeType = fixMimeType(uri);
+                }
                 boolean isDirectory = false;
                 List<SafFastItem> childItems = null;
                 if (mimeType.equals(DocumentsContract.Document.MIME_TYPE_DIR)) {
@@ -207,6 +210,19 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
             Log.w("DocumentsContractAccess", "Failed query: " + e);
             throw new FileAccessError(e);
         }
+    }
+
+    private String fixMimeType(Uri uri) {
+        // Ensure that seafile libraries are handled like a folder.
+        // On the initial query, DocumentFile.isDirectory() returns false.
+        String mimeType = "application/octet-stream";
+        if ("com.seafile.seadroid2".equals(uri.getAuthority())) {
+            DocumentFile file = DocumentFile.fromTreeUri(context, buildHierarchicalDocumentsUri(uri));
+            if (null != file && !file.isFile()) {
+                mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+            }
+        }
+        return mimeType;
     }
 
     @Override
