@@ -90,7 +90,7 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
         Uri srcParentUri = getParent(srcStubUri);
         Uri dstParentUri = getParent(targetStubUri);
 
-        if(srcParentUri.equals(dstParentUri)){
+        if (srcParentUri.equals(dstParentUri)) {
             renameItem(srcStubUri, targetStubUri);
             return;
         }
@@ -186,7 +186,7 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
                 }
                 boolean isDirectory = false;
                 List<SafFastItem> childItems = null;
-                if (mimeType.equals(DocumentsContract.Document.MIME_TYPE_DIR)) {
+                if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
                     mimeType = "inode/directory";
                     isDirectory = true;
                     Uri childUri = DocumentsContract.buildDocumentUriUsingTree(buildHierarchicalDocumentsUri(uri), documentId);
@@ -240,6 +240,15 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
     // Note: this is modelled to observed behavior, because the
     // DocumentsContract#fromXXUri APIs don't really work well
     private Uri buildHierarchicalDocumentsUri(Uri uri, boolean buildParent) {
+        if(!ProviderPaths.ANDROID_PROVIDER_AUTHORITY.equals(uri.getAuthority())) {
+            if (buildParent) {
+                return DocumentFile.fromTreeUri(context, uri).getParentFile().getUri();
+            } else {
+                // This is a thirdparty provider. No assumptions regarding URL
+                // structure are possible. Instead, follow documented semantics.
+                return treeWalkCompat(uri);
+            }
+        }
         String path = uri.getPath();
         int treeIndex = path.indexOf("/tree/");
         if (0 != treeIndex) {
@@ -269,10 +278,6 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("UTF-8 not available");
             }
-        } else {
-            // This is a thirdparty provider. No assumptions regarding URL
-            // structure are possible. Instead, follow documented semantics.
-            DocumentFile.fromTreeUri(context, uri);
         }
         throw new SafException("Unsupported DocumentsProvider: " + uri.toString());
     }
@@ -284,18 +289,57 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
         String displayName;
         String path = uri.getPath();
         int rootSep;
-        if(segments.size() >= 3 ){
-            displayName = segments.get(segments.size()-1);
-        } else  if((rootSep = path.indexOf(':', 6)) != -1 || (rootSep = path.indexOf('/', 6)) != -1){
-            displayName = path.substring(rootSep+1);
+        if (segments.size() >= 3) {
+            displayName = segments.get(segments.size() - 1);
+        } else if ((rootSep = path.indexOf(':', 6)) != -1 || (rootSep = path.indexOf('/', 6)) != -1) {
+            displayName = path.substring(rootSep + 1);
         } else {
-            displayName = segments.get(segments.size()-1);
+            displayName = segments.get(segments.size() - 1);
         }
 
-        if(displayName.lastIndexOf('/') == displayName.length()-1){
-            displayName = displayName.substring(0, displayName.length()-1);
+        if (displayName.lastIndexOf('/') == displayName.length() - 1) {
+            displayName = displayName.substring(0, displayName.length() - 1);
         }
 
         return displayName;
+    }
+
+    /**
+     * Get the display name, using standard contract APIs.
+     * @param uri document uri
+     * @return display name
+     */
+    private String getDisplayNameCompat(Uri uri) {
+        String[] projection = new String[]{DocumentsContract.Document.COLUMN_DISPLAY_NAME};
+        try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
+            if (cursor.moveToFirst() && cursor.isNull(0)) {
+                return cursor.getString(0);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+   private  Uri treeWalkCompat(Uri uri) {
+        Uri baseUri = DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getTreeDocumentId(uri));
+        Uri subFolder = DocumentFile.fromTreeUri(context, baseUri).getUri();
+        String path = uri.getPath();
+        String mediaPath = path.substring(baseUri.getPath().length());
+        String[] directories = mediaPath.split("/");
+        for (String directory : directories) {
+            if("".equals(directory)) {
+                continue;
+            }
+            List<SafFastItem> items = list(subFolder);
+            for(SafFastItem item : items) {
+                if (directory.equals(item.getName())) {
+                    subFolder = item.getUri();
+                    continue;
+                }
+            }
+        }
+        return subFolder;
     }
 }

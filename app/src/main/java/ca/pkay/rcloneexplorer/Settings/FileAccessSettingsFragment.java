@@ -37,6 +37,7 @@ public class FileAccessSettingsFragment extends Fragment {
 
     public static final int onDocumentTreeOpened = 1001;
     private static final int onAllFilesSettingOpened = 1002;
+    private static final String ANDROID_AUTHORITY = "com.android.externalstorage.documents";
 
     private Context context;
     private ViewGroup fileAccessAll;
@@ -230,8 +231,6 @@ public class FileAccessSettingsFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
-
     private void onTreeResult(int resultCode, Intent data) {
         if (Activity.RESULT_OK == resultCode) {
             Uri uri = data.getData();
@@ -249,10 +248,9 @@ public class FileAccessSettingsFragment extends Fragment {
                     return;
                 }
             }
-            // discard non-android storage devices
-            if (!"com.android.externalstorage.documents".equals(uri.getAuthority())) {
-                Toasty.error(context, getString(R.string.saf_uri_permission_no_support), Toast.LENGTH_LONG, true).show();
-                return;
+            if(!ANDROID_AUTHORITY.equals(uri.getAuthority())){
+                String msg = "Third party providers are not tested well, proceed with caution.";
+                Toasty.warning(context, msg, Toast.LENGTH_LONG, true).show();
             }
             contentResolver.takePersistableUriPermission(uri, takeFlags);
             permissionList.updatePermissions(context.getContentResolver().getPersistedUriPermissions());
@@ -293,8 +291,14 @@ public class FileAccessSettingsFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull PermissionsViewHolder holder, int position) {
             holder.permission = permissions.get(position);
+            String authority = holder.permission.getUri().getAuthority();
             String permissionLabel = holder.permission.getUri().getPath();
-            if ("/tree/primary:".equals(permissionLabel)) {
+            if (permissionLabel.startsWith("/tree/")) {
+                permissionLabel = permissionLabel.substring(6);
+            }
+            if (!ANDROID_AUTHORITY.equals(authority)) {
+                permissionLabel = authority + " (" + permissionLabel + ")";
+            } else if ("primary:".equals(permissionLabel)) {
                 permissionLabel = getString(R.string.pref_saf_permission_label_primary, permissionLabel);
             } else {
                 permissionLabel = getString(R.string.pref_saf_permission_label_external, permissionLabel);
