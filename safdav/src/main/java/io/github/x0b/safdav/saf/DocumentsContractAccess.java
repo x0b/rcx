@@ -201,8 +201,6 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
                         isDirectory,
                         childItems
                 );
-            } else {
-                throw new ItemNotFoundException();
             }
         } catch (IllegalArgumentException e) {
             throw new ItemNotFoundException(e);
@@ -210,6 +208,7 @@ public class DocumentsContractAccess implements ItemAccess<SafFastItem> {
             Log.w("DocumentsContractAccess", "Failed query: " + e);
             throw new FileAccessError(e);
         }
+        throw new ItemNotFoundException();
     }
 
     private String fixMimeType(Uri uri) {
