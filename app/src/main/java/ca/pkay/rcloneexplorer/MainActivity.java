@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
     }
 
     @Override

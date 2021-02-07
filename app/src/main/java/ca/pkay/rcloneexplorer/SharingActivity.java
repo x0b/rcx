@@ -47,7 +47,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
     }
 
     @Override

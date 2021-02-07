@@ -22,7 +22,7 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
     }
 
     @Override

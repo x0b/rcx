@@ -44,7 +44,7 @@ public class OnboardingActivity extends AppIntro {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
     }
 
 

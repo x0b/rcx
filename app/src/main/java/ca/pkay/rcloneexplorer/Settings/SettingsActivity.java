@@ -24,7 +24,7 @@ public class SettingsActivity extends AppCompatActivity implements  SettingsFrag
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(RuntimeConfiguration.attach(newBase));
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
     }
 
     @Override
