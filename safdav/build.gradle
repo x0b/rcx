@@ -36,6 +36,10 @@ repositories {
     mavenCentral()
 }
 
+task prepareKotlinBuildScriptModel {
+    // ignore, does not build from kotlin sources
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'

@@ -4,11 +4,11 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+        jcenter() // TODO: !JCENTER SHUTDOWN! waiting for AGP 4.2 / org.jetbrains.trove4j:trove4j:20160824
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.android.tools.build:gradle:4.1.2'
 
         if (!getGradle().getStartParameter().getTaskRequests().toString().toLowerCase().contains("oss")) {
             classpath 'com.google.gms:google-services:4.3.4' // google-services plugin
