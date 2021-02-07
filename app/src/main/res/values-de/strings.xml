@@ -146,11 +146,12 @@
     <string name="pref_proxy_port_dlg_title">Proxy-Port eingeben</string>
     <string name="pref_proxy_exclude">Nicht über Proxy leiten</string>
     <string name="pref_locale">Sprache</string>
+    <string name="pref_locale_not_set">Standard verwenden</string>
     <string name="pref_locale_dlg_title">Sprache auswählen</string>
     <string name="pref_locale_restart_notice">Sprache wird beim nächsten neustart der App geändert.</string>
     <string name="miscellaneous">Verschiedenes</string>
     <string name="use_logs">Rclone-Fehler protokollieren</string>
-    <string name="use_logs_summary">Fehler werden in einer lokalen Datei protokolliert</string>
+    <string name="use_logs_summary">Fehler werden in einer lokalen Datei protokolliert (Android/data/io.github.rcx/files/logs)</string>
     <string name="color_picker_checkmark">Farbauswahl-Checkmark</string>
     <string name="primary_color_picker_title">Primärfarbe auswählen</string>
     <string name="accent_color_picker_title">Akzentfarbe auswählen</string>
@@ -176,7 +177,7 @@
     <string name="no_search_results">Keine Ergebnisse gefunden</string>
     <string name="nothing_selected">Nichts ausgewählt</string>
     <string name="file_picker_root_title">Interner Speicher</string>
-    <string name="remote_name_hint">Remote-Name</string>
+    <string name="remote_name_hint">Name (nur a-z, 0-9)</string>
     <string name="amazon_cloud_storage_client_id_hint">Amazon Client-ID</string>
     <string name="amazon_cloud_storage_client_secret_hint">Amazon Client-Secret</string>
     <string name="box_client_id_hint">Box App Client-ID</string>
@@ -209,7 +210,7 @@
     <string name="provider_ftp">FTP</string>
     <string name="provider_http">HTTP</string>
     <string name="serve_dlna">DLNA</string>
-    <string name="url_hint">URL des HTTP-Servers zum Verbinden</string>
+    <string name="url_hint">Server-URL</string>
     <string name="hubic_client_id_hint">HubiC Client-ID</string>
     <string name="hubic_client_secret_hint">HubiC Client-Secret</string>
     <string name="provider_hubic">HubiC</string>
@@ -231,7 +232,7 @@
     <string name="remote_creation_success">Remote erfolgreich erstellt</string>
     <string name="next">Weiter</string>
     <string name="leave_blank_normally">Normalerweise leer lassen</string>
-    <string name="title_activity_remote_config">Wähle den Typ</string>
+    <string name="title_activity_remote_config">Neuer Speicherort</string>
     <string name="provider_onedrive">Microsoft OneDrive</string>
     <string name="onedrive_client_id_hint">Microsoft Client-ID</string>
     <string name="onedrive_client_secret_hint">Microsoft Client-Secret</string>
@@ -248,14 +249,14 @@
     <string name="select_remote">Remote auswählen</string>
     <string name="select_path_to_alias">Pfad für Alias auswählen</string>
     <string name="select_path_to_crypt">Pfad für Crypt auswählen</string>
-    <string name="webdav_spinner_prompt">Name des WebDAV-Diensts</string>
+    <string name="webdav_spinner_prompt">WebDAV-Dienstart</string>
     <string-array name="filename_encryption_spinner_labels">
-        <item>Dateinamen-Verschlüsselungstyp</item>
+        <item>Dateinamen verschlüsseln</item>
         <item>Aus</item>
-        <item>Standard</item>
-        <item>Verbergen</item>
+        <item>Ein (Standard)</item>
+        <item>Abwandeln (Obfuscate)</item>
     </string-array>
-    <string name="directory_name_encryption_hint">Verzeichnisnamen-Verschlüsselung</string>
+    <string name="directory_name_encryption_hint">Verzeichnisnamen verschlüsseln</string>
     <string name="crypt_pass_hint">Verschlüsselungs-Passwort</string>
     <string name="crypt_pass2_hint">Verschlüsselungs-Salt</string>
     <string name="crypt_pass2_helper_text">Optional, aber empfohlen</string>
@@ -308,9 +309,8 @@
     <string name="cache_size">Cache-Größe</string>
     <string name="selected_cache_size">Cache-Größe: %1$s</string>
     <string name="send_anonymous_crash_reports">Anonyme Absturzberichte senden</string>
-    <string name="pref_crash_report_summary">(i) Bericht wird an Microsoft Appcenter gesendet</string>
     <string name="pref_send_test_report_title">Test-Fehlerbericht senden</string>
-    <string name="pref_send_test_report_summary">Tested die Fehlerberichterstattung</string>
+    <string name="pref_send_test_report_summary">Testet die Fehlerberichterstattung</string>
     <string name="pin_to_the_top">Oben anheften</string>
     <string name="unpin_from_the_top">Von oben lösen</string>
     <string name="pin_to_drawer">Im Navigationsbereich anheften</string>
@@ -426,4 +426,17 @@
     <string name="rcd_service_notification_channel_description">Hintergrunddienst</string>
     <string name="serve_dialog_remote_notice_enabled">Der aktuelle Ordner wird im Netzwerk sichtbar (für TVs, Media Player)</string>
     <string name="serve_dialog_remote_notice_disabled">Datein sind nur für andere Apps auf diesem Gerät sichtbar.</string>
+    <string name="pref_crash_report_summary">Hilf uns bei der Weiterenwicklung, indem du automatisch Fehlerberichte sendest. Details unter https://x0b.github.io/rcx-privacy. \nID: %1$s.</string>
+    <string name="report_collection_title">Fehlerbericht</string>
+    <string name="report_collection_collecting">Erfasse Daten für Fehlerbericht</string>
+    <string name="report_collection_stop_collection">Erfassung beenden</string>
+    <string name="pref_bugreport_start_title">Lokalen Fehlerbericht erfassen</string>
+    <string name="pref_bugreport_start_summary">Auswählen, um Fehlererfassung zu starten. Anschließend Fehler nachvollziehen und Erfassung beenden.</string>
+    <string name="intro_welcome_title">Hallo</string>
+    <string name="intro_welcome_description">RCX verwaltet deine Dateien, egal ob sie auf deinem Smartphone in der Cloud gespeichert sind. Bei Fragen gibt es eine Dokumentation unter x0b.github.io/docs.</string>
+    <string name="intro_storage_title">Speicherzugriff</string>
+    <string name="intro_storage_description">RCX baut auf rclone auf und benötigt deine Zustimmung zum Dateizugriff. Stimme also im nächsten Schritt zu, damit wir deine Daten verwalten können.</string>
+    <string name="intro_community_title">Community</string>
+    <string name="intro_community_description">RCX wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf x0b.github.io/rcx-privacy erfährst du mehr.</string>
+    <string name="intro_community_switch">Fehlerberichte senden</string>
 </resources>

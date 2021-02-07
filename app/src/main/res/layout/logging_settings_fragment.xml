@@ -164,19 +164,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:orientation="vertical" >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/textColorPrimary"
-                    android:textStyle="bold"
-                    android:text="Collect Bug Report"/>
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/textColorSecondary"
-                    android:text="Tap to start data collection, then try to reproduce issue and stop collection."/>
+                    android:text="@string/pref_bugreport_start_title"
+                    android:textColor="?attr/textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pref_bugreport_start_summary"
+                    android:textColor="?attr/textColorSecondary" />
 
             </LinearLayout>
         </RelativeLayout>

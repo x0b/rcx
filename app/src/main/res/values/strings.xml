@@ -149,8 +149,8 @@
     <string name="intro_storage_title">Storage access required</string>
     <string name="intro_storage_description">RCX uses rclone, and we need your permission to access files. First, please allow storage access.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">RCX is developed by and for its community. Please contribute by allowing error reports.</string>
-    <string name="intro_community_switch">Send error logs </string>
+    <string name="intro_community_description">RCX is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
+    <string name="intro_community_switch">Contribute error reports</string>
     <string name="pref_key_stream_max" translatable="false">pref_key_stream_max</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_color_primary" translatable="false">pref_key_color_primary</string>
@@ -195,9 +195,10 @@
     <string name="pref_locale_dlg_title">Select Language</string>
     <string name="pref_locale_restart_notice">Language will change once the app is restarted</string>
     <string name="pref_key_locale" translatable="false">locale</string>
+    <string name="pref_locale_not_set">Use default language</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="use_logs">Log Rclone errors</string>
-    <string name="use_logs_summary">Errors will be logged to a local file</string>
+    <string name="use_logs_summary">Errors will be logged to a local file (Android/data/io.github.rcx/files/logs)</string>
     <string name="color_picker_checkmark">Color picker checkmark</string>
     <string name="primary_color_picker_title">Select primary color</string>
     <string name="accent_color_picker_title">Select accent color</string>
@@ -227,7 +228,7 @@
     <string name="no_search_results">No search results</string>
     <string name="nothing_selected">Nothing selected</string>
     <string name="file_picker_root_title">Device storage</string>
-    <string name="remote_name_hint">Remote name</string>
+    <string name="remote_name_hint">Name (a-z, 0-9 only)</string>
     <string name="amazon_cloud_storage_client_id_hint">Amazon Client ID</string>
     <string name="amazon_cloud_storage_client_secret_hint">Amazon Client Secret</string>
     <string name="box_client_id_hint">Box App Client ID</string>
@@ -301,7 +302,7 @@
     <string name="select_remote">Select a remote</string>
     <string name="select_path_to_alias">Select path to Alias</string>
     <string name="select_path_to_crypt">Select path to Encrypt</string>
-    <string name="webdav_spinner_prompt">Name of the Webdav service</string>
+    <string name="webdav_spinner_prompt">WebDAV service provider</string>
     <string-array name="filename_encryption_spinner_values" translatable="false">
         <item>How to encrypt the filenames</item>
         <item>Off</item>
@@ -512,4 +513,6 @@
     <string name="report_collection_title">Bug report</string>
     <string name="report_collection_collecting">Collecting data for bug report</string>
     <string name="report_collection_stop_collection">Stop collection</string>
+    <string name="pref_bugreport_start_title">Collect local bug report</string>
+    <string name="pref_bugreport_start_summary">Tap to start data collection, then try to reproduce issue and stop collection.</string>
 </resources>
