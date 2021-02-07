@@ -155,8 +155,14 @@ public class GeneralSettingsFragment extends Fragment {
         if(showThumbnails) {
             thumbnailSizeElement.setVisibility(View.VISIBLE);
         }
-        String locale = sharedPreferences.getString(getString(R.string.pref_key_locale), "en-US");
-        localeSummary.setText(Locale.forLanguageTag(locale).getDisplayLanguage());
+
+        if (sharedPreferences.contains(getString(R.string.pref_key_locale))) {
+            String localeTag = sharedPreferences.getString(getString(R.string.pref_key_locale), "en-US");
+            Locale locale = Locale.forLanguageTag(localeTag);
+            localeSummary.setText(locale.getDisplayLanguage());
+        } else {
+            localeSummary.setText(getString(R.string.pref_locale_not_set));
+        }
     }
     
     private void setClickListeners() {

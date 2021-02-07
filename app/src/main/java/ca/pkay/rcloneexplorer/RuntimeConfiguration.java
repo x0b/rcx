@@ -30,8 +30,11 @@ public class RuntimeConfiguration {
     public static Context attach(@Nullable Activity host, @NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String localeTag = preferences.getString(context.getString(R.string.pref_key_locale), "en-US");
-        Locale locale = Locale.forLanguageTag(localeTag);
+        Locale locale = Locale.getDefault();
+        if (preferences.contains(context.getString(R.string.pref_key_locale))) {
+            String localeTag = preferences.getString(context.getString(R.string.pref_key_locale), "en-US");
+            locale = Locale.forLanguageTag(localeTag);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
            context = applyLocale(context, locale, host);
