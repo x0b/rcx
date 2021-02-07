@@ -50,10 +50,9 @@
     <string name="select">Select</string>
     <string name="app_icon">App Icon</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="github_app_url" translatable="false">https://github.com/x0b/rcloneExplorer</string>
-    <string name="github_issue_url" translatable="false">https://github.com/x0b/rcloneExplorer/issues/new?title=Bug%20Report&amp;label=app%20issue%20link&amp;body=</string>
-    <string name="github_issue_template" tools:ignore="TypographyDashes" translatable="false">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
-    <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
+    <string name="github_app_url" translatable="false">https://github.com/x0b/rcx</string>
+    <string name="github_issue_url" translatable="false">https://github.com/x0b/rcx/issues/new/choose</string>
+   <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
     <string name="github_maintainer_url" translatable="false">https://github.com/x0b</string>
     <string name="about_check_updates">Check</string>
     <string name="replace_config_file_question">Replace current configuration file?</string>
@@ -370,7 +369,7 @@
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
-    <string name="pref_crash_report_summary">(i) New crash logging using app center.</string>
+    <string name="pref_crash_report_summary">Help the developers by sending error and crash reports. See https://x0b.github.io/rcx-privacy. \nID: %1$s.</string>
     <string name="pref_send_test_report_title">Send Test Report</string>
     <string name="pref_send_test_report_summary">Sends a test report to the crash logger</string>
     <string name="pin_to_the_top">Pin to the top</string>

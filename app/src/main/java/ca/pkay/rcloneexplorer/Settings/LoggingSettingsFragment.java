@@ -11,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.microsoft.appcenter.AppCenter;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.ReportService;
@@ -24,6 +27,7 @@ public class LoggingSettingsFragment extends Fragment {
     private Switch useLogsSwitch;
     private View useLogsElement;
     private View crashReportsElement;
+    private TextView crashReportSummary;
     private Switch crashReportsSwitch;
     private View testReportElement;
     private View startCollectionElement;
@@ -70,6 +74,7 @@ public class LoggingSettingsFragment extends Fragment {
         useLogsElement = view.findViewById(R.id.use_logs);
         crashReportsElement = view.findViewById(R.id.crash_reporting);
         crashReportsSwitch = view.findViewById(R.id.crash_reporting_switch);
+        crashReportSummary = view.findViewById(R.id.txt_crash_report_summary);
         testReportElement = view.findViewById(R.id.send_test_report);
         startCollectionElement = view.findViewById(R.id.start_report_collection);
     }
@@ -82,6 +87,21 @@ public class LoggingSettingsFragment extends Fragment {
 
         useLogsSwitch.setChecked(useLogs);
         crashReportsSwitch.setChecked(crashReports);
+        if (crashReports) {
+            AppCenter.getInstallId().thenAccept(uuid -> {
+                if (null == crashReportSummary) {
+                    return;
+                }
+                if (null == uuid) {
+                    crashReportSummary.setText(getString(R.string.pref_crash_report_summary, getString(R.string.restart_required)));
+                } else {
+                    String userId = uuid.toString();
+                    crashReportSummary.setText(getString(R.string.pref_crash_report_summary, userId));
+                }
+            });
+        } else {
+            crashReportSummary.setText(getString(R.string.pref_crash_report_summary, "N/A"));
+        }
     }
 
     private void setClickListeners() {
