@@ -299,6 +299,9 @@ public class VirtualContentProvider extends SingleRootProvider {
 
     @Override
     public Cursor queryDocument(@NonNull String documentId, String[] projection) throws FileNotFoundException {
+        if (rcdAvailable && rcdService != null) {
+            rcdService.onNotifyUse();
+        }
         grantPermission(documentId);
         FLog.v(TAG, "queryDocument(): %s", documentId);
         if (null == projection) {
@@ -1377,7 +1380,11 @@ public class VirtualContentProvider extends SingleRootProvider {
                 remotes.put(fresh.getName(), fresh);
             }
         } catch (RcloneRcd.RcdOpException e) {
-            FLog.e(TAG, "Could not load remotes", e);
+            // FIXME: pre-load remotes
+            FLog.i(TAG, "RCD not ready, loading remotes directly", e);
+            for (RemoteItem remoteItem : rclone.getRemotes()) {
+                remotes.put(remoteItem.getName(), remoteItem);
+            }
         }
     }
 

@@ -19,6 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import java.util.concurrent.TimeUnit;
+
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RcloneRcd;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -33,9 +36,22 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
     public static final String ACTION_START_FOREGROUND = "ca.pkay.rcloneexplorer.RcdService.StartForeground";
     public static final String ACTION_STOP_FOREGROUND = "ca.pkay.rcloneexplorer.RcdService.StopForeground";
 
+    /**
+     * If the service was started 60 or less seconds ago, it ignores system memory pressure of
+     * level {@link android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW}.
+     */
+    private static final int ALIVE_SECONDS_LOW = 60;
+
+    /**
+     * If the service was started 30 or less seconds ago, it ignores system memory pressure of
+     * level {@link android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL}.
+     */
+    private static final int ALIVE_SECONDS_CRITICAL = 30;
+
     private RcloneRcd rcloneRcd;
     private boolean shutdown;
     private Boolean available;
+    private long initNanosTimestamp = 0;
 
     private final IBinder binder = new RcdBinder();
     private NotificationManagerCompat notificationManager;
@@ -47,6 +63,7 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        initNanosTimestamp = System.nanoTime();
         FLog.d(TAG, "onBind: client binds to service");
         return binder;
     }
@@ -102,6 +119,7 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
 
     @Override
     public void onRebind(Intent intent) {
+        initNanosTimestamp = System.nanoTime();
         FLog.v(TAG, "onRebind: client binds again");
         super.onRebind(intent);
     }
@@ -115,6 +133,7 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
     @Override
     public void onCreate() {
         super.onCreate();
+        initNanosTimestamp = System.nanoTime();
         FLog.d(TAG, "onCreate: service is being created");
         notificationManager = NotificationManagerCompat.from(getApplicationContext());
         setNotificationChannel();
@@ -173,6 +192,14 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
         super.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * In general, reducing memory usage when requested by the system can result in improved user
+     * experience. However, unloading resources must be weighed agains the cost of recreating the
+     * resources when required. On device testing has shown that user activity causes high memory
+     * pressure. The system does not seem to take into account that app components are currently in
+     * use. Therefore, a recently used service ignores memory pressure signals.
+     * @param level
+     */
     @Override
     public void onTrimMemory(int level) {
         if (shutdown) {
@@ -181,14 +208,37 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
             return;
         }
         if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) {
-            FLog.v(TAG, "Memory running critical (15)");
-            shutdownIfPossible();
+            long currentNanos = System.nanoTime();
+            long graceNanos = initNanosTimestamp + TimeUnit.SECONDS.toNanos(ALIVE_SECONDS_CRITICAL);
+            if (currentNanos > graceNanos) {
+                long actualSeconds = TimeUnit.NANOSECONDS.toSeconds(currentNanos - graceNanos);
+                FLog.v(TAG, "Unprotected (%ds) memory critical (level=%d), shutdown requested", actualSeconds, level);
+                shutdownIfPossible();
+            } else {
+                FLog.v(TAG, "Protected memory critical (level=%d), ignoring signal", level);
+            }
         } else if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
-            FLog.v(TAG, "Memory running low (10)");
-            shutdownIfPossible();
+            long currentNanos = System.nanoTime();
+            long graceNanos = initNanosTimestamp + TimeUnit.SECONDS.toNanos(ALIVE_SECONDS_LOW);
+            if (currentNanos > graceNanos) {
+                FLog.v(TAG, "Unprotected memory low (level=%d), shutdown requested", level);
+                shutdownIfPossible();
+            } else {
+                FLog.v(TAG, "Protected memory low (level=%d), ignoring signal", level);
+            }
         } else if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE) {
-            FLog.v(TAG, "Memory running low (5)");
+            FLog.v(TAG, "Memory moderate (level=%d), ignoring signal", level);
         }
+    }
+
+    /**
+     * Notify service that user is active. Some clients (e.g.
+     * @{@link ca.pkay.rcloneexplorer.VirtualContentProvider}) may use the service for longer time
+     * spans and can use this method to inform the service that when it s in use.
+     *
+     */
+    public void onNotifyUse() {
+        initNanosTimestamp = System.nanoTime();
     }
 
     private void shutdownIfPossible() {
