@@ -26,3 +26,6 @@
 
 # ignore okhttp conscrypt warning
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
+
+# keep model classes
+-keep public class ca.pkay.rcloneexplorer.RcloneRcd.*
