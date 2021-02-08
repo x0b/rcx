@@ -6,7 +6,9 @@ def buildTag = 'v1.54.0'
 //
 import java.nio.file.Paths
 def repository = 'github.com/rclone/rclone'
+def repositoryRef = repository + '@' + buildTag
 def goPath = Paths.get(projectDir.absolutePath, 'gopath').toAbsolutePath().toString()
+def appLibPath = Paths.get(projectDir.absolutePath, '../app/lib').toAbsolutePath().toString()
 def osName = System.properties['os.name'].toLowerCase()
 def osArch = System.properties['os.arch']
 def String os
@@ -25,33 +27,22 @@ if (osName.contains('windows')) {
 task fetchRclone(type: Exec) {
     mkdir "gopath"
     environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
-    commandLine 'go', 'get', '-d', repository
-}
-
-task updateLocalRclone(type: Exec) {
-    dependsOn fetchRclone
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'git', 'fetch'
-}
-
-task checkoutRclone(type: Exec) {
-    dependsOn updateLocalRclone
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'git', 'checkout', buildTag
+    environment "GO111MODULE", "on"
+    commandLine 'go', 'get', '-d', repositoryRef
 }
 
 task cleanNative {
     enabled = false
     doLast {
-        delete '../../../../../../app/lib/armeabi-v7a/librclone.so'
-        delete '../../../../../../app/lib/arm64-v8a/librclone.so'
-        delete '../../../../../../app/lib/x86/librclone.so'
-        delete '../../../../../../app/lib/x86_64/librclone.so'
+        delete "${appLibPath}/armeabi-v7a/librclone.so"
+        delete "${appLibPath}/arm64-v8a/librclone.so"
+        delete "${appLibPath}/x86/librclone.so"
+        delete "${appLibPath}/x86_64/librclone.so"
     }
 }
 
 task buildArm(type: Exec) {
-    dependsOn checkoutRclone
+    dependsOn fetchRclone
     environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
     def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk', '21.3.6528147', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'armv7a-linux-androideabi21-clang')
     environment 'CC', crossCompiler
@@ -61,12 +52,13 @@ task buildArm(type: Exec) {
     environment 'GOARM', '7'
     environment 'CGO_ENABLED', '1'
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', '../../../../../../app/lib/armeabi-v7a/librclone.so', repository
+    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
+    def artifactTarget = "${appLibPath}/armeabi-v7a/librclone.so"
+    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', artifactTarget, '.'
 }
 
 task buildArm64(type: Exec) {
-    dependsOn checkoutRclone
+    dependsOn fetchRclone
     environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
     def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk', '21.3.6528147', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'aarch64-linux-android21-clang')
     environment 'CC', crossCompiler
@@ -75,12 +67,12 @@ task buildArm64(type: Exec) {
     environment 'GOARCH', 'arm64'
     environment 'CGO_ENABLED', '1'
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-v', '-o', '../../../../../../app/lib/arm64-v8a/librclone.so', repository
-}
+    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
+    def artifactTarget = "${appLibPath}/arm64-v8a/librclone.so"
+    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', artifactTarget, '.'}
 
 task buildx86(type: Exec) {
-    dependsOn checkoutRclone
+    dependsOn fetchRclone
     environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
     def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk', '21.3.6528147', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'i686-linux-android21-clang')
     environment 'CC', crossCompiler
@@ -89,12 +81,13 @@ task buildx86(type: Exec) {
     environment 'GOARCH', '386'
     environment 'CGO_ENABLED', '1'
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', '../../../../../../app/lib/x86/librclone.so', repository
+    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
+    def artifactTarget = "${appLibPath}/x86/librclone.so"
+    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', artifactTarget, '.'
 }
 
 task buildx64(type: Exec) {
-    dependsOn checkoutRclone
+    dependsOn fetchRclone
     environment 'GOPATH', Paths.get(projectDir.absolutePath, 'gopath')
     def String crossCompiler = Paths.get(System.getenv('ANDROID_HOME'), 'ndk', '21.3.6528147', 'toolchains', 'llvm', 'prebuilt', os, 'bin', 'x86_64-linux-android21-clang')
     environment 'CC', crossCompiler
@@ -103,13 +96,13 @@ task buildx64(type: Exec) {
     environment 'GOARCH', 'amd64'
     environment 'CGO_ENABLED', '1'
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
-    workingDir Paths.get(goPath, "src/${repository}".split('/'))
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', '../../../../../../app/lib/x86_64/librclone.so', repository
+    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
+    def artifactTarget = "${appLibPath}/x86_64/librclone.so"
+    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-o', artifactTarget, '.'
 }
 
 task buildNative {
     dependsOn fetchRclone
-    dependsOn checkoutRclone
     dependsOn buildArm
     dependsOn buildArm64
     dependsOn buildx86
