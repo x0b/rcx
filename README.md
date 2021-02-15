@@ -1,7 +1,7 @@
 # RCX - Rclone for Android
 [![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/x0b/rcx/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcx/total.svg)](https://github.com/x0b/rcx/releases) [![GitHub release](https://img.shields.io/github/v/release/x0b/rcx?include_prereleases)](https://github.com/x0b/rcx/releases/latest) [![Google Play Pre-Registration](https://img.shields.io/badge/Google_Play-Pre%E2%80%93Registration-brightgreen)](https://groups.google.com/forum/#!forum/rcx-alpha/join)
 
-A cloud file manager, powered by rclone. 
+A cloud file manager, powered by rclone
 
 🎉 We have rebranded to **RCX - Rclone for Android**. [Read more about the changes on the new website](https://x0b.github.io/posts/upcoming-changes-202001/).
 
