@@ -166,6 +166,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Context context;
     private String thumbnailServerAuth;
     private int thumbnailServerPort;
+    private boolean wrapFilenames;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -231,6 +232,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        wrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
         if (goToDefaultSet) {
             startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
@@ -269,6 +271,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.showThumbnails(showThumbnails);
+        recyclerViewAdapter.setWrapFileNames(wrapFilenames);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
@@ -582,8 +585,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             menu.findItem(R.id.action_sync).setVisible(false);
         }
 
-        menu.findItem(R.id.action_wrap_filenames).setChecked(true);
-
         if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
             setOptionsMenuVisibility(false);
         }
@@ -633,9 +634,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return true;
             case R.id.action_link:
                 new LinkTask().execute(directoryObject.getCurrentPath());
-                return true;
-            case R.id.action_wrap_filenames:
-                wrapFilenames(item);
                 return true;
             case R.id.action_sync:
                 showSyncDialog(directoryObject.getCurrentPath());
@@ -726,16 +724,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
-    }
-
-    private void wrapFilenames(MenuItem menuItem) {
-        if (menuItem.isChecked()) {
-            menuItem.setChecked(false);
-            recyclerViewAdapter.setWrapFileNames(false);
-        } else {
-            menuItem.setChecked(true);
-            recyclerViewAdapter.setWrapFileNames(true);
-        }
     }
 
     private void startThumbnailService() {

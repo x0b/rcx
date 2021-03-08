@@ -44,10 +44,4 @@
         android:id="@+id/action_empty_trash"
         android:title="@string/empty_trash"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_wrap_filenames"
-        android:title="@string/wrap_filenames"
-        android:checkable="true"
-        app:showAsAction="never" />
 </menu>
