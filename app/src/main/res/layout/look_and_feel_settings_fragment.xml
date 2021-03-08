@@ -122,6 +122,39 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?attr/dividerColor"/>
+
+        <RelativeLayout
+            android:id="@+id/wrap_filenames"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="?attr/textColorPrimary"
+                android:textStyle="bold"
+                android:text="@string/wrap_filenames"/>
+
+            <Switch
+                android:id="@+id/wrap_filenames_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>
