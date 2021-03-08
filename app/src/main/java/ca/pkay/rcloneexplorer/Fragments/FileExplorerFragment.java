@@ -585,7 +585,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Boolean isWrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
         recyclerViewAdapter.setWrapFileNames(isWrapFilenames);
-        menu.findItem(R.id.action_wrap_filenames).setChecked(isWrapFilenames);
 
         if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
             setOptionsMenuVisibility(false);
@@ -636,9 +635,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return true;
             case R.id.action_link:
                 new LinkTask().execute(directoryObject.getCurrentPath());
-                return true;
-            case R.id.action_wrap_filenames:
-                wrapFilenames(item);
                 return true;
             case R.id.action_sync:
                 showSyncDialog(directoryObject.getCurrentPath());
@@ -726,15 +722,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
-    }
-
-    private void wrapFilenames(MenuItem menuItem) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Boolean isChecked = !menuItem.isChecked();
-        editor.putBoolean(getString(R.string.pref_key_wrap_filenames), isChecked);
-        menuItem.setChecked(isChecked);
-        recyclerViewAdapter.setWrapFileNames(isChecked);
     }
 
     private void startThumbnailService() {
