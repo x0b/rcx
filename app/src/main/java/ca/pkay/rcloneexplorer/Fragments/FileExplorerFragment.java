@@ -166,6 +166,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Context context;
     private String thumbnailServerAuth;
     private int thumbnailServerPort;
+    private boolean wrapFilenames;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -231,6 +232,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        wrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
         if (goToDefaultSet) {
             startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
@@ -269,6 +271,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.showThumbnails(showThumbnails);
+        recyclerViewAdapter.setWrapFileNames(wrapFilenames);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
@@ -581,10 +584,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (!remote.hasSyncSupport()) {
             menu.findItem(R.id.action_sync).setVisible(false);
         }
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean isWrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
-        recyclerViewAdapter.setWrapFileNames(isWrapFilenames);
 
         if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
             setOptionsMenuVisibility(false);
