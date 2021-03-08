@@ -148,6 +148,7 @@
     <string name="pref_key_color_primary" translatable="false">pref_key_color_primary</string>
     <string name="pref_key_color_accent" translatable="false">pref_key_color_accent</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_dark_theme</string>
+    <string name="pref_key_wrap_filenames" translatable="false">pref_key_wrap_filenames</string>
     <string name="pref_key_app_updates" translatable="false">pref_key_app_updates</string>
     <string name="pref_key_app_updates_beta" translatable="false">pref_key_app_updates_beta</string>
     <string name="pref_key_crash_reports" translatable="false">pref_key_crash_reports</string>
