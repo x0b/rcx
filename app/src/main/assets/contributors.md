@@ -2,12 +2,13 @@
 This application was created by [Patryk Kaczmarkiewicz](https://github.com/kaczmarkiewiczp). Your current build is maintained by [x0b](https://github.com/x0b).
 
 ### Github contributors
-Additionally, these people have contributed towards making rcloneExplorer better:
+Additionally, these people have contributed towards making RCX better:
 
 * [buywetwok](https://github.com/buywetwok)
 * [davsinghm](https://github.com/davsinghm)
+* [alyssadev](https://github.com/alyssadev)
 
-[Join us now on Github.](https://github.com/x0b/rcloneExplorer)
+[Join us now on Github.](https://github.com/x0b/rcx)
 
 ## License
     
