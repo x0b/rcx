@@ -27,6 +27,8 @@ public class LookAndFeelSettingsFragment extends Fragment {
     private ImageView accentColorPreview;
     private Switch darkThemeSwitch;
     private View darkThemeElement;
+    private Switch wrapFilenamesSwitch;
+    private View wrapFilenamesElement;
     private boolean isDarkTheme;
 
     public interface OnThemeHasChanged {
@@ -86,13 +88,17 @@ public class LookAndFeelSettingsFragment extends Fragment {
         accentColorPreview = view.findViewById(R.id.accent_color_preview);
         darkThemeSwitch = view.findViewById(R.id.dark_theme_switch);
         darkThemeElement = view.findViewById(R.id.dark_theme);
+        wrapFilenamesSwitch = view.findViewById(R.id.wrap_filenames_switch);
+        wrapFilenamesElement = view.findViewById(R.id.wrap_filenames);
     }
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        boolean isWrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
         darkThemeSwitch.setChecked(isDarkTheme);
+        wrapFilenamesSwitch.setChecked(isWrapFilenames);
     }
 
     private void setClickListeners() {
@@ -100,6 +106,8 @@ public class LookAndFeelSettingsFragment extends Fragment {
         accentColorElement.setOnClickListener(v -> showAccentColorPicker());
         darkThemeElement.setOnClickListener(v -> darkThemeSwitch.setChecked(!darkThemeSwitch.isChecked()));
         darkThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onDarkThemeClicked(isChecked));
+        wrapFilenamesElement.setOnClickListener(v -> wrapFilenamesSwitch.setChecked(!wrapFilenamesSwitch.isChecked()));
+        wrapFilenamesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onWrapFilenamesClicked(isChecked));
     }
 
     private void showPrimaryColorPicker() {
@@ -156,6 +164,15 @@ public class LookAndFeelSettingsFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_dark_theme), isChecked);
+        editor.apply();
+
+        listener.onThemeChanged();
+    }
+
+    private void onWrapFilenamesClicked(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_wrap_filenames), isChecked);
         editor.apply();
 
         listener.onThemeChanged();
