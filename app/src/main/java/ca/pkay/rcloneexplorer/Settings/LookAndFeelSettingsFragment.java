@@ -174,7 +174,5 @@ public class LookAndFeelSettingsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_wrap_filenames), isChecked);
         editor.apply();
-
-        listener.onThemeChanged();
     }
 }
