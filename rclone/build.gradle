@@ -1,5 +1,5 @@
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.54.0'
+def buildTag = 'v1.54.1'
 
 //
 // DO NOT EDIT ANYTHING BELOW
