@@ -20,6 +20,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -89,6 +90,7 @@ public class UploadService extends IntentService {
         final String uploadFilePath = intent.getStringExtra(LOCAL_PATH_ARG);
         final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
+        boolean isFile = new File(uploadFilePath).isFile();
         String uploadFileName;
         int slashIndex = uploadFilePath.lastIndexOf("/");
         if (slashIndex >= 0) {
@@ -141,7 +143,7 @@ public class UploadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    updateNotification(uploadFileName, notificationContent, notificationBigText);
+                    updateNotification(uploadFileName, notificationContent, notificationBigText, isFile);
                 }
             } catch (IOException e) {
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e);
@@ -194,10 +196,16 @@ public class UploadService extends IntentService {
         }
     }
 
-    private void updateNotification(String uploadFileName, String content, String[] bigTextArray) {
+    private void updateNotification(String uploadFileName, String content, String[] bigTextArray, boolean singleFile) {
         StringBuilder bigText = new StringBuilder();
         for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
+            String progressLine = bigTextArray[i];
+            if (null != progressLine) {
+                bigText.append(progressLine);
+            }
+            if (singleFile) {
+                break;
+            }
             if (i < 4) {
                 bigText.append("\n");
             }

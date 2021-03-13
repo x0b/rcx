@@ -196,7 +196,13 @@ public class DownloadService extends IntentService {
     private void updateNotification(FileItem downloadItem, String content, String[] bigTextArray) {
         StringBuilder bigText = new StringBuilder();
         for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
+            String progressLine = bigTextArray[i];
+            if (null != progressLine) {
+                bigText.append(progressLine);
+            }
+            if (!"inode/directory".equals(downloadItem.getMimeType())) {
+                break;
+            }
             if (i < 4) {
                 bigText.append("\n");
             }
