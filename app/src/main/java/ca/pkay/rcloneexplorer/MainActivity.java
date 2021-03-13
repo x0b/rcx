@@ -46,6 +46,7 @@ import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
+import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -287,6 +288,9 @@ public class MainActivity extends AppCompatActivity
             if(refresh.isRequired()) {
                 refresh.execute();
             }
+        } else if (requestCode == FileExplorerFragment.STREAMING_INTENT_RESULT) {
+            Intent serveIntent = new Intent(this, StreamingService.class);
+            context.stopService(serveIntent);
         }
     }
 

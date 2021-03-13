@@ -108,13 +108,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                                                 SortDialog.OnClickListener,
                                                                 ServeDialog.Callback {
 
+    public static final int STREAMING_INTENT_RESULT = 468;
     private static final String TAG = "FileExplorerFragment";
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private static final int FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int FILE_PICKER_SYNC_RESULT = 45;
-    private static final int STREAMING_INTENT_RESULT = 468;
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
     private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
@@ -666,6 +666,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     // serve callback
     @Override
     public void onServeOptionsSelected(int protocol, boolean allowRemoteAccess, String user, String password) {
+        // GH-87: Release old stream
+        context.stopService(new Intent(context, StreamingService.class));
+
         Intent intent = new Intent(getContext(), StreamingService.class);
         intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
         intent.putExtra(StreamingService.REMOTE_ARG, remote);
@@ -1319,6 +1322,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                             default:
                                 return;
                         }
+                        // GH-87: Release old server
+                        context.stopService(new Intent(context, StreamingService.class));
                         tryStartService(context, intent);
                     });
                     builder.setTitle(R.string.pick_a_protocol);
@@ -1948,6 +1953,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
             serveIntent.putExtra(StreamingService.SERVE_PORT, port);
+            // GH-87: Release old stream
+            context.stopService(new Intent(context, StreamingService.class));
             tryStartService(context, serveIntent);
 
             Uri uri = Uri.parse("http://127.0.0.1:" + port)
