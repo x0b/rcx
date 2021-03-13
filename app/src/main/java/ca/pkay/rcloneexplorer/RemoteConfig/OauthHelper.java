@@ -7,11 +7,11 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
-import es.dmoral.toasty.Toasty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +23,7 @@ public class OauthHelper {
 
     private static final String TAG = "OAuthHelper";
     private static final String regex = "go to the following link: ([^\\s]+)";
+    private static volatile WeakReference<UrlAuthThread> lastAuthAttempt;
 
     /**
      * Save the options in the rclone config file and start the OAuth authentication process
@@ -32,17 +33,27 @@ public class OauthHelper {
      * @return true if successful
      **/
     public static boolean createOptionsWithOauth(ArrayList<String> options, Rclone rclone, Context context) {
+        // Since authorization uses a fixed port, shut down previous attempt.
+        UrlAuthThread oldThread = lastAuthAttempt != null ? lastAuthAttempt.get() : null;
+        if (oldThread != null) {
+            if (!oldThread.isStopped()) {
+                oldThread.forceStop();
+            }
+            oldThread = null;
+        }
+
         Process process = rclone.configCreate(options);
         if (null == process) {
             return false;
         }
-        Thread authThread = new OauthHelper.UrlAuthThread(process, context);
-        authThread.start();
+        UrlAuthThread currentAuth = new OauthHelper.UrlAuthThread(process, context);
+        lastAuthAttempt = new WeakReference<>(currentAuth);
+        currentAuth.start();
         try {
             process.waitFor();
         } catch (InterruptedException e) {
-            authThread.interrupt();
-            FLog.e(TAG, "createOptionsWithOauth: aborted", e);
+            FLog.d(TAG, "Auth stopped by process interrupt");
+            currentAuth.forceStop();
         }
         return 0 == process.exitValue();
     }
@@ -57,6 +68,7 @@ public class OauthHelper {
         private static final String TAG = "UrlAuthThread";
         private final Process process;
         private final Context context;
+        private volatile boolean stopped = false;
 
         public UrlAuthThread(Process process, Context context) {
             this.process = process;
@@ -81,9 +93,23 @@ public class OauthHelper {
                     }
                 }
             } catch (IOException e) {
+                if (stopped) {
+                    FLog.v(TAG, "Authentication attempt stopped");
+                    return;
+                }
+                stopped = true;
                 FLog.e(TAG, "doInBackground: could not read auth url", e);
                 process.destroy();
             }
+        }
+
+        public void forceStop() {
+            stopped = true;
+            process.destroy();
+        }
+
+        public boolean isStopped() {
+            return stopped;
         }
     }
 
