@@ -167,6 +167,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private String thumbnailServerAuth;
     private int thumbnailServerPort;
     private boolean wrapFilenames;
+    private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -232,6 +233,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        prefChangeListener = (pref, key) -> {
+            String wrapFilenamesKey = getString(R.string.pref_key_wrap_filenames);
+            if (key.equals(wrapFilenamesKey) && recyclerViewAdapter != null) {
+                recyclerViewAdapter.setWrapFileNames(pref.getBoolean(wrapFilenamesKey, true));
+            }
+        };
+        sharedPreferences.registerOnSharedPreferenceChangeListener(prefChangeListener);
         wrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
         if (goToDefaultSet) {
@@ -1123,6 +1131,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         searchBar.setVisibility(View.GONE);
         ((FragmentActivity) context).setTitle(originalToolbarTitle);
         showNavDrawerButtonInToolbar();
+        prefChangeListener = null;
         isRunning = false;
         context = null;
     }
