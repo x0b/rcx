@@ -21,30 +21,33 @@
             />
 
     <LinearLayout
-            android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/providerIcon"
+        app:layout_constraintStart_toEndOf="@id/provider_rb"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/provider_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/provider_rb"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="16dp">
+            android:textColor="?attr/textColorPrimary"
+            android:textIsSelectable="true"
+            android:textSize="18sp"
+            tools:text="ExampleProvider" />
 
         <TextView
-                android:id="@+id/provider_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/textColorPrimary"
-                tools:text="ExampleProvider"
-                android:textSize="18sp"/>
-
-        <TextView
-                android:id="@+id/provider_summary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?android:textColorHint"
-                tools:text="Lower focus explainer text"
-                android:text="Lower focus explainer text"
-                android:textSize="14sp"/>
+            android:id="@+id/provider_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:textColorHint"
+            android:textIsSelectable="false"
+            android:textSize="14sp"
+            tools:text="Lower focus explainer text" />
 
     </LinearLayout>
 
@@ -55,6 +58,7 @@
             android:id="@+id/providerIcon"
             android:contentDescription="@null"
             android:layout_marginEnd="16dp"
+            app:tint="?attr/iconTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
