@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="provider_names">
+        <item>Box</item>
+        <item>Backblaze B2</item>
+        <item>Dropbox</item>
+        <item>FTP</item>
+        <item>HTTP</item>
+        <item>HubiC</item>
+        <item>pCloud</item>
+        <item>SFTP</item>
+        <item>Yandex Disk</item>
+        <item>WebDAV</item>
+        <item>Microsoft OneDrive</item>
+        <item>Alias</item>
+        <item>Crypt</item>
+        <item>QingCloud QingStor</item>
+        <item>Microsoft Azure Blob Storage</item>
+        <item>Cache</item>
+        <item>Local</item>
+        <item>Google Drive</item>
+        <item>Google Photos</item>
+        <item>Union</item>
+        <item>Mega</item>
+    </array>
+
+    <array name="provider_summaries">
+        <item>Cloudspeicher</item>
+        <item>Cloudspeicher</item>
+        <item>Cloudspeicher</item>
+        <item>Zugriff auf Dateiserver</item>
+        <item>Zugriff auf einen HTTP-Server</item>
+        <item>Cloudspeicher</item>
+        <item>Cloudspeicher</item>
+        <item>Zugriff auf einen SFTP-Server</item>
+        <item>Cloudspeicher</item>
+        <item>Zugriff auf einen WebDAV-Server</item>
+        <item>Cloudspeicher</item>
+        <item>Einen neuen namen für eine Remote oder einen Pfad vergeben</item>
+        <item>Dateien auf anderen Remotes verschlüsseln</item>
+        <item>Cloud-Objektspeicher</item>
+        <item>Cloud-Objektspeicher</item>
+        <item>Zugriff durch lokales Zwischenspeichern beschleunigen</item>
+        <item>Zugriff auf "Externen Speicher"</item>
+        <item>Cloudspeicher</item>
+        <item>Cloud-Fotospeicher</item>
+        <item>Mehrere Remotes kombinieren</item>
+        <item>Cloudspeicher</item>
+    </array>
+</resources>

@@ -15,7 +15,7 @@
     <string name="about">Info</string>
     <string name="sort">Sortieren</string>
     <string name="select_all">Alle auswählen</string>
-    <string name="serve">Server starten</string>
+    <string name="serve">Server starten…</string>
     <string name="action_sort_name">Name</string>
     <string name="action_sort_date">Datum</string>
     <string name="action_sort_size">Größe</string>
@@ -48,7 +48,7 @@
     <string name="no_internet_connection">Keine Internetverbindung</string>
     <string name="about_check_updates">Prüfen</string>
     <string name="replace_config_file_question">Aktuelle Konfigurationsdatei ersetzen?</string>
-    <string name="config_file_lost_statement">Die aktuelle Konfiguration wird überschrieben</string>
+    <string name="config_file_lost_statement">Die aktuelle Konfiguration wird ersetzt!</string>
     <string name="continue_statement">Weiter</string>
     <string name="download_complete">Download abgeschlossen</string>
     <string name="download_service_notification_description">Datei-Downloads</string>
@@ -114,7 +114,7 @@
     <string name="failed_to_upload">Hochladen fehlgeschlagen</string>
     <string name="upload_failed">Hochladen fehlgeschlagen</string>
     <string name="properties">Eigenschaften</string>
-    <string name="open_as">Öffnen als</string>
+    <string name="open_as">Öffnen als…</string>
     <string name="open_as_text">Text</string>
     <string name="open_as_audio">Audio</string>
     <string name="open_as_video">Video</string>
@@ -312,9 +312,9 @@
     <string name="pref_send_test_report_title">Test-Fehlerbericht senden</string>
     <string name="pref_send_test_report_summary">Testet die Fehlerberichterstattung</string>
     <string name="pin_to_the_top">Oben anheften</string>
-    <string name="unpin_from_the_top">Von oben lösen</string>
-    <string name="pin_to_drawer">Im Navigationsbereich anheften</string>
-    <string name="unpin_from_drawer">Vom Navigationsbereich lösen</string>
+    <string name="unpin_from_the_top">Nicht mehr anheften</string>
+    <string name="pin_to_drawer">Im Menü anheften</string>
+    <string name="unpin_from_drawer">Vom Menü lösen</string>
     <string name="experimental_features">Experimentelle Funktionen</string>
     <string name="show_thumbnails">Bildervorschau anzeigen</string>
     <string name="pref_thumbnails_size_title">Max. Dateigröße für Bildvorschau</string>
@@ -348,7 +348,7 @@
     <string name="remote_not_found">Remote nicht gefunden</string>
     <string name="add_to_home_screen">Zum Startbildschirm hinzufügen</string>
     <string name="pick_a_protocol">Protokoll auswählen</string>
-    <string name="sync">Sync</string>
+    <string name="sync">Synchronisation…</string>
     <string name="select_sync_direction">Sync-Richtung auswählen</string>
     <string name="nav_drawer_pinned_header">Angeheftet</string>
     <string name="nav_header_options_header">Optionen</string>
@@ -362,10 +362,10 @@
     <string name="notification_settings_icon_content_description">Benachrichtigungseinstellungen</string>
     <string name="logging_settings_icon_content_description">Logging-Einstellungens-Symbol</string>
     <string name="file_access_settings_icon_content_description">Dateizugriff-Einstellungs-Symbol</string>
-    <string name="hidden_remotes">Ausgeblendete Remotes</string>
-    <string name="select_remotes_to_hide">Auszublendende Remotes</string>
+    <string name="hidden_remotes">Remote ausblenden</string>
+    <string name="select_remotes_to_hide">Remote ausblenden</string>
     <string name="allow_remote_access">Zugriff von anderen Geräten erlauben</string>
-    <string name="refreshing_local_alias_remotes">Aktualisiere lokale Speicher...</string>
+    <string name="refreshing_local_alias_remotes">Aktualisiere lokale Speicher…</string>
     <string name="pref_enable_local_alias_title">Speicher automatisch aktualisieren</string>
     <string name="pref_enable_local_alias_summary">Automatisch beim Starten der App lokal verfügbare Speicherorte aktualisieren</string>
     <string name="authentication">Authentifizierung</string>
@@ -407,12 +407,12 @@
     </plurals>
     <string name="move_operation_failed">Fehler beim Verschieben</string>
     <string name="sync_operation_failed">Fehler bei der Synchronisation</string>
-    <string name="pref_open_all_files_setting_label">MANAGE_EXTERNAL_STORAGE Berechtigung erteilen</string>
-    <string name="pref_open_all_files_setting_summary">EXPERIMENTEL: Funktioniert nur auf Android R (Android 11)</string>
+    <string name="pref_open_all_files_setting_label">MANAGE_EXTERNAL_STORAGE-Berechtigung erteilen</string>
+    <string name="pref_open_all_files_setting_summary">EXPERIMENTELL: Funktioniert nur auf Android R (Android 11)</string>
     <string name="pref_saf_vcp_local_pretend_enable">Als “local” deklarieren</string>
     <string name="pref_saf_vcp_local_pretend_summary">Einige Apps (z.B. Google Docs) zeigen RCX sonst nicht an.</string>
     <string name="pref_saf_vcp_grant_all_enable">Jeder App Zugriff auf Remotes geben</string>
-    <string name="pref_saf_vcp_grant_all_summary">ACHTUNG: Jede App kann damit jeden Pfad deiner Remotes lesen und schreiben.</string>
+    <string name="pref_saf_vcp_grant_all_summary">GEFÄHRLICH: Jede App kann damit jeden Pfad deiner Remotes lesen und schreiben.</string>
     <string name="virtual_content_provider_exception_advice">Prüfe die Netzwerkverbindung</string>
     <string name="virtual_content_provider_exception_error">Technische Info: %1$s</string>
     <string name="virtual_content_provider_service_error">Verbindungsfehler zum Hintergrunddienst. Beenden erzwingen und erneut versuchen.</string>

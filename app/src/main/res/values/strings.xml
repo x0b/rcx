@@ -17,7 +17,7 @@
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
-    <string name="serve">Serve</string>
+    <string name="serve">Serve…</string>
     <string name="action_sort_name">Name</string>
     <string name="action_sort_date">Date</string>
     <string name="action_sort_size">Size</string>
@@ -420,7 +420,7 @@
     <string name="remote_not_found">Remote not found</string>
     <string name="add_to_home_screen">Add to home screen</string>
     <string name="pick_a_protocol">Pick a protocol</string>
-    <string name="sync">Sync</string>
+    <string name="sync">Sync…</string>
     <string name="select_sync_direction">Select sync direction</string>
     <string name="nav_drawer_pinned_header">Pinned</string>
     <string name="nav_header_options_header">Options</string>
@@ -442,7 +442,7 @@
     <string name="allow_remote_access">Allow access from other devices</string>
     <string name="pref_key_local_alias_remotes" translatable="false">local_alias_remotes</string>
     <string name="pref_key_refresh_local_aliases" translatable="false">refresh_local_aliases</string>
-    <string name="refreshing_local_alias_remotes">Refreshing local alias remotes...</string>
+    <string name="refreshing_local_alias_remotes">Refreshing local alias remotes…</string>
     <string name="pref_enable_local_alias_title">Refresh local drives</string>
     <string name="pref_enable_local_alias_summary">Automatically refresh local storage media when starting</string>
     <string name="authentication">Authentication</string>
