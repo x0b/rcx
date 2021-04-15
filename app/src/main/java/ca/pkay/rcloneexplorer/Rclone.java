@@ -623,7 +623,7 @@ public class Rclone {
         if (deleteItem.isDir()) {
             command = createCommandWithOptions("purge", filePath);
         } else {
-            command = createCommandWithOptions("delete", filePath);
+            command = createCommandWithOptions("deletefile", filePath);
         }
 
         String[] env = getRcloneEnv();
