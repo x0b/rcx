@@ -39,12 +39,11 @@ import ca.pkay.rcloneexplorer.util.FLog;
 import io.github.x0b.safdav.provider.SingleRootProvider;
 import java9.util.concurrent.CompletableFuture;
 
-import java.io.FileDescriptor;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +56,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME;
@@ -104,12 +102,14 @@ public class VirtualContentProvider extends SingleRootProvider {
     }
 
     private volatile ConcurrentHashMap<String, RemoteItem> remotes;
-    private volatile Executor asyncExc;
+    volatile Executor asyncExc;
     private volatile FsCache fsCache;
+    private volatile long configModifiedTimestamp = 0L;
 
     private FsState remoteState;
     private Rclone rclone;
     private SharedPreferences preferences;
+    private File configFile;
     RcloneRcd rcd;
     RcdService rcdService;
     volatile boolean rcdAvailable;
@@ -122,7 +122,7 @@ public class VirtualContentProvider extends SingleRootProvider {
             rcdService = binder.getService();
             rcd = rcdService.getLocalRcd();
             rcdAvailable = true;
-            CompletableFuture.runAsync(() -> refreshRemotes(), asyncExc);
+            CompletableFuture.runAsync(() -> reloadRemotesIfRequired(), asyncExc);
         }
 
         @Override
@@ -197,12 +197,12 @@ public class VirtualContentProvider extends SingleRootProvider {
         super.attachInfo(context, info);
         this.rclone = new Rclone(context);
         this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        //Context appCtx = context.getApplicationContext();
-        //startBindService(context);
+        this.configFile = new File(context.getFilesDir().getPath() + "/rclone.conf");
         this.remotes = new ConcurrentHashMap<>();
         this.remoteState = new FsState();
         this.fsCache = new FsCache(400000);
         initAsyncPool();
+        CompletableFuture.runAsync(this::reloadRemotesIfRequired, asyncExc);
     }
 
     @Override
@@ -248,8 +248,6 @@ public class VirtualContentProvider extends SingleRootProvider {
         if (!vcpEnabled || !acquireRcd()) {
             return new MatrixCursor(DEFAULT_ROOT_PROJECTION);
         }
-        // Force preloading of remotes (otherwise we can't call .size())
-        refreshRemotes();
         String summary = context.getString(R.string.virtual_content_provider_summary, remotes.size());
         int flags = Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_IS_CHILD
@@ -1201,16 +1199,8 @@ public class VirtualContentProvider extends SingleRootProvider {
                 notificationUri = buildRemotesUri();
             }
             cursor.setNotificationUri(getContext().getContentResolver(), notificationUri);
-            CompletableFuture.supplyAsync(() -> {
-                FLog.d(TAG, "getRemotesAsCursor: Requesting update of known remotes");
-                return rcd.configDump().entrySet();
-            }, asyncExc).thenAccept(entries -> {
-                FLog.d(TAG, "getRemotesAsCursor: Processing update of known remotes");
-                for (Map.Entry<String, RcloneRcd.ConfigDumpRemote> entry : entries) {
-                    RemoteItem item = new RemoteItem(entry.getKey(), entry.getValue().type);
-                    remotes.put(item.getName(), item);
-                }
-                FLog.d(TAG, "getRemotesAsCursor: Notifying listeners to remote update");
+
+            CompletableFuture.runAsync(this::reloadRemotesIfRequired, asyncExc).thenRun(() -> {
                 getContext().getContentResolver().notifyChange(notificationUri, null);
             });
 
@@ -1234,8 +1224,7 @@ public class VirtualContentProvider extends SingleRootProvider {
                     }
                 } else {
                     cursor.addRow(getForProjection(item, projection));
-                }
-                remotes.put(item.getName(), item);
+                };
             }
             FLog.d(TAG, "getRemotesAsCursor: Returning cursor with remotes");
             return cursor;
@@ -1361,7 +1350,7 @@ public class VirtualContentProvider extends SingleRootProvider {
     private RemoteItem getRemoteItem(String name) {
         RemoteItem item = remotes.get(name);
         if (null == item) {
-            refreshRemotes();
+            reloadRemotesIfRequired();
             item = remotes.get(name);
             if (null == item) {
                 throw new IllegalArgumentException("Remote " + name + " does not exist");
@@ -1370,20 +1359,19 @@ public class VirtualContentProvider extends SingleRootProvider {
         return item;
     }
 
-    private void refreshRemotes() {
-        if(!acquireRcd()) {
-            throw new IllegalStateException("Can't retrieve remote without rcd");
-        }
-        try {
-            for(Map.Entry<String, RcloneRcd.ConfigDumpRemote> entry : rcd.configDump().entrySet()) {
-                RemoteItem fresh = new RemoteItem(entry.getKey(), entry.getValue().type);
-                remotes.put(fresh.getName(), fresh);
-            }
-        } catch (RcloneRcd.RcdOpException e) {
-            // FIXME: pre-load remotes
-            FLog.i(TAG, "RCD not ready, loading remotes directly", e);
-            for (RemoteItem remoteItem : rclone.getRemotes()) {
-                remotes.put(remoteItem.getName(), remoteItem);
+    /**
+     * Checks if the config file was changed and then reloads it
+     */
+    synchronized void reloadRemotesIfRequired() {
+        synchronized (configFile) {
+            long lastModified = configFile.lastModified();
+            if (lastModified > configModifiedTimestamp) {
+                configModifiedTimestamp = lastModified;
+                FLog.d(TAG, "reloadRemotesIfRequired(): requesting new remote config data");
+                for (RemoteItem remoteItem : rclone.getRemotes()) {
+                    remotes.put(remoteItem.getName(), remoteItem);
+                }
+                FLog.v(TAG, "reloadRemotesIfRequired(): remote config data updated");
             }
         }
     }
