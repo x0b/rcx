@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import ca.pkay.rcloneexplorer.InteractiveRunner;
+import ca.pkay.rcloneexplorer.InteractiveRunner.Step;
 import ca.pkay.rcloneexplorer.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -169,22 +170,22 @@ public class OneDriveConfig extends Fragment {
                 clientId = options.get(1);
                 clientSecret = options.get(2);
             }
-
             // recipe definition
-            InteractiveRunner.Step start = new InteractiveRunner.Step("s/q>", new InteractiveRunner.StringAction("n"));
+            Step start = new Step("s/q>", new InteractiveRunner.StringAction("n"));
             start.addFollowing("name> ", name)
-                    .addFollowing(new OneDriveSelectionStep())
-                    .addFollowing("client_id>", clientId)
-                    .addFollowing("client_secret>", clientSecret)
-                    .addFollowing("y/n> ", "n")
-                    .addFollowing("y/n> ", "y")
+                    .addFollowing("Microsoft OneDrive", "onedrive", Step.STDOUT)
+                    .addFollowing("client_id>", clientId, Step.STDOUT)
+                    .addFollowing("client_secret>", clientSecret, Step.STDOUT)
+                    .addFollowing("national cloud region", "global", Step.STDOUT)
+                    .addFollowing("y/n> ", "n", Step.STDOUT)
+                    .addFollowing("y/n> ", "y", Step.STDOUT)
                     .addFollowing(new OauthHelper.InitOauthStep(context))
                     .addFollowing(new OauthHelper.OauthFinishStep())
-                    .addFollowing("Your choice> ", "1")
-                    .addFollowing("Chose drive to use:> ", "0")
-                    .addFollowing("y/n> ", "y")
-                    .addFollowing("y/e/d> ", "y")
-                    .addFollowing("e/n/d/r/c/s/q> ", "q");
+                    .addFollowing("OneDrive Personal or Business", "onedrive", Step.STDOUT)
+                    .addFollowing("Chose drive to use:> ", "0", Step.STDOUT)
+                    .addFollowing("y/n> ", "y", Step.STDOUT)
+                    .addFollowing("y/e/d> ", "y", Step.STDOUT)
+                    .addFollowing("e/n/d/r/c/s/q> ", "q", Step.STDOUT);
 
             InteractiveRunner.ErrorHandler errorHandler = exception -> {
                 FLog.e(TAG, "onError: The recipe is probably bad.", exception);
@@ -222,31 +223,6 @@ public class OneDriveConfig extends Fragment {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
-    }
-
-    private static class OneDriveSelectionStep extends InteractiveRunner.Step {
-
-        private static final String regex = "(\\d+) \\/ Microsoft OneDrive";
-        private static final Pattern pattern = Pattern.compile(regex, 0);
-
-        public OneDriveSelectionStep() {
-            super("Microsoft OneDrive", new InteractiveRunner.Action() {
-                private String selection = "23";
-
-                @Override
-                public void onTrigger(String cliBuffer) {
-                    Matcher matcher = pattern.matcher(cliBuffer);
-                    if (matcher.find()) {
-                        selection = matcher.group(1);
-                    }
-                }
-
-                @Override
-                public String getInput() {
-                    return selection;
-                }
-            });
         }
     }
 }

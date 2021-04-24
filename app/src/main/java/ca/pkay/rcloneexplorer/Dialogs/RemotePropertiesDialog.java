@@ -238,7 +238,7 @@ public class RemotePropertiesDialog extends DialogFragment {
 
                 if (RemoteItem.ONEDRIVE == remoteItem.getType()) {
                     // OneDrive needs active drive selection
-                    postOauth.addFollowing("Your choice> ", "1")
+                    postOauth.addFollowing("OneDrive Personal or Business", "onedrive")
                             .addFollowing("Chose drive to use:> ", "0")
                             .addFollowing("y/n> ", "y");
                 }

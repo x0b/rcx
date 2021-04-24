@@ -167,7 +167,8 @@ public class OauthHelper {
         private static final String TRIGGER = "Got code\n";
 
         public OauthFinishStep() {
-            super(TRIGGER, new InteractiveRunner.StringAction(""));
+            super(TRIGGER, InteractiveRunner.Step.ENDS_WITH, InteractiveRunner.Step.STDOUT,
+                    new InteractiveRunner.StringAction(""));
         }
 
         @Override
