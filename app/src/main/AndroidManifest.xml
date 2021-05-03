@@ -22,6 +22,7 @@
             android:theme="@style/AppTheme"
             android:networkSecurityConfig="@xml/network_security_config"
             android:requestLegacyExternalStorage="true"
+            android:extractNativeLibs="true"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="29">
         <activity android:name=".OnboardingActivity">
