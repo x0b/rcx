@@ -15,8 +15,7 @@ public abstract class FLog {
     private static final String REPLACE_PATH = "***anonymized_path***";
     private static final String PATTERN_URI = "content://";
     private static final String REPLACE_URI = "***anonymized_uri***";
-
-    private static final FLog logger;
+    
     /**
      * Use this log tag to set a lower than default (<=INFO) log tag for all
      * app log messages.
@@ -25,40 +24,38 @@ public abstract class FLog {
      */
     public static final String LOGGING_MIN_LEVEL_TAG = "APP_MIN";
 
-    static {
-        if (BuildConfig.DEBUG) {
-            logger = new DevLogger();
-        } else {
-            logger = new ProdLogger();
-        }
-    }
-
     public static void v(String tag, String message, Object... args) {
-        if (logger.isLoggable(tag, Log.VERBOSE)) {
+        if (!BuildConfig.DEBUG) {
+            return;
+        }
+        if (isLoggable(tag, Log.VERBOSE)) {
             Log.v(tag, applyFormatting(message, args));
         }
     }
 
     public static void d(String tag, String message, Object... args) {
-        if (logger.isLoggable(tag, Log.DEBUG)) {
+        if (!BuildConfig.DEBUG) {
+            return;
+        }
+        if (isLoggable(tag, Log.DEBUG)) {
             Log.d(tag, applyFormatting(message, args));
         }
     }
 
     public static void i(String tag, String message, Object... args) {
-        if (logger.isLoggable(tag, Log.INFO)) {
+        if (isLoggable(tag, Log.INFO)) {
             Log.i(tag, applyFormatting(message, args));
         }
     }
 
     public static void w(String tag, String message, Object... args) {
-        if (logger.isLoggable(tag, Log.WARN)) {
+        if (isLoggable(tag, Log.WARN)) {
             Log.w(tag, applyFormatting(message, args));
         }
     }
 
     public static void w(String tag, String message, Exception e, Object... args) {
-        if (logger.isLoggable(tag, Log.WARN)) {
+        if (isLoggable(tag, Log.WARN)) {
             Log.w(tag, applyFormatting(message, args), e);
         }
     }
@@ -88,7 +85,7 @@ public abstract class FLog {
     // is filtered by anonymizeArgument()
     public static void e(String tag, String message, Object... args) {
         CrashLogger.logNonFatal(tag, applyAnonimizedFormatting(message, args), new LoggedError());
-        if (logger.isLoggable(tag, Log.ERROR)) {
+        if (isLoggable(tag, Log.ERROR)) {
             Log.e(tag, applyFormatting(message, args));
         }
     }
@@ -98,12 +95,10 @@ public abstract class FLog {
     public static void e(String tag, String message, Throwable e, Object... args) {
         String formatted = applyFormatting(message, args);
         CrashLogger.logNonFatal(tag, applyAnonimizedFormatting(message, args), e);
-        if (logger.isLoggable(tag, Log.ERROR)) {
+        if (isLoggable(tag, Log.ERROR)) {
             Log.e(tag, formatted, e);
         }
     }
-
-    abstract boolean isLoggable(String tag, int level);
 
     private static String applyFormatting(String message, Object... args) {
         if (args.length == 0) {
@@ -140,26 +135,12 @@ public abstract class FLog {
         }
         return arg;
     }
-
-    static final class DevLogger extends FLog {
-
-        @Override
-        boolean isLoggable(String tag, int level) {
+    
+    private static final boolean isLoggable(String tag, int level){
+        if(BuildConfig.DEBUG) {
             return Log.isLoggable(tag, level) || level != Log.INFO && Log.isLoggable(LOGGING_MIN_LEVEL_TAG, level);
-        }
-    }
-
-    static final class ProdLogger extends FLog {
-
-        @Override
-        boolean isLoggable(String tag, int level) {
-            switch (level) {
-                case Log.VERBOSE:
-                case Log.DEBUG:
-                    return false;
-                default:
-                    return Log.isLoggable(tag, level);
-            }
+        } else {
+            return Log.isLoggable(tag, level);
         }
     }
 }
