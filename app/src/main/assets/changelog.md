@@ -17,6 +17,7 @@
 * **Fix:** Local storage spaces not refreshing after changing storage permissions
 * **Fix:** Notification for uploads/downloads showing garbage
 * **Fix:** OAuth getting stuck ("Error creating remote")
+* **Fix:** OneDrive configuration not working
 * **Fix:** Password default length and generation algorithm
 * **Fix:** Seafile DocumentsProvider access not working (SAFDAV)
 * **Fix:** Slow deletions in large directories or containers
