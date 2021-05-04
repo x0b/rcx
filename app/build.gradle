@@ -12,11 +12,11 @@ android {
         applicationId 'io.github.x0b.rcx'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 190 // last digit is reserved for ABI, only ever end on 0!
-        versionName '1.12.0-r210422'
+        versionCode 200 // last digit is reserved for ABI, only ever end on 0!
+        versionName '1.12.0'
         resConfigs "en", "de" // restrict to used languages
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"c6ec06cf-9569-ffa5-6800-8fa53afd652f\""
+        buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"f49658d8-2b3f-a284-6789-767e89b3bbc8\""
         buildConfigField "java.lang.String", "VCP_AUTHORITY", "\"" + applicationId + ".vcp\"";
     }
 
