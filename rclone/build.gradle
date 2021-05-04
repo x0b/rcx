@@ -1,5 +1,5 @@
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.55.0'
+def buildTag = 'v1.55.1'
 
 //
 // DO NOT EDIT ANYTHING BELOW
@@ -55,7 +55,7 @@ task buildArm(type: Exec) {
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
     workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
     def artifactTarget = "${appLibPath}/armeabi-v7a/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
+    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
 }
 
 task buildArm64(type: Exec) {
@@ -70,7 +70,7 @@ task buildArm64(type: Exec) {
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
     workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
     def artifactTarget = "${appLibPath}/arm64-v8a/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'}
+    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'}
 
 task buildx86(type: Exec) {
     dependsOn fetchRclone
@@ -84,7 +84,7 @@ task buildx86(type: Exec) {
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
     workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
     def artifactTarget = "${appLibPath}/x86/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
+    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
 }
 
 task buildx64(type: Exec) {
@@ -99,7 +99,7 @@ task buildx64(type: Exec) {
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s -w"
     workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
     def artifactTarget = "${appLibPath}/x86_64/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
+    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
 }
 
 task buildNative {
