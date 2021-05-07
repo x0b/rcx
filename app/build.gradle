@@ -13,10 +13,10 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 200 // last digit is reserved for ABI, only ever end on 0!
-        versionName '1.12.0'
+        versionName '1.13-dev'
         resConfigs "en", "de" // restrict to used languages
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"f49658d8-2b3f-a284-6789-767e89b3bbc8\""
+        buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"c03129b6-b09f-9cb4-8fcd-7f143b8f94ef\""
         buildConfigField "java.lang.String", "VCP_AUTHORITY", "\"" + applicationId + ".vcp\"";
     }
 
