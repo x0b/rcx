@@ -132,6 +132,10 @@ public class Rclone {
         String tmpDir = context.getCacheDir().getAbsolutePath();
         environmentValues.add("TMPDIR=" + tmpDir);
 
+        // ignore chtimes errors
+        // ref: https://github.com/rclone/rclone/issues/2446
+        environmentValues.add("RCLONE_LOCAL_NO_SET_MODTIME=true");
+
         // Allow the caller to overwrite any option for special cases
         Iterator<String> envVarIter = environmentValues.iterator();
         while(envVarIter.hasNext()){
