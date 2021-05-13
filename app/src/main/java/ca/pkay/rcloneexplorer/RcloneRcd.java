@@ -171,6 +171,10 @@ public class RcloneRcd {
         // only accessible for the shell user
         String tmpDir = context.getCacheDir().getAbsolutePath();
         environmentValues.add("TMPDIR=" + tmpDir);
+
+        // ignore chtimes errors
+        // ref: https://github.com/rclone/rclone/issues/2446
+        environmentValues.add("RCLONE_LOCAL_NO_SET_MODTIME=true");
         return environmentValues.toArray(new String[0]);
     }
 
