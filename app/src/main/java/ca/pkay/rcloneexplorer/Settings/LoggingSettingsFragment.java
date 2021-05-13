@@ -89,7 +89,7 @@ public class LoggingSettingsFragment extends Fragment {
         crashReportsSwitch.setChecked(crashReports);
         if (crashReports) {
             AppCenter.getInstallId().thenAccept(uuid -> {
-                if (null == crashReportSummary) {
+                if (null == crashReportSummary || null == getContext()) {
                     return;
                 }
                 if (null == uuid) {
