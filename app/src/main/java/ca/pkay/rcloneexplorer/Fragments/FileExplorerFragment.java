@@ -36,6 +36,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -1839,13 +1840,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(FileItem... fileItems) {
             FileItem fileItem = fileItems[0];
-            File file = context.getExternalCacheDir();
-            String saveLocation;
-            if (file != null) {
-                saveLocation = file.getAbsolutePath();
-            } else {
+            File[] extCacheDirs = ContextCompat.getExternalCacheDirs(context);
+            if (extCacheDirs.length < 1) {
                 return false;
             }
+            String saveLocation = extCacheDirs[0].getAbsolutePath();
 
             fileLocation = saveLocation + "/" + fileItem.getName();
 
