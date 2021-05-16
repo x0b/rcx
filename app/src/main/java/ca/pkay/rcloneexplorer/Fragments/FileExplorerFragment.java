@@ -1804,6 +1804,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         private LoadingDialog loadingDialog;
         private String fileLocation;
         private Process process;
+        private volatile boolean isCancelled = false;
 
         DownloadAndOpen() {
             this(-1);
@@ -1814,6 +1815,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         private void cancelProcess() {
+            isCancelled = true;
             if (null != process) {
                 process.destroy();
             }
@@ -1854,7 +1856,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
-                    FLog.e(TAG, "DownloadAndOpen/doInBackground: error waiting for process", e);
+                    if (!isCancelled) {
+                        FLog.e(TAG, "DownloadAndOpen/doInBackground: error waiting for process", e);
+                    }
                     return false;
                 }
             }
