@@ -146,7 +146,7 @@ public class UploadService extends IntentService {
                     updateNotification(uploadFileName, notificationContent, notificationBigText, isFile);
                 }
             } catch (IOException e) {
-                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                FLog.w(TAG, "onHandleIntent: error reading stdout", e);
             }
 
             try {

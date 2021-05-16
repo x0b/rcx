@@ -153,7 +153,7 @@ public class VirtualContentProvider extends SingleRootProvider {
         startBindService(context);
         awaitRcdService();
         if (null != rcdService) {
-            FLog.e(TAG, "acquireRcd: rcd not ready in time");
+            FLog.w(TAG, "acquireRcd: rcd not ready in time");
             return true;
         }
         return false;

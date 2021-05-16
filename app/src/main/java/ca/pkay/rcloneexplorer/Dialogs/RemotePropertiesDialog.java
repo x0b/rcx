@@ -244,7 +244,7 @@ public class RemotePropertiesDialog extends DialogFragment {
                 }
 
                 ErrorHandler errorHandler = e -> {
-                    FLog.e(TAG, "onError: The recipe is probably bad.", e);
+                    FLog.e(TAG, "onError: The recipe for %s is probably bad", e, remoteItem.getTypeReadable());
                     process.destroy();
                 };
 
