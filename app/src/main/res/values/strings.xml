@@ -516,4 +516,6 @@
     <string name="report_collection_stop_collection">Stop collection</string>
     <string name="pref_bugreport_start_title">Collect local bug report</string>
     <string name="pref_bugreport_start_summary">Tap to start data collection, then try to reproduce issue and stop collection.</string>
+    <string name="pref_send_sigquit_title">Debug: Stop with SIGQUIT</string>
+    <string name="pref_send_sigquit_summary">Stops all rclone processes with kill -SIGQUIT. Requires logging enabled.</string>
 </resources>
