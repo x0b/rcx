@@ -21,19 +21,21 @@ import java.util.concurrent.TimeoutException;
 public class InteractiveRunner {
 
     private static final String TAG = "InteractiveRunner";
-    private Step startingStep;
-    private ErrorHandler errorHandler;
     private Process process;
+    private Thread runner;
 
     public InteractiveRunner(Step startingStep, ErrorHandler errorHandler, Process process) {
-        this.startingStep = startingStep;
-        this.errorHandler = errorHandler;
         this.process = process;
+        runner = new StepRunner(process, startingStep, errorHandler);
     }
 
     public void runSteps() {
-        Thread runner = new StepRunner(process, startingStep, errorHandler);
         runner.start();
+    }
+
+    public void forceStop() {
+        runner.interrupt();
+        process.destroy();
     }
 
     /**
@@ -256,7 +258,7 @@ public class InteractiveRunner {
                 char[] buffer = new char[256];
                 int bufPos = 0;
 
-                while (true) {
+                while (!isInterrupted()) {
                     // Set to interleaved if there are multiple nodes at the same
                     // level with different stream types
                     int streamType = currentSteps.get(0).getStreamType();
@@ -360,7 +362,7 @@ public class InteractiveRunner {
                 }
                 FLog.e(TAG, "run: transcript: \n%s\n active triggers:\n%s", e, bufferContent, sb);
             } else {
-                FLog.e(TAG, "run: ", e);
+                FLog.e(TAG, "run: (no transcript)", e);
             }
         }
 
