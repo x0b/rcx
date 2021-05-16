@@ -972,6 +972,19 @@ public class RcloneRcd {
         long used;
     }
 
+    // Example
+    // ===
+    // {
+    //	"duration": 0.514823698,
+    //	"endTime": "2021-05-11T22:21:41.780060917Z",
+    //	"error": "mkdir /Alarms: read-only file system",
+    //	"finished": true,
+    //	"group": "job/1",
+    //	"id": 1,
+    //	"output": {},
+    //	"startTime": "2021-05-11T22:21:41.265237323Z",
+    //	"success": false
+    //}
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class JobStatusResponse implements RcOpResponse {
         public int id;
@@ -981,8 +994,9 @@ public class RcloneRcd {
         public long startTime;
         @JsonDeserialize(using = Rfc3339Deserializer.class)
         public long endTime;
-        //public Object output;
-        //public String progress;
+        public String error;
+        public Object output;
+        public String progress;
     }
 
     public static class JobListResponse implements RcOpResponse {
