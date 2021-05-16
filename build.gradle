@@ -4,11 +4,11 @@ buildscript {
 
     repositories {
         google()
-        jcenter() // TODO: !JCENTER SHUTDOWN! waiting for AGP 4.2 / org.jetbrains.trove4j:trove4j:20160824
+        mavenCentral()
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:4.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -18,7 +18,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
     }
 }

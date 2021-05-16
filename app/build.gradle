@@ -7,11 +7,11 @@ android {
         }
     }
     compileSdkVersion 30
-    ndkVersion '21.3.6528147'
+    ndkVersion '22.1.7171670'
     defaultConfig {
         applicationId 'io.github.x0b.rcx'
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 200 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.13-dev'
         resConfigs "en", "de" // restrict to used languages
@@ -78,13 +78,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion = '29.0.3'
 }
 
 repositories {
     mavenCentral()
     google()
-    jcenter()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -96,15 +95,15 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.browser:browser:1.3.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.google.android.material:material:1.3.0'
-    implementation 'com.leinardi.android:speed-dial:2.0.0'
+    implementation 'com.github.leinardi:FloatingActionButtonSpeedDial:3.1.1'
     implementation 'org.markdownj:markdownj-core:0.4'
-    implementation 'jp.wasabeef:recyclerview-animators:2.3.0'
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
     implementation 'com.github.GrenderG:Toasty:1.3.0'
     // Appcenter (sourced from own sdk fork to ensure control)
-    def appCenterSdkVersion = '4.0.0'
+    def appCenterSdkVersion = '4.1.1'
     implementation "com.github.x0b.appcenter-sdk-android:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.github.x0b.appcenter-sdk-android:appcenter-crashes:${appCenterSdkVersion}"
     // Thumbnails
@@ -114,9 +113,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     debugImplementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     // JSON
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.1'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     // Timestmps
     implementation 'com.github.x0b:rfc3339parser:2.0.0'
     // SAF/WebDAV
@@ -127,7 +126,7 @@ dependencies {
     implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.3'
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.3'
     // App intro
-    implementation 'com.github.AppIntro:AppIntro:6.0.0'
+    implementation 'com.github.AppIntro:AppIntro:6.1.0'
     // TEST
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test:runner:1.3.0'
