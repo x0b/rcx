@@ -439,4 +439,6 @@
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">RCX wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf x0b.github.io/rcx-privacy erfährst du mehr.</string>
     <string name="intro_community_switch">Fehlerberichte senden</string>
+    <string name="pref_send_sigquit_title">Debug: Mit SIGQUIT beenden</string>
+    <string name="pref_send_sigquit_summary">Alle rclone-Prozesse mit kill -SIGQUIT beenden. Rclone-Protokollierung muss aktiviert sein.</string>
 </resources>
