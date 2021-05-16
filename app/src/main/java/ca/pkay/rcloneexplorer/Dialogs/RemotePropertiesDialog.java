@@ -20,6 +20,7 @@ import ca.pkay.rcloneexplorer.InteractiveRunner.StringAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.InitOauthStep;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.OauthFinishStep;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -101,7 +102,7 @@ public class RemotePropertiesDialog extends DialogFragment {
 
         View authorizeContainer = view.findViewById(R.id.remote_authorization_container);
         if (remote.isOAuth()) {
-            authorizeContainer.setOnClickListener(v -> new ReconnectRemoteTask(rclone, remote, context).execute());
+            authorizeContainer.setOnClickListener(v -> new ReconnectRemoteTask(rclone, remote, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
         } else {
             authorizeContainer.setVisibility(View.GONE);
         }
@@ -249,6 +250,7 @@ public class RemotePropertiesDialog extends DialogFragment {
                 };
 
                 InteractiveRunner interactiveRunner = new InteractiveRunner(start, errorHandler, process);
+                OauthHelper.registerRunner(interactiveRunner);
                 interactiveRunner.runSteps();
 
                 try {

@@ -23,7 +23,57 @@ public class OauthHelper {
 
     private static final String TAG = "OAuthHelper";
     private static final String regex = "go to the following link: ([^\\s]+)";
-    private static volatile WeakReference<UrlAuthThread> lastAuthAttempt;
+    private static final OauthProcessToken oauthProcessToken = new OauthProcessToken();
+
+    // Since OAuth always blocks port 53682, only a single authentication
+    // attempt is allowed at a time.
+    static class OauthProcessToken {
+
+        private volatile WeakReference<UrlAuthThread> threadAuthThread;
+        private volatile WeakReference<InteractiveRunner> runner;
+
+        public synchronized boolean acquire(UrlAuthThread controlThread) {
+            boolean oldAttemptStopped = forceRelease();
+            this.threadAuthThread = new WeakReference<>(controlThread);
+            return oldAttemptStopped;
+        }
+
+        public synchronized boolean acquire(InteractiveRunner runner) {
+            boolean oldAttemptStopped = forceRelease();
+            this.runner = new WeakReference<>(runner);
+            return oldAttemptStopped;
+        }
+
+        public synchronized boolean forceRelease() {
+            UrlAuthThread oldThread = threadAuthThread != null ? threadAuthThread.get() : null;
+            InteractiveRunner oldRunner = runner != null ? runner.get() : null;
+            boolean killed = false;
+
+            if (oldThread != null) {
+                if (!oldThread.isStopped()) {
+                    FLog.d(TAG, "Removing old auth attempt");
+                    oldThread.forceStop();
+                    killed = true;
+                }
+            }
+
+            if (oldRunner != null) {
+                FLog.d(TAG, "Removing old re-auth attempt");
+                oldRunner.forceStop();
+                killed = true;
+            }
+
+            return killed;
+        }
+    }
+
+    /**
+     * Ensure that an OAuth attempt can be made.
+     */
+    public static void registerRunner(InteractiveRunner runner) {
+        oauthProcessToken.forceRelease();
+        oauthProcessToken.acquire(runner);
+    }
 
     /**
      * Save the options in the rclone config file and start the OAuth authentication process
@@ -34,20 +84,14 @@ public class OauthHelper {
      **/
     public static boolean createOptionsWithOauth(ArrayList<String> options, Rclone rclone, Context context) {
         // Since authorization uses a fixed port, shut down previous attempt.
-        UrlAuthThread oldThread = lastAuthAttempt != null ? lastAuthAttempt.get() : null;
-        if (oldThread != null) {
-            if (!oldThread.isStopped()) {
-                oldThread.forceStop();
-            }
-            oldThread = null;
-        }
+        oauthProcessToken.forceRelease();
 
         Process process = rclone.configCreate(options);
         if (null == process) {
             return false;
         }
         UrlAuthThread currentAuth = new OauthHelper.UrlAuthThread(process, context);
-        lastAuthAttempt = new WeakReference<>(currentAuth);
+        oauthProcessToken.acquire(currentAuth);
         currentAuth.start();
         try {
             process.waitFor();
@@ -157,6 +201,11 @@ public class OauthHelper {
     public static class InitOauthStep extends InteractiveRunner.Step {
         private static final String TRIGGER = "Log in and authorize rclone for access";
 
+        /**
+         * An OAuth step that launches a browser. ATTENTION: must be registered
+         * with {@link OauthHelper} to allow removal in case the port is needed.
+         * @param context
+         */
         public InitOauthStep(Context context) {
             super(TRIGGER,  new OauthHelper.OauthAction(context));
         }
