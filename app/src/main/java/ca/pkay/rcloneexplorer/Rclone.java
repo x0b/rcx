@@ -311,14 +311,14 @@ public class Rclone {
             String key = iterator.next();
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
-                String type = remoteJSON.getString("type");
-                if (type == null || type.trim().isEmpty()) {
+                String type = remoteJSON.optString("type");
+                if (type.trim().isEmpty()) {
                     Toasty.error(context, context.getResources().getString(R.string.error_retrieving_remote, key), Toast.LENGTH_SHORT, true).show();
                     continue;
                 }
                 if(type.equals("webdav")){
-                    String url = remoteJSON.getString("url");
-                    if(url != null && url.startsWith(SafConstants.SAF_REMOTE_URL)){
+                    String url = remoteJSON.optString("url");
+                    if(url.startsWith(SafConstants.SAF_REMOTE_URL)){
                         type = SafConstants.SAF_REMOTE_NAME;
                     }
                 }
