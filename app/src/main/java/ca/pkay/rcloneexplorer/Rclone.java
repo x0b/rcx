@@ -513,6 +513,14 @@ public class Rclone {
             params.add(baseUrl);
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isLoggingEnabled = sharedPreferences.getBoolean(context.getString(R.string.pref_key_logs), false);
+        if (isLoggingEnabled) {
+            File serveLog = new File(context.getExternalFilesDir("logs"), "serve.log");
+            params.add("--log-file");
+            params.add(serveLog.getAbsolutePath());
+        }
+
         String[] env = getRcloneEnv();
         String[] command = params.toArray(new String[0]);
         try {
