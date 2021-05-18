@@ -12,11 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,20 +42,20 @@ public class FileAccessSettingsFragment extends Fragment {
     private Context context;
     private ViewGroup fileAccessAll;
     private View safEnabledView;
-    private Switch safEnabledSwitch;
+    private SwitchCompat safEnabledSwitch;
     private View vcpEnabledContainer;
-    private Switch vcpEnabledSwitch;
+    private SwitchCompat vcpEnabledSwitch;
     private View vcpDeclareLocalContainer;
-    private Switch vcpDeclareLocalSwitch;
+    private SwitchCompat vcpDeclareLocalSwitch;
     private PermissionListAdapter permissionList;
     private Button addPermissionBtn;
     private RecyclerView listView;
     private View addButtonContainer;
     private View refreshLaContainer;
-    private Switch refreshLaSwitch;
+    private SwitchCompat refreshLaSwitch;
     private View openAllFilesPerm;
     private View vcpGrantAllContainer;
-    private Switch vcpGrantAllSwitch;
+    private SwitchCompat vcpGrantAllSwitch;
     private Rclone rclone;
 
     public static FileAccessSettingsFragment newInstance() {

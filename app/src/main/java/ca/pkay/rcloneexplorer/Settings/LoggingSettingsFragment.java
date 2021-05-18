@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -12,7 +13,6 @@ import android.os.Process;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,11 +35,11 @@ public class LoggingSettingsFragment extends Fragment {
     private static final String TAG = "LoggingSettingsFragment";
 
     private Context context;
-    private Switch useLogsSwitch;
+    private SwitchCompat useLogsSwitch;
     private View useLogsElement;
     private View crashReportsElement;
     private TextView crashReportSummary;
-    private Switch crashReportsSwitch;
+    private SwitchCompat crashReportsSwitch;
     private View testReportElement;
     private View startCollectionElement;
     private View sigquitElement;

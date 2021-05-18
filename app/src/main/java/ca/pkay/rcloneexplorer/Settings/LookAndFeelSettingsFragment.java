@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
@@ -25,9 +25,9 @@ public class LookAndFeelSettingsFragment extends Fragment {
     private ImageView primaryColorPreview;
     private View accentColorElement;
     private ImageView accentColorPreview;
-    private Switch darkThemeSwitch;
+    private SwitchCompat darkThemeSwitch;
     private View darkThemeElement;
-    private Switch wrapFilenamesSwitch;
+    private SwitchCompat wrapFilenamesSwitch;
     private View wrapFilenamesElement;
     private boolean isDarkTheme;
 

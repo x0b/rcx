@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,11 +37,6 @@ public class GeneralSettingsFragment extends Fragment {
 
     private static final String TAG = "GeneralSettingsFragment";
     private Context context;
-    private View appShortcutsElement;
-    private View showThumbnailsElement;
-    private Switch showThumbnailsSwitch;
-    private View wifiOnlyElement;
-    private Switch wifiOnlySwitch;
     private boolean isDarkTheme;
 
     private Switch useProxySwitch;

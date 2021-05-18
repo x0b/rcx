@@ -47,7 +47,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/use_logs_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/crash_reporting_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

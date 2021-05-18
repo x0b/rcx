@@ -100,7 +100,7 @@
                 android:textStyle="bold"
                 android:text="@string/show_thumbnails"/>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/show_thumbnails_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -193,7 +193,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/wifi_only_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -242,7 +242,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/use_proxy_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

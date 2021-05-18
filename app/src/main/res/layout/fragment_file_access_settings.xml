@@ -50,7 +50,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/enable_saf_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/enable_refresh_la_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/enable_saf_vcp_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -275,7 +275,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/vcp_declare_local_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -323,7 +323,7 @@
 
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/vcp_grant_all_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

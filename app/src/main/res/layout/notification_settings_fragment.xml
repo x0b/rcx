@@ -62,7 +62,7 @@
                 android:textStyle="bold"
                 android:text="@string/app_updates_notifications"/>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/app_updates_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 android:textStyle="bold"
                 android:text="@string/beta_app_updates_notifications"/>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/beta_app_updates_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

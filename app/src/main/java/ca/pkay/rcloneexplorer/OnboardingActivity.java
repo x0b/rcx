@@ -9,8 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.widget.Switch;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -70,7 +70,7 @@ public class OnboardingActivity extends AppIntro {
         }
         if (newFragment.getTag().endsWith(":2")) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            Switch crashLoggingSwitch = newFragment.getView().findViewById(R.id.switch_err_logs);
+            SwitchCompat crashLoggingSwitch = newFragment.getView().findViewById(R.id.switch_err_logs);
             crashLoggingSwitch.setChecked(preferences.getBoolean(
                     getString(R.string.pref_key_crash_reports),
                     getResources().getBoolean(R.bool.default_crash_log_enable)));
