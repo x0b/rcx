@@ -1,3 +1,15 @@
+### 1.12.1
+* **Fix:** Crash when opening a file by tapping
+* **Fix:** Crash when opening logging settings and then immediately going back
+* **Fix:** Failures when downloading or synchronising to internal storage or SD card
+* **Fix:** Error message when remote config is missing type attribute
+* **Fix:** SAF DocumentProvider not working
+* **Internal:** Reduce logging noise
+* **Internal:** Force stop with sigquit (rclone traces)
+* **Internal:** "Log rclone errors" now also applies to rclone serve
+
+***
+
 ### 1.12.0
 * **New:** Support for accessing cloud files from other apps (SAF DocumentProvider)
 * **New:** Support for all DocumentProviders
