@@ -34,6 +34,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.databinding.DialogRemoteDestBinding;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -69,6 +70,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     private int title;
     private boolean startAtRoot;
     private OnDestinationSelectedListener listener;
+    private DialogRemoteDestBinding binding;
 
     public RemoteDestinationDialog() {
         pathStack = new Stack<>();
@@ -106,16 +108,17 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         }
 
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.dialog_remote_dest, null);
+        binding = DialogRemoteDestBinding.inflate(layoutInflater);
 
-        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
-        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        View emptyFolderView = binding.emptyFolderView.getRoot();
+        // TODO: missing include in layout?
+        View noSearchResultsView = binding.getRoot().findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.disableFileOptions();
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -135,18 +138,18 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
-        view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
-        view.findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.cancel_move).setOnClickListener(v -> dismiss());
-        view.findViewById(R.id.select_move).setOnClickListener(v -> {
+        binding.moveBar.moveBar.setBackgroundColor(accentColorValue.data);
+        binding.moveBar.moveBar.setVisibility(View.VISIBLE);
+        binding.moveBar.cancelMove.setOnClickListener(v -> dismiss());
+        binding.moveBar.selectMove.setOnClickListener(v -> {
             listener.onDestinationSelected(directoryObject.getCurrentPath());
             dismiss();
         });
-        view.findViewById(R.id.new_folder).setOnClickListener(v -> onCreateNewDirectory());
-        view.findViewById(R.id.previous_dir).setOnClickListener(v -> goUp());
-        previousDirView = view.findViewById(R.id.previous_dir);
+        binding.moveBar.newFolder.setOnClickListener(v -> onCreateNewDirectory());
+        binding.previousDir.setOnClickListener(v -> goUp());
+        previousDirView = binding.previousDir;
         previousDirView.setVisibility(View.GONE);
-        previousDirLabel = view.findViewById(R.id.previous_dir_label);
+        previousDirLabel = binding.previousDirLabel;
 
         if (savedInstanceState != null) {
             String restoredPreviousDirLabel = savedInstanceState.getString(SAVED_PREVIOUS_DIR_TEXT);
@@ -156,10 +159,10 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
             }
         }
 
-        ((TextView)view.findViewById(R.id.dialog_title)).setText(title);
+        binding.dialogTitle.setText(title);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogThemeFullScreen);
-        builder.setView(view);
+        builder.setView(binding.getRoot());
         builder.setOnKeyListener((dialog, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                 goUp();
@@ -190,6 +193,12 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         if (context instanceof OnDestinationSelectedListener) {
             listener = (OnDestinationSelectedListener) context;
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void buildStackFromPath(String remote, String path) {

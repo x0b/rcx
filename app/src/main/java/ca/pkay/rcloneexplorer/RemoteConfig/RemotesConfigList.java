@@ -2,22 +2,21 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import ca.pkay.rcloneexplorer.R;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.ConfigListItemTemplateBinding;
 import java9.util.stream.IntStream;
 
 public class RemotesConfigList extends Fragment {
@@ -95,17 +94,13 @@ public class RemotesConfigList extends Fragment {
         Arrays.sort(sorted, (i, j) -> names[i].compareToIgnoreCase(names[j]));
 
         for (int i = 0, itemsLength = ids.length; i < itemsLength; i++) {
-            int j = sorted[i];
-            View provider = View.inflate(context, R.layout.config_list_item_template, null);
-            ((TextView) provider.findViewById(R.id.provider_tv)).setText(names[j]);
-            ((TextView) provider.findViewById(R.id.provider_summary)).setText(summaries[j]);
-            ((ImageView) provider.findViewById(R.id.providerIcon)).setImageDrawable(icons.getDrawable(j));
-            final String providerId = ids[j];
-            provider.findViewById(R.id.provider).setOnClickListener(v -> {
-                RadioButton rb = v.findViewById(R.id.provider_rb);
-                setSelected(rb, providerId);
-            });
-            listContent.addView(provider);
+            int j = sorted[i]; // Construct list sorted by provider name, not order of declaration
+            ConfigListItemTemplateBinding item = ConfigListItemTemplateBinding.inflate(getLayoutInflater());
+            item.providerTv.setText(names[j]);
+            item.providerSummary.setText(summaries[j]);
+            item.providerIcon.setImageDrawable(icons.getDrawable(j));
+            item.provider.setOnClickListener(v -> setSelected(item.providerRb, ids[j]));
+            listContent.addView(item.getRoot());
         }
     }
 }

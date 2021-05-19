@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.DialogSortBinding;
 
 public class SortDialog extends DialogFragment {
 
@@ -35,7 +36,7 @@ public class SortDialog extends DialogFragment {
     private int sortOrder;
     private Boolean isDarkTheme;
     private OnClickListener listener;
-    private View view;
+    private DialogSortBinding binding;
 
     public SortDialog() {
         isDarkTheme = false;
@@ -62,16 +63,15 @@ public class SortDialog extends DialogFragment {
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
-        view = layoutInflater.inflate(R.layout.dialog_sort, null);
+        binding = DialogSortBinding.inflate(LayoutInflater.from(context));
 
         if (title > 0) {
             builder.setTitle(title);
         }
         if (positiveText > 0) {
             builder.setPositiveButton(positiveText, (dialog, which) -> {
-                int sortById = ((RadioGroup)view.findViewById(R.id.radio_group_sort_by)).getCheckedRadioButtonId();
-                int sortOrderId = ((RadioGroup)view.findViewById(R.id.radio_group_sort_order)).getCheckedRadioButtonId();
+                int sortById = binding.radioGroupSortBy.getCheckedRadioButtonId();
+                int sortOrderId = binding.radioGroupSortOrder.getCheckedRadioButtonId();
                 listener.onPositiveButtonClick(sortById, sortOrderId);
             });
         }
@@ -81,7 +81,7 @@ public class SortDialog extends DialogFragment {
 
         setRadioButtons();
 
-        builder.setView(view);
+        builder.setView(binding.getRoot());
         return builder.create();
     }
 
@@ -103,6 +103,12 @@ public class SortDialog extends DialogFragment {
         outState.putInt("positiveText", positiveText);
         outState.putInt("negativeText", negativeText);
         outState.putInt("sortOrder", sortOrder);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     public SortDialog setTitle(int title) {
@@ -133,29 +139,29 @@ public class SortDialog extends DialogFragment {
     private void setRadioButtons() {
         switch (sortOrder) {
             case MOD_TIME_DESCENDING:
-                ((RadioButton)view.findViewById(R.id.radio_sort_date)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+                binding.radioSortDate.setChecked(true);
+                binding.radioSortDescending.setChecked(true);
                 break;
             case MOD_TIME_ASCENDING:
-                ((RadioButton)view.findViewById(R.id.radio_sort_date)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
+                binding.radioSortDate.setChecked(true);
+                binding.radioSortAscending.setChecked(true);
                 break;
             case SIZE_DESCENDING:
-                ((RadioButton)view.findViewById(R.id.radio_sort_size)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+                binding.radioSortSize.setChecked(true);
+                binding.radioSortDescending.setChecked(true);
                 break;
             case SIZE_ASCENDING:
-                ((RadioButton)view.findViewById(R.id.radio_sort_size)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
+                binding.radioSortSize.setChecked(true);
+                binding.radioSortAscending.setChecked(true);
                 break;
             case ALPHA_DESCENDING:
-                ((RadioButton)view.findViewById(R.id.radio_sort_name)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_descending)).setChecked(true);
+                binding.radioSortName.setChecked(true);
+                binding.radioSortDescending.setChecked(true);
                 break;
             case ALPHA_ASCENDING:
             default:
-                ((RadioButton)view.findViewById(R.id.radio_sort_name)).setChecked(true);
-                ((RadioButton)view.findViewById(R.id.radio_sort_ascending)).setChecked(true);
+                binding.radioSortName.setChecked(true);
+                binding.radioSortAscending.setChecked(true);
         }
     }
 }

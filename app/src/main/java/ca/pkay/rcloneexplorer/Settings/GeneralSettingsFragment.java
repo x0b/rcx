@@ -30,6 +30,7 @@ import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.databinding.GeneralSettingsFragmentBinding;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
@@ -38,19 +39,7 @@ public class GeneralSettingsFragment extends Fragment {
     private static final String TAG = "GeneralSettingsFragment";
     private Context context;
     private boolean isDarkTheme;
-
-    private Switch useProxySwitch;
-    private View useProxyElement;
-    private View proxyProtocolElement;
-    private TextView proxyProtocolSummary;
-    private View proxyHostElement;
-    private TextView proxyHostSummary;
-    private View proxyPortElement;
-    private TextView proxyPortSummary;
-    private View thumbnailSizeElement;
-    private TextView thumbnailSizeSummary;
-    private View localeElement;
-    private TextView localeSummary;
+    private GeneralSettingsFragmentBinding binding;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,8 +60,7 @@ public class GeneralSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.general_settings_fragment, container, false);
-        getViews(view);
+        binding = GeneralSettingsFragmentBinding.inflate(inflater, container, false);
         setDefaultStates();
         setClickListeners();
 
@@ -80,7 +68,7 @@ public class GeneralSettingsFragment extends Fragment {
             getActivity().setTitle(getString(R.string.pref_header_general));
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -93,26 +81,6 @@ public class GeneralSettingsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         this.context = null;
-    }
-
-    private void getViews(View view) {
-        appShortcutsElement = view.findViewById(R.id.app_shortcuts);
-        showThumbnailsElement = view.findViewById(R.id.show_thumbnails);
-        showThumbnailsSwitch = view.findViewById(R.id.show_thumbnails_switch);
-        wifiOnlyElement = view.findViewById(R.id.wifi_only);
-        wifiOnlySwitch = view.findViewById(R.id.wifi_only_switch);
-        useProxyElement = view.findViewById(R.id.use_proxy);
-        useProxySwitch = view.findViewById(R.id.use_proxy_switch);
-        proxyProtocolElement = view.findViewById(R.id.proxy_protocol);
-        proxyProtocolSummary = view.findViewById(R.id.proxy_protocol_summary);
-        proxyHostElement = view.findViewById(R.id.proxy_host);
-        proxyHostSummary = view.findViewById(R.id.proxy_host_summary);
-        proxyPortElement = view.findViewById(R.id.proxy_port);
-        proxyPortSummary = view.findViewById(R.id.proxy_port_summary);
-        thumbnailSizeElement = view.findViewById(R.id.thumbnail_size);
-        thumbnailSizeSummary = view.findViewById(R.id.thumbnail_size_summary);
-        localeElement = view.findViewById(R.id.locale_container);
-        localeSummary = view.findViewById(R.id.locale_summary);
     }
     
     private void setDefaultStates() {
@@ -127,76 +95,58 @@ public class GeneralSettingsFragment extends Fragment {
         // TODO: build ui
         //String noProxyHosts = sharedPreferences.getString(getString(R.string.pref_key_no_proxy_hosts), "localhost");
 
-        showThumbnailsSwitch.setChecked(showThumbnails);
-        wifiOnlySwitch.setChecked(isWifiOnly);
-        useProxySwitch.setChecked(useProxy);
-        proxyProtocolSummary.setText(proxyProtocol);
-        proxyHostSummary.setText(proxyHost);
-        proxyPortSummary.setText(String.valueOf(proxyPort));
+        binding.showThumbnailsSwitch.setChecked(showThumbnails);
+        binding.wifiOnlySwitch.setChecked(isWifiOnly);
+        binding.useProxySwitch.setChecked(useProxy);
+        binding.proxyProtocolSummary.setText(proxyProtocol);
+        binding.proxyHostSummary.setText(proxyHost);
+        binding.proxyPortSummary.setText(String.valueOf(proxyPort));
         if(!useProxy) {
-            proxyProtocolElement.setVisibility(View.GONE);
-            proxyHostElement.setVisibility(View.GONE);
-            proxyPortElement.setVisibility(View.GONE);
+            binding.proxyProtocol.setVisibility(View.GONE);
+            binding.proxyHost.setVisibility(View.GONE);
+            binding.proxyPort.setVisibility(View.GONE);
         }
 
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N_MR1) {
-            appShortcutsElement.setVisibility(View.GONE);
+            binding.appShortcuts.setVisibility(View.GONE);
         }
         long thumbnailSizeLimit = sharedPreferences.getLong(getString(R.string.pref_key_thumbnail_size_limit),
                 getResources().getInteger(R.integer.default_thumbnail_size_limit));
-        thumbnailSizeSummary.setText(getString(R.string.pref_thumbnails_size_summary,
+        binding.thumbnailSizeSummary.setText(getString(R.string.pref_thumbnails_size_summary,
                 thumbnailSizeLimit / (1024 * 1024d)));
         if(showThumbnails) {
-            thumbnailSizeElement.setVisibility(View.VISIBLE);
+            binding.thumbnailSize.setVisibility(View.VISIBLE);
         }
 
         if (sharedPreferences.contains(getString(R.string.pref_key_locale))) {
             String localeTag = sharedPreferences.getString(getString(R.string.pref_key_locale), "en-US");
             Locale locale = Locale.forLanguageTag(localeTag);
-            localeSummary.setText(locale.getDisplayLanguage());
+            binding.localeSummary.setText(locale.getDisplayLanguage());
         } else {
-            localeSummary.setText(getString(R.string.pref_locale_not_set));
+            binding.localeSummary.setText(getString(R.string.pref_locale_not_set));
         }
     }
     
     private void setClickListeners() {
-        showThumbnailsElement.setOnClickListener(v -> {
-            if (showThumbnailsSwitch.isChecked()) {
-                showThumbnailsSwitch.setChecked(false);
-            } else {
-                showThumbnailsSwitch.setChecked(true);
-            }
-        });
-        showThumbnailsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> showThumbnails(isChecked));
-        appShortcutsElement.setOnClickListener(v -> showAppShortcutDialog());
-        wifiOnlyElement.setOnClickListener(v -> {
-            if (wifiOnlySwitch.isChecked()) {
-                wifiOnlySwitch.setChecked(false);
-            } else {
-                wifiOnlySwitch.setChecked(true);
-            }
-        });
-        wifiOnlySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setWifiOnlyTransfers(isChecked));
-        useProxyElement.setOnClickListener(v -> {
-            if(useProxySwitch.isChecked()) {
-                useProxySwitch.setChecked(false);
-            } else {
-                useProxySwitch.setChecked(true);
-            }
-        });
-        useProxySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setUseProxy(isChecked));
-        proxyProtocolElement.setOnClickListener(v -> showProxyProtocolMenu());
-        proxyHostElement.setOnClickListener(v -> showProxyHostMenu());
-        proxyPortElement.setOnClickListener(v -> showProxyPortMenu());
-        thumbnailSizeElement.setOnClickListener(v -> showThumbnailSizeDialog());
-        localeElement.setOnClickListener(v -> showLocaleDialog());
+        binding.showThumbnails.setOnClickListener(v -> binding.showThumbnailsSwitch.setChecked(!binding.showThumbnailsSwitch.isChecked()));
+        binding.showThumbnailsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> showThumbnails(isChecked));
+        binding.appShortcuts.setOnClickListener(v -> showAppShortcutDialog());
+        binding.wifiOnly.setOnClickListener(v -> binding.wifiOnlySwitch.setChecked(!binding.wifiOnlySwitch.isChecked()));
+        binding.wifiOnlySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setWifiOnlyTransfers(isChecked));
+        binding.useProxy.setOnClickListener(v -> binding.useProxySwitch.setChecked(!binding.useProxySwitch.isChecked()));
+        binding.useProxySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setUseProxy(isChecked));
+        binding.proxyProtocol.setOnClickListener(v -> showProxyProtocolMenu());
+        binding.proxyHost.setOnClickListener(v -> showProxyHostMenu());
+        binding.proxyPort.setOnClickListener(v -> showProxyPortMenu());
+        binding.thumbnailSize.setOnClickListener(v -> showThumbnailSizeDialog());
+        binding.localeContainer.setOnClickListener(v -> showLocaleDialog());
     }
 
     private void showThumbnails(boolean isChecked) {
         if (isChecked) {
-            thumbnailSizeElement.setVisibility(View.VISIBLE);
+            binding.thumbnailSize.setVisibility(View.VISIBLE);
         } else {
-            thumbnailSizeElement.setVisibility(View.GONE);
+            binding.thumbnailSize.setVisibility(View.GONE);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -324,13 +274,13 @@ public class GeneralSettingsFragment extends Fragment {
 
     private void setUseProxy(boolean isChecked) {
         if(isChecked) {
-            proxyProtocolElement.setVisibility(View.VISIBLE);
-            proxyHostElement.setVisibility(View.VISIBLE);
-            proxyPortElement.setVisibility(View.VISIBLE);
+            binding.proxyProtocol.setVisibility(View.VISIBLE);
+            binding.proxyHost.setVisibility(View.VISIBLE);
+            binding.proxyPort.setVisibility(View.VISIBLE);
         } else {
-            proxyProtocolElement.setVisibility(View.GONE);
-            proxyHostElement.setVisibility(View.GONE);
-            proxyPortElement.setVisibility(View.GONE);
+            binding.proxyProtocol.setVisibility(View.GONE);
+            binding.proxyHost.setVisibility(View.GONE);
+            binding.proxyPort.setVisibility(View.GONE);
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -359,9 +309,7 @@ public class GeneralSettingsFragment extends Fragment {
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
             String protocol = proxyProtocols.get(userSelected[0]);
             pref.edit().putString(getString(R.string.pref_key_proxy_protocol), protocol).apply();
-            if(proxyProtocolSummary != null) {
-                proxyProtocolSummary.setText(protocol);
-            }
+            binding.proxyProtocolSummary.setText(protocol);
         });
 
         builder.show();
@@ -387,9 +335,7 @@ public class GeneralSettingsFragment extends Fragment {
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
             String host = proxyHostEdit.getText().toString();
             pref.edit().putString(getString(R.string.pref_key_proxy_host), host).apply();
-            if(null != proxyHostSummary) {
-                proxyHostSummary.setText(host);
-            }
+            binding.proxyHostSummary.setText(host);
         });
 
         builder.show();
@@ -423,9 +369,7 @@ public class GeneralSettingsFragment extends Fragment {
                 return;
             }
             pref.edit().putInt(getString(R.string.pref_key_proxy_port), port).apply();
-            if(null != proxyPortSummary) {
-                proxyPortSummary.setText(String.valueOf(port));
-            }
+            binding.proxyPortSummary.setText(String.valueOf(port));
         });
 
         builder.show();
@@ -462,9 +406,7 @@ public class GeneralSettingsFragment extends Fragment {
                 return;
             }
             pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size1).apply();
-            if(null != thumbnailSizeSummary) {
-                thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
-            }
+            binding.thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
         });
 
         builder.show();
@@ -491,10 +433,8 @@ public class GeneralSettingsFragment extends Fragment {
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
             String locale = locales.get(userSelected[0]);
             pref.edit().putString(getString(R.string.pref_key_locale), locale).apply();
-            if(null != localeSummary) {
-                localeSummary.setText(Locale.forLanguageTag(locale).getDisplayLanguage());
-                Toasty.normal(context, getString(R.string.pref_locale_restart_notice), Toast.LENGTH_LONG).show();
-            }
+            binding.localeSummary.setText(Locale.forLanguageTag(locale).getDisplayLanguage());
+            Toasty.normal(context, getString(R.string.pref_locale_restart_notice), Toast.LENGTH_LONG).show();
         });
 
         builder.show();

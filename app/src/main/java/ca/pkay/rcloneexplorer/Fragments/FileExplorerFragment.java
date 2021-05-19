@@ -72,6 +72,7 @@ import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import ca.pkay.rcloneexplorer.databinding.FragmentFileExplorerListBinding;
 import ca.pkay.rcloneexplorer.util.FLog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
@@ -169,6 +170,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private int thumbnailServerPort;
     private boolean wrapFilenames;
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
+    private FragmentFileExplorerListBinding binding;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -257,7 +259,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_file_explorer_list, container, false);
+        binding = FragmentFileExplorerListBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         if (savedInstanceState != null) {
             startAtRoot = savedInstanceState.getBoolean(SAVED_START_AT_BOOT);
         }
@@ -267,17 +270,17 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             startThumbnailService();
         }
 
-        swipeRefreshLayout = view.findViewById(R.id.file_explorer_srl);
+        swipeRefreshLayout = binding.fileExplorerSrl;
         swipeRefreshLayout.setOnRefreshListener(this);
 
         Context context = view.getContext();
 
-        RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
+        RecyclerView recyclerView = binding.fileExplorerList;
         recyclerViewLinearLayoutManager = new LinearLayoutManager(context);
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
-        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
-        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        View emptyFolderView = binding.emptyDirectoryState.emptyFolderView;
+        View noSearchResultsView = binding.noSearchResults.noSearchResultsView;
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.showThumbnails(showThumbnails);
         recyclerViewAdapter.setWrapFileNames(wrapFilenames);
@@ -294,8 +297,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
         }
 
-        fab = view.findViewById(R.id.fab_fragment_file_explorer_list);
-        fab.setOverlayLayout((SpeedDialOverlayLayout)view.findViewById(R.id.fab_overlay));
+        fab = binding.fabFragmentFileExplorerList;
+        fab.setOverlayLayout(binding.fabOverlay);
         fab.setOnActionSelectedListener(actionItem -> {
             switch (actionItem.getId()) {
                 case R.id.fab_add_folder:
@@ -328,11 +331,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
-        view.findViewById(R.id.bottom_bar).setBackgroundColor(accentColorValue.data);
-        view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
-        if (view.findViewById(R.id.background) != null) {
-            view.findViewById(R.id.background).setOnClickListener(v -> onClickOutsideOfView());
-        }
+        binding.moveBar.moveBar.setBackgroundColor(accentColorValue.data);
+        binding.moveBar.moveBar.setBackgroundColor(accentColorValue.data);
+        binding.background.setOnClickListener(v -> onClickOutsideOfView());
 
         setBottomBarClickListeners(view);
 
@@ -835,22 +836,22 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void setBottomBarClickListeners(final View view) {
-        view.findViewById(R.id.file_download).setOnClickListener(v -> {
+        binding.bottomBar.fileDownload.setOnClickListener(v -> {
             downloadList = new ArrayList<>(recyclerViewAdapter.getSelectedItems());
             downloadFiles();
         });
 
-        view.findViewById(R.id.file_move).setOnClickListener(v -> moveFiles(recyclerViewAdapter.getSelectedItems()));
+        binding.bottomBar.fileMove.setOnClickListener(v -> moveFiles(recyclerViewAdapter.getSelectedItems()));
 
-        view.findViewById(R.id.file_rename).setOnClickListener(v -> {
+        binding.bottomBar.fileRename.setOnClickListener(v -> {
             renameItem = recyclerViewAdapter.getSelectedItems().get(0);
             renameFiles();
         });
 
-        view.findViewById(R.id.file_delete).setOnClickListener(v -> deleteFiles(recyclerViewAdapter.getSelectedItems()));
-        view.findViewById(R.id.cancel_move).setOnClickListener(v -> cancelMoveClicked());
-        view.findViewById(R.id.select_move).setOnClickListener(v -> moveLocationSelected());
-        view.findViewById(R.id.new_folder).setOnClickListener(v -> onCreateNewDirectory());
+        binding.bottomBar.fileDelete.setOnClickListener(v -> deleteFiles(recyclerViewAdapter.getSelectedItems()));
+        binding.moveBar.cancelMove.setOnClickListener(v -> cancelMoveClicked());
+        binding.moveBar.selectMove.setOnClickListener(v -> moveLocationSelected());
+        binding.moveBar.newFolder.setOnClickListener(v -> onCreateNewDirectory());
 
         ((EditText)searchBar.findViewById(R.id.search_field)).addTextChangedListener(new TextWatcher() {
             @Override
@@ -1119,6 +1120,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         LocalBroadcastManager.getInstance(context).unregisterReceiver(backgroundTaskBroadcastReceiver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

@@ -40,6 +40,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.databinding.FragmentShareListBinding;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -72,6 +73,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     private boolean isRunning;
     private boolean startAtRoot;
     private boolean goToDefaultSet;
+    private FragmentShareListBinding binding;
 
     public ShareFragment() {
     }
@@ -123,9 +125,8 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_share_list, container, false);
-
-        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        binding = FragmentShareListBinding.inflate(inflater, container, false);
+        swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(this);
 
         if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
@@ -143,11 +144,12 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        View emptyFolderView = view.findViewById(R.id.empty_folder_view);
-        View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
+        View emptyFolderView = binding.emptyDirectoryState.emptyFolderView;
+        // TODO: Fix view hierarchy - there is no search!
+        View noSearchResultsView = binding.getRoot().findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.disableFileOptions();
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -161,12 +163,12 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
-        view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
-        view.findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.cancel_move).setOnClickListener(v -> ((FragmentActivity) context).finish());
-        view.findViewById(R.id.select_move).setOnClickListener(
+        binding.moveBar.moveBar.setBackgroundColor(accentColorValue.data);
+        binding.moveBar.moveBar.setVisibility(View.VISIBLE);
+        binding.moveBar.cancelMove.setOnClickListener(v -> ((FragmentActivity) context).finish());
+        binding.moveBar.selectMove.setOnClickListener(
                 v -> listener.onShareDestinationSelected(remote, directoryObject.getCurrentPath()));
-        view.findViewById(R.id.new_folder).setOnClickListener(v -> onCreateNewDirectory());
+        binding.moveBar.newFolder.setOnClickListener(v -> onCreateNewDirectory());
 
         int currentOrientation = getResources().getConfiguration().orientation;
         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -177,7 +179,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
         }
 
         isRunning = true;
-        return view;
+        return binding.getRoot();
     }
 
     @Override

@@ -1,8 +1,6 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,16 +9,19 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ca.pkay.rcloneexplorer.Items.FileItem;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.FilePickerItemBinding;
 
 public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.ViewHolder> {
 
@@ -49,8 +50,8 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_picker_item, parent, false);
-        return new ViewHolder(view);
+        FilePickerItemBinding binding = FilePickerItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
                 listener.onDirectoryClicked(file);
             } else if (!destinationPickerType) {
                 toggleSelection(file);
-           }
+            }
         });
     }
 
@@ -220,16 +221,16 @@ public class FilePickerAdapter extends RecyclerView.Adapter<FilePickerAdapter.Vi
         public final TextView interpunct;
         public final CheckBox checkBox;
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-            view = itemView;
-            fileIcon = itemView.findViewById(R.id.file_icon);
-            dirIcon = itemView.findViewById(R.id.folder_icon);
-            fileName = itemView.findViewById(R.id.file_name);
-            fileModTime = itemView.findViewById(R.id.file_modtime);
-            fileSize = itemView.findViewById(R.id.file_size);
-            interpunct = itemView.findViewById(R.id.interpunct);
-            checkBox = itemView.findViewById(R.id.file_checkbox);
+        public ViewHolder(FilePickerItemBinding binding) {
+            super(binding.getRoot());
+            view = binding.getRoot();
+            fileIcon = binding.fileIcon;
+            dirIcon = binding.folderIcon;
+            fileName = binding.fileName;
+            fileModTime = binding.fileModtime;
+            fileSize = binding.fileSize;
+            interpunct = binding.interpunct;
+            checkBox = binding.fileCheckbox;
         }
     }
 }

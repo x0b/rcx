@@ -16,11 +16,13 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.NotificationSettingsFragmentBinding;
 import es.dmoral.toasty.Toasty;
 
 public class NotificationsSettingsFragment extends Fragment {
 
     private Context context;
+    private NotificationSettingsFragmentBinding binding;
     private View notificationsElement;
     private View appUpdatesElement;
     private SwitchCompat appUpdatesSwitch;
@@ -46,8 +48,8 @@ public class NotificationsSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.notification_settings_fragment, container, false);
-        getViews(view);
+        binding = NotificationSettingsFragmentBinding.inflate(inflater, container, false);
+        getViews(binding);
         setDefaultStates();
         setClickListeners();
 
@@ -55,7 +57,7 @@ public class NotificationsSettingsFragment extends Fragment {
             getActivity().setTitle(getString(R.string.notifications_pref_title));
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -64,12 +66,18 @@ public class NotificationsSettingsFragment extends Fragment {
         this.context = context;
     }
 
-    private void getViews(View view) {
-        notificationsElement = view.findViewById(R.id.notifications);
-        appUpdatesElement = view.findViewById(R.id.app_updates);
-        appUpdatesSwitch = view.findViewById(R.id.app_updates_switch);
-        betaAppUpdatesElement = view.findViewById(R.id.beta_app_updates);
-        betaAppUpdatesSwitch = view.findViewById(R.id.beta_app_updates_switch);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    private void getViews(NotificationSettingsFragmentBinding binding) {
+        notificationsElement = binding.notifications;
+        appUpdatesElement = binding.appUpdates;
+        appUpdatesSwitch = binding.appUpdatesSwitch;
+        betaAppUpdatesElement = binding.betaAppUpdates;
+        betaAppUpdatesSwitch = binding.betaAppUpdatesSwitch;
     }
 
     private void setDefaultStates() {

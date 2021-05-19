@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.view.LayoutInflater;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import ca.pkay.rcloneexplorer.databinding.ActivitySharingBinding;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
@@ -56,9 +58,9 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
         ActivityHelper.applyTheme(this);
         isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.pref_key_dark_theme), false);
-        setContentView(R.layout.activity_sharing);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        ActivitySharingBinding binding = ActivitySharingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
 
         Rclone rclone = new Rclone(this);
         uploadList = new ArrayList<>();

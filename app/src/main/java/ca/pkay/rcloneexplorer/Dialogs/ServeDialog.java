@@ -2,35 +2,28 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioGroup;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.databinding.DialogServeBinding;
 
 public class ServeDialog extends DialogFragment {
 
     private Context context;
     private boolean isDarkTheme;
     private Callback callback;
-    private RadioGroup protocol;
-    private CheckBox allowRemoteAccess;
-    private EditText user;
-    private EditText password;
+    private DialogServeBinding binding;
 
     public interface Callback {
         void onServeOptionsSelected(int protocol, boolean allowRemoteAccess, String user, String password);
@@ -54,29 +47,23 @@ public class ServeDialog extends DialogFragment {
             builder = new AlertDialog.Builder(context);
         }
 
-        LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.dialog_serve, null);
-
-        protocol = view.findViewById(R.id.radio_group_protocol);
-        allowRemoteAccess = view.findViewById(R.id.checkbox_allow_remote_access);
-        user = view.findViewById(R.id.edit_text_user);
-        password = view.findViewById(R.id.edit_text_password);
+        binding = DialogServeBinding.inflate(LayoutInflater.from(context));
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         if (pref.contains(getString(R.string.pref_choice_serve_dialog_allow_ext))) {
             boolean checked = pref.getBoolean(getString(R.string.pref_choice_serve_dialog_allow_ext), false);
-            allowRemoteAccess.setChecked(checked);
+            binding.checkboxAllowRemoteAccess.setChecked(checked);
         }
 
-        ((TextInputLayout) view.findViewById(R.id.text_input_layout_user)).setHint("Username");
-        ((TextInputLayout) view.findViewById(R.id.text_input_layout_password)).setHint("Password");
+        binding.textInputLayoutUser.setHint("Username");
+        binding.textInputLayoutPassword.setHint("Password");
 
         builder.setTitle(R.string.serve_dialog_title);
         builder.setPositiveButton(R.string.ok, (dialog, which) -> sendCallback());
         builder.setNegativeButton(R.string.cancel, null);
-        builder.setView(view);
+        builder.setView(binding.getRoot());
 
-        ((CheckBox) view.findViewById(R.id.checkbox_allow_remote_access)).setOnCheckedChangeListener((btn, isChecked) -> {
+        binding.checkboxAllowRemoteAccess.setOnCheckedChangeListener((btn, isChecked) -> {
             if (isChecked) {
                 Snackbar.make(btn, R.string.serve_dialog_remote_notice_enabled, Snackbar.LENGTH_LONG)
                         .show();
@@ -93,13 +80,13 @@ public class ServeDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("isDarkTheme", isDarkTheme);
-        outState.putInt("protocol", protocol.getCheckedRadioButtonId());
-        outState.putBoolean("allowRemoteAccess", allowRemoteAccess.isChecked());
-        if (!user.getText().toString().trim().isEmpty()) {
-            outState.putString("user", user.getText().toString());
+        outState.putInt("protocol", binding.radioGroupProtocol.getCheckedRadioButtonId());
+        outState.putBoolean("allowRemoteAccess", binding.checkboxAllowRemoteAccess.isChecked());
+        if (!binding.editTextUser.getText().toString().trim().isEmpty()) {
+            outState.putString("user", binding.editTextUser.getText().toString());
         }
-        if (!password.getText().toString().trim().isEmpty()) {
-            outState.putString("password", password.getText().toString());
+        if (!binding.editTextPassword.getText().toString().trim().isEmpty()) {
+            outState.putString("password", binding.editTextPassword.getText().toString());
         }
     }
 
@@ -110,21 +97,21 @@ public class ServeDialog extends DialogFragment {
             return;
         }
 
-        allowRemoteAccess.setChecked(savedInstanceState.getBoolean("allowRemoteAccess", false));
+        binding.checkboxAllowRemoteAccess.setChecked(savedInstanceState.getBoolean("allowRemoteAccess", false));
         String savedUser = savedInstanceState.getString("user");
         if (savedUser != null) {
-            user.setText(savedUser);
+            binding.editTextUser.setText(savedUser);
         }
 
         String savedPassword = savedInstanceState.getString("password");
         if (savedPassword != null) {
-            password.setText(savedPassword);
+            binding.editTextPassword.setText(savedPassword);
         }
 
         int savedProtocol = savedInstanceState.getInt("protocol", -1);
         if (savedProtocol == R.id.radio_http || savedProtocol == R.id.radio_dlna
                 || savedProtocol == R.id.radio_webdav || savedProtocol == R.id.radio_ftp) {
-            protocol.check(savedProtocol);
+            binding.radioGroupProtocol.check(savedProtocol);
         }
     }
 
@@ -138,13 +125,19 @@ public class ServeDialog extends DialogFragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     public ServeDialog setDarkTheme(boolean isDarkTheme) {
         this.isDarkTheme = isDarkTheme;
         return this;
     }
 
     private void sendCallback() {
-        int selectedProtocolId = protocol.getCheckedRadioButtonId();
+        int selectedProtocolId = binding.radioGroupProtocol.getCheckedRadioButtonId();
         int selectedProtocol;
         switch (selectedProtocolId) {
             case R.id.radio_ftp:
@@ -164,9 +157,12 @@ public class ServeDialog extends DialogFragment {
 
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putBoolean(getString(R.string.pref_choice_serve_dialog_allow_ext), allowRemoteAccess.isChecked())
+                .putBoolean(getString(R.string.pref_choice_serve_dialog_allow_ext), binding.checkboxAllowRemoteAccess.isChecked())
                 .apply();
 
-        callback.onServeOptionsSelected(selectedProtocol, allowRemoteAccess.isChecked(), user.getText().toString(), password.getText().toString());
+        callback.onServeOptionsSelected(selectedProtocol,
+                binding.checkboxAllowRemoteAccess.isChecked(),
+                binding.editTextUser.getText().toString(),
+                binding.editTextPassword.getText().toString());
     }
 }

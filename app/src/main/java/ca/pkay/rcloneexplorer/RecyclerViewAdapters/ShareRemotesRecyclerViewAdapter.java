@@ -15,12 +15,13 @@ import java.util.List;
 import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.FragmentShareRemotesItemBinding;
 
 public class ShareRemotesRecyclerViewAdapter extends RecyclerView.Adapter<ShareRemotesRecyclerViewAdapter.ViewHolder>{
 
     private List<RemoteItem> remotes;
     private final ShareRemotesFragment.OnRemoteClickListener clickListener;
-    private View view;
+    private FragmentShareRemotesItemBinding binding;
 
     public ShareRemotesRecyclerViewAdapter(List<RemoteItem> remotes, ShareRemotesFragment.OnRemoteClickListener clickListener) {
         this.remotes = remotes;
@@ -31,8 +32,8 @@ public class ShareRemotesRecyclerViewAdapter extends RecyclerView.Adapter<ShareR
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_share_remotes_item, parent, false);
-        return new ViewHolder(view);
+        binding = FragmentShareRemotesItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class ShareRemotesRecyclerViewAdapter extends RecyclerView.Adapter<ShareR
         holder.tvName.setText(remotes.get(position).getDisplayName());
 
         int icon = remotes.get(position).getRemoteIcon();
-        holder.ivIcon.setImageDrawable(view.getResources().getDrawable(icon));
+        holder.ivIcon.setImageDrawable(binding.getRoot().getResources().getDrawable(icon));
 
         if (isPinned) {
             holder.pinIcon.setVisibility(View.VISIBLE);
@@ -74,12 +75,12 @@ public class ShareRemotesRecyclerViewAdapter extends RecyclerView.Adapter<ShareR
         final ImageView pinIcon;
         public String remoteName;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            this.view = itemView;
-            this.ivIcon = view.findViewById(R.id.remoteIcon);
-            this.tvName = view.findViewById(R.id.remoteName);
-            this.pinIcon = view.findViewById(R.id.pin_icon);
+        ViewHolder(FragmentShareRemotesItemBinding binding) {
+            super(binding.getRoot());
+            this.view = binding.getRoot();
+            this.ivIcon = binding.remoteIcon;
+            this.tvName = binding.remoteName;
+            this.pinIcon = binding.pinIcon;
         }
     }
 

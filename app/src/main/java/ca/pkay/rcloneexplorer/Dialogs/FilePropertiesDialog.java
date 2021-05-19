@@ -8,19 +8,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.databinding.DialogFilePropertiesBinding;
 import es.dmoral.toasty.Toasty;
 
 public class FilePropertiesDialog extends DialogFragment {
@@ -33,7 +33,6 @@ public class FilePropertiesDialog extends DialogFragment {
     private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.FilePropertiesDialog.IS_DARK_THEME";
     private FileItem fileItem;
     private RemoteItem remote;
-    private View view;
     private Rclone rclone;
     private AsyncTask[] asyncTasks;
     private String md5String;
@@ -41,6 +40,7 @@ public class FilePropertiesDialog extends DialogFragment {
     private Boolean showHash;
     private Boolean isDarkTheme;
     private Context context;
+    DialogFilePropertiesBinding binding;
 
     public FilePropertiesDialog() {
         showHash = true;
@@ -67,54 +67,50 @@ public class FilePropertiesDialog extends DialogFragment {
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_file_properties, null);
+        binding = DialogFilePropertiesBinding.inflate(LayoutInflater.from(context));
 
-        ((TextView)view.findViewById(R.id.filename)).setText(fileItem.getName());
+        binding.filename.setText(fileItem.getName());
 
         RemoteItem itemRemote = fileItem.getRemote();
         if (!itemRemote.isDirectoryModifiedTimeSupported() && fileItem.isDir()) {
-            view.findViewById(R.id.file_modtime_label).setVisibility(View.GONE);
-            view.findViewById(R.id.file_modtime).setVisibility(View.GONE);
+            binding.fileModtimeLabel.setVisibility(View.GONE);
+            binding.fileModtime.setVisibility(View.GONE);
         } else {
-            view.findViewById(R.id.file_modtime_label).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.file_modtime).setVisibility(View.VISIBLE);
-            ((TextView)view.findViewById(R.id.file_modtime)).setText(fileItem.getFormattedModTime());
+            binding.fileModtimeLabel.setVisibility(View.VISIBLE);
+            binding.fileModtime.setVisibility(View.VISIBLE);
+            binding.fileModtime.setText(fileItem.getFormattedModTime());
         }
 
         if (fileItem.isDir()) {
-            view.findViewById(R.id.file_size).setVisibility(View.GONE);
-            view.findViewById(R.id.file_size_label).setVisibility(View.GONE);
+            binding.fileSize.setVisibility(View.GONE);
+            binding.fileSizeLabel.setVisibility(View.GONE);
         } else {
-            view.findViewById(R.id.file_size).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.file_size_label).setVisibility(View.VISIBLE);
-            ((TextView)view.findViewById(R.id.file_size)).setText(fileItem.getHumanReadableSize());
+            binding.fileSize.setVisibility(View.VISIBLE);
+            binding.fileSize.setText(fileItem.getHumanReadableSize());
+            binding.fileSizeLabel.setVisibility(View.VISIBLE);
         }
 
-        View md5Container = view.findViewById(R.id.file_md5_container);
-        View sha1Container = view.findViewById(R.id.file_sha1_container);
-        View hashSeparator = view.findViewById(R.id.hash_separator);
         if (showHash && !fileItem.isDir()) {
-            md5Container.setVisibility(View.VISIBLE);
-            sha1Container.setVisibility(View.VISIBLE);
-            hashSeparator.setVisibility(View.VISIBLE);
+            binding.fileMd5Container.setVisibility(View.VISIBLE);
+            binding.fileSha1Container.setVisibility(View.VISIBLE);
+            binding.hashSeparator.setVisibility(View.VISIBLE);
 
-            md5Container.setOnClickListener(v -> calculateMD5());
-            sha1Container.setOnClickListener(v -> calculateSHA1());
+            binding.fileMd5Container.setOnClickListener(v -> calculateMD5());
+            binding.fileSha1Container.setOnClickListener(v -> calculateSHA1());
 
             if (md5String != null) {
-                ((TextView)view.findViewById(R.id.file_md5)).setText(md5String);
+                binding.fileMd5.setText(md5String);
             }
             if (sha1String != null) {
-                ((TextView)view.findViewById(R.id.file_sha1)).setText(sha1String);
+                binding.fileSha1.setText(sha1String);
             }
         } else {
-            md5Container.setVisibility(View.GONE);
-            sha1Container.setVisibility(View.GONE);
-            hashSeparator.setVisibility(View.GONE);
+            binding.fileMd5Container.setVisibility(View.GONE);
+            binding.fileSha1Container.setVisibility(View.GONE);
+            binding.hashSeparator.setVisibility(View.GONE);
         }
 
-        builder.setView(view)
+        builder.setView(binding.getRoot())
                 .setPositiveButton(R.string.ok, null);
         return builder.create();
     }
@@ -171,7 +167,7 @@ public class FilePropertiesDialog extends DialogFragment {
         if (md5String != null && !md5String.isEmpty()) {
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("Copied hash", md5String);
-            ((TextView)view.findViewById(R.id.file_md5)).setTextIsSelectable(true);
+            binding.fileMd5.setTextIsSelectable(true);
             if (clipboardManager == null) {
                 return;
             }
@@ -190,7 +186,7 @@ public class FilePropertiesDialog extends DialogFragment {
         if (sha1String != null && !sha1String.isEmpty()) {
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("Copied hash", sha1String);
-            ((TextView)view.findViewById(R.id.file_sha1)).setTextIsSelectable(true);
+            binding.fileSha1.setTextIsSelectable(true);
             if (clipboardManager == null) {
                 return;
             }
@@ -220,7 +216,7 @@ public class FilePropertiesDialog extends DialogFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            ((TextView)view.findViewById(R.id.file_md5)).setText(R.string.calculating);
+            binding.fileMd5.setText(R.string.calculating);
         }
 
         @Override
@@ -231,7 +227,7 @@ public class FilePropertiesDialog extends DialogFragment {
         @Override
         protected void onPostExecute(String md5) {
             super.onPostExecute(md5);
-            ((TextView)view.findViewById(R.id.file_md5)).setText(md5);
+            binding.fileMd5.setText(md5);
 
             if (!md5.equals(getString(R.string.hash_error)) && !md5.equals(getString(R.string.hash_unsupported))) {
                 md5String = md5;
@@ -247,7 +243,7 @@ public class FilePropertiesDialog extends DialogFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            ((TextView)view.findViewById(R.id.file_sha1)).setText(R.string.calculating);
+            binding.fileSha1.setText(R.string.calculating);
         }
 
         @Override
@@ -258,7 +254,7 @@ public class FilePropertiesDialog extends DialogFragment {
         @Override
         protected void onPostExecute(String sha1) {
             super.onPostExecute(sha1);
-            ((TextView)view.findViewById(R.id.file_sha1)).setText(sha1);
+            binding.fileSha1.setText(sha1);
 
             if (!sha1.equals(getString(R.string.hash_error)) && !sha1.equals(getString(R.string.hash_unsupported))) {
                 sha1String = sha1;

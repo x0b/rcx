@@ -2,20 +2,18 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.DialogNumberPickerBinding;
 
 public class NumberPickerDialog extends DialogFragment {
 
@@ -38,6 +36,7 @@ public class NumberPickerDialog extends DialogFragment {
     private int optionUnits;
     private int defaultValue;
     private OnValueSelected listener;
+    private DialogNumberPickerBinding binding;
 
     public interface OnValueSelected {
         void onValueSelected(String tag, int number, int units);
@@ -62,15 +61,14 @@ public class NumberPickerDialog extends DialogFragment {
             builder = new AlertDialog.Builder(context);
         }
 
-        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_number_picker, null);
+        binding = DialogNumberPickerBinding.inflate(LayoutInflater.from(context));
 
-        numberPicker = view.findViewById(R.id.number_picker);
+        numberPicker = binding.numberPicker;
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(1000);
         numberPicker.setValue(defaultValue);
 
-        spinner = view.findViewById(R.id.spinner);
+        spinner = binding.spinner;
 
         String[] options;
         if (optionUnits == UNITS_STORAGE) {
@@ -86,7 +84,7 @@ public class NumberPickerDialog extends DialogFragment {
 
         builder.setPositiveButton(R.string.select, (dialog, which) -> valueSelected());
         builder.setTitle(title);
-        builder.setView(view);
+        builder.setView(binding.getRoot());
         return builder.create();
     }
 
@@ -103,6 +101,12 @@ public class NumberPickerDialog extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void valueSelected() {

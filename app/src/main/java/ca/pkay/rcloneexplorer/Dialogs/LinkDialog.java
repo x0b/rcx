@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.DialogLinkBinding;
 import es.dmoral.toasty.Toasty;
 
 public class LinkDialog extends DialogFragment {
@@ -24,6 +25,7 @@ public class LinkDialog extends DialogFragment {
     private Context context;
     private String linkUrl;
     private boolean isDarkTheme;
+    private DialogLinkBinding binding;
 
     public LinkDialog() {}
 
@@ -42,12 +44,10 @@ public class LinkDialog extends DialogFragment {
             builder = new AlertDialog.Builder(context);
         }
 
-        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_link, null);
+        binding = DialogLinkBinding.inflate(LayoutInflater.from(context));
 
-        TextView textView = view.findViewById(R.id.text_view);
-        textView.setText(linkUrl);
-        textView.setOnClickListener(v -> {
+        binding.textView.setText(linkUrl);
+        binding.textView.setOnClickListener(v -> {
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = ClipData.newPlainText("Copied link", linkUrl);
             if (clipboardManager == null) {
@@ -57,10 +57,16 @@ public class LinkDialog extends DialogFragment {
             Toasty.info(context, getString(R.string.link_copied_to_clipboard), Toast.LENGTH_SHORT, true).show();
         });
 
-        builder.setView(view)
+        builder.setView(binding.getRoot())
                 .setPositiveButton(R.string.ok, null);
 
         return builder.create();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

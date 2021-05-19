@@ -105,5 +105,6 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
+        android:id="@+id/move_bar"
         layout="@layout/move_bar"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

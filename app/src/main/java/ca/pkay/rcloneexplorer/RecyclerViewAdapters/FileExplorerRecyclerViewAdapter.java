@@ -21,6 +21,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
+
+import ca.pkay.rcloneexplorer.databinding.FragmentFileExplorerItemBinding;
 import io.github.x0b.safdav.SafAccessProvider;
 
 import java.net.MalformedURLException;
@@ -85,8 +87,9 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_file_explorer_item, parent, false);
-        return new ViewHolder(view);
+        FragmentFileExplorerItemBinding binding = FragmentFileExplorerItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -454,17 +457,17 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         public final ImageButton fileOptions;
         public FileItem fileItem;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            this.view = itemView;
-            this.icons = view.findViewById(R.id.icons);
-            this.fileIcon = view.findViewById(R.id.file_icon);
-            this.dirIcon = view.findViewById(R.id.dir_icon);
-            this.fileName = view.findViewById(R.id.file_name);
-            this.fileModTime = view.findViewById(R.id.file_modtime);
-            this.fileSize = view.findViewById(R.id.file_size);
-            this.fileOptions = view.findViewById(R.id.file_options);
-            this.interpunct = view.findViewById(R.id.interpunct);
+        ViewHolder(FragmentFileExplorerItemBinding binding) {
+            super(binding.getRoot());
+            this.view = binding.getRoot();
+            this.icons = binding.icons;
+            this.fileIcon = binding.fileIcon;
+            this.dirIcon = binding.dirIcon;
+            this.fileName = binding.fileName;
+            this.fileModTime = binding.fileModtime;
+            this.fileSize = binding.fileSize;
+            this.fileOptions = binding.fileOptions;
+            this.interpunct = binding.interpunct;
         }
     }
 }

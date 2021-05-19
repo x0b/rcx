@@ -2,18 +2,16 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.DialogInputBinding;
 
 public class InputDialog extends DialogFragment {
 
@@ -32,7 +30,6 @@ public class InputDialog extends DialogFragment {
     private final String SAVED_TAG = "ca.pkay.rcexplorer.InputDialog.TAG";
     private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.InputDialog.IS_DARK_THEME";
     private Context context;
-    private EditText editText;
     private String title;
     private int titleId;
     private String message;
@@ -44,6 +41,7 @@ public class InputDialog extends DialogFragment {
     private Boolean isDarkTheme;
     private String tag;
     private OnPositive onPositiveListener;
+    private DialogInputBinding binding;
 
     public InputDialog() {
         isDarkTheme = false;
@@ -76,10 +74,8 @@ public class InputDialog extends DialogFragment {
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_input, null);
-        editText = view.findViewById(R.id.dialog_input);
-        builder.setView(view);
+        binding = DialogInputBinding.inflate(LayoutInflater.from(context));
+        builder.setView(binding.getRoot());
         if (title != null) {
             builder.setTitle(title);
         } else if (titleId > 1) {
@@ -92,7 +88,7 @@ public class InputDialog extends DialogFragment {
         }
         if (positiveTextId > 1) {
             builder.setPositiveButton(positiveTextId, (dialog, which) -> {
-                String input = editText.getText().toString();
+                String input = binding.dialogInput.getText().toString();
                 onPositiveListener.onPositive(tag, input);
             });
         }
@@ -102,11 +98,11 @@ public class InputDialog extends DialogFragment {
             });
         }
         if (filledText != null) {
-            editText.setText(filledText, TextView.BufferType.EDITABLE);
-            editText.setSelection(editText.getText().length());
+            binding.dialogInput.setText(filledText, TextView.BufferType.EDITABLE);
+            binding.dialogInput.setSelection(binding.dialogInput.getText().length());
         }
         if (inputType > 0) {
-            editText.setInputType(inputType);
+            binding.dialogInput.setInputType(inputType);
         }
 
         return builder.create();
@@ -135,6 +131,12 @@ public class InputDialog extends DialogFragment {
         if (context instanceof OnPositive) {
             onPositiveListener = (OnPositive) context;
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     public InputDialog setFilledText(String text) {

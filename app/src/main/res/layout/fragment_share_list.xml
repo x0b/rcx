@@ -9,6 +9,7 @@
     android:background="?attr/backgroundColor" >
 
     <include
+        android:id="@+id/empty_directory_state"
         layout="@layout/empty_directory_state" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -28,5 +29,6 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
+        android:id="@+id/move_bar"
         layout="@layout/move_bar"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

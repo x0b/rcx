@@ -2,27 +2,23 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
 
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.DialogPasswordGeneratorBinding;
 
 public class PasswordGeneratorDialog extends DialogFragment {
 
@@ -47,6 +43,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
     private CheckBox checkBoxUpperCase;
     private CheckBox checkBoxNumbers;
     private CheckBox checkBoxSpecialChars;
+    private DialogPasswordGeneratorBinding binding;
 
     private String[] lowerCase = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
     private String[] upperCase = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -76,16 +73,14 @@ public class PasswordGeneratorDialog extends DialogFragment {
         builder.setPositiveButton(R.string.set_password_button, (dialog, which) -> callback.onPasswordSelected(getTag(), generatedPassword));
         builder.setNegativeButton(R.string.cancel, null);
 
-        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_password_generator, null);
+        binding = DialogPasswordGeneratorBinding.inflate(LayoutInflater.from(context));
 
-        passwordDisplay = view.findViewById(R.id.password);
-        seekBar = view.findViewById(R.id.password_length_seekbar);
-        passwordLength = view.findViewById(R.id.password_length);
-        checkBoxLowerCase = view.findViewById(R.id.checkbox_lower_case);
-        checkBoxUpperCase = view.findViewById(R.id.checkbox_upper_case);
-        checkBoxNumbers = view.findViewById(R.id.checkbox_numbers);
-        checkBoxSpecialChars = view.findViewById(R.id.checkbox_special_chars);
+        seekBar = binding.passwordLengthSeekbar;
+        passwordLength = binding.passwordLength;
+        checkBoxLowerCase = binding.checkboxLowerCase;
+        checkBoxUpperCase = binding.checkboxUpperCase;
+        checkBoxNumbers = binding.checkboxNumbers;
+        checkBoxSpecialChars = binding.checkboxSpecialChars;
 
         passwordLength.setText(String.valueOf(DEFAULT_PASSWORD_LENGTH));
 
@@ -115,11 +110,11 @@ public class PasswordGeneratorDialog extends DialogFragment {
         checkBoxNumbers.setOnCheckedChangeListener((buttonView, isChecked) -> generatePassword());
         checkBoxSpecialChars.setOnCheckedChangeListener((buttonView, isChecked) -> generatePassword());
 
-        view.findViewById(R.id.lower_case).setOnClickListener(v -> checkBoxLowerCase.setChecked(!checkBoxLowerCase.isChecked()));
-        view.findViewById(R.id.upper_case).setOnClickListener(v -> checkBoxUpperCase.setChecked(!checkBoxUpperCase.isChecked()));
-        view.findViewById(R.id.numbers).setOnClickListener(v -> checkBoxNumbers.setChecked(!checkBoxNumbers.isChecked()));
-        view.findViewById(R.id.special_chars).setOnClickListener(v -> checkBoxSpecialChars.setChecked(!checkBoxSpecialChars.isChecked()));
-        view.findViewById(R.id.refresh_password).setOnClickListener(v -> generatePassword());
+        binding.lowerCase.setOnClickListener(v -> checkBoxLowerCase.setChecked(!checkBoxLowerCase.isChecked()));
+        binding.upperCase.setOnClickListener(v -> checkBoxUpperCase.setChecked(!checkBoxUpperCase.isChecked()));
+        binding.numbers.setOnClickListener(v -> checkBoxNumbers.setChecked(!checkBoxNumbers.isChecked()));
+        binding.specialChars.setOnClickListener(v -> checkBoxSpecialChars.setChecked(!checkBoxSpecialChars.isChecked()));
+        binding.refreshPassword.setOnClickListener(v -> generatePassword());
 
         if (savedInstanceState != null) {
             checkBoxLowerCase.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_LOWERCASE));
@@ -127,13 +122,13 @@ public class PasswordGeneratorDialog extends DialogFragment {
             checkBoxNumbers.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_NUMBERS));
             checkBoxSpecialChars.setChecked(savedInstanceState.getBoolean(SAVED_CHECKBOX_SPECIAL_CHARS));
             seekBar.setProgress(savedInstanceState.getInt(SAVED_PASSWORD_LENGTH));
-            passwordDisplay.setText(savedInstanceState.getString(SAVED_GENERATED_PASSWORD));
+            binding.password.setText(savedInstanceState.getString(SAVED_GENERATED_PASSWORD));
             generatedPassword = savedInstanceState.getString(SAVED_GENERATED_PASSWORD);
         } else {
             generatePassword();
         }
 
-        builder.setView(view);
+        builder.setView(binding.getRoot());
         return builder.create();
     }
 
@@ -155,6 +150,12 @@ public class PasswordGeneratorDialog extends DialogFragment {
         outState.putInt(SAVED_PASSWORD_LENGTH, seekBar.getProgress());
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     public PasswordGeneratorDialog setDarkTheme(boolean isDarkTheme) {
         this.isDarkTheme = isDarkTheme;
         return this;
@@ -163,7 +164,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
     private void generatePassword() {
         if (!checkBoxLowerCase.isChecked() && !checkBoxUpperCase.isChecked() && !checkBoxNumbers.isChecked() && !checkBoxSpecialChars.isChecked()) {
             generatedPassword = "";
-            passwordDisplay.setText("");
+            binding.password.setText("");
             return;
         }
 
@@ -190,6 +191,6 @@ public class PasswordGeneratorDialog extends DialogFragment {
         }
 
         generatedPassword = TextUtils.join("", password);
-        passwordDisplay.setText(generatedPassword);
+        binding.password.setText(generatedPassword);
     }
 }

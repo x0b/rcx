@@ -26,6 +26,8 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.RcdService;
 import ca.pkay.rcloneexplorer.VirtualContentProvider;
+import ca.pkay.rcloneexplorer.databinding.FragmentFileAccessSettingsBinding;
+import ca.pkay.rcloneexplorer.databinding.FragmentPermissionItemBinding;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.file.SafConstants;
 
@@ -57,6 +59,7 @@ public class FileAccessSettingsFragment extends Fragment {
     private View vcpGrantAllContainer;
     private SwitchCompat vcpGrantAllSwitch;
     private Rclone rclone;
+    private FragmentFileAccessSettingsBinding binding;
 
     public static FileAccessSettingsFragment newInstance() {
         return new FileAccessSettingsFragment();
@@ -70,14 +73,14 @@ public class FileAccessSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_file_access_settings, container, false);
+        binding = FragmentFileAccessSettingsBinding.inflate(inflater, container, false);
 
         permissionList = new PermissionListAdapter(context.getContentResolver().getPersistedUriPermissions());
-        listView = view.findViewById(R.id.file_permission_list);
+        listView = binding.filePermissionList;
         listView.setAdapter(permissionList);
-        addButtonContainer = view.findViewById(R.id.permission_add_container);
+        addButtonContainer = binding.permissionAddContainer;
 
-        getViews(view);
+        getViews(binding);
         setDefaultStates();
         setClickListeners();
 
@@ -85,7 +88,7 @@ public class FileAccessSettingsFragment extends Fragment {
             getActivity().setTitle(getString(R.string.pref_header_file_access));
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -96,25 +99,31 @@ public class FileAccessSettingsFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.binding = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         this.context = null;
     }
 
-    private void getViews(View view) {
-        safEnabledView = view.findViewById(R.id.enable_saf_view);
-        safEnabledSwitch = view.findViewById(R.id.enable_saf_switch);
-        fileAccessAll = view.findViewById(R.id.file_access_settings_all);
-        addPermissionBtn = view.findViewById(R.id.permission_add_button);
-        refreshLaContainer = view.findViewById(R.id.enable_refresh_la_container);
-        refreshLaSwitch = view.findViewById(R.id.enable_refresh_la_switch);
-        openAllFilesPerm = view.findViewById(R.id.open_all_files_setting_container);
-        vcpEnabledContainer = view.findViewById(R.id.enable_saf_vcp_view);
-        vcpEnabledSwitch = view.findViewById(R.id.enable_saf_vcp_switch);
-        vcpDeclareLocalContainer = view.findViewById(R.id.vcp_declare_local_container);
-        vcpDeclareLocalSwitch = view.findViewById(R.id.vcp_declare_local_switch);
-        vcpGrantAllContainer = view.findViewById(R.id.vcp_grant_all_container);
-        vcpGrantAllSwitch = view.findViewById(R.id.vcp_grant_all_switch);
+    private void getViews(FragmentFileAccessSettingsBinding view) {
+        safEnabledView = binding.enableSafView;
+        safEnabledSwitch = binding.enableSafSwitch;
+        fileAccessAll = binding.fileAccessSettingsAll;
+        addPermissionBtn = binding.permissionAddButton;
+        refreshLaContainer = binding.enableRefreshLaContainer;
+        refreshLaSwitch = binding.enableRefreshLaSwitch;
+        openAllFilesPerm = binding.openAllFilesSettingContainer;
+        vcpEnabledContainer = binding.enableSafVcpView;
+        vcpEnabledSwitch = binding.enableSafVcpSwitch;
+        vcpDeclareLocalContainer = binding.vcpDeclareLocalContainer;
+        vcpDeclareLocalSwitch = binding.vcpDeclareLocalSwitch;
+        vcpGrantAllContainer = binding.vcpGrantAllContainer;
+        vcpGrantAllSwitch = binding.vcpGrantAllSwitch;
     }
 
     private void setDefaultStates() {
@@ -266,10 +275,10 @@ public class FileAccessSettingsFragment extends Fragment {
         TextView text;
         UriPermission permission;
 
-        public PermissionsViewHolder(@NonNull View itemView, final PermissionListAdapter adapter) {
-            super(itemView);
-            text = itemView.findViewById(R.id.permission_path);
-            itemView.findViewById(R.id.permission_remove).setOnClickListener(v -> adapter.remove(getAdapterPosition()));
+        public PermissionsViewHolder(@NonNull FragmentPermissionItemBinding binding, final PermissionListAdapter adapter) {
+            super(binding.getRoot());
+            text = binding.permissionPath;
+            binding.permissionRemove.setOnClickListener(v -> adapter.remove(getAdapterPosition()));
         }
     }
 
@@ -284,8 +293,8 @@ public class FileAccessSettingsFragment extends Fragment {
         @NonNull
         @Override
         public PermissionsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            View v = LayoutInflater.from(context).inflate(R.layout.fragment_permission_item, parent, false);
-            return new PermissionsViewHolder(v, this);
+            FragmentPermissionItemBinding binding = FragmentPermissionItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new PermissionsViewHolder(binding, this);
         }
 
         @Override

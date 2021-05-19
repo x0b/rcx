@@ -11,9 +11,11 @@
     android:background="?attr/backgroundColor" >
 
     <include
+        android:id="@+id/empty_directory_state"
         layout="@layout/empty_directory_state" />
 
     <include
+        android:id="@+id/no_search_results"
         layout="@layout/no_search_results" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -52,9 +54,11 @@
         app:sdMainFabClosedSrc="@drawable/ic_add" />
 
     <include
+        android:id="@+id/bottom_bar"
         layout="@layout/bottom_bar"/>
 
     <include
+        android:id="@+id/move_bar"
         layout="@layout/move_bar"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

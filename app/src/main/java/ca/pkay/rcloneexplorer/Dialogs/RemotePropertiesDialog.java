@@ -22,6 +22,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.InitOauthStep;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.OauthFinishStep;
+import ca.pkay.rcloneexplorer.databinding.DialogRemotePropertiesBinding;
 import ca.pkay.rcloneexplorer.util.FLog;
 
 public class RemotePropertiesDialog extends DialogFragment {
@@ -44,10 +45,9 @@ public class RemotePropertiesDialog extends DialogFragment {
     private long storageFree;
     private long storageTrashed;
 
-    private View view;
     private Rclone rclone;
-    private TextView remoteStorageStats;
     private Context context;
+    private DialogRemotePropertiesBinding binding;
 
     public RemotePropertiesDialog() {
         isDarkTheme = false;
@@ -87,26 +87,22 @@ public class RemotePropertiesDialog extends DialogFragment {
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        LayoutInflater inflater = ((FragmentActivity) context).getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_remote_properties, null);
+        binding = DialogRemotePropertiesBinding.inflate(LayoutInflater.from(context));
 
-        ((TextView) view.findViewById(R.id.remote_name)).setText(remote.getDisplayName());
-
-        View storageContainer = view.findViewById(R.id.remote_storage_container);
-        remoteStorageStats = view.findViewById(R.id.remote_storage_stats);
+        binding.remoteName.setText(remote.getDisplayName());
         if (RemoteItem.LOCAL == remote.getType()) {
             updateStorageUsage();
         }
-        storageContainer.setOnClickListener(v -> updateStorageUsage());
+        binding.remoteStorageContainer.setOnClickListener(v -> updateStorageUsage());
 
-        View authorizeContainer = view.findViewById(R.id.remote_authorization_container);
+        View authorizeContainer = binding.remoteAuthorizationContainer;
         if (remote.isOAuth()) {
             authorizeContainer.setOnClickListener(v -> new ReconnectRemoteTask(rclone, remote, context).execute());
         } else {
             authorizeContainer.setVisibility(View.GONE);
         }
 
-        builder.setView(view).setPositiveButton(R.string.ok, null);
+        builder.setView(binding.getRoot()).setPositiveButton(R.string.ok, null);
         return builder.create();
     }
 
@@ -127,6 +123,12 @@ public class RemotePropertiesDialog extends DialogFragment {
         outState.putLong(SAVED_STORAGE_BYTES_TRASHED, storageTrashed);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     public RemotePropertiesDialog setRemote(RemoteItem remote) {
         this.remote = remote;
         return this;
@@ -138,10 +140,10 @@ public class RemotePropertiesDialog extends DialogFragment {
     }
 
     private void updateStorageUsage() {
-        remoteStorageStats.setText(R.string.calculating);
+        binding.remoteStorageStats.setText(R.string.calculating);
         new AboutRemoteTask(rclone, remote, result -> {
             if (result.hasFailed()) {
-                remoteStorageStats.setText(R.string.remote_properties_about_failed);
+                binding.remoteStorageStats.setText(R.string.remote_properties_about_failed);
                 return;
             }
             storageUsed = result.getUsed();
@@ -157,13 +159,13 @@ public class RemotePropertiesDialog extends DialogFragment {
         String total = Formatter.formatFileSize(context, storageTotal);
         String free = Formatter.formatFileSize(context, storageFree);
 
-        if (null != remoteStorageStats && isAdded()) {
+        if (null != binding && isAdded()) {
             if (storageUsed < 0) {
-                remoteStorageStats.setText(R.string.remote_properties_about_failed);
+                binding.remoteStorageStats.setText(R.string.remote_properties_about_failed);
             } else if (storageTotal < 0 || storageFree < 0) {
-                remoteStorageStats.setText(getString(R.string.remote_properties_storage_used, used));
+                binding.remoteStorageStats.setText(getString(R.string.remote_properties_storage_used, used));
             } else {
-                remoteStorageStats.setText(getString(R.string.remote_properties_storage_stats, used, total, free));
+                binding.remoteStorageStats.setText(getString(R.string.remote_properties_storage_stats, used, total, free));
             }
         }
     }

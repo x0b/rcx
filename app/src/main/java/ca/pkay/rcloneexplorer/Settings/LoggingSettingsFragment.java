@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.ReportService;
+import ca.pkay.rcloneexplorer.databinding.LoggingSettingsFragmentBinding;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
@@ -43,6 +44,7 @@ public class LoggingSettingsFragment extends Fragment {
     private View testReportElement;
     private View startCollectionElement;
     private View sigquitElement;
+    private LoggingSettingsFragmentBinding binding;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -63,8 +65,8 @@ public class LoggingSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.logging_settings_fragment, container, false);
-        getViews(view);
+        binding = LoggingSettingsFragmentBinding.inflate(inflater, container, false);
+        getViews(binding);
         setDefaultStates();
         setClickListeners();
 
@@ -72,7 +74,7 @@ public class LoggingSettingsFragment extends Fragment {
             getActivity().setTitle(getString(R.string.logging_settings_header));
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -81,15 +83,21 @@ public class LoggingSettingsFragment extends Fragment {
         this.context = context;
     }
 
-    private void getViews(View view) {
-        useLogsSwitch = view.findViewById(R.id.use_logs_switch);
-        useLogsElement = view.findViewById(R.id.use_logs);
-        crashReportsElement = view.findViewById(R.id.crash_reporting);
-        crashReportsSwitch = view.findViewById(R.id.crash_reporting_switch);
-        crashReportSummary = view.findViewById(R.id.txt_crash_report_summary);
-        testReportElement = view.findViewById(R.id.send_test_report);
-        startCollectionElement = view.findViewById(R.id.start_report_collection);
-        sigquitElement = view.findViewById(R.id.send_sigquit_to_rclone);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    private void getViews(LoggingSettingsFragmentBinding binding) {
+        useLogsSwitch = binding.useLogsSwitch;
+        useLogsElement = binding.useLogs;
+        crashReportsElement = binding.crashReporting;
+        crashReportsSwitch = binding.crashReportingSwitch;
+        crashReportSummary = binding.txtCrashReportSummary;
+        testReportElement = binding.sendTestReport;
+        startCollectionElement = binding.startReportCollection;
+        sigquitElement = binding.sendSigquitToRclone;
     }
 
     private void setDefaultStates() {

@@ -19,6 +19,8 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.ShareRemotesRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.databinding.FragmentFileExplorerItemBinding;
+import ca.pkay.rcloneexplorer.databinding.FragmentShareRemotesListBinding;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class ShareRemotesFragment extends Fragment {
@@ -60,16 +62,13 @@ public class ShareRemotesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_share_remotes_list, container, false);
-
-        final Context context = view.getContext();
-        RecyclerView recyclerView =  view.findViewById(R.id.share_remotes_list);
+        FragmentShareRemotesListBinding binding = FragmentShareRemotesListBinding.inflate(inflater, container, false);
+        RecyclerView recyclerView =  binding.shareRemotesList;
         recyclerView.setItemAnimator(new LandingAnimator());
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         ShareRemotesRecyclerViewAdapter recyclerViewAdapter = new ShareRemotesRecyclerViewAdapter(remotes, remoteClickListener);
         recyclerView.setAdapter(recyclerViewAdapter);
-
-        return view;
+        return binding.getRoot();
     }
 
     @Override

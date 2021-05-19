@@ -33,6 +33,9 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import ca.pkay.rcloneexplorer.databinding.EmptyStateConfigFileBinding;
+import ca.pkay.rcloneexplorer.databinding.FragmentRemotesListBinding;
 import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -53,6 +56,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private AddRemoteToNavDrawer pinToDrawerListener;
     private Context context;
     private boolean isDarkTheme;
+    private EmptyStateConfigFileBinding emptyBinding;
+    private FragmentRemotesListBinding binding;
 
     public interface OnRemoteClickListener {
         void onRemoteClick(RemoteItem remote);
@@ -94,8 +99,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view;
         if (!rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
-            view = inflater.inflate(R.layout.empty_state_config_file, container, false);
-            view.findViewById(R.id.empty_state_btn).setOnClickListener(v -> {
+            emptyBinding = EmptyStateConfigFileBinding.inflate(inflater, container, false);
+            emptyBinding.emptyStateBtn.setOnClickListener(v -> {
                 Uri externalConfig;
                 if(null != (externalConfig = rclone.searchExternalConfig())){
                     if (getActivity() != null) {
@@ -108,8 +113,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
                 }
             });
 
-            SpeedDialView speedDialView = view.findViewById(R.id.fab_empty_config);
-            speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+            emptyBinding.fabEmptyConfig.setOnChangeListener(new SpeedDialView.OnChangeListener() {
                 @Override
                 public boolean onMainActionSelected() {
                     Intent intent = new Intent(context, RemoteConfig.class);
@@ -122,22 +126,21 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
                 }
             });
-            return view;
+            return emptyBinding.getRoot();
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
-        view = inflater.inflate(R.layout.fragment_remotes_list, container, false);
+        binding = FragmentRemotesListBinding.inflate(inflater, container, false);
 
-        final Context context = view.getContext();
-        RecyclerView recyclerView =  view.findViewById(R.id.remotes_list);
+        final Context context = binding.getRoot().getContext();
+        RecyclerView recyclerView =  binding.remotesList;
         recyclerView.setItemAnimator(new LandingAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewAdapter = new RemotesRecyclerViewAdapter(remotes, remoteClickListener, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        SpeedDialView speedDialView = view.findViewById(R.id.fab_fragment_remote_list);
-        speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+        binding.fabFragmentRemoteList.setOnChangeListener(new SpeedDialView.OnChangeListener() {
             @Override
             public boolean onMainActionSelected() {
                 Intent intent = new Intent(context, RemoteConfig.class);
@@ -151,7 +154,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
         });
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -229,6 +232,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         context = null;
         remoteClickListener = null;
         pinToDrawerListener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        emptyBinding = null;
+        binding = null;
     }
 
     @Override

@@ -3,15 +3,15 @@ package ca.pkay.rcloneexplorer.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.DialogOpenAsBinding;
 
 public class OpenAsDialog extends DialogFragment {
 
@@ -25,10 +25,10 @@ public class OpenAsDialog extends DialogFragment {
     private final String SAVED_FILE_ITEM = "ca.pkay.rcexplorer.OpenAsDialog.FILE_ITEM";
     private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.OpenAsDialog.IS_DARK_THEME";
     private Context context;
-    private View view;
     private Boolean isDarkTheme;
     private FileItem fileItem;
     private OnClickListener listener;
+    private DialogOpenAsBinding binding;
 
     @NonNull
     @Override
@@ -47,10 +47,9 @@ public class OpenAsDialog extends DialogFragment {
         } else {
             builder = new AlertDialog.Builder(context);
         }
-        LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_open_as, null);
+        binding = DialogOpenAsBinding.inflate(LayoutInflater.from(context));
         setListeners();
-        builder.setView(view);
+        builder.setView(binding.getRoot());
         return builder.create();
     }
 
@@ -67,23 +66,29 @@ public class OpenAsDialog extends DialogFragment {
         this.context = context;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     private void setListeners() {
-        view.findViewById(R.id.open_as_text).setOnClickListener(v -> {
+        binding.openAsText.setOnClickListener(v -> {
             listener.onClickText(fileItem);
             dismiss();
         });
 
-        view.findViewById(R.id.open_as_audio).setOnClickListener(v -> {
+        binding.openAsAudio.setOnClickListener(v -> {
             listener.onClickAudio(fileItem);
             dismiss();
         });
 
-        view.findViewById(R.id.open_as_video).setOnClickListener(v -> {
+        binding.openAsVideo.setOnClickListener(v -> {
             listener.onClickVideo(fileItem);
             dismiss();
         });
 
-        view.findViewById(R.id.open_as_image).setOnClickListener(v -> {
+        binding.openAsImage.setOnClickListener(v -> {
             listener.onClickImage(fileItem);
             dismiss();
         });

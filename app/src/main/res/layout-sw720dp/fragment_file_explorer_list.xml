@@ -11,9 +11,11 @@
     android:background="?attr/backgroundColor">
 
     <include
+        android:id="@+id/empty_directory_state"
         layout="@layout/empty_directory_state" />
 
     <include
+        android:id="@+id/no_search_results"
         layout="@layout/no_search_results" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

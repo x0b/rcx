@@ -9,6 +9,7 @@
     android:background="?attr/backgroundColor" >
 
     <include
+        android:id="@+id/empty_directory_state"
         layout="@layout/empty_directory_state" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

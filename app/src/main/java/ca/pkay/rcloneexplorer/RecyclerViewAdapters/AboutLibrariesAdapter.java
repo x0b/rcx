@@ -1,16 +1,17 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.Map;
 
-import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.AboutIconItemBinding;
+import ca.pkay.rcloneexplorer.databinding.AboutLibrariesItemBinding;
 
 public class AboutLibrariesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -38,12 +39,11 @@ public class AboutLibrariesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == CONTENT_TYPE) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.about_libraries_item, parent, false);
-            return new ContentViewHolder(view);
+            AboutLibrariesItemBinding libBinding = AboutLibrariesItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ContentViewHolder(libBinding);
         }
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.about_icon_item, parent, false);
-        return new FooterViewHolder(view);
+        AboutIconItemBinding iconBinding = AboutIconItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new FooterViewHolder(iconBinding);
     }
 
     @Override
@@ -101,10 +101,10 @@ public class AboutLibrariesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         final TextView libraryName;
         final TextView libraryLicence;
 
-        ContentViewHolder(View itemView) {
-            super(itemView);
-            this.libraryName = itemView.findViewById(R.id.library_name);
-            this.libraryLicence = itemView.findViewById(R.id.library_licence);
+        ContentViewHolder(AboutLibrariesItemBinding binding) {
+            super(binding.getRoot());
+            this.libraryName = binding.libraryName;
+            this.libraryLicence = binding.libraryLicence;
         }
     }
 
@@ -113,10 +113,10 @@ public class AboutLibrariesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         final TextView smashIcons;
         final TextView flatIcon;
 
-        FooterViewHolder(View itemView) {
-            super(itemView);
-            this.smashIcons = itemView.findViewById(R.id.smashicons);
-            this.flatIcon = itemView.findViewById(R.id.flaticon);
+        FooterViewHolder(AboutIconItemBinding binding) {
+            super(binding.getRoot());
+            this.smashIcons = binding.smashicons;
+            this.flatIcon = binding.flaticon;
         }
     }
 }

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.databinding.LookAndFeelSettingsFragmentBinding;
 
 public class LookAndFeelSettingsFragment extends Fragment {
 
@@ -30,6 +31,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
     private SwitchCompat wrapFilenamesSwitch;
     private View wrapFilenamesElement;
     private boolean isDarkTheme;
+    private LookAndFeelSettingsFragmentBinding binding;
 
     public interface OnThemeHasChanged {
         void onThemeChanged();
@@ -54,12 +56,12 @@ public class LookAndFeelSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.look_and_feel_settings_fragment, container, false);
+        binding = LookAndFeelSettingsFragmentBinding.inflate(inflater, container, false);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(inflater.getContext());
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
-        getViews(view);
+        getViews(binding);
         setDefaultStates();
         setClickListeners();
 
@@ -67,7 +69,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
             getActivity().setTitle(getString(R.string.look_and_feel));
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -81,15 +83,15 @@ public class LookAndFeelSettingsFragment extends Fragment {
         }
     }
 
-    private void getViews(View view) {
-        primaryColorElement = view.findViewById(R.id.primary_color);
-        primaryColorPreview = view.findViewById(R.id.primary_color_preview);
-        accentColorElement = view.findViewById(R.id.accent_color);
-        accentColorPreview = view.findViewById(R.id.accent_color_preview);
-        darkThemeSwitch = view.findViewById(R.id.dark_theme_switch);
-        darkThemeElement = view.findViewById(R.id.dark_theme);
-        wrapFilenamesSwitch = view.findViewById(R.id.wrap_filenames_switch);
-        wrapFilenamesElement = view.findViewById(R.id.wrap_filenames);
+    private void getViews(LookAndFeelSettingsFragmentBinding binding) {
+        primaryColorElement = binding.primaryColor;
+        primaryColorPreview = binding.primaryColorPreview;
+        accentColorElement = binding.accentColor;
+        accentColorPreview = binding.accentColorPreview;
+        darkThemeSwitch = binding.darkThemeSwitch;
+        darkThemeElement = binding.darkTheme;
+        wrapFilenamesSwitch = binding.wrapFilenamesSwitch;
+        wrapFilenamesElement = binding.wrapFilenames;
     }
 
     private void setDefaultStates() {
@@ -108,6 +110,12 @@ public class LookAndFeelSettingsFragment extends Fragment {
         darkThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onDarkThemeClicked(isChecked));
         wrapFilenamesElement.setOnClickListener(v -> wrapFilenamesSwitch.setChecked(!wrapFilenamesSwitch.isChecked()));
         wrapFilenamesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onWrapFilenamesClicked(isChecked));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void showPrimaryColorPicker() {
