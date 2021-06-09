@@ -15,6 +15,10 @@
             android:id="@+id/nav_tasks"
             android:icon="@drawable/ic_notification_sync"
             android:title="@string/tasks" />
+        <item
+            android:id="@+id/nav_trigger"
+            android:icon="@drawable/ic_notification_sync"
+            android:title="@string/trigger" />
     </group>
 
     <item

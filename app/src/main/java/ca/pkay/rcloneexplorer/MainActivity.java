@@ -45,6 +45,7 @@ import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
+import ca.pkay.rcloneexplorer.Fragments.TriggerFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
@@ -371,6 +372,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_tasks:
                 startTasksFragment();
                 break;
+            case R.id.nav_trigger:
+                startTriggerFragment();
+                break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
@@ -386,8 +390,17 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void startTasksFragment() {
-        fragment = TasksFragment.newInstance();
+
+    private void startTasksFragment(){
+        startFragment(TasksFragment.newInstance());
+    }
+
+    private void startTriggerFragment() {
+        startFragment(TriggerFragment.newInstance());
+    }
+
+    private void startFragment(Fragment fragmentToStart) {
+        fragment = fragmentToStart;
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {

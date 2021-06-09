@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/trigger_name_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name" />
+
+            <EditText
+                android:id="@+id/trigger_name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <CheckBox
+                android:id="@+id/cb_is_enabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enabled" />
+
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Weekdays" />
+
+            <CheckBox
+                android:id="@+id/trigger_cb_monday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mon" />
+            <CheckBox
+                android:id="@+id/trigger_cb_tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tue" />
+            <CheckBox
+                android:id="@+id/trigger_cb_wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wed" />
+            <CheckBox
+                android:id="@+id/trigger_cb_thursday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thu" />
+            <CheckBox
+                android:id="@+id/trigger_cb_friday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fr" />
+            <CheckBox
+                android:id="@+id/trigger_cb_saturday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sat" />
+            <CheckBox
+                android:id="@+id/trigger_cb_sunday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sunday" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Time" />
+
+
+            <TimePicker android:id="@+id/trigger_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:timePickerMode="spinner" />
+
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Task to run" />
+
+            <Spinner
+                android:id="@+id/trigger_targets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

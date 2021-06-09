@@ -13,7 +13,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "rcloneExplorer.db";
 
     public DatabaseHandler(Context context) {
@@ -22,12 +22,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(DatabaseInfo.SQL_CREATE_TABLES);
+        sqLiteDatabase.execSQL(DatabaseInfo.SQL_CREATE_TABLES_TASKS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-
+        if (oldVersion < 2) {
+            sqLiteDatabase.execSQL(DatabaseInfo.SQL_CREATE_TABLE_TRIGGER);
+        }
     }
 
     public List<Task> getAllTasks(){
@@ -172,4 +174,118 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
+
+    public List<Trigger> getAllTrigger(){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = getTriggerProjection();
+
+        String selection = "";
+        String[] selectionArgs = {};
+
+        String sortOrder = Trigger.COLUMN_NAME_ID + " ASC";
+
+        Cursor cursor = db.query(
+                Trigger.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+
+        List<Trigger> results = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            results.add(triggerFromCursor(cursor));
+        }
+        cursor.close();
+        return results;
+    }
+
+    public Trigger getTrigger(Long id){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = getTriggerProjection();
+
+        String selection = Trigger.COLUMN_NAME_ID + " LIKE ?";
+        String[] selectionArgs = {String.valueOf(id)};
+        String sortOrder = Trigger.COLUMN_NAME_ID + " ASC";
+
+        Cursor cursor = db.query(
+                Trigger.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+
+        List<Trigger> results = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            results.add(triggerFromCursor(cursor));
+        }
+        cursor.close();
+        return results.get(0);
+    }
+
+    public Trigger createTrigger(Trigger triggerToStore){
+        SQLiteDatabase db = getWritableDatabase();
+        long newRowId = db.insert(Trigger.TABLE_NAME, null, getTriggerContentValues(triggerToStore));
+        triggerToStore.setId(newRowId);
+        return triggerToStore;
+
+    }
+
+    public void updateTrigger(Trigger triggerToUpdate) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(Trigger.TABLE_NAME, getTriggerContentValuesWithID(triggerToUpdate), Trigger.COLUMN_NAME_ID+" = ?", new String[]{String.valueOf(triggerToUpdate.getId())});
+    }
+
+    public int deleteTrigger(long id){
+        SQLiteDatabase db = getWritableDatabase();
+        String selection = Trigger.COLUMN_NAME_ID + " LIKE ?";
+        String[] selectionArgs = {String.valueOf(id)};
+        return db.delete(Trigger.TABLE_NAME, selection, selectionArgs);
+
+    }
+
+
+    private ContentValues getTriggerContentValuesWithID(Trigger t){
+        ContentValues values = getTriggerContentValues(t);
+        values.put(Trigger.COLUMN_NAME_ID, t.getId());
+        return values;
+    }
+    private ContentValues getTriggerContentValues(Trigger t){
+        ContentValues values = new ContentValues();
+        values.put(Trigger.COLUMN_NAME_TITLE, t.getTitle());
+        values.put(Trigger.COLUMN_NAME_ENABLED, t.isEnabled());
+        values.put(Trigger.COLUMN_NAME_TIME, t.getTime());
+        values.put(Trigger.COLUMN_NAME_WEEKDAY, t.getWeekdays());
+        values.put(Trigger.COLUMN_NAME_TARGET, t.getWhatToTrigger());
+        return values;
+    }
+    private String[] getTriggerProjection(){
+        String[] projection = {
+                Trigger.COLUMN_NAME_ID,
+                Trigger.COLUMN_NAME_TITLE,
+                Trigger.COLUMN_NAME_ENABLED,
+                Trigger.COLUMN_NAME_TIME,
+                Trigger.COLUMN_NAME_WEEKDAY,
+                Trigger.COLUMN_NAME_TARGET
+        };
+        return projection;
+    }
+
+    private Trigger triggerFromCursor(Cursor cursor){
+        Trigger trigger = new Trigger(cursor.getLong(0));
+        trigger.setTitle(cursor.getString(1));
+        trigger.setEnabled(cursor.getInt(2) == 0);
+        trigger.setTime(cursor.getInt(3));
+        int weekdays = cursor.getInt(4);
+        trigger.setWeekdays((byte)weekdays);
+        trigger.setWhatToTrigger(cursor.getLong(5));
+        return trigger;
+    }
 }

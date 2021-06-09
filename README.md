@@ -57,6 +57,10 @@ Usage
 ------------
 [See the documentation](https://x0b.github.io/docs/).
 
+Developing
+------------
+[See the developer-documentation](https://x0b.github.io/dev/).
+
 Known Issues
 ------------
 - Reauthorization of OAuth remotes shows intermittent failures. This is currently under investigation.

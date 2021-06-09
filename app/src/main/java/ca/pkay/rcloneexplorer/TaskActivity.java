@@ -78,6 +78,7 @@ public class TaskActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Todo fix error when no remotes are available
                 if(existingTask==null){
                     saveTask();
                 }else{

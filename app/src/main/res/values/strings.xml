@@ -562,4 +562,7 @@
     <string name="pref_bugreport_start_summary">Tap to start data collection, then try to reproduce issue and stop collection.</string>
     <string name="pref_send_sigquit_title">Debug: Stop with SIGQUIT</string>
     <string name="pref_send_sigquit_summary">Stops all rclone processes with kill -SIGQUIT. Requires logging enabled.</string>
+    <string name="trigger">Trigger</string>
+    <string name="title_activity_trigger">Trigger</string>
+    <string name="enabled">Enabled</string>
 </resources>
