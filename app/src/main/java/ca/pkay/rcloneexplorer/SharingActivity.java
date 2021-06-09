@@ -2,29 +2,22 @@ package ca.pkay.rcloneexplorer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
@@ -33,15 +26,29 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartService;
 
 public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
                                                                     ShareFragment.OnShareDestinationSelected {
 
+    private static final String TAG = "SharingActivity";
     private boolean isDarkTheme;
     private Fragment fragment;
     private ArrayList<String> uploadList;
     private boolean isDataReady;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -175,7 +182,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    FLog.e(TAG, "UploadTask/doInBackground: error waiting for data", e);
                 }
             }
             return null;
@@ -225,45 +232,53 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
                     success = false;
                     continue;
                 }
-                if (uri.getScheme().equals("content")) {
-                    Cursor returnCursor = getContentResolver().query(uri, null, null, null, null);
-                    if (returnCursor == null) {
-                        return false;
-                    }
-                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    returnCursor.moveToFirst();
-                    fileName = returnCursor.getString(nameIndex);
-                    returnCursor.close();
-                } else {
-                    fileName = uri.getPath();
-                    int index = fileName.lastIndexOf("/");
-                    fileName = fileName.substring(index + 1);
-                }
 
-                File cacheDir = getExternalCacheDir();
-                InputStream inputStream;
                 try {
-                    inputStream = getContentResolver().openInputStream(uri);
-                    if (inputStream == null) {
-                        return false;
+                    fileName = resolveName(uri);
+                } catch (SecurityException e) {
+                    success = false;
+                    continue;
+                }
+                // todo: encrypt external cache
+                File cacheDir = getExternalCacheDir();
+                File outFile = new File(cacheDir, fileName);
+                try (InputStream in = getContentResolver().openInputStream(uri);
+                     FileOutputStream out = new FileOutputStream(outFile)) {
+                    if (null == in) {
+                        success = false;
+                        continue;
                     }
-                    File outFile = new File(cacheDir, fileName);
                     uploadList.add(outFile.getAbsolutePath());
-                    FileOutputStream fileOutputStream = new FileOutputStream(outFile);
-                    byte[] buffer = new byte[4096];
-                    int offset;
-                    while ((offset = inputStream.read(buffer)) > 0) {
-                        fileOutputStream.write(buffer, 0, offset);
+                    byte[] buf = new byte[4096];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
                     }
-                    inputStream.close();
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
+                    out.flush();
                 } catch (IOException e) {
-                    FLog.e(TAG, "Copy error ", e);
-                    return false;
+                    FLog.e(TAG, "Copy error: ", e);
+                    success = false;
                 }
             }
             return success;
+        }
+
+        @NonNull
+        private String resolveName(@NonNull Uri uri) {
+            String[] projection = {OpenableColumns.DISPLAY_NAME};
+            try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
+                if (null != cursor && cursor.moveToFirst()) {
+                    String name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    if (null != name) {
+                        return name;
+                    }
+                }
+            }
+            List<String> segments = uri.getPathSegments();
+            if (segments.size() >= 1) {
+                return segments.get(segments.size() - 1);
+            }
+            return "unnamed";
         }
 
         @Override

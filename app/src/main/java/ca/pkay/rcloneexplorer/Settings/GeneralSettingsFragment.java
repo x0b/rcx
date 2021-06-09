@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
@@ -54,6 +55,8 @@ public class GeneralSettingsFragment extends Fragment {
     private TextView proxyPortSummary;
     private View thumbnailSizeElement;
     private TextView thumbnailSizeSummary;
+    private View localeElement;
+    private TextView localeSummary;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -114,6 +117,8 @@ public class GeneralSettingsFragment extends Fragment {
         proxyPortSummary = view.findViewById(R.id.proxy_port_summary);
         thumbnailSizeElement = view.findViewById(R.id.thumbnail_size);
         thumbnailSizeSummary = view.findViewById(R.id.thumbnail_size_summary);
+        localeElement = view.findViewById(R.id.locale_container);
+        localeSummary = view.findViewById(R.id.locale_summary);
     }
     
     private void setDefaultStates() {
@@ -150,6 +155,14 @@ public class GeneralSettingsFragment extends Fragment {
         if(showThumbnails) {
             thumbnailSizeElement.setVisibility(View.VISIBLE);
         }
+
+        if (sharedPreferences.contains(getString(R.string.pref_key_locale))) {
+            String localeTag = sharedPreferences.getString(getString(R.string.pref_key_locale), "en-US");
+            Locale locale = Locale.forLanguageTag(localeTag);
+            localeSummary.setText(locale.getDisplayLanguage());
+        } else {
+            localeSummary.setText(getString(R.string.pref_locale_not_set));
+        }
     }
     
     private void setClickListeners() {
@@ -182,6 +195,7 @@ public class GeneralSettingsFragment extends Fragment {
         proxyHostElement.setOnClickListener(v -> showProxyHostMenu());
         proxyPortElement.setOnClickListener(v -> showProxyPortMenu());
         thumbnailSizeElement.setOnClickListener(v -> showThumbnailSizeDialog());
+        localeElement.setOnClickListener(v -> showLocaleDialog());
     }
 
     private void showThumbnails(boolean isChecked) {
@@ -456,6 +470,36 @@ public class GeneralSettingsFragment extends Fragment {
             pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size1).apply();
             if(null != thumbnailSizeSummary) {
                 thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showLocaleDialog() {
+        AlertDialog.Builder builder;
+        if (isDarkTheme) {
+            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        final List<String> locales = Arrays.asList(context.getResources().getStringArray(R.array.locales));
+
+        int initialSelection = locales.indexOf(
+                pref.getString(context.getString(R.string.pref_key_locale), "en-US"));
+
+        builder.setTitle(R.string.pref_locale_dlg_title);
+        final int[] userSelected = new int[1];
+        builder.setSingleChoiceItems(R.array.locales, initialSelection, (dialog, which) -> userSelected[0] = which);
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.select, (dialog, which) -> {
+            String locale = locales.get(userSelected[0]);
+            pref.edit().putString(getString(R.string.pref_key_locale), locale).apply();
+            if(null != localeSummary) {
+                localeSummary.setText(Locale.forLanguageTag(locale).getDisplayLanguage());
+                Toasty.normal(context, getString(R.string.pref_locale_restart_notice), Toast.LENGTH_LONG).show();
             }
         });
 

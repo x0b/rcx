@@ -36,6 +36,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -109,13 +110,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                                                                 SortDialog.OnClickListener,
                                                                 ServeDialog.Callback {
 
+    public static final int STREAMING_INTENT_RESULT = 468;
     private static final String TAG = "FileExplorerFragment";
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private static final int FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int FILE_PICKER_SYNC_RESULT = 45;
-    private static final int STREAMING_INTENT_RESULT = 468;
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
     private final String SAVED_SEARCH_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_MODE";
@@ -167,6 +168,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Context context;
     private String thumbnailServerAuth;
     private int thumbnailServerPort;
+    private boolean wrapFilenames;
+    private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -232,6 +235,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
+        String wrapFilenamesKey = getString(R.string.pref_key_wrap_filenames);
+        prefChangeListener = (pref, key) -> {
+            if (key.equals(wrapFilenamesKey) && recyclerViewAdapter != null) {
+                recyclerViewAdapter.setWrapFileNames(pref.getBoolean(wrapFilenamesKey, true));
+            }
+        };
+        sharedPreferences.registerOnSharedPreferenceChangeListener(prefChangeListener);
+        wrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
         if (goToDefaultSet) {
             startAtRoot = sharedPreferences.getBoolean(getString(R.string.pref_key_start_at_root), false);
@@ -270,6 +281,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.showThumbnails(showThumbnails);
+        recyclerViewAdapter.setWrapFileNames(wrapFilenames);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
@@ -583,8 +595,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             menu.findItem(R.id.action_sync).setVisible(false);
         }
 
-        menu.findItem(R.id.action_wrap_filenames).setChecked(true);
-
         if (isInMoveMode || recyclerViewAdapter.isInSelectMode()) {
             setOptionsMenuVisibility(false);
         }
@@ -635,9 +645,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_link:
                 new LinkTask().execute(directoryObject.getCurrentPath());
                 return true;
-            case R.id.action_wrap_filenames:
-                wrapFilenames(item);
-                return true;
             case R.id.action_sync:
                 showSyncDialog(directoryObject.getCurrentPath());
                 return true;
@@ -667,6 +674,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     // serve callback
     @Override
     public void onServeOptionsSelected(int protocol, boolean allowRemoteAccess, String user, String password) {
+        // GH-87: Release old stream
+        context.stopService(new Intent(context, StreamingService.class));
+
         Intent intent = new Intent(getContext(), StreamingService.class);
         intent.putExtra(StreamingService.SERVE_PATH_ARG, directoryObject.getCurrentPath());
         intent.putExtra(StreamingService.REMOTE_ARG, remote);
@@ -724,16 +734,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             fetchDirectoryTask.cancel(true);
         }
         fetchDirectoryTask = new FetchDirectoryContent(true).execute();
-    }
-
-    private void wrapFilenames(MenuItem menuItem) {
-        if (menuItem.isChecked()) {
-            menuItem.setChecked(false);
-            recyclerViewAdapter.setWrapFileNames(false);
-        } else {
-            menuItem.setChecked(true);
-            recyclerViewAdapter.setWrapFileNames(true);
-        }
     }
 
     private void startThumbnailService() {
@@ -1133,6 +1133,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         searchBar.setVisibility(View.GONE);
         ((FragmentActivity) context).setTitle(originalToolbarTitle);
         showNavDrawerButtonInToolbar();
+        prefChangeListener = null;
         isRunning = false;
         context = null;
     }
@@ -1320,6 +1321,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                             default:
                                 return;
                         }
+                        // GH-87: Release old server
+                        context.stopService(new Intent(context, StreamingService.class));
                         tryStartService(context, intent);
                     });
                     builder.setTitle(R.string.pick_a_protocol);
@@ -1673,6 +1676,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
+            if (null == getContext()) {
+                FLog.w(TAG, "FetchDirectoryContent/onPostExecute: discarding refresh");
+                return;
+            }
             if (fileItems == null) {
                 if (silentFetch) {
                     return;
@@ -1801,6 +1808,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         private LoadingDialog loadingDialog;
         private String fileLocation;
         private Process process;
+        private volatile boolean isCancelled = false;
 
         DownloadAndOpen() {
             this(-1);
@@ -1811,6 +1819,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         private void cancelProcess() {
+            isCancelled = true;
             if (null != process) {
                 process.destroy();
             }
@@ -1837,13 +1846,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(FileItem... fileItems) {
             FileItem fileItem = fileItems[0];
-            File file = context.getExternalCacheDir();
-            String saveLocation;
-            if (file != null) {
-                saveLocation = file.getAbsolutePath();
-            } else {
+            File[] extCacheDirs = ContextCompat.getExternalCacheDirs(context);
+            if (extCacheDirs.length < 1) {
                 return false;
             }
+            String saveLocation = extCacheDirs[0].getAbsolutePath();
 
             fileLocation = saveLocation + "/" + fileItem.getName();
 
@@ -1853,7 +1860,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if (!isCancelled) {
+                        FLog.e(TAG, "DownloadAndOpen/doInBackground: error waiting for process", e);
+                    }
                     return false;
                 }
             }
@@ -1942,13 +1951,17 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 return false;
             }
             fileItem = fileItems[0];
+            int port = allocatePort(8080, true);
             serveIntent = new Intent(context, StreamingService.class);
             serveIntent.putExtra(StreamingService.SERVE_PATH_ARG, fileItem.getPath());
             serveIntent.putExtra(StreamingService.REMOTE_ARG, remote);
             serveIntent.putExtra(StreamingService.SHOW_NOTIFICATION_TEXT, false);
+            serveIntent.putExtra(StreamingService.SERVE_PORT, port);
+            // GH-87: Release old stream
+            context.stopService(new Intent(context, StreamingService.class));
             tryStartService(context, serveIntent);
 
-            Uri uri = Uri.parse("http://127.0.0.1:8080")
+            Uri uri = Uri.parse("http://127.0.0.1:" + port)
                     .buildUpon()
                     .appendPath(fileItem.getName())
                     .build();
@@ -1975,9 +1988,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             Request request = new Request.Builder().url(uri.toString()).head().build();
             int code = -1;
 
-            int retries = 120;
+            long waitTime = 30 * 1000;
             boolean available = false;
-            while (retries > 0) {
+            while (waitTime > 0) {
+                long waitStart = System.nanoTime();
                 try {
                     FLog.v(TAG, "doInBackground: HEAD %s", uri.toString());
                     Response response = client.newCall(request).execute();
@@ -1998,13 +2012,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     available = true;
                     break;
                 }
-
                 try {
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
                     // ignored
                 }
-                retries--;
+                long waitEnd = System.nanoTime();
+                long actualWait = (waitEnd - waitStart) / 1000000;
+                waitTime -= actualWait;
             }
             return available;
         }
@@ -2081,24 +2096,26 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String link) {
             Dialogs.dismissSilently(loadingDialog);
+            if (null == getContext()) {
+                return;
+            }
 
-            if (s == null) {
+            if (link == null) {
                 Toasty.error(context, getString(R.string.error_generating_link), Toast.LENGTH_SHORT, true).show();
                 return;
             }
 
             LinkDialog linkDialog = new LinkDialog()
                     .isDarkTheme(isDarkTheme)
-                    .setLinkUrl(s);
+                    .setLinkUrl(link);
             if (getFragmentManager() != null && !getChildFragmentManager().isStateSaved()) {
                 linkDialog.show(getChildFragmentManager(), "link dialog");
             }
 
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clipData = ClipData.newPlainText("Copied link", s);
+            ClipData clipData = ClipData.newPlainText("Copied link", link);
             if (clipboardManager == null) {
                 return;
             }

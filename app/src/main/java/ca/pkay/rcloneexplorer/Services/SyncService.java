@@ -31,9 +31,11 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 public class SyncService extends IntentService {
 
+    private static final String TAG = "SyncService";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_ARG";
     public static final String REMOTE_PATH_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_PATH_ARG";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG";
@@ -145,13 +147,13 @@ public class SyncService extends IntentService {
                     updateNotification(title, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
             }
 
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
 

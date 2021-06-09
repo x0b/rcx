@@ -9,13 +9,13 @@ on:
       - 'dev'
 
 jobs:
-  build:
+  build-all:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
-    - name: set up JDK 1.8
+    - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
@@ -24,15 +24,39 @@ jobs:
       with:
         go-version: 1.14
       id: go
-    # https://github.com/actions/virtual-environments/issues/578
-    - name: Fix missing NDK dependency
-      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;20.0.5594570"
+    - name: Force NDK version
+      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147"
     - name: Build rclone
-      run: ./gradlew buildNative -p rclone
+      run: ./gradlew rclone:buildNative
     - name: Build app
       run: ./gradlew assembleOssDebug
-    - name: Upload APK
-      uses: actions/upload-artifact@v2-preview
+    - name: Upload APK (arm)
+      uses: actions/upload-artifact@v2
+      with:
+        name: arm.apk
+        path: app/build/outputs/apk/oss/debug/app-oss-armeabi-v7a-debug.apk
+        retention-days: 3
+    - name: Upload APK (arm64)
+      uses: actions/upload-artifact@v2
+      with:
+        name: arm64.apk
+        path: app/build/outputs/apk/oss/debug/app-oss-arm64-v8a-debug.apk
+        retention-days: 3
+    - name: Upload APK (x86)
+      uses: actions/upload-artifact@v2
+      with:
+        name: x86.apk
+        path: app/build/outputs/apk/oss/debug/app-oss-x86-debug.apk
+        retention-days: 3
+    - name: Upload APK (arm)
+      uses: actions/upload-artifact@v2
+      with:
+        name: x64.apk
+        path: app/build/outputs/apk/oss/debug/app-oss-x86_64-debug.apk
+        retention-days: 3
+    - name: Upload APK (universal)
+      uses: actions/upload-artifact@v2
       with:
         name: universal.apk
         path: app/build/outputs/apk/oss/debug/app-oss-universal-debug.apk
+        retention-days: 14

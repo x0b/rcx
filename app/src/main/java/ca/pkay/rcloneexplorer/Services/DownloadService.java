@@ -28,10 +28,12 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 
 public class DownloadService extends IntentService {
 
+    private static final String TAG = "DownloadService";
     public static final String DOWNLOAD_ITEM_ARG = "ca.pkay.rcexplorer.download_service.arg1";
     public static final String DOWNLOAD_PATH_ARG = "ca.pkay.rcexplorer.download_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.download_service.arg3";
@@ -134,13 +136,13 @@ public class DownloadService extends IntentService {
                     updateNotification(downloadItem, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
             }
 
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
 
@@ -194,7 +196,13 @@ public class DownloadService extends IntentService {
     private void updateNotification(FileItem downloadItem, String content, String[] bigTextArray) {
         StringBuilder bigText = new StringBuilder();
         for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
+            String progressLine = bigTextArray[i];
+            if (null != progressLine) {
+                bigText.append(progressLine);
+            }
+            if (!"inode/directory".equals(downloadItem.getMimeType())) {
+                break;
+            }
             if (i < 4) {
                 bigText.append("\n");
             }

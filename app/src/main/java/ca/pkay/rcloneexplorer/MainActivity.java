@@ -26,6 +26,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,7 @@ import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
+import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
+    private static final int ONBOARDING_REQUEST = 93;
     private static final int UPDATE_AVAILABLE = 201;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
@@ -131,9 +134,15 @@ public class MainActivity extends AppCompatActivity
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableCrashReports = sharedPreferences.getBoolean(getString(R.string.pref_key_crash_reports), false);
+        boolean enableCrashReports = sharedPreferences.getBoolean(
+                getString(R.string.pref_key_crash_reports),
+                getResources().getBoolean(R.bool.default_crash_log_enable));
         if (enableCrashReports) {
             CrashLogger.initCrashLogging(this);
+        }
+
+        if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
+            startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }
 
         applyTheme();
@@ -154,7 +163,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         rclone = new Rclone(this);
-        requestPermissions();
 
         findViewById(R.id.locked_config_btn).setOnClickListener(v -> askForConfigPassword());
 
@@ -210,6 +218,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        requestPermissions();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         pinRemotesToDrawer();
@@ -261,10 +280,18 @@ public class MainActivity extends AppCompatActivity
                 try {
                     rclone.exportConfigFile(uri);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FLog.e(TAG, "Could not export config file to %s", e, uri);
                     Toasty.error(this, getString(R.string.error_exporting_config_file), Toast.LENGTH_SHORT, true).show();
                 }
             }
+        } else if (requestCode == ONBOARDING_REQUEST) {
+            RefreshLocalAliases refresh = new RefreshLocalAliases();
+            if(refresh.isRequired()) {
+                refresh.execute();
+            }
+        } else if (requestCode == FileExplorerFragment.STREAMING_INTENT_RESULT) {
+            Intent serveIntent = new Intent(this, StreamingService.class);
+            context.stopService(serveIntent);
         }
     }
 
@@ -504,17 +531,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
-        } else {
-            boolean refreshLocalAliases = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
-            if (refreshLocalAliases) {
-                FLog.d(TAG, "Reloading local path aliases");
-                RefreshLocalAliases refresh = new RefreshLocalAliases();
-                if (refresh.isRequired()) {
-                    refresh.execute();
-                }
+        boolean refreshLocalAliases = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
+        if (refreshLocalAliases) {
+            FLog.d(TAG, "Reloading local path aliases");
+            RefreshLocalAliases refresh = new RefreshLocalAliases();
+            if (refresh.isRequired()) {
+                refresh.execute();
             }
         }
     }
@@ -757,6 +780,16 @@ public class MainActivity extends AppCompatActivity
 
         private LoadingDialog loadingDialog;
 
+        private boolean isPermissable(File file) {
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                return Environment.isExternalStorageLegacy(file);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                return Environment.isExternalStorageManager(file);
+            } else {
+                return true;
+            }
+        }
+
         protected boolean isRequired() {
             String[] externalVolumes = null;
             String persisted = PreferenceManager.getDefaultSharedPreferences(context)
@@ -766,7 +799,9 @@ public class MainActivity extends AppCompatActivity
             }
             String[] current = Stream.of(context.getExternalFilesDirs(null))
                     .filter(f -> f != null)
-                    .map(f -> f.getAbsolutePath())
+                    .map(this::getRootOrSelf)
+                    .filter(this::isPermissable)
+                    .map(File::getAbsolutePath)
                     .toArray(String[]::new);
 
             if(Arrays.deepEquals(externalVolumes, current)) {
@@ -827,6 +862,8 @@ public class MainActivity extends AppCompatActivity
                         File root = getVolumeRoot(file);
                         if (root.canRead()) {
                             addLocalRemote(root);
+                        } else if (file.canRead()){
+                            addLocalRemote(file);
                         }
                     } catch (NullPointerException | IOException e) {
                         // ignored, this is not a valid file
@@ -835,6 +872,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             return null;
+        }
+
+        private File getRootOrSelf(File file) {
+            File root = getVolumeRoot(file);
+            if (root.canRead()) {
+                return root;
+            } else {
+                return file;
+            }
         }
 
         private File getVolumeRoot(File file) {
@@ -850,13 +896,22 @@ public class MainActivity extends AppCompatActivity
         private void addLocalRemote(File root) throws IOException {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
             String name = root.getCanonicalPath();
-            String id = Environment.isExternalStorageEmulated(root) ? EMULATED : UUID.randomUUID().toString();
+            String id = UUID.randomUUID().toString();
+            try {
+                if (Environment.isExternalStorageEmulated(root)) {
+                    id = EMULATED;
+                }
+            } catch (IllegalArgumentException e) {
+                FLog.e(TAG, "RefreshLocalAliases/addLocalRemote: %s is not a valid path", e, name);
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 StorageManager storageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
                 StorageVolume storageVolume = storageManager.getStorageVolume(root);
-                name = storageVolume.getDescription(context);
-                if (null != storageVolume.getUuid()) {
-                    id = storageVolume.getUuid();
+                if (null != storageVolume) {
+                    name = storageVolume.getDescription(context);
+                    if (null != storageVolume.getUuid()) {
+                        id = storageVolume.getUuid();
+                    }
                 }
             }
 
@@ -868,6 +923,9 @@ public class MainActivity extends AppCompatActivity
             options.add(path);
             FLog.d(TAG, "Adding local remote [%s] remote = %s", id, path);
             Process process = rclone.configCreate(options);
+            if (null == process) {
+                return;
+            }
             try {
                 process.waitFor();
                 if (process.exitValue() != 0) {

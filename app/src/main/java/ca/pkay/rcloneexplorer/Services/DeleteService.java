@@ -18,9 +18,11 @@ import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 public class DeleteService extends IntentService {
 
+    private static final String TAG = "DeleteService";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.DELETE_SERVICE_REMOTE_ARG";
     public static final String DELETE_ITEM = "ca.pkay.rcexplorer.DELETE_SERVICE_DELETE_ARG";
     public static final String PATH = "ca.pkay.rcexplorer.DELETE_SERVICE_PATH_ARG";
@@ -80,7 +82,7 @@ public class DeleteService extends IntentService {
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
 

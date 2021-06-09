@@ -17,7 +17,7 @@
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
-    <string name="serve">Serve</string>
+    <string name="serve">Serve…</string>
     <string name="action_sort_name">Name</string>
     <string name="action_sort_date">Date</string>
     <string name="action_sort_size">Size</string>
@@ -50,10 +50,9 @@
     <string name="select">Select</string>
     <string name="app_icon">App Icon</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="github_app_url" translatable="false">https://github.com/x0b/rcloneExplorer</string>
-    <string name="github_issue_url" translatable="false">https://github.com/x0b/rcloneExplorer/issues/new?title=Bug%20Report&amp;label=app%20issue%20link&amp;body=</string>
-    <string name="github_issue_template" translatable="false" tools:ignore="TypographyDashes">### What problem are you having with rcloneExplorer?\n&lt;!-- Please be as detailed as reasonable. If you have a problem, try to include steps on how to reproduce the issue. --&gt;\n\n\n\n#### Technical Information\n&lt;!-- This information helps with finding your problem. However, you can redact it if you like. --&gt;\n```\nrclone: %1$s\nrcloneExplorer: %2$s\nandroid-sdk: %3$d\nandroid-device: %4$s\nandroid-ndk-abis: %5$s\n```\n</string>
-    <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
+    <string name="github_app_url" translatable="false">https://github.com/x0b/rcx</string>
+    <string name="github_issue_url" translatable="false">https://github.com/x0b/rcx/issues/new/choose</string>
+   <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
     <string name="github_maintainer_url" translatable="false">https://github.com/x0b</string>
     <string name="about_check_updates">Check</string>
     <string name="replace_config_file_question">Replace current configuration file?</string>
@@ -63,9 +62,10 @@
     <string name="download_service_notification_description">File downloads</string>
     <string name="download_service_notification_title">Download</string>
     <string name="streaming_service_notification_title">Streaming Service</string>
-    <string name="streaming_service_notification_content">Serving on http://127.0.0.1:8080</string>
+    <string name="streaming_service_notification_content">Serving on http://127.0.0.1:%1$d</string>
     <string name="streaming_service_notification_channel_description">Streaming service</string>
     <string name="streaming_task_failed">Could not stream file</string>
+    <string name="rcd_service_notification_channel_description">Background Service</string>
     <string name="upload_service_notification_title">Upload</string>
     <string name="upload_complete">Upload complete</string>
     <string name="upload_service_notification_channel_description">File uploads</string>
@@ -143,11 +143,20 @@
     <string name="smashicons" translatable="false">Smashicons</string>
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
+    <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
+    <string name="intro_welcome_title">Welcome</string>
+    <string name="intro_welcome_description">RCX manages your files, whether they are stored on your device or online in the cloud. Check out the documentation at x0b.github.io/docs for more information.</string>
+    <string name="intro_storage_title">Storage access required</string>
+    <string name="intro_storage_description">RCX uses rclone, and we need your permission to access files. First, please allow storage access.</string>
+    <string name="intro_community_title">Community</string>
+    <string name="intro_community_description">RCX is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
+    <string name="intro_community_switch">Contribute error reports</string>
     <string name="pref_key_stream_max" translatable="false">pref_key_stream_max</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_color_primary" translatable="false">pref_key_color_primary</string>
     <string name="pref_key_color_accent" translatable="false">pref_key_color_accent</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_dark_theme</string>
+    <string name="pref_key_wrap_filenames" translatable="false">pref_key_wrap_filenames</string>
     <string name="pref_key_app_updates" translatable="false">pref_key_app_updates</string>
     <string name="pref_key_app_updates_beta" translatable="false">pref_key_app_updates_beta</string>
     <string name="pref_key_crash_reports" translatable="false">pref_key_crash_reports</string>
@@ -157,7 +166,9 @@
     <string name="pref_key_version_code" translatable="false">pref_key_version_code</string>
     <string name="pref_key_version_name" translatable="false">pref_key_version_name</string>
     <string name="pref_key_enable_saf" translatable="false">pref_key_enable_saf</string>
-    <string name="pref_key_enable_vcp" translatable="false">pref_key_enable_vcp</string>
+    <string name="pref_key_enable_vcp" translatable="false">vcp_enable</string>
+    <string name="pref_key_vcp_declare_local" translatable="false">vcp_declare_local</string>
+    <string name="pref_key_vcp_grant_all" translatable="false">vcp_grant_all</string>
     <string name="file_access">File Access</string>
     <string name="look_and_feel">Look and Feel</string>
     <string name="primary_color">Primary Color</string>
@@ -181,9 +192,14 @@
     <string name="pref_proxy_port">Proxy Port</string>
     <string name="pref_proxy_port_dlg_title">Enter Proxy port</string>
     <string name="pref_proxy_exclude">Exclude from Proxy</string>
+    <string name="pref_locale">Language</string>
+    <string name="pref_locale_dlg_title">Select Language</string>
+    <string name="pref_locale_restart_notice">Language will change once the app is restarted</string>
+    <string name="pref_key_locale" translatable="false">locale</string>
+    <string name="pref_locale_not_set">Use default language</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="use_logs">Log Rclone errors</string>
-    <string name="use_logs_summary">Errors will be logged to a local file</string>
+    <string name="use_logs_summary">Errors will be logged to a local file (Android/data/io.github.rcx/files/logs)</string>
     <string name="color_picker_checkmark">Color picker checkmark</string>
     <string name="primary_color_picker_title">Select primary color</string>
     <string name="accent_color_picker_title">Select accent color</string>
@@ -213,7 +229,7 @@
     <string name="no_search_results">No search results</string>
     <string name="nothing_selected">Nothing selected</string>
     <string name="file_picker_root_title">Device storage</string>
-    <string name="remote_name_hint">Remote name</string>
+    <string name="remote_name_hint">Name (a-z, 0-9 only)</string>
     <string name="amazon_cloud_storage_client_id_hint">Amazon Client ID</string>
     <string name="amazon_cloud_storage_client_secret_hint">Amazon Client Secret</string>
     <string name="box_client_id_hint">Box App Client ID</string>
@@ -287,7 +303,7 @@
     <string name="select_remote">Select a remote</string>
     <string name="select_path_to_alias">Select path to Alias</string>
     <string name="select_path_to_crypt">Select path to Encrypt</string>
-    <string name="webdav_spinner_prompt">Name of the Webdav service</string>
+    <string name="webdav_spinner_prompt">WebDAV service provider</string>
     <string-array name="filename_encryption_spinner_values" translatable="false">
         <item>How to encrypt the filenames</item>
         <item>Off</item>
@@ -355,7 +371,9 @@
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
-    <string name="pref_crash_report_summary">Send a report if the app crashes. This will help the development with technical details and won\'t contain personal information. Data will be send to Fabric Crashlytics (<a href="https://docs.fabric.io/android/fabric/data-privacy.html&#35;crashlytics">Privacy Policy</a>).</string>
+    <string name="pref_crash_report_summary">Help the developers by sending error and crash reports. See https://x0b.github.io/rcx-privacy. \nID: %1$s.</string>
+    <string name="pref_send_test_report_title">Send Test Report</string>
+    <string name="pref_send_test_report_summary">Sends a test report to the crash logger</string>
     <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
     <string name="pin_to_drawer">Pin to drawer</string>
@@ -403,7 +421,7 @@
     <string name="remote_not_found">Remote not found</string>
     <string name="add_to_home_screen">Add to home screen</string>
     <string name="pick_a_protocol">Pick a protocol</string>
-    <string name="sync">Sync</string>
+    <string name="sync">Sync…</string>
     <string name="select_sync_direction">Select sync direction</string>
     <string name="nav_drawer_pinned_header">Pinned</string>
     <string name="nav_header_options_header">Options</string>
@@ -425,12 +443,15 @@
     <string name="allow_remote_access">Allow access from other devices</string>
     <string name="pref_key_local_alias_remotes" translatable="false">local_alias_remotes</string>
     <string name="pref_key_refresh_local_aliases" translatable="false">refresh_local_aliases</string>
-    <string name="refreshing_local_alias_remotes">Refreshing local alias remotes...</string>
+    <string name="refreshing_local_alias_remotes">Refreshing local alias remotes…</string>
     <string name="pref_enable_local_alias_title">Refresh local drives</string>
     <string name="pref_enable_local_alias_summary">Automatically refresh local storage media when starting</string>
     <string name="authentication">Authentication</string>
     <string name="optional">Optional</string>
     <string name="serve_dialog_title">Serve a remote</string>
+    <string name="serve_dialog_remote_notice_enabled">The current directory will be visible to the local network (TVs, media players).</string>
+    <string name="serve_dialog_remote_notice_disabled">Files will only be available to other apps on this device.</string>
+    <string name="pref_choice_serve_dialog_allow_ext" translatable="false">choice_serve_allow_ext</string>
     <string name="config_use_external_question">Import found configuration?</string>
     <string name="config_import_external_explain">Automatically import from %1$s</string>
     <string name="pref_header_file_access">File Access</string>
@@ -441,13 +462,21 @@
     <string name="pref_saf_permission_label_external">External Storage (%1$s)</string>
     <string name="pref_saf_virtual_content_provider_enable">Enable Content Provider Preview</string>
     <string name="pref_saf_virtual_content_provider_summary">EXPERIMENTAL: Allows you to grant other apps access to rclone remotes</string>
+    <string name="pref_saf_vcp_local_pretend_enable">Declare as local provider</string>
+    <string name="pref_saf_vcp_local_pretend_summary">Some apps (e.g. Google docs) otherwise can\'t access files</string>
+    <string name="pref_saf_vcp_grant_all_enable">All any app to access your remotes</string>
+    <string name="pref_saf_vcp_grant_all_summary">WARNING: This will allow any app to read and write any path on any configured remote.</string>
     <string name="saf_uri_permission_added">Storage added</string>
     <string name="saf_uri_permission_cancelled">Permission Cancelled</string>
     <string name="saf_uri_permission_error">Invalid permission - can not access storage</string>
     <string name="saf_uri_permission_already_added">Storage or a subfolder is already added</string>
     <string name="saf_uri_permission_no_support">Third party not yet supported. Open an issue with the affected app name.</string>
     <string name="virtual_content_provider_summary">%1$d Remotes available</string>
+    <string name="virtual_content_provider_exception_advice">Check your network connection</string>
+    <string name="virtual_content_provider_exception_error">Support info: \n%1$s</string>
     <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>
+    <string name="virtual_content_provider_service_error">Rclone service connection failure. Force stop and retry.</string>
+    <string name="virtual_content_provider_no_remotes">No remotes configured. Open RCX to add a storage location.</string>
     <string name="remote_properties_remote_name">Remote name</string>
     <string name="remote_properties_storage_usage">Storage usage</string>
     <string name="remote_properties_storage_stats">%1$s / %2$s used (%3$s free)</string>
@@ -520,4 +549,17 @@
     <string name="task_edit_hint_title">Title of Task</string>
     <string name="task_edit_hint_local">Local Path</string>
     <string name="task_edit_hint_remote">Remote Path</string>
+    <string name="rcd_service_notification_running_in_background">Rclone is running in background</string>
+    <string name="rcd_service_notification_no_active_jobs">No active jobs.</string>
+    <string name="rcd_service_notification_btn_stop_all">Stop All</string>
+    <string name="rcd_service_notification_stats_template">Running: %1$d, Finished: %2$d, Failed: %3$d</string>
+    <string name="pref_key_rcd_user" translatable="false">rcd_user</string>
+    <string name="pref_key_rcd_pass" translatable="false">rcd_pass</string>
+    <string name="report_collection_title">Bug report</string>
+    <string name="report_collection_collecting">Collecting data for bug report</string>
+    <string name="report_collection_stop_collection">Stop collection</string>
+    <string name="pref_bugreport_start_title">Collect local bug report</string>
+    <string name="pref_bugreport_start_summary">Tap to start data collection, then try to reproduce issue and stop collection.</string>
+    <string name="pref_send_sigquit_title">Debug: Stop with SIGQUIT</string>
+    <string name="pref_send_sigquit_summary">Stops all rclone processes with kill -SIGQUIT. Requires logging enabled.</string>
 </resources>

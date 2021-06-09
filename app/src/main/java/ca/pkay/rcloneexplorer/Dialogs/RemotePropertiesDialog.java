@@ -238,13 +238,13 @@ public class RemotePropertiesDialog extends DialogFragment {
 
                 if (RemoteItem.ONEDRIVE == remoteItem.getType()) {
                     // OneDrive needs active drive selection
-                    postOauth.addFollowing("Your choice> ", "1")
+                    postOauth.addFollowing("OneDrive Personal or Business", "onedrive")
                             .addFollowing("Chose drive to use:> ", "0")
                             .addFollowing("y/n> ", "y");
                 }
 
                 ErrorHandler errorHandler = e -> {
-                    FLog.e(TAG, "onError: The recipe is probably bad.", e);
+                    FLog.e(TAG, "onError: The recipe for %s is probably bad", e, remoteItem.getTypeReadable());
                     process.destroy();
                 };
 

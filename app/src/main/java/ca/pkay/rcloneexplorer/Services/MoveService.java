@@ -18,9 +18,11 @@ import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 public class MoveService extends IntentService {
 
+    private static final String TAG = "MoveService";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.MOVE_SERVICE_REMOTE_ARG";
     public static final String MOVE_DEST_PATH = "ca.pkat.rcexplorer.MOVE_SERVICE_MOVE_DEST_ARG";
     public static final String MOVE_ITEM = "ca.pkay.rcexplorer.MOVE_SERVICE_MOVE_ARG";
@@ -82,7 +84,7 @@ public class MoveService extends IntentService {
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
         sendUploadFinishedBroadcast(remote.getName(), moveDestPath, path);

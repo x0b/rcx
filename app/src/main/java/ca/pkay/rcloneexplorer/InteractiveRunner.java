@@ -137,6 +137,10 @@ public class InteractiveRunner {
             return addFollowing(new Step(trigger, new StringAction(action)));
         }
 
+        public Step addFollowing(String trigger, String action, @StreamType int streamType) {
+            return addFollowing(new Step(trigger, ENDS_WITH, streamType, new StringAction(action)));
+        }
+
         public List<Step> getFollowing() {
             return Collections.unmodifiableList(followingSteps);
         }

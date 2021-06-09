@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.RemoteConfig;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.Toast;
@@ -11,12 +12,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import ca.pkay.rcloneexplorer.ActivityHelper;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import es.dmoral.toasty.Toasty;
 
 public class RemoteConfig extends AppCompatActivity implements RemotesConfigList.ProviderSelectedListener {
 
     private final String OUTSTATE_TITLE = "ca.pkay.rcexplorer.remoteConfig.TITLE";
     private Fragment fragment;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/main"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:paddingTop="@dimen/appintro_statusbar_height"
+                                                   android:paddingBottom="@dimen/appintro2_bottombar_height"
+                                                   tools:background="@color/appintro_background_color">
+
+    <TextView
+            android:id="@+id/title"
+            style="@style/AppIntroDefaultHeading"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            app:layout_constraintVertical_weight="2"
+            app:layout_constraintBottom_toTopOf="@+id/img_slide_main"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            android:text="@string/intro_community_title"/>
+
+    <ImageView
+        android:id="@+id/img_slide_main"
+        style="@style/AppIntroDefaultImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/text_contribute_logs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintDimensionRatio="H,5:4"
+        app:layout_constraintVertical_weight="5"
+        app:srcCompat="@drawable/ic_heart_red_24dp" />
+
+    <TextView
+            android:id="@+id/text_contribute_logs"
+            style="@style/AppIntroDefaultText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintVertical_weight="3"
+            app:layout_constraintBottom_toTopOf="@+id/switch_err_logs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_slide_main"
+            android:text="@string/intro_community_description"/>
+
+    <Switch
+            android:text="@string/intro_community_switch"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AppIntroDefaultText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_contribute_logs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/switch_err_logs"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

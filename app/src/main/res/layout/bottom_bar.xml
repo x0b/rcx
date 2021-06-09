@@ -40,11 +40,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
             android:text="@string/download"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <Space
@@ -73,11 +74,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:text="@string/move"
             android:textColor="@android:color/white"
-            android:text="@string/move"/>
+            android:textSize="12sp" />
     </LinearLayout>
 
     <Space
@@ -106,11 +108,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:text="@string/rename"
             android:textColor="@android:color/white"
-            android:text="@string/rename"/>
+            android:textSize="12sp" />
     </LinearLayout>
 
     <Space
@@ -139,11 +142,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
+            android:paddingBottom="10dp"
+            android:text="@string/delete"
             android:textColor="@android:color/white"
-            android:text="@string/delete"/>
+            android:textSize="12sp" />
     </LinearLayout>
 
     <Space

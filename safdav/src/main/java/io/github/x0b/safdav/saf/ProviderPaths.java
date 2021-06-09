@@ -5,18 +5,27 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+
 import io.github.x0b.safdav.file.ItemNotFoundException;
 import io.github.x0b.safdav.file.SafItem;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 public class ProviderPaths {
 
     private static final String TAG = "ProviderPaths";
+    private static volatile ConcurrentHashMap<String, Uri> urisById;
+    private static volatile ConcurrentHashMap<Uri, String> idsByUri;
     private static final String ANDROID_EXTERNAL_STORAGE_PREFIX = "content://com.android.externalstorage.documents/tree/";
+
+    public static final String ANDROID_PROVIDER_AUTHORITY = "com.android.externalstorage.documents";
 
     private final Context context;
     // stores permissions by their name
@@ -36,10 +45,19 @@ public class ProviderPaths {
         return new SafPermissionItem(permissions);
     }
 
+    /**
+     * Create a mapping between a DAV path and a corresponding permission item. This path will be
+     * later used to look up the correct permission to use for accessing that storage volume.
+     * @param uri
+     * @return
+     */
     public static String getPathForUri(Uri uri){
+        if (!ANDROID_PROVIDER_AUTHORITY.equals(uri.getAuthority())) {
+            return mapUriThirdParty(uri);
+        }
         String path = getNormalizedPath(uri);
         path = path.substring(0, path.length()-1);
-        if("primary".equals(path) && "com.android.externalstorage.documents".equals(uri.getAuthority())) {
+        if("primary".equals(path) && ANDROID_PROVIDER_AUTHORITY.equals(uri.getAuthority())) {
             if(Environment.isExternalStorageRemovable()) {
                 path = "SD Card";
             } else {
@@ -75,14 +93,21 @@ public class ProviderPaths {
         if(null == requestUri || '/' != requestUri.charAt(0)){
             throw new IllegalArgumentException("You must request an actual path permission, not " + requestUri);
         }
-
+        Uri thirdParty = getUriThirdParty(requestUri);
+        if (null != thirdParty) {
+            return thirdParty;
+        }
         // the first path segment is the id to resolve to the underlying permission uri
         String path = requestUri.substring(1);
-        int idx;
+        int idx = requestUri.indexOf('/', 1);
         String pathExtra = "";
-        if((idx = requestUri.indexOf('/', 1)) != -1) {
+        // cut trailing slash
+        if(idx != 1 && idx == path.length()) {
             path = requestUri.substring(1, idx);
-            pathExtra = requestUri.substring(idx+1);
+        }
+        if(idx != -1 && idx < path.length()-1) {
+            path = requestUri.substring(1, idx);
+            pathExtra = requestUri.substring(idx);
         }
         // try to retrieve by map
         Uri storedUri = permissionsByPath.get(path);
@@ -151,11 +176,46 @@ public class ProviderPaths {
         return path;
     }
 
-    public static String getProviderHash(Uri uri){
-        String input = uri.getAuthority();
-        byte[] bytes = input.getBytes();
-        Checksum checksum = new CRC32();
-        checksum.update(bytes, 0, bytes.length);
-        return Long.toHexString(checksum.getValue());
+    private static void initUriMaps() {
+        if (null == idsByUri) {
+            synchronized (ProviderPaths.class) {
+                if(null == idsByUri) {
+                    idsByUri = new ConcurrentHashMap<>();
+                    urisById = new ConcurrentHashMap<>();
+                }
+            }
+        }
+    }
+
+    private static String mapUriThirdParty(Uri uri) {
+        initUriMaps();
+        synchronized (idsByUri) {
+            if(!idsByUri.containsKey(uri)) {
+                String uriId = uri.getAuthority() + " (" + UUID.randomUUID().toString() + ")"; //uri.getPath().replace("/", "_")
+                idsByUri.put(uri, uriId);
+                urisById.put(uriId, uri);
+            }
+            return idsByUri.get(uri) + "/";
+        }
+    }
+
+    private static @Nullable Uri getUriThirdParty(String requestUri) {
+        int segmentEnd = requestUri.indexOf('/', 1);
+        if (-1 == segmentEnd && requestUri.length() >= 2) {
+            segmentEnd = requestUri.length();
+        }
+        String permissionId = requestUri.substring(1, segmentEnd);
+        initUriMaps();
+        synchronized (idsByUri) {
+            if(urisById.containsKey(permissionId)) {
+                Uri uri = urisById.get(permissionId);
+                if (requestUri.length() >= segmentEnd + 1) {
+                    return uri.buildUpon().appendEncodedPath(requestUri.substring(segmentEnd+1)).build();
+                } else {
+                    return uri;
+                }
+            }
+            return null;
+        }
     }
 }

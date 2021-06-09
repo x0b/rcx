@@ -1,3 +1,35 @@
+### 1.12.0
+* **New:** Support for accessing cloud files from other apps (SAF DocumentProvider)
+* **New:** Support for all DocumentProviders
+* **New:** Support for translations, with German as test language
+* **Fix:** Crash after refreshing directory
+* **Fix:** Crash when deleting remote
+* **Fix:** Crash when lifecycle event occurs while creating link
+* **Fix:** Crash when setting up local remote
+* **Fix:** Crash when sharing file to RCX and cancelling immediately
+* **Fix:** Crash when sharing file to RCX with missing permissions
+* **Fix:** Crash when sharing file to RCX without name
+* **Fix:** Crash when trying to access SAF content
+* **Fix:** Crash when trying to authenticate an OAuth remote on devices with defective browser
+* **Fix:** Crash when trying to stop failed Streaming
+* **Fix:** Crash when updating local storage devices when discovering invalid or unknown devices
+* **Fix:** FileNotFound being reported as SAF server error (SAFDAV)
+* **Fix:** Local storage spaces not refreshing after changing storage permissions
+* **Fix:** Notification for uploads/downloads showing garbage
+* **Fix:** OAuth getting stuck ("Error creating remote")
+* **Fix:** OneDrive configuration not working
+* **Fix:** Password default length and generation algorithm
+* **Fix:** Seafile DocumentsProvider access not working (SAFDAV)
+* **Fix:** Slow deletions in large directories or containers
+* **Fix:** Streaming getting stuck after failure
+* **Fix:** Using technical name for remotes in some circumstances
+* **Internal:** Appcenter error reporting has replaced Firebase
+* **Internal:** Fix source build (rclone, GitHub actions)
+* **Internal:** Support for rclone rcd
+* **Internal:** Updated dependencies (gradle, java, rclone)
+
+***
+
 ### 1.11.4
 * **Fix:** Crash when sharing file to rcx contains garbage data, part II
 * **Fix:** Crash when deleting remotes

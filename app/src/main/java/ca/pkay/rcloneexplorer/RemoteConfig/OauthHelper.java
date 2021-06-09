@@ -2,15 +2,16 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
-import es.dmoral.toasty.Toasty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,7 @@ public class OauthHelper {
 
     private static final String TAG = "OAuthHelper";
     private static final String regex = "go to the following link: ([^\\s]+)";
+    private static volatile WeakReference<UrlAuthThread> lastAuthAttempt;
 
     /**
      * Save the options in the rclone config file and start the OAuth authentication process
@@ -31,14 +33,27 @@ public class OauthHelper {
      * @return true if successful
      **/
     public static boolean createOptionsWithOauth(ArrayList<String> options, Rclone rclone, Context context) {
+        // Since authorization uses a fixed port, shut down previous attempt.
+        UrlAuthThread oldThread = lastAuthAttempt != null ? lastAuthAttempt.get() : null;
+        if (oldThread != null) {
+            if (!oldThread.isStopped()) {
+                oldThread.forceStop();
+            }
+            oldThread = null;
+        }
+
         Process process = rclone.configCreate(options);
-        Thread authThread = new OauthHelper.UrlAuthThread(process, context);
-        authThread.start();
+        if (null == process) {
+            return false;
+        }
+        UrlAuthThread currentAuth = new OauthHelper.UrlAuthThread(process, context);
+        lastAuthAttempt = new WeakReference<>(currentAuth);
+        currentAuth.start();
         try {
             process.waitFor();
         } catch (InterruptedException e) {
-            authThread.interrupt();
-            FLog.e(TAG, "createOptionsWithOauth: aborted", e);
+            FLog.d(TAG, "Auth stopped by process interrupt");
+            currentAuth.forceStop();
         }
         return 0 == process.exitValue();
     }
@@ -53,6 +68,7 @@ public class OauthHelper {
         private static final String TAG = "UrlAuthThread";
         private final Process process;
         private final Context context;
+        private volatile boolean stopped = false;
 
         public UrlAuthThread(Process process, Context context) {
             this.process = process;
@@ -66,10 +82,9 @@ public class OauthHelper {
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.find()) {
                         String url = matcher.group(1);
-
-                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                        CustomTabsIntent customTabsIntent = builder.build();
-                        customTabsIntent.launchUrl(context, Uri.parse(url));
+                        if (url != null) {
+                            launchBrowser(context, url);
+                        }
 
                         // Do NOT break here, or the stream will be closed.
                         // When rclone then tries to write to the stream, it will receive SIGPIPE
@@ -78,9 +93,36 @@ public class OauthHelper {
                     }
                 }
             } catch (IOException e) {
+                if (stopped) {
+                    FLog.v(TAG, "Authentication attempt stopped");
+                    return;
+                }
+                stopped = true;
                 FLog.e(TAG, "doInBackground: could not read auth url", e);
                 process.destroy();
             }
+        }
+
+        public void forceStop() {
+            stopped = true;
+            process.destroy();
+        }
+
+        public boolean isStopped() {
+            return stopped;
+        }
+    }
+
+    static void launchBrowser(@NonNull Context context, @NonNull String url) {
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        try {
+            customTabsIntent.launchUrl(context, Uri.parse(url));
+        } catch (SecurityException e) {
+            // This happens if a buggy third party component is registered for
+            // browser intents with a non-exported activity.
+            // TODO: Fix this for Android TV
+            FLog.e(TAG, "Could not launch browser", e);
         }
     }
 
@@ -98,10 +140,9 @@ public class OauthHelper {
             Matcher matcher = pattern.matcher(cliBuffer);
             if (matcher.find()) {
                 String url = matcher.group(1);
-
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(context, Uri.parse(url));
+                if (url != null) {
+                    launchBrowser(context, url);
+                }
             } else {
                 FLog.w(TAG, "onTrigger: could not extract auth URL from buffer: %s", cliBuffer);
             }
@@ -126,7 +167,8 @@ public class OauthHelper {
         private static final String TRIGGER = "Got code\n";
 
         public OauthFinishStep() {
-            super(TRIGGER, new InteractiveRunner.StringAction(""));
+            super(TRIGGER, InteractiveRunner.Step.ENDS_WITH, InteractiveRunner.Step.STDOUT,
+                    new InteractiveRunner.StringAction(""));
         }
 
         @Override

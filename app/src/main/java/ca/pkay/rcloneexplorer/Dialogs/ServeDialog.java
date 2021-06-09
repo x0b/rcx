@@ -3,9 +3,12 @@ package ca.pkay.rcloneexplorer.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
@@ -59,15 +62,29 @@ public class ServeDialog extends DialogFragment {
         user = view.findViewById(R.id.edit_text_user);
         password = view.findViewById(R.id.edit_text_password);
 
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        if (pref.contains(getString(R.string.pref_choice_serve_dialog_allow_ext))) {
+            boolean checked = pref.getBoolean(getString(R.string.pref_choice_serve_dialog_allow_ext), false);
+            allowRemoteAccess.setChecked(checked);
+        }
+
         ((TextInputLayout) view.findViewById(R.id.text_input_layout_user)).setHint("Username");
         ((TextInputLayout) view.findViewById(R.id.text_input_layout_password)).setHint("Password");
 
         builder.setTitle(R.string.serve_dialog_title);
         builder.setPositiveButton(R.string.ok, (dialog, which) -> sendCallback());
-
         builder.setNegativeButton(R.string.cancel, null);
-
         builder.setView(view);
+
+        ((CheckBox) view.findViewById(R.id.checkbox_allow_remote_access)).setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                Snackbar.make(btn, R.string.serve_dialog_remote_notice_enabled, Snackbar.LENGTH_LONG)
+                        .show();
+            } else {
+                Snackbar.make(btn, R.string.serve_dialog_remote_notice_disabled, Snackbar.LENGTH_LONG)
+                        .show();
+            }
+        });
 
         return builder.show();
     }
@@ -144,6 +161,11 @@ public class ServeDialog extends DialogFragment {
                 selectedProtocol = Rclone.SERVE_PROTOCOL_HTTP;
                 break;
         }
+
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(getString(R.string.pref_choice_serve_dialog_allow_ext), allowRemoteAccess.isChecked())
+                .apply();
 
         callback.onServeOptionsSelected(selectedProtocol, allowRemoteAccess.isChecked(), user.getText().toString(), password.getText().toString());
     }

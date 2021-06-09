@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,6 +13,7 @@ import java.util.Date;
 
 public class Log2File {
 
+    private static final String TAG = "Log2File";
     private Context context;
 
     public Log2File(Context context) {
@@ -56,7 +58,7 @@ public class Log2File {
                 stream.write(logMessage.getBytes());
                 stream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "Could not write log file", e);
             }
             return null;
         }

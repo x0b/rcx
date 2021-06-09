@@ -20,6 +20,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -28,10 +29,12 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 
 public class UploadService extends IntentService {
 
+    private static final String TAG = "UploadService";
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
@@ -87,6 +90,7 @@ public class UploadService extends IntentService {
         final String uploadFilePath = intent.getStringExtra(LOCAL_PATH_ARG);
         final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
+        boolean isFile = new File(uploadFilePath).isFile();
         String uploadFileName;
         int slashIndex = uploadFilePath.lastIndexOf("/");
         if (slashIndex >= 0) {
@@ -139,16 +143,16 @@ public class UploadService extends IntentService {
                         log2File.log(line);
                     }
 
-                    updateNotification(uploadFileName, notificationContent, notificationBigText);
+                    updateNotification(uploadFileName, notificationContent, notificationBigText, isFile);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                FLog.w(TAG, "onHandleIntent: error reading stdout", e);
             }
 
             try {
                 currentProcess.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
             }
         }
 
@@ -192,10 +196,16 @@ public class UploadService extends IntentService {
         }
     }
 
-    private void updateNotification(String uploadFileName, String content, String[] bigTextArray) {
+    private void updateNotification(String uploadFileName, String content, String[] bigTextArray, boolean singleFile) {
         StringBuilder bigText = new StringBuilder();
         for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
+            String progressLine = bigTextArray[i];
+            if (null != progressLine) {
+                bigText.append(progressLine);
+            }
+            if (singleFile) {
+                break;
+            }
             if (i < 4) {
                 bigText.append("\n");
             }

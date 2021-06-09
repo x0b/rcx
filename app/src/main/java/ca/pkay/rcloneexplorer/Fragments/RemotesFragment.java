@@ -303,7 +303,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private List<RemoteItem> filterRemotes() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
-        Set<String> renamedRemotes = sharedPreferences.getStringSet(getString(R.string.pref_key_renamed_remotes), new HashSet<>());
         remotes = rclone.getRemotes();
         if (hiddenRemotes != null && !hiddenRemotes.isEmpty()) {
             ArrayList<RemoteItem> toBeHidden = new ArrayList<>();
@@ -314,14 +313,8 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
             remotes.removeAll(toBeHidden);
         }
+        RemoteItem.prepareDisplay(context, remotes);
         Collections.sort(remotes);
-        for(RemoteItem item : remotes) {
-            if(renamedRemotes.contains(item.getName())) {
-                String displayName = sharedPreferences.getString(
-                        getString(R.string.pref_key_renamed_remote_prefix, item.getName()), item.getName());
-                item.setDisplayName(displayName);
-            }
-        }
         return remotes;
     }
 
@@ -345,29 +338,31 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
         builder.setTitle(R.string.select_remotes_to_hide);
         final ArrayList<RemoteItem> remotes = new ArrayList<>(rclone.getRemotes());
+        RemoteItem.prepareDisplay(context, remotes);
         Collections.sort(remotes);
-        final CharSequence[] options = new CharSequence[remotes.size()];
-        int i = 0;
-        for (RemoteItem remoteItem : remotes) {
-            options[i++] = remoteItem.getName();
+        final CharSequence[] remoteDisplayNames = new CharSequence[remotes.size()];
+        final String[] remoteIds = new String[remotes.size()];
+        for (int i = 0; i < remoteDisplayNames.length; i++) {
+            remoteDisplayNames[i] = remotes.get(i).getDisplayName();
+            remoteIds[i] = remotes.get(i).getName();
         }
 
         final ArrayList<String> userSelected = new ArrayList<>();
-        boolean[] checkedItems = new boolean[options.length];
-        i = 0;
-        for (CharSequence cs : options) {
-            if (hiddenRemotes.contains(cs.toString())) {
-                userSelected.add(cs.toString());
+        boolean[] checkedItems = new boolean[remoteDisplayNames.length];
+
+        for (int i = 0; i < remoteIds.length; i++) {
+            String remoteId = remoteIds[i];
+            if (hiddenRemotes.contains(remoteId)) {
+                userSelected.add(remoteId);
                 checkedItems[i] = true;
             }
-            i++;
         }
 
-        builder.setMultiChoiceItems(options, checkedItems, (dialog, which, isChecked) -> {
+        builder.setMultiChoiceItems(remoteDisplayNames, checkedItems, (dialog, which, isChecked) -> {
             if (isChecked) {
-                userSelected.add(options[which].toString());
+                userSelected.add(remoteIds[which]);
             } else {
-                userSelected.remove(options[which].toString());
+                userSelected.remove(remoteIds[which]);
             }
         });
 
@@ -528,26 +523,26 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            Set<String> pinnedRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<>());
+            Set<String> pinnedRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<>());
             if (pinnedRemotes.contains(remoteItem.getName())) {
                 pinnedRemotes.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_pinned_remotes), new HashSet<>(pinnedRemotes));
+                editor.putStringSet(context.getString(R.string.shared_preferences_pinned_remotes), new HashSet<>(pinnedRemotes));
                 editor.apply();
             }
 
-            Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
+            Set<String> hiddenRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
             if (hiddenRemotes.contains(remoteItem.getName())) {
                 hiddenRemotes.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>(hiddenRemotes));
+                editor.putStringSet(context.getString(R.string.shared_preferences_hidden_remotes), new HashSet<>(hiddenRemotes));
                 editor.apply();
             }
 
             AppShortcutsHelper.removeAppShortcut(context, remoteItem.getName());
 
-            Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
+            Set<String> drawerPinnedRemote = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
             if (drawerPinnedRemote.contains(remoteItem.getName())) {
                 drawerPinnedRemote.remove(remoteItem.getName());
-                editor.putStringSet(getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>(pinnedRemotes));
+                editor.putStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>(pinnedRemotes));
                 editor.apply();
                 pinToDrawerListener.removeRemoteFromNavDrawer();
             }

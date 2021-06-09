@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +18,11 @@ import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 public class AboutActivity extends AppCompatActivity {
 
     private static final String TAG = "AboutActivity";
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,15 +83,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void reportBug() {
-        String template = getString(R.string.github_issue_template,
-                new Rclone(this).getRcloneVersion(),
-                BuildConfig.VERSION_NAME,
-                Build.VERSION.SDK_INT,
-                Build.MODEL,
-                TextUtils.join(";", Build.SUPPORTED_ABIS)
-        );
-        String baseUri = getString(R.string.github_issue_url);
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(baseUri + Uri.encode(template)));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_issue_url)));
         tryStartActivity(this, browserIntent);
     }
 
