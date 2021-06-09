@@ -3,7 +3,6 @@ package ca.pkay.rcloneexplorer.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,33 +10,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.xml.sax.SAXException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.Task;
 import ca.pkay.rcloneexplorer.Database.xml.Exporter;
 import ca.pkay.rcloneexplorer.Database.xml.Importer;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TriggerRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.TaskActivity;
 import ca.pkay.rcloneexplorer.TriggerActivity;
-import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TriggerFragment extends Fragment {

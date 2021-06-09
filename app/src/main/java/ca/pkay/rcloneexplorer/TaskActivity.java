@@ -1,17 +1,14 @@
 package ca.pkay.rcloneexplorer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.documentfile.provider.DocumentFile;
 
 import android.util.Log;
 import android.view.View;
@@ -20,16 +17,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.Task;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
-import ca.pkay.rcloneexplorer.Services.SyncService;
 
 public class TaskActivity extends AppCompatActivity {
 

@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.Task;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;

@@ -12,7 +12,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.Task;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 
 
@@ -26,8 +26,8 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 public class TaskStartService extends IntentService {
 
     public static String TASK_ACTION= "START_TASK";
-    private static String EXTRA_TASK_ID= "task";
-    private static String EXTRA_TASK_SILENT= "notification";
+    public static String EXTRA_TASK_ID= "task";
+    public static String EXTRA_TASK_SILENT= "notification";
 
     public TaskStartService() {
         super("TaskStartService");

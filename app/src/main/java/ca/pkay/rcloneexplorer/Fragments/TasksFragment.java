@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import javax.xml.parsers.ParserConfigurationException;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.Task;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Database.xml.Exporter;
 import ca.pkay.rcloneexplorer.Database.xml.Importer;
 import ca.pkay.rcloneexplorer.R;

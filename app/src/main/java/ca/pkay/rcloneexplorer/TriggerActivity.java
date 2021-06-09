@@ -3,7 +3,7 @@ package ca.pkay.rcloneexplorer;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -12,21 +12,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.Task;
-import ca.pkay.rcloneexplorer.Database.Trigger;
+import ca.pkay.rcloneexplorer.Items.Task;
+import ca.pkay.rcloneexplorer.Items.Trigger;
+import ca.pkay.rcloneexplorer.Services.TriggerService;
 
 public class TriggerActivity extends AppCompatActivity {
 
@@ -77,7 +73,6 @@ public class TriggerActivity extends AppCompatActivity {
 
         for (int i = 0; i< taskList.size(); i++) {
             items[i]= taskList.get(i).getTitle();
-            Log.e("app", "app: "+items[i].toString());
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
@@ -87,12 +82,10 @@ public class TriggerActivity extends AppCompatActivity {
     }
 
     private void populateFields() {
-        Log.e("app!", "Populate Task");
         if(existingTrigger!=null){
-            Log.e("app!", "Populate Task"+existingTrigger.getTitle());
             ((TextView)findViewById(R.id.trigger_name_edit)).setText(existingTrigger.getTitle());
 
-            ((CheckBox)findViewById(R.id.cb_is_enabled)).setChecked(existingTrigger.isEnabled());
+            ((CheckBox)findViewById(R.id.cb_is_enabled)).setChecked(!existingTrigger.isEnabled());
 
             ((CheckBox)findViewById(R.id.trigger_cb_monday)).setChecked(existingTrigger.isEnabledAtDay(0));
             ((CheckBox)findViewById(R.id.trigger_cb_tuesday)).setChecked(existingTrigger.isEnabledAtDay(1));
@@ -111,22 +104,35 @@ public class TriggerActivity extends AppCompatActivity {
             }
             ((Spinner)findViewById(R.id.trigger_targets)).setSelection(pos);
 
-            TimePicker tp = (TimePicker)findViewById(R.id.trigger_time);
+            TimePicker tp = findViewById(R.id.trigger_time);
+
+            if (DateFormat.is24HourFormat(this)){
+                tp.setIs24HourView(true);
+            }
+
+
             int seconds = existingTrigger.getTime();
-            tp.setHour(seconds/60);
-            tp.setMinute(seconds%60);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                tp.setHour(seconds/60);
+                tp.setMinute(seconds%60);
+            }else{
+                tp.setCurrentHour(seconds/60);
+                tp.setCurrentMinute(seconds%60);
+            }
+
+
         }
     }
 
     private void persistTaskChanges(){
         dbHandler.updateTrigger(getTriggerValues(existingTrigger.getId()));
-        Log.e("app!", "Update Task: ");
+        new TriggerService(this);
         finish();
     }
 
     private void saveTrigger(){
         Trigger newTrigger = dbHandler.createTrigger(getTriggerValues(0L));
-        Log.e("app!", "Trigger Dialog: "+newTrigger.toString());
+        new TriggerService(this);
         finish();
     }
 
@@ -151,7 +157,15 @@ public class TriggerActivity extends AppCompatActivity {
 
         TimePicker tp = (TimePicker)findViewById(R.id.trigger_time);
 
-        int sinceMidnight=tp.getHour()*60+tp.getMinute();
+        int sinceMidnight=0;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            sinceMidnight=tp.getHour()*60+tp.getMinute();
+        }else{
+            sinceMidnight=tp.getCurrentHour()*60+tp.getCurrentMinute();
+        }
+
+
         triggerToPopulate.setTime(sinceMidnight);
 
         return triggerToPopulate;

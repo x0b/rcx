@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,14 +30,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+
+import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
@@ -49,6 +48,7 @@ import ca.pkay.rcloneexplorer.Fragments.TriggerFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
+import ca.pkay.rcloneexplorer.Services.TriggerService;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+        new TriggerService(context);
     }
 
     @Override

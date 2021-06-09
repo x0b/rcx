@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer.Database;
+package ca.pkay.rcloneexplorer.Items;
 
 public class Task {
 

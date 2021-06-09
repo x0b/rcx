@@ -1,6 +1,5 @@
-package ca.pkay.rcloneexplorer.Database;
+package ca.pkay.rcloneexplorer.Items;
 
-import android.util.Log;
 
 public class Trigger {
 

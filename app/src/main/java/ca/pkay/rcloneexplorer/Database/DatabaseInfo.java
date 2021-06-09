@@ -1,5 +1,8 @@
 package ca.pkay.rcloneexplorer.Database;
 
+import ca.pkay.rcloneexplorer.Items.Task;
+import ca.pkay.rcloneexplorer.Items.Trigger;
+
 class DatabaseInfo {
 
 

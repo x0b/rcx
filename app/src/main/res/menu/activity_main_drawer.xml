@@ -17,7 +17,7 @@
             android:title="@string/tasks" />
         <item
             android:id="@+id/nav_trigger"
-            android:icon="@drawable/ic_notification_sync"
+            android:icon="@drawable/ic_baseline_av_timer_24"
             android:title="@string/trigger" />
     </group>
 

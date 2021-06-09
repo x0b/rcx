@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Items.Task;
+import ca.pkay.rcloneexplorer.Items.Trigger;
+
 public class DatabaseHandler extends SQLiteOpenHelper {
 
 
@@ -23,6 +26,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DatabaseInfo.SQL_CREATE_TABLES_TASKS);
+        sqLiteDatabase.execSQL(DatabaseInfo.SQL_CREATE_TABLE_TRIGGER);
     }
 
     @Override
