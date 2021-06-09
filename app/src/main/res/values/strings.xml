@@ -565,4 +565,14 @@
     <string name="trigger">Trigger</string>
     <string name="title_activity_trigger">Trigger</string>
     <string name="enabled">Enabled</string>
+    <string name="trigger_name">Trigger-Name</string>
+ <string name="monday">Monday</string>
+ <string name="tuesday">Tuesday</string>
+ <string name="wednesday">Wednesday</string>
+ <string name="thursday">Thursday</string>
+ <string name="friday">Friday</string>
+ <string name="saturday">Saturday</string>
+ <string name="sunday">Sunday</string>
+ <string name="time">Time</string>
+ <string name="task_to_run">Task to run</string>
 </resources>
