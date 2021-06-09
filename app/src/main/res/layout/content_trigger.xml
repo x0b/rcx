@@ -38,6 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:checked="true"
                 android:text="Is this trigger enabled?" />
 
 
@@ -53,42 +54,49 @@
                 android:id="@+id/trigger_cb_monday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/monday" />
 
             <CheckBox
                 android:id="@+id/trigger_cb_tuesday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/tuesday" />
 
             <CheckBox
                 android:id="@+id/trigger_cb_wednesday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/wednesday" />
 
             <CheckBox
                 android:id="@+id/trigger_cb_thursday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/thursday" />
 
             <CheckBox
                 android:id="@+id/trigger_cb_friday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/friday" />
 
             <CheckBox
                 android:id="@+id/trigger_cb_saturday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/saturday" />
 
             <CheckBox
                 android:id="@+id/trigger_cb_sunday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:layout_marginBottom="8dp"
                 android:text="@string/sunday" />
 

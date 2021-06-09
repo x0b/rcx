@@ -82,6 +82,11 @@ public class TriggerActivity extends AppCompatActivity {
     }
 
     private void populateFields() {
+        TimePicker tp = findViewById(R.id.trigger_time);
+        if (DateFormat.is24HourFormat(this)){
+            tp.setIs24HourView(true);
+        }
+
         if(existingTrigger!=null){
             ((TextView)findViewById(R.id.trigger_name_edit)).setText(existingTrigger.getTitle());
 
@@ -103,13 +108,6 @@ public class TriggerActivity extends AppCompatActivity {
                 }
             }
             ((Spinner)findViewById(R.id.trigger_targets)).setSelection(pos);
-
-            TimePicker tp = findViewById(R.id.trigger_time);
-
-            if (DateFormat.is24HourFormat(this)){
-                tp.setIs24HourView(true);
-            }
-
 
             int seconds = existingTrigger.getTime();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
