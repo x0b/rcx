@@ -78,6 +78,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             results.add(task);
         }
         cursor.close();
+        db.close();
 
         return results;
 
@@ -125,6 +126,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             results.add(task);
         }
         cursor.close();
+        db.close();
 
         return results.get(0);
 
@@ -142,6 +144,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Task.COLUMN_NAME_SYNC_DIRECTION, taskToStore.getDirection());
 
         long newRowId = db.insert(Task.TABLE_NAME, null, values);
+        db.close();
 
         Task newObject = new Task(newRowId);
         newObject.setTitle(taskToStore.getTitle());
@@ -167,6 +170,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Task.COLUMN_NAME_SYNC_DIRECTION, taskToUpdate.getDirection());
 
         db.update(Task.TABLE_NAME, values, Task.COLUMN_NAME_ID+" = ?", new String[]{String.valueOf(taskToUpdate.getId())});
+        db.close();
 
     }
 
@@ -174,7 +178,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String selection = Task.COLUMN_NAME_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
-        return db.delete(Task.TABLE_NAME, selection, selectionArgs);
+        int retcode = db.delete(Task.TABLE_NAME, selection, selectionArgs);
+        db.close();
+        return retcode;
 
     }
 
@@ -204,6 +210,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             results.add(triggerFromCursor(cursor));
         }
         cursor.close();
+        db.close();
         return results;
     }
 
@@ -231,12 +238,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             results.add(triggerFromCursor(cursor));
         }
         cursor.close();
+        db.close();
         return results.get(0);
     }
 
     public Trigger createTrigger(Trigger triggerToStore){
         SQLiteDatabase db = getWritableDatabase();
         long newRowId = db.insert(Trigger.TABLE_NAME, null, getTriggerContentValues(triggerToStore));
+        db.close();
         triggerToStore.setId(newRowId);
         return triggerToStore;
 
@@ -245,13 +254,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateTrigger(Trigger triggerToUpdate) {
         SQLiteDatabase db = getWritableDatabase();
         db.update(Trigger.TABLE_NAME, getTriggerContentValuesWithID(triggerToUpdate), Trigger.COLUMN_NAME_ID+" = ?", new String[]{String.valueOf(triggerToUpdate.getId())});
+        db.close();
     }
 
     public int deleteTrigger(long id){
         SQLiteDatabase db = getWritableDatabase();
         String selection = Trigger.COLUMN_NAME_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
-        return db.delete(Trigger.TABLE_NAME, selection, selectionArgs);
+        int retcode = db.delete(Trigger.TABLE_NAME, selection, selectionArgs);
+        db.close();
+        return retcode;
 
     }
 
@@ -285,7 +297,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private Trigger triggerFromCursor(Cursor cursor){
         Trigger trigger = new Trigger(cursor.getLong(0));
         trigger.setTitle(cursor.getString(1));
-        trigger.setEnabled(cursor.getInt(2) == 0);
+        trigger.setEnabled(cursor.getInt(2) == 1);
         trigger.setTime(cursor.getInt(3));
         int weekdays = cursor.getInt(4);
         trigger.setWeekdays((byte)weekdays);

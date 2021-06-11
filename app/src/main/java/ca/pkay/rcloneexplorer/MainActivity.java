@@ -216,7 +216,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
-        new TriggerService(context);
+        TriggerService triggerService = new TriggerService(context);
+        triggerService.queueTrigger();
     }
 
     @Override

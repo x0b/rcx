@@ -90,7 +90,7 @@ public class TriggerActivity extends AppCompatActivity {
         if(existingTrigger!=null){
             ((TextView)findViewById(R.id.trigger_name_edit)).setText(existingTrigger.getTitle());
 
-            ((CheckBox)findViewById(R.id.cb_is_enabled)).setChecked(!existingTrigger.isEnabled());
+            ((CheckBox)findViewById(R.id.cb_is_enabled)).setChecked(existingTrigger.isEnabled());
 
             ((CheckBox)findViewById(R.id.trigger_cb_monday)).setChecked(existingTrigger.isEnabledAtDay(0));
             ((CheckBox)findViewById(R.id.trigger_cb_tuesday)).setChecked(existingTrigger.isEnabledAtDay(1));
@@ -123,14 +123,15 @@ public class TriggerActivity extends AppCompatActivity {
     }
 
     private void persistTaskChanges(){
-        dbHandler.updateTrigger(getTriggerValues(existingTrigger.getId()));
-        new TriggerService(this);
+        Trigger updatedTrigger = getTriggerValues(existingTrigger.getId());
+        dbHandler.updateTrigger(updatedTrigger);
+        new TriggerService(this).queueSingleTrigger(updatedTrigger);
         finish();
     }
 
     private void saveTrigger(){
         Trigger newTrigger = dbHandler.createTrigger(getTriggerValues(0L));
-        new TriggerService(this);
+        new TriggerService(this).queueSingleTrigger(newTrigger);
         finish();
     }
 

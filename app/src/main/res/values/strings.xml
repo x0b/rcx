@@ -575,4 +575,6 @@
  <string name="sunday">Sunday</string>
  <string name="time">Time</string>
  <string name="task_to_run">Task to run</string>
+    <string name="notification_triggerservice_description">This is a notification that allows the triggermechanism to start a Task</string>
+ <string name="notification_triggerservice_title">Triggerservice</string>
 </resources>

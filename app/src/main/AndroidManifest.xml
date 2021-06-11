@@ -96,6 +96,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".BroadcastReceivers.TriggerReciever"
+            android:exported="true"/>
 
         <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
 

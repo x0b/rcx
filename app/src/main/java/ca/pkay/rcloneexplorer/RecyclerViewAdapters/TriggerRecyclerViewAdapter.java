@@ -71,7 +71,7 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
         setTextViewValue(holder.sun, selectedTrigger.isEnabledAtDay(6));
 
         Drawable d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_check_circle_outline_24, null);
-        if(selectedTrigger.isEnabled()){
+        if(!selectedTrigger.isEnabled()){
             d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_block_24, null);
         }
         holder.triggerIcon.setImageDrawable(d);
