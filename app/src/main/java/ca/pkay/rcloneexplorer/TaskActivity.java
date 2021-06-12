@@ -135,13 +135,13 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     private void persistTaskChanges(){
-        dbHandler.updateEntry(getTaskValues(existingTask.getId()));
+        dbHandler.updateTask(getTaskValues(existingTask.getId()));
         Log.e("app!", "Update Task: ");
         finish();
     }
 
     private void saveTask(){
-        Task newTask = dbHandler.createEntry(getTaskValues(0L));
+        Task newTask = dbHandler.createTask(getTaskValues(0L));
         Log.e("app!", "Task Dialog: "+newTask.toString());
         finish();
     }

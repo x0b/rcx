@@ -38,13 +38,11 @@ public class TriggerService extends Service {
     public TriggerService() {}
 
     public TriggerService(Context c) {
-        Log.e("app", "StartTs2");
         this.dbHandler = new DatabaseHandler(c);
         this.context = c;
     }
 
     public void queueTrigger(){
-        Log.e("app", "queue trigger");
         for(Trigger t : dbHandler.getAllTrigger()){
             queueSingleTrigger(t);
         }
@@ -52,18 +50,6 @@ public class TriggerService extends Service {
 
     public void queueSingleTrigger(Trigger trigger){
         if(trigger.isEnabled()){
-            AlarmManager am =(AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-            Intent i = new Intent(context, TriggerReciever.class);
-            i.setAction(TRIGGER_RECIEVE);
-            i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            long wtt = trigger.getId();
-            i.putExtra(TRIGGER_ID, wtt);
-
-
-            // Todo: Beacause of the long to int cast, this may fail when the user has more than Integer.MAX tasks.
-            PendingIntent pi = PendingIntent.getBroadcast(context, (int) wtt, i, PendingIntent.FLAG_UPDATE_CURRENT);
-
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
 
@@ -78,18 +64,15 @@ public class TriggerService extends Service {
             }
 
             // If a triggered event schedules the next occurence, we need to make sure that it does not create an endless loop for 60 seconds.
-            // Todo: Think about moving the scheduling into a handler that waits 60 seconds and triggers then.
-            Log.e("app", ""+Calendar.getInstance().get(Calendar.MINUTE));
-            Log.e("app", ""+seconds%60);
+            // If it is "now", do it in 24h
             if(Calendar.getInstance().get(Calendar.MINUTE) == seconds%60){
-                int move = 3*60*1000;
-                //difference = difference + move;
-                Log.e("app", "Move Back "+difference+"<-"+(difference-move));
+                difference = (24*60*60*1000);
             }
 
             long timeToTrigger = System.currentTimeMillis() + difference;
 
-            Log.e("app", "Queue: "+trigger.getId());
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pi = getIntent(trigger.getId());
             am.cancel(pi);
             am.setExact(
                     AlarmManager.RTC_WAKEUP,
@@ -98,16 +81,20 @@ public class TriggerService extends Service {
             );
             return;
         }
-        Log.e("app", "Not enabled: "+trigger.getId());
+    }
+
+    public void cancelTrigger(long triggerID){
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(getIntent(triggerID));
     }
 
     private void startTask(Trigger trigger){
-        Log.e("app", "start: "+trigger.getTitle());
         boolean skipBecauseOfWeekday;
-        Calendar calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_WEEK)-2; //account for monday beeing 1 and sunday beeing 0
+        //account for monday beeing 1 and sunday beeing 0. Therefor we need to offset by 2
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-2;
 
-        if(day==-1){//check for sundays. Calendar starts with sunday.
+        //check for sundays. Calendar starts with sunday.
+        if(day==-1){
             skipBecauseOfWeekday = !trigger.isEnabledAtDay(6);
         }else{
             skipBecauseOfWeekday = !trigger.isEnabledAtDay(day);
@@ -120,8 +107,17 @@ public class TriggerService extends Service {
         Intent i = new Intent(context, TaskStartService.class);
         i.setAction(TaskStartService.TASK_ACTION);
         i.putExtra(TaskStartService.EXTRA_TASK_ID, trigger.getWhatToTrigger().intValue());
-        //i.putExtra(TaskStartService.EXTRA_TASK_SILENT, true);
         context.startService(i);
+    }
+
+    private PendingIntent getIntent(long triggerId){
+        Intent i = new Intent(context, TriggerReciever.class);
+        i.setAction(TRIGGER_RECIEVE);
+        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra(TRIGGER_ID, triggerId);
+
+        // Todo: Beacause of the long to int cast, this may fail when the user has more than Integer.MAX tasks.
+        return PendingIntent.getBroadcast(context, (int) triggerId, i, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -153,7 +149,6 @@ public class TriggerService extends Service {
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .build();
         } else {
-
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setContentTitle(getText(R.string.notification_triggerservice_title))
                     .setContentText(getText(R.string.notification_triggerservice_description))
@@ -165,11 +160,13 @@ public class TriggerService extends Service {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, getString(R.string.notification_triggerservice_title), importance);
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    getString(R.string.notification_triggerservice_title),
+                    NotificationManager.IMPORTANCE_LOW
+            );
             channel.setDescription(getString(R.string.notification_triggerservice_description));
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
+
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }

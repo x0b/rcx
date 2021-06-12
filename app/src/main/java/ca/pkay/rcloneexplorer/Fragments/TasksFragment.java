@@ -168,11 +168,11 @@ public class TasksFragment extends Fragment {
                     ArrayList<Task> importedList = Importer.createTasklist(importedData);
                     DatabaseHandler dbHandler = new DatabaseHandler(context);
                     for (Task t : dbHandler.getAllTasks()){
-                        dbHandler.deleteEntry(t.getId());
+                        dbHandler.deleteTask(t.getId());
                     }
 
                     for(Task t: importedList){
-                        dbHandler.createEntry(t);
+                        dbHandler.createTask(t);
                     }
 
                     recyclerViewAdapter.setList((ArrayList<Task>) dbHandler.getAllTasks());

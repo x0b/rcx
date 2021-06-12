@@ -163,7 +163,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                         editTask(task);
                         break;
                     case R.id.action_delete_task:
-                        new DatabaseHandler(context).deleteEntry(task.getId());
+                        new DatabaseHandler(context).deleteTask(task.getId());
                         notifyDataSetChanged();
                         removeItem(task);
                         break;
