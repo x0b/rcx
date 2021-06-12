@@ -3,7 +3,6 @@ package ca.pkay.rcloneexplorer.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,19 +17,10 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.xml.sax.SAXException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import javax.xml.parsers.ParserConfigurationException;
+import org.json.JSONException;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Items.Task;
-import ca.pkay.rcloneexplorer.Database.xml.Exporter;
-import ca.pkay.rcloneexplorer.Database.xml.Importer;
+import ca.pkay.rcloneexplorer.Database.json.Exporter;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.TaskActivity;
@@ -90,15 +80,13 @@ public class TasksFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_import:
-                if(Importer.getFilePermission(getActivity())){
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("text/xml");
-                    startActivityForResult(intent, Importer.READ_REQUEST_CODE);
-                }
                 break;
             case R.id.action_export:
-                Exporter.export(getActivity());
+                try {
+                    Exporter.create(getActivity());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -123,62 +111,6 @@ public class TasksFragment extends Fragment {
         if(activity==null){
             Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
             return;
-        }
-
-        switch (requestCode){
-            case Importer.PERM_REQUEST_CODE:
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("text/xml");
-                startActivityForResult(intent, Importer.READ_REQUEST_CODE);
-                break;
-            case Importer.READ_REQUEST_CODE:
-                try {
-                    String importedData="";
-                    if (resultCode == Activity.RESULT_OK) {
-
-                        Uri uri = null;
-                        if (resultData != null) {
-                            uri = resultData.getData();
-
-                            if(uri==null){
-                                Toasty.error(context, context.getResources().getString(R.string.importer_no_file_selected), Toast.LENGTH_SHORT, true).show();
-                                return;
-                            }
-
-                            InputStream in =  activity.getContentResolver().openInputStream(uri);
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                            StringBuilder out = new StringBuilder();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                out.append(line);
-                            }
-
-                            reader.close();
-                            if (in != null) {
-                                in.close();
-                            }
-                            importedData = out.toString();
-                        }
-                    }
-
-                    ArrayList<Task> importedList = Importer.createTasklist(importedData);
-                    DatabaseHandler dbHandler = new DatabaseHandler(context);
-                    for (Task t : dbHandler.getAllTasks()){
-                        dbHandler.deleteTask(t.getId());
-                    }
-
-                    for(Task t: importedList){
-                        dbHandler.createTask(t);
-                    }
-
-                    recyclerViewAdapter.setList((ArrayList<Task>) dbHandler.getAllTasks());
-
-                } catch (IOException | SAXException | ParserConfigurationException e) {
-                    e.printStackTrace();
-                }
-
-                break;
         }
     }
 }

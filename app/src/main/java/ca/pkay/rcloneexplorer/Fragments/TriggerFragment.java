@@ -1,6 +1,5 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.xml.Exporter;
-import ca.pkay.rcloneexplorer.Database.xml.Importer;
+import ca.pkay.rcloneexplorer.Database.json.Exporter;
+import ca.pkay.rcloneexplorer.Database.json.Importer;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TriggerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.TriggerActivity;
@@ -74,20 +73,6 @@ public class TriggerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_import:
-                if(Importer.getFilePermission(getActivity())){
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("text/xml");
-                    startActivityForResult(intent, Importer.READ_REQUEST_CODE);
-                }
-                break;
-            case R.id.action_export:
-                Exporter.export(getActivity());
-                break;
-        }
         return super.onOptionsItemSelected(item);
     }
 
