@@ -76,6 +76,8 @@ import ca.pkay.rcloneexplorer.util.FLog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import ca.pkay.rcloneexplorer.util.LargeParcel;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;
@@ -393,18 +395,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (syncRemotePath != null) {
             outState.putString(SAVED_SYNC_REMOTE_PATH, syncRemotePath);
         }
-        if (calculateBundleSize(outState) > 500 * 1024) {
+        if (LargeParcel.calculateBundleSize(outState) > 250 * 1024) {
             outState.remove(SAVED_CONTENT);
         }
     }
 
-    private int calculateBundleSize(@NonNull Bundle bundle) {
-        Parcel parcel = Parcel.obtain();
-        parcel.writeBundle(bundle);
-        int size = parcel.dataSize();
-        parcel.recycle();
-        return size;
-    }
+
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
