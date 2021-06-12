@@ -34,6 +34,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.util.LargeParcel;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -87,7 +88,9 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
             remote = savedInstanceState.getParcelable(SAVED_REMOTE);
             isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME, false);
             directoryObject.setPath(savedInstanceState.getString(SAVED_PATH));
-            directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
+            if (savedInstanceState.containsKey(SAVED_CONTENT)) {
+                directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
+            }
             buildStackFromPath(remote.getName(), directoryObject.getCurrentPath());
             title = savedInstanceState.getInt(SAVED_TITLE);
         } else {
@@ -180,6 +183,9 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         outState.putParcelableArrayList(SAVED_CONTENT, content);
         outState.putString(SAVED_PREVIOUS_DIR_TEXT, previousDirLabel.getText().toString());
         outState.putInt(SAVED_TITLE, title);
+        if (LargeParcel.calculateBundleSize(outState) > 250 * 1024) {
+            outState.remove(SAVED_CONTENT);
+        }
     }
 
     @Override
