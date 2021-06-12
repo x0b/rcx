@@ -27,7 +27,6 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 public class TriggerFragment extends Fragment {
 
     private TriggerRecyclerViewAdapter recyclerViewAdapter;
-    private Activity filePickerActivity;
     private View fragmentView;
 
 
@@ -53,11 +52,9 @@ public class TriggerFragment extends Fragment {
         fragmentView = view;
         populateTriggerList(fragmentView);
 
-        view.findViewById(R.id.newTrigger).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(view.getContext(), TriggerActivity.class);
-                startActivity(intent);
-            }
+        view.findViewById(R.id.newTrigger).setOnClickListener(v -> {
+            Intent intent = new Intent(view.getContext(), TriggerActivity.class);
+            startActivity(intent);
         });
 
         return view;

@@ -40,7 +40,7 @@ import es.dmoral.toasty.Toasty;
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
 
 
-    private static String clipboardID="rclone_explorer_task_id";
+    private static final String clipboardID = "rclone_explorer_task_id";
 
     private List<Task> tasks;
     private View view;
@@ -89,17 +89,18 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         }
 
         switch (direction){
-            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL: holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync)); break;
-            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE: holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy)); break;
-            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL: holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy)); break;
-            default: holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync)); break;
+            case SyncDirectionObject.COPY_LOCAL_TO_REMOTE:
+            case SyncDirectionObject.COPY_REMOTE_TO_LOCAL:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy));
+                break;
+            case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL:
+            default:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync));
+                break;
         }
 
-        holder.fileOptions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showFileMenu(v, selectedTask);
-            }
+        holder.fileOptions.setOnClickListener(v-> {
+            showFileMenu(v, selectedTask);
         });
 
     }
@@ -110,7 +111,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     public void setList(ArrayList<Task> data) {
-        tasks=data;
+        tasks = data;
         notifyDataSetChanged();
     }
 
@@ -125,7 +126,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         context.startService(intent);
     }
 
-    private void editTask(Task task){
+    private void editTask(Task task) {
         Intent intent = new Intent(context, TaskActivity.class);
         intent.putExtra(TaskActivity.ID_EXTRA, task.getId());
         context.startActivity(intent);
@@ -212,19 +213,19 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         }
     }
 
-    private static void createShortcut(Context c, Task t) {
+    private static void createShortcut(Context c, Task task) {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
 
 
             Intent i = new Intent(c, TaskStartService.class);
-            i.putExtra("task", t.getId());
+            i.putExtra("task", task.getId());
             i.setAction(TaskStartService.TASK_ACTION);
 
-            ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(t.getId()))
-                    .setShortLabel(t.getTitle())
-                    .setLongLabel(t.getRemotePath())
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(task.getId()))
+                    .setShortLabel(task.getTitle())
+                    .setLongLabel(task.getRemotePath())
                     .setIcon(Icon.createWithResource(c, R.mipmap.ic_launcher))
                     .setIntent(i)
                     .build();

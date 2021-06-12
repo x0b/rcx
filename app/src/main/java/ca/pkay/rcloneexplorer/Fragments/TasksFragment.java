@@ -40,7 +40,6 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 public class TasksFragment extends Fragment {
 
     private TasksRecyclerViewAdapter recyclerViewAdapter;
-    private Activity filePickerActivity;
     private View fragmentView;
 
 
@@ -66,11 +65,9 @@ public class TasksFragment extends Fragment {
         fragmentView = view;
         populateTaskList(fragmentView);
 
-        view.findViewById(R.id.newTask).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(view.getContext(), TaskActivity.class);
-                startActivity(intent);
-            }
+        view.findViewById(R.id.newTask).setOnClickListener(v -> {
+            Intent intent = new Intent(view.getContext(), TaskActivity.class);
+            startActivity(intent);
         });
 
         return view;
