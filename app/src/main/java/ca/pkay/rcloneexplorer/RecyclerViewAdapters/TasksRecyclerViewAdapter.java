@@ -66,7 +66,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         holder.taskName.setText(remoteName);
 
-        RemoteItem remote = new RemoteItem(selectedTask.getRemote_id(), String.valueOf(selectedTask.getRemote_type()));
+        RemoteItem remote = new RemoteItem(selectedTask.getRemoteId(), String.valueOf(selectedTask.getRemoteType()));
 
         holder.taskIcon.setImageDrawable(view.getResources().getDrawable(remote.getRemoteIcon()));
 
@@ -74,18 +74,18 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         if(direction == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE || direction == SyncDirectionObject.COPY_LOCAL_TO_REMOTE){
             holder.fromID.setVisibility(View.GONE);
-            holder.fromPath.setText(selectedTask.getLocal_path());
+            holder.fromPath.setText(selectedTask.getLocalPath());
 
-            holder.toID.setText(String.format("@%s", selectedTask.getRemote_id()));
-            holder.toPath.setText(selectedTask.getRemote_path());
+            holder.toID.setText(String.format("@%s", selectedTask.getRemoteId()));
+            holder.toPath.setText(selectedTask.getRemotePath());
         }
 
         if(direction == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL || direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL){
-            holder.fromID.setText(String.format("@%s", selectedTask.getRemote_id()));
-            holder.fromPath.setText(selectedTask.getRemote_path());
+            holder.fromID.setText(String.format("@%s", selectedTask.getRemoteId()));
+            holder.fromPath.setText(selectedTask.getRemotePath());
 
             holder.toID.setVisibility(View.GONE);
-            holder.toPath.setText(selectedTask.getLocal_path());
+            holder.toPath.setText(selectedTask.getLocalPath());
         }
 
         switch (direction){
@@ -115,13 +115,13 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private void startTask(Task task){
-        String path = task.getLocal_path();
-        RemoteItem ri = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
+        String path = task.getLocalPath();
+        RemoteItem ri = new RemoteItem(task.getRemoteId(), task.getRemoteType(), "");
         Intent intent = new Intent(context, SyncService.class);
         intent.putExtra(SyncService.REMOTE_ARG, ri);
         intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
         intent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
-        intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
+        intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
         context.startService(intent);
     }
 
@@ -224,7 +224,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
             ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(t.getId()))
                     .setShortLabel(t.getTitle())
-                    .setLongLabel(t.getRemote_path())
+                    .setLongLabel(t.getRemotePath())
                     .setIcon(Icon.createWithResource(c, R.mipmap.ic_launcher))
                     .setIntent(i)
                     .build();

@@ -15,10 +15,10 @@ public class Task {
     private Long id;
 
     private String title="";
-    private String remote_id="";
-    private int remote_type=0;
-    private String remote_path="";
-    private String local_path = "";
+    private String remoteId ="";
+    private int remoteType =0;
+    private String remotePath ="";
+    private String localPath = "";
     private int direction=0;
 
 
@@ -42,36 +42,36 @@ public class Task {
         this.title = title;
     }
 
-    public String getRemote_id() {
-        return remote_id;
+    public String getRemoteId() {
+        return remoteId;
     }
 
-    public void setRemote_id(String remote_id) {
-        this.remote_id = remote_id;
+    public void setRemoteId(String remoteId) {
+        this.remoteId = remoteId;
     }
 
-    public int getRemote_type() {
-        return remote_type;
+    public int getRemoteType() {
+        return remoteType;
     }
 
-    public void setRemote_type(int remote_type) {
-        this.remote_type = remote_type;
+    public void setRemoteType(int remoteType) {
+        this.remoteType = remoteType;
     }
 
-    public String getRemote_path() {
-        return remote_path;
+    public String getRemotePath() {
+        return remotePath;
     }
 
-    public void setRemote_path(String remote_path) {
-        this.remote_path = remote_path;
+    public void setRemotePath(String remotePath) {
+        this.remotePath = remotePath;
     }
 
-    public String getLocal_path() {
-        return local_path;
+    public String getLocalPath() {
+        return localPath;
     }
 
-    public void setLocal_path(String local_path) {
-        this.local_path = local_path;
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
     }
 
     public int getDirection() {
@@ -83,6 +83,6 @@ public class Task {
     }
 
     public String toString(){
-        return title + ": " + remote_id + ": " + remote_type + ": " + remote_path + ": " + local_path + ": " + direction;
+        return title + ": " + remoteId + ": " + remoteType + ": " + remotePath + ": " + localPath + ": " + direction;
     }
 }

@@ -51,13 +51,13 @@ public class Importer {
                         task.setTitle(nodeContent);
                         break;
                     case "remote_name":
-                        task.setRemote_id(nodeContent);
+                        task.setRemoteId(nodeContent);
                         break;
                     case "remote_path":
-                        task.setRemote_path(nodeContent);
+                        task.setRemotePath(nodeContent);
                         break;
                     case "local_path":
-                        task.setLocal_path(nodeContent);
+                        task.setLocalPath(nodeContent);
                         break;
                     case "sync_direction":
                         task.setDirection(Integer.valueOf(nodeContent));

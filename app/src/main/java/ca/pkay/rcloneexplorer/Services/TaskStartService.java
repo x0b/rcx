@@ -48,18 +48,18 @@ public class TaskStartService extends IntentService {
                 DatabaseHandler db = new DatabaseHandler(this);
                 for (Task task: db.getAllTasks()){
                     if(task.getId()==intent.getIntExtra(EXTRA_TASK_ID, -1)){
-                        String path = task.getLocal_path();
+                        String path = task.getLocalPath();
 
                         boolean silentRun =intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
 
-                        RemoteItem remoteItem = new RemoteItem(task.getRemote_id(), task.getRemote_type(), "");
+                        RemoteItem remoteItem = new RemoteItem(task.getRemoteId(), task.getRemoteType(), "");
                         Intent taskIntent = new Intent();
                         taskIntent.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
 
                         taskIntent.putExtra(SyncService.REMOTE_ARG, remoteItem);
                         taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
                         taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
-                        taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemote_path());
+                        taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
                         taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             startForegroundService(taskIntent);

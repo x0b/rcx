@@ -122,14 +122,14 @@ public class TaskActivity extends AppCompatActivity {
 
             int i=0;
             for(String remote: remotes) {
-                if(remote.equals(existingTask.getRemote_id())){
+                if(remote.equals(existingTask.getRemoteId())){
                     s.setSelection(i);
                 }
                 i++;
             }
 
-            ((TextView)findViewById(R.id.task_remote_path_textfield)).setText(existingTask.getRemote_path());
-            ((TextView)findViewById(R.id.task_local_path_textfield)).setText(existingTask.getLocal_path());
+            ((TextView)findViewById(R.id.task_remote_path_textfield)).setText(existingTask.getRemotePath());
+            ((TextView)findViewById(R.id.task_local_path_textfield)).setText(existingTask.getLocalPath());
             ((Spinner)findViewById(R.id.task_direction_spinner)).setSelection(existingTask.getDirection()-1);
         }
     }
@@ -151,20 +151,20 @@ public class TaskActivity extends AppCompatActivity {
         taskToPopulate.setTitle(((EditText)findViewById(R.id.task_title_textfield)).getText().toString());
 
         String remotename=((Spinner)findViewById(R.id.task_remote_spinner)).getSelectedItem().toString();
-        taskToPopulate.setRemote_id(remotename);
+        taskToPopulate.setRemoteId(remotename);
 
         int direction = ((Spinner)findViewById(R.id.task_direction_spinner)).getSelectedItemPosition()+1;
 
 
 
         for (RemoteItem ri: rcloneInstance.getRemotes()) {
-            if(ri.getName().equals(taskToPopulate.getRemote_id())){
-                taskToPopulate.setRemote_type(ri.getType());
+            if(ri.getName().equals(taskToPopulate.getRemoteId())){
+                taskToPopulate.setRemoteType(ri.getType());
             }
         }
 
-        taskToPopulate.setRemote_path(((EditText)findViewById(R.id.task_remote_path_textfield)).getText().toString());
-        taskToPopulate.setLocal_path(((EditText)findViewById(R.id.task_local_path_textfield)).getText().toString());
+        taskToPopulate.setRemotePath(((EditText)findViewById(R.id.task_remote_path_textfield)).getText().toString());
+        taskToPopulate.setLocalPath(((EditText)findViewById(R.id.task_local_path_textfield)).getText().toString());
         taskToPopulate.setDirection(direction);
         return taskToPopulate;
     }

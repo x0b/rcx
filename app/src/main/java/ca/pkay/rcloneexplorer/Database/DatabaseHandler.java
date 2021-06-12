@@ -127,10 +127,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private Task taskFromCursor(Cursor cursor){
         Task task = new Task(cursor.getLong(0));
         task.setTitle(cursor.getString(1));
-        task.setRemote_id(cursor.getString(2));
-        task.setRemote_type(cursor.getInt(3));
-        task.setRemote_path(cursor.getString(4));
-        task.setLocal_path(cursor.getString(5));
+        task.setRemoteId(cursor.getString(2));
+        task.setRemoteType(cursor.getInt(3));
+        task.setRemotePath(cursor.getString(4));
+        task.setLocalPath(cursor.getString(5));
         task.setDirection(cursor.getInt(6));
         return task;
     }
@@ -154,10 +154,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private ContentValues getTaskContentValues(Task task){
         ContentValues values = new ContentValues();
         values.put(Task.COLUMN_NAME_TITLE, task.getTitle());
-        values.put(Task.COLUMN_NAME_LOCAL_PATH, task.getLocal_path());
-        values.put(Task.COLUMN_NAME_REMOTE_ID, task.getRemote_id());
-        values.put(Task.COLUMN_NAME_REMOTE_PATH, task.getRemote_path());
-        values.put(Task.COLUMN_NAME_REMOTE_TYPE, task.getRemote_type());
+        values.put(Task.COLUMN_NAME_LOCAL_PATH, task.getLocalPath());
+        values.put(Task.COLUMN_NAME_REMOTE_ID, task.getRemoteId());
+        values.put(Task.COLUMN_NAME_REMOTE_PATH, task.getRemotePath());
+        values.put(Task.COLUMN_NAME_REMOTE_TYPE, task.getRemoteType());
         values.put(Task.COLUMN_NAME_SYNC_DIRECTION, task.getDirection());
         return values;
     }
