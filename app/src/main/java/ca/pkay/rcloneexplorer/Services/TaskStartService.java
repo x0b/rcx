@@ -7,13 +7,14 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.R;
 
 
 /**
@@ -25,13 +26,12 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
  */
 public class TaskStartService extends IntentService {
 
-    public static String TASK_ACTION= "START_TASK";
-    public static String EXTRA_TASK_ID= "task";
-    public static String EXTRA_TASK_SILENT= "notification";
+    public static final String TASK_ACTION= "START_TASK";
+    public static final String EXTRA_TASK_ID= "task";
+    public static final String EXTRA_TASK_SILENT= "notification";
 
     public TaskStartService() {
         super("TaskStartService");
-        Log.e("Service", "Start service intent!");
     }
 
     @Override
@@ -79,12 +79,11 @@ public class TaskStartService extends IntentService {
     private void createPersistentNotification() {
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "task_intent_notification";
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel for intent notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            String notification_description = this.getResources().getString(R.string.intent_channel_notification_description);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, notification_description, NotificationManager.IMPORTANCE_DEFAULT);
 
-            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-
+            NotificationManagerCompat.from(this).createNotificationChannel(channel);
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
-
             startForeground(1, notification);
         }
     }

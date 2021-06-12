@@ -577,4 +577,5 @@
  <string name="task_to_run">Task to run</string>
     <string name="notification_triggerservice_description">This is a notification that allows the triggermechanism to start a Task</string>
  <string name="notification_triggerservice_title">Triggerservice</string>
+    <string name="intent_channel_notification_description">Channel for intent notifications</string>
 </resources>
