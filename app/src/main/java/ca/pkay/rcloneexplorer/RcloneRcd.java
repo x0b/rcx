@@ -15,19 +15,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import io.github.x0b.rfc3339parser.Rfc3339Parser;
-import io.github.x0b.rfc3339parser.Rfc3339Strict;
-import java9.util.stream.Collectors;
-import java9.util.stream.Stream;
+import ca.pkay.rcloneexplorer.util.Rfc3339Deserializer;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -41,7 +34,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.ServerSocket;
 import java.security.SecureRandom;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1080,29 +1072,5 @@ public class RcloneRcd {
 
     private static class PublicLinkRcOpResponse implements RcOpResponse {
         String url;
-    }
-
-
-    ///
-    /// Custom Serializers & Deserializers
-    ///
-    private static class Rfc3339Deserializer extends StdDeserializer<Long> {
-
-        private Rfc3339Parser rfc3339Parser;
-
-        protected Rfc3339Deserializer() {
-            super(Rfc3339Deserializer.class);
-            rfc3339Parser = new Rfc3339Strict();
-        }
-
-        @Override
-        public Long deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            JsonNode timeNode = parser.getCodec().readTree(parser);
-            try {
-                return rfc3339Parser.parseCalendar(timeNode.asText()).getTimeInMillis();
-            } catch (ParseException e) {
-                return 0L;
-            }
-        }
     }
 }
