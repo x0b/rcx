@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -7,13 +8,19 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.webkit.WebView;
+import android.widget.Toast;
+
 import org.markdownj.MarkdownProcessor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import es.dmoral.toasty.Toasty;
+
 public class MarkdownView extends WebView {
+
+    private static final String TAG = "MarkdownView";
 
     public MarkdownView(Context context) {
         super(patchContext(context));
@@ -21,6 +28,16 @@ public class MarkdownView extends WebView {
 
     public MarkdownView(Context context, AttributeSet attrs) {
         super(patchContext(context), attrs);
+    }
+
+    public static void closeOnMissingWebView(Activity host, Exception exception) {
+        if (exception.getMessage() != null && exception.getMessage().contains("Failed to load WebView provider: No WebView installed")) {
+            FLog.e(TAG, "onCreate: Failed to load WebView (Appcenter PUB #49494606u)", exception);
+            Toasty.error(host.getApplicationContext(), "Install WebView and try again", Toast.LENGTH_LONG, true).show();
+            host.finish();
+        } else {
+            throw new RuntimeException(exception);
+        }
     }
 
     private static Context patchContext(Context context) {
