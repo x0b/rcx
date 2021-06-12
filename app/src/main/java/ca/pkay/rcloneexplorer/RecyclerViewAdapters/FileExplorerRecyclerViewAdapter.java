@@ -21,7 +21,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
+
+import ca.pkay.rcloneexplorer.util.FLog;
 import io.github.x0b.safdav.SafAccessProvider;
+import io.github.x0b.safdav.file.FileAccessError;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +33,7 @@ import java.util.List;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
+    private static final String TAG = "FileExplorerRVA";
     private List<FileItem> files;
     private int selectionColor;
     private View emptyView;
@@ -117,13 +121,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.ic_file);
                 if(localLoad) {
-                    Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/'+item.getPath());
-                    Glide
-                            .with(context)
-                            .load(contentUri)
-                            .apply(glideOption)
-                            .thumbnail(0.1f)
-                            .into(holder.fileIcon);
+                    bindSafFile(holder, item, glideOption);
                 } else {
                     String[] serverParams = listener.getThumbnailServerParams();
                     String hiddenPath = serverParams[0];
@@ -209,6 +207,21 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 onLongClickAction(item, holder);
             }
         });
+    }
+
+    private void bindSafFile(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
+        try {
+            Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/'+ item.getPath());
+            Glide
+                    .with(context)
+                    .load(contentUri)
+                    .apply(glideOption)
+                    .thumbnail(0.1f)
+                    .into(holder.fileIcon);
+        } catch (FileAccessError e) {
+            FLog.e(TAG, "onBindViewHolder: SAF error", e);
+            holder.fileIcon.setImageResource(R.drawable.ic_file);
+        }
     }
 
     private static class PersistentGlideUrl extends GlideUrl {
