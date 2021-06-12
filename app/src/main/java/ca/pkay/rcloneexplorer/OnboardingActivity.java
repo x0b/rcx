@@ -71,6 +71,9 @@ public class OnboardingActivity extends AppIntro {
         if (newFragment.getTag().endsWith(":2")) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             Switch crashLoggingSwitch = newFragment.getView().findViewById(R.id.switch_err_logs);
+            if (crashLoggingSwitch == null) {
+                return;
+            }
             crashLoggingSwitch.setChecked(preferences.getBoolean(
                     getString(R.string.pref_key_crash_reports),
                     getResources().getBoolean(R.bool.default_crash_log_enable)));
