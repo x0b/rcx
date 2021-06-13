@@ -218,7 +218,7 @@ public class Rclone {
         Process process;
         try {
             FLog.d(TAG, "getDirectoryContent[ENV]: %s", Arrays.toString(env));
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -285,8 +285,7 @@ public class Rclone {
         Set<String> favoriteRemotes = sharedPreferences.getStringSet(context.getString(R.string.shared_preferences_drawer_pinned_remotes), new HashSet<>());
 
         try {
-            process = Runtime.getRuntime().exec(command);
-
+            process = getRuntimeProcess(command);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -350,6 +349,21 @@ public class Rclone {
 
         return remoteItemList;
     }
+
+        private Process getRuntimeProcess(String[] command) throws IOException {
+            return getRuntimeProcess(command, new String[0]);
+        }
+
+        private Process getRuntimeProcess(String[] command, String[] env) throws IOException {
+            try{
+                Runtime.getRuntime().exec(rclone);
+            } catch (IOException e){
+                FLog.e("rclone", "Error executing rclone!" +e.getMessage());
+                throw new IOException("Error executing rclone!" +e.getMessage());
+            }
+
+            return Runtime.getRuntime().exec(command, env);
+        }
 
     @Nullable
     private RemoteItem getRemoteType(JSONObject remotesJSON, RemoteItem remoteItem, String remoteName, int maxDepth) {
@@ -422,7 +436,7 @@ public class Rclone {
 
 
         try {
-            return Runtime.getRuntime().exec(commandWithOptions);
+            return getRuntimeProcess(commandWithOptions);
         } catch (IOException e) {
             FLog.e(TAG, "configCreate: error starting rclone", e);
             return null;
@@ -432,7 +446,7 @@ public class Rclone {
     public Process configInteractive() throws IOException {
         String[] command = createCommand("config");
         String[] environment = getRcloneEnv();
-        return Runtime.getRuntime().exec(command, environment);
+        return getRuntimeProcess(command, environment);
     }
 
     public void deleteRemote(String remoteName) {
@@ -440,7 +454,7 @@ public class Rclone {
         Process process;
 
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = getRuntimeProcess(command);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             FLog.e(TAG, "deleteRemote: error starting rclone", e);
@@ -452,7 +466,7 @@ public class Rclone {
 
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = getRuntimeProcess(command);
             process.waitFor();
             if (process.exitValue() != 0) {
                 return null;
@@ -525,7 +539,7 @@ public class Rclone {
         String[] env = getRcloneEnv();
         String[] command = params.toArray(new String[0]);
         try {
-            return Runtime.getRuntime().exec(command, env);
+            return getRuntimeProcess(command, env);
         } catch (IOException e) {
             FLog.e(TAG, "serve: error starting rclone", e);
             // todo: guard callers against null result
@@ -557,7 +571,7 @@ public class Rclone {
 
         String[] env = getRcloneEnv();
         try {
-            return Runtime.getRuntime().exec(command, env);
+            return getRuntimeProcess(command, env);
         } catch (IOException e) {
             FLog.e(TAG, "sync: error starting rclone", e);
             return null;
@@ -584,7 +598,7 @@ public class Rclone {
 
         String[] env = getRcloneEnv();
         try {
-            return Runtime.getRuntime().exec(command, env);
+            return getRuntimeProcess(command, env);
         } catch (IOException e) {
             FLog.e(TAG, "downloadFile: error starting rclone", e);
             return null;
@@ -616,7 +630,7 @@ public class Rclone {
 
         String[] env = getRcloneEnv();
         try {
-            return Runtime.getRuntime().exec(command, env);
+            return getRuntimeProcess(command, env);
         } catch (IOException e) {
             FLog.e(TAG, "uploadFile: error starting rclone", e);
             return null;
@@ -645,7 +659,7 @@ public class Rclone {
 
         String[] env = getRcloneEnv();
         try {
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
         } catch (IOException e) {
             FLog.e(TAG, "deleteItems: error starting rclone", e);
         }
@@ -665,7 +679,7 @@ public class Rclone {
         String[] command = createCommandWithOptions("mkdir", newDir);
         String[] env = getRcloneEnv();
         try {
-            Process process = Runtime.getRuntime().exec(command, env);
+            Process process = getRuntimeProcess(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -697,7 +711,7 @@ public class Rclone {
         command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         String[] env = getRcloneEnv();
         try {
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
         } catch (IOException e) {
             FLog.e(TAG, "moveTo: error starting rclone", e);
         }
@@ -720,7 +734,7 @@ public class Rclone {
         String[] command = createCommandWithOptions("moveto", oldFilePath, newFilePath);
         String[] env = getRcloneEnv();
         try {
-            Process process = Runtime.getRuntime().exec(command, env);
+            Process process = getRuntimeProcess(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -736,7 +750,7 @@ public class Rclone {
     public InputStream downloadToPipe(String rclonePath) throws IOException {
         String[] command = createCommandWithOptions("cat", rclonePath);
         String[] env = getRcloneEnv();
-        final Process process = Runtime.getRuntime().exec(command, env);
+        final Process process = getRuntimeProcess(command, env);
         new Thread() {
             @Override
             public void run() {
@@ -754,7 +768,7 @@ public class Rclone {
     public OutputStream uploadFromPipe(String rclonePath) throws IOException {
         String[] command = createCommandWithOptions("rcat", rclonePath, "--streaming-upload-cutoff", "500K");
         String[] env = getRcloneEnv();
-        final Process process = Runtime.getRuntime().exec(command, env);
+        final Process process = getRuntimeProcess(command, env);
         new Thread() {
             @Override
             public void run() {
@@ -774,7 +788,7 @@ public class Rclone {
         Process process = null;
         String[] env = getRcloneEnv();
         try {
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             FLog.e(TAG, "emptyTrashCan: error running rclone", e);
@@ -794,7 +808,7 @@ public class Rclone {
         String[] env = getRcloneEnv();
 
         try {
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -827,7 +841,7 @@ public class Rclone {
         String[] env = getRcloneEnv();
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 return context.getString(R.string.hash_error);
@@ -861,7 +875,7 @@ public class Rclone {
         String[] env = getRcloneEnv();
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command, env);
+            process = getRuntimeProcess(command, env);
             process.waitFor();
             if (process.exitValue() != 0) {
                 return context.getString(R.string.hash_error);
@@ -885,7 +899,7 @@ public class Rclone {
         String[] command = createCommand("--version");
         ArrayList<String> result = new ArrayList<>();
         try {
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = getRuntimeProcess(command);
             process.waitFor();
             if (process.exitValue() != 0) {
                 logErrorOutput(process);
@@ -911,7 +925,7 @@ public class Rclone {
         String[] command = createCommand("config", "reconnect", remoteName);
 
         try {
-            return Runtime.getRuntime().exec(command, getRcloneEnv());
+            return getRuntimeProcess(command, getRcloneEnv());
         } catch (IOException e) {
             return null;
         }
@@ -926,7 +940,7 @@ public class Rclone {
         JSONObject aboutJSON;
 
         try {
-            process = Runtime.getRuntime().exec(command, getRcloneEnv());
+            process = getRuntimeProcess(command, getRcloneEnv());
             try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -1010,7 +1024,7 @@ public class Rclone {
         String[] command = createCommand( "--ask-password=false", "listremotes");
         Process process;
         try {
-            process = Runtime.getRuntime().exec(command);
+            process = getRuntimeProcess(command);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             FLog.e(TAG, "Error running rclone %s", e, Arrays.toString(command));
@@ -1025,7 +1039,7 @@ public class Rclone {
         Process process;
 
         try {
-            process = Runtime.getRuntime().exec(command, environmentalVars);
+            process = getRuntimeProcess(command, environmentalVars);
         } catch (IOException e) {
             FLog.e(TAG, "decryptConfig: error running rclone", e);
             return false;
@@ -1131,7 +1145,7 @@ public class Rclone {
     public boolean isValidConfig(String path) {
         String[] command = {rclone, "-vvv", "--ask-password=false", "--config", path, "listremotes"};
         try {
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = getRuntimeProcess(command);
             process.waitFor();
             if (process.exitValue() != 0) { //
                 try (BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
