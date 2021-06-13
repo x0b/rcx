@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.TriggerActivity;
@@ -52,7 +53,12 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Trigger selectedTrigger = triggers.get(position);
         holder.triggerName.setText(selectedTrigger.getTitle());
-        holder.triggerTarget.setText((new DatabaseHandler(context)).getTask(selectedTrigger.getId()).getTitle());
+        Task task = (new DatabaseHandler(context)).getTask(selectedTrigger.getId());
+        String taskTitle = "ERR: NOTFOUND";
+        if(task != null){
+            taskTitle = task.getTitle();
+        }
+        holder.triggerTarget.setText(taskTitle);
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, selectedTrigger.getTime()/60);

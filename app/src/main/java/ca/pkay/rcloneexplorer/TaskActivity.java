@@ -21,6 +21,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import es.dmoral.toasty.Toasty;
 
 public class TaskActivity extends AppCompatActivity {
 
@@ -60,6 +61,10 @@ public class TaskActivity extends AppCompatActivity {
             task_id = extras.getLong(ID_EXTRA);
             if(task_id!=0){
                 existingTask = dbHandler.getTask(task_id);
+                if(existingTask == null){
+                    Toasty.error(this, this.getResources().getString(R.string.taskactivity_task_not_found)).show();
+                    finish();
+                }
             }
         }
 

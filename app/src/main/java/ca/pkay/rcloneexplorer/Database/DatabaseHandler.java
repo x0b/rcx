@@ -91,6 +91,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
+        if(results.size()==0){
+            return null;
+        }
         return results.get(0);
 
     }
@@ -216,6 +219,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
+
+        if(results.size()==0){
+            return null;
+        }
         return results.get(0);
     }
 

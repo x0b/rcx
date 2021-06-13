@@ -589,4 +589,7 @@
  <string name="weekday_shorthand_sat">SAT</string>
  <string name="weekday_shorthand_sun">SUN</string>
  <string name="trigger_task_label">Task:</string>
+    <string name="trigger_save_notasks">There are no tasks!</string>
+    <string name="taskactivity_task_not_found">This task was not found</string>
+    <string name="triggeractivity_trigger_not_found">Trigger not found!</string>
 </resources>

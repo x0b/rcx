@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -23,6 +24,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
+import es.dmoral.toasty.Toasty;
 
 public class TriggerActivity extends AppCompatActivity {
 
@@ -48,6 +50,10 @@ public class TriggerActivity extends AppCompatActivity {
             trigger_id = extras.getLong(ID_EXTRA);
             if(trigger_id!=0){
                 existingTrigger = dbHandler.getTrigger(trigger_id);
+                if(existingTrigger == null){
+                    Toasty.error(this, this.getResources().getString(R.string.triggeractivity_trigger_not_found)).show();
+                    finish();
+                }
             }
         }
 
@@ -122,16 +128,28 @@ public class TriggerActivity extends AppCompatActivity {
         }
     }
 
+    private boolean checkTaskExistence(){
+        Log.e("a", ""+taskList.size());
+        if(taskList.size()==0){
+            Toasty.error(this, this.getResources().getString(R.string.trigger_save_notasks)).show();
+            return false;
+        }
+        return true;
+    }
     private void persistTaskChanges(){
-        Trigger updatedTrigger = getTriggerValues(existingTrigger.getId());
-        dbHandler.updateTrigger(updatedTrigger);
-        new TriggerService(this).queueSingleTrigger(updatedTrigger);
+        if(checkTaskExistence()){
+            Trigger updatedTrigger = getTriggerValues(existingTrigger.getId());
+            dbHandler.updateTrigger(updatedTrigger);
+            new TriggerService(this).queueSingleTrigger(updatedTrigger);
+        }
         finish();
     }
 
     private void saveTrigger(){
-        Trigger newTrigger = dbHandler.createTrigger(getTriggerValues(0L));
-        new TriggerService(this).queueSingleTrigger(newTrigger);
+        if(checkTaskExistence()) {
+            Trigger newTrigger = dbHandler.createTrigger(getTriggerValues(0L));
+            new TriggerService(this).queueSingleTrigger(newTrigger);
+        }
         finish();
     }
 

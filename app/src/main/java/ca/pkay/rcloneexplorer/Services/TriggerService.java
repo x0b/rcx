@@ -127,6 +127,7 @@ public class TriggerService extends Service {
         this.dbHandler = new DatabaseHandler(getBaseContext());
         this.context = getBaseContext();
         Trigger t = dbHandler.getTrigger(id);
+        //Todo: Handle case when t is not defined because the trigger was deleted but scheduled
         startTask(t);
         queueSingleTrigger(t);
         stopForeground(true);
