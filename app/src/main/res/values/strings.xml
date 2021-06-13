@@ -592,4 +592,6 @@
     <string name="trigger_save_notasks">There are no tasks!</string>
     <string name="taskactivity_task_not_found">This task was not found</string>
     <string name="triggeractivity_trigger_not_found">Trigger not found!</string>
+ <string name="task_item_label_from">From:</string>
+ <string name="task_item_label_to">To:</string>
 </resources>

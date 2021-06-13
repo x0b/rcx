@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:textColor="?attr/textColorSecondary"
-            android:text="From:"
+            android:text="@string/task_item_label_from"
             app:layout_constraintStart_toEndOf="@+id/task_sync_direction"
             app:layout_constraintTop_toTopOf="@+id/task_sync_direction" />
 
@@ -55,7 +55,8 @@
             android:textColor="?attr/textColorSecondary"
             android:text="fromid"
             app:layout_constraintStart_toEndOf="@+id/fromPath"
-            app:layout_constraintTop_toTopOf="@+id/fromLabel" />
+            app:layout_constraintTop_toTopOf="@+id/fromLabel"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/fromPath"
@@ -65,7 +66,8 @@
             android:textColor="?attr/textColorSecondary"
             android:text="fromPath"
             app:layout_constraintStart_toEndOf="@+id/fromLabel"
-            app:layout_constraintTop_toTopOf="@+id/fromLabel" />
+            app:layout_constraintTop_toTopOf="@+id/fromLabel"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/toLabel"
@@ -73,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:textColor="?attr/textColorSecondary"
-            android:text="To:"
+            android:text="@string/task_item_label_to"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/fromLabel"
             app:layout_constraintTop_toBottomOf="@+id/fromLabel" />
@@ -85,7 +87,8 @@
             android:textColor="?attr/textColorSecondary"
             android:text="toid"
             app:layout_constraintStart_toEndOf="@+id/toPath"
-            app:layout_constraintTop_toTopOf="@+id/toLabel" />
+            app:layout_constraintTop_toTopOf="@+id/toLabel"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/toPath"
@@ -94,7 +97,8 @@
             android:textColor="?attr/textColorSecondary"
             android:text="toPath"
             app:layout_constraintStart_toStartOf="@+id/fromPath"
-            app:layout_constraintTop_toTopOf="@+id/toLabel" />
+            app:layout_constraintTop_toTopOf="@+id/toLabel"
+            tools:ignore="HardcodedText" />
 
         <ImageButton
             android:id="@+id/file_options"
