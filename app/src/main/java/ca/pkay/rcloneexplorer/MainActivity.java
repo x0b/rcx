@@ -71,8 +71,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -541,7 +543,10 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
-        intent.putExtra(Intent.EXTRA_TITLE, "rclone.conf");
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String localTime = date.format(Calendar.getInstance().getTime());
+
+        intent.putExtra(Intent.EXTRA_TITLE, "rcx-backup-"+localTime+".zip");
         tryStartActivityForResult(this, intent, WRITE_REQUEST_CODE);
     }
 

@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
+
+import ca.pkay.rcloneexplorer.Database.json.Exporter;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
@@ -31,12 +33,16 @@ import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Rclone {
 
@@ -1173,15 +1179,33 @@ public class Rclone {
         if (inputStream == null || outputStream == null) {
             return;
         }
-
-        byte[] buffer = new byte[4096];
-        int offset;
-        while ((offset = inputStream.read(buffer)) > 0) {
-            outputStream.write(buffer, 0, offset);
+        char[] buffer = new char[4096];
+        StringBuilder out = new StringBuilder();
+        Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        for (int numRead; (numRead = in.read(buffer, 0, buffer.length)) > 0; ) {
+            out.append(buffer, 0, numRead);
         }
-        inputStream.close();
-        outputStream.flush();
-        outputStream.close();
+
+        ZipOutputStream zos = new ZipOutputStream(outputStream);
+        try {
+            ZipEntry zipEntry = new ZipEntry("rcx.json");
+            zos.putNextEntry(zipEntry);
+            zos.write(Exporter.create(this.context).getBytes());
+            zos.closeEntry();
+            zipEntry = new ZipEntry("rclone.conf");
+            zos.putNextEntry(zipEntry);
+            zos.write(out.toString().getBytes());
+            zos.closeEntry();
+        }
+        catch (Exception e) {
+            // unable to write zip
+        }
+        finally {
+            zos.close();
+            inputStream.close();
+            outputStream.flush();
+            outputStream.close();
+        }
     }
 
     /**

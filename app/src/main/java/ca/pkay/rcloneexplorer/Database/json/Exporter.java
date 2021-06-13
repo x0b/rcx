@@ -1,6 +1,6 @@
 package ca.pkay.rcloneexplorer.Database.json;
 
-import android.app.Activity;
+import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,9 +12,9 @@ import ca.pkay.rcloneexplorer.Items.Trigger;
 
 public class Exporter {
 
-    public static String create(Activity a) throws JSONException {
+    public static String create(Context context) throws JSONException {
 
-        DatabaseHandler dbHandler = new DatabaseHandler(a);
+        DatabaseHandler dbHandler = new DatabaseHandler(context);
 
         JSONObject main = new JSONObject();
         JSONArray tasks = new JSONArray();
