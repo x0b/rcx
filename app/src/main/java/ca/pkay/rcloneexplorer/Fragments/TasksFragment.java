@@ -45,7 +45,7 @@ public class TasksFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((FragmentActivity) getContext()).setTitle(R.string.tasks);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
     }
 
     @Override
@@ -70,26 +70,14 @@ public class TasksFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.tasks_fragment_menu, menu);
-    }
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        Activity activity = getActivity();
+        Context context = getContext();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_import:
-                break;
-            case R.id.action_export:
-                try {
-                    Exporter.create(getActivity());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
+        if(activity==null){
+            Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
+            return;
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void populateTaskList(View v){
@@ -102,15 +90,5 @@ public class TasksFragment extends Fragment {
 
         recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), c);
         recyclerView.setAdapter(recyclerViewAdapter);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        Activity activity = getActivity();
-        Context context = getContext();
-
-        if(activity==null){
-            Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
-            return;
-        }
     }
 }

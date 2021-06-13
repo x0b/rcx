@@ -46,7 +46,7 @@ public class TriggerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((FragmentActivity) getContext()).setTitle(R.string.trigger);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
     }
 
     @Override
@@ -75,7 +75,6 @@ public class TriggerFragment extends Fragment {
 
         view.findViewById(R.id.task_activity_button).setOnClickListener(v -> {
             Fragment fragment = new TasksFragment();
-
             FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = fm.beginTransaction();
             transaction.replace(R.id.flFragment, fragment);
@@ -89,17 +88,6 @@ public class TriggerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         populateTriggerList(fragmentView);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.tasks_fragment_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     private void populateTriggerList(View v){
