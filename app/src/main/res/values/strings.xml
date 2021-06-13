@@ -52,7 +52,7 @@
     <string name="no_internet_connection">No internet connection</string>
     <string name="github_app_url" translatable="false">https://github.com/x0b/rcx</string>
     <string name="github_issue_url" translatable="false">https://github.com/x0b/rcx/issues/new/choose</string>
-   <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
+    <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
     <string name="github_maintainer_url" translatable="false">https://github.com/x0b</string>
     <string name="about_check_updates">Check</string>
     <string name="replace_config_file_question">Replace current configuration file?</string>
@@ -506,7 +506,6 @@
     <string name="no_app_found_for_this_link">No app found for this link</string>
     <string name="documentsui_missing">System component for files (com.android.documentsui) missing</string>
 
-
     <string name="back">Back</string>
     <string name="task_dialog_save">save</string>
     <string name="task_dialog_title_textfield_hint">Name</string>
@@ -566,32 +565,32 @@
     <string name="title_activity_trigger">Trigger</string>
     <string name="enabled">Enabled</string>
     <string name="trigger_name">Trigger-Name</string>
- <string name="monday">Monday</string>
- <string name="tuesday">Tuesday</string>
- <string name="wednesday">Wednesday</string>
- <string name="thursday">Thursday</string>
- <string name="friday">Friday</string>
- <string name="saturday">Saturday</string>
- <string name="sunday">Sunday</string>
- <string name="time">Time</string>
- <string name="task_to_run">Task to run</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="time">Time</string>
+    <string name="task_to_run">Task to run</string>
     <string name="notification_triggerservice_description">This is a notification that allows the triggermechanism to start a Task</string>
- <string name="notification_triggerservice_title">Triggerservice</string>
+    <string name="notification_triggerservice_title">Triggerservice</string>
     <string name="intent_channel_notification_description">Channel for intent notifications</string>
     <string name="message_trigger_enabled">Enabled Trigger</string>
- <string name="message_trigger_disabled">Disabled Trigger</string>
+    <string name="message_trigger_disabled">Disabled Trigger</string>
     <string name="trigger_time_label">Time:</string>
     <string name="weekday_shorthand_mon">MON</string>
- <string name="weekday_shorthand_tue">TUE</string>
- <string name="weekday_shorthand_wed">WED</string>
- <string name="weekday_shorthand_thur">THUR</string>
- <string name="weekday_shorthand_fri">FRI</string>
- <string name="weekday_shorthand_sat">SAT</string>
- <string name="weekday_shorthand_sun">SUN</string>
- <string name="trigger_task_label">Task:</string>
+    <string name="weekday_shorthand_tue">TUE</string>
+    <string name="weekday_shorthand_wed">WED</string>
+    <string name="weekday_shorthand_thur">THUR</string>
+    <string name="weekday_shorthand_fri">FRI</string>
+    <string name="weekday_shorthand_sat">SAT</string>
+    <string name="weekday_shorthand_sun">SUN</string>
+    <string name="trigger_task_label">Task:</string>
     <string name="trigger_save_notasks">There are no tasks!</string>
     <string name="taskactivity_task_not_found">This task was not found</string>
     <string name="triggeractivity_trigger_not_found">Trigger not found!</string>
- <string name="task_item_label_from">From:</string>
- <string name="task_item_label_to">To:</string>
+    <string name="task_item_label_from">From:</string>
+    <string name="task_item_label_to">To:</string>
 </resources>
