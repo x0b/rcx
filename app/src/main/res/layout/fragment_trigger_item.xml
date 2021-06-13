@@ -12,12 +12,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/triggerIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:background="#00FFFFFF"
             android:contentDescription="@string/enabled"
+            android:foreground="?attr/selectableItemBackground"
             android:tint="?attr/iconTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +30,7 @@
             android:id="@+id/triggerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif"
             android:textAppearance="?attr/textAppearanceListItem"
@@ -36,10 +38,10 @@
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/triggerIcon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Google Drive" />
+            tools:text="Triggername" />
 
         <ImageButton
-            android:id="@+id/trigger_options"
+            android:id="@+id/triggerOptions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -61,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
-            android:text="Time:"
+            android:text="@string/trigger_time_label"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="@+id/triggerName"
             app:layout_constraintTop_toBottomOf="@+id/triggerName" />
@@ -72,7 +74,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="00:00"
-            app:layout_constraintEnd_toStartOf="@+id/tiggerIcon"
             app:layout_constraintStart_toEndOf="@+id/text_label_time"
             app:layout_constraintTop_toTopOf="@+id/text_label_time" />
 
@@ -93,50 +94,68 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="MON" />
+                android:text="@string/weekday_shorthand_mon" />
 
             <TextView
                 android:id="@+id/trigger_enabled_tue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TUE" />
+                android:text="@string/weekday_shorthand_tue" />
 
             <TextView
                 android:id="@+id/trigger_enabled_wed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="WED" />
+                android:text="@string/weekday_shorthand_wed" />
 
             <TextView
                 android:id="@+id/trigger_enabled_thu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="THUR" />
+                android:text="@string/weekday_shorthand_thur" />
 
             <TextView
                 android:id="@+id/trigger_enabled_fri"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="FRI" />
+                android:text="@string/weekday_shorthand_fri" />
 
             <TextView
                 android:id="@+id/trigger_enabled_sat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="SAT" />
+                android:text="@string/weekday_shorthand_sat" />
 
             <TextView
                 android:id="@+id/trigger_enabled_sun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="SUN" />
+                android:text="@string/weekday_shorthand_sun" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/trigger_target_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="@string/trigger_task_label"
+            app:layout_constraintStart_toEndOf="@+id/time_starttime"
+            app:layout_constraintTop_toTopOf="@+id/time_starttime" />
+
+        <TextView
+            android:id="@+id/trigger_target"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintStart_toEndOf="@+id/trigger_target_label"
+            app:layout_constraintTop_toTopOf="@+id/trigger_target_label" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

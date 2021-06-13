@@ -10,8 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
@@ -28,6 +28,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.TriggerActivity;
+import es.dmoral.toasty.Toasty;
 
 public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecyclerViewAdapter.ViewHolder>{
 
@@ -50,9 +51,8 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Trigger selectedTrigger = triggers.get(position);
-        String remoteName = selectedTrigger.getTitle();
-
-        holder.triggerName.setText(remoteName);
+        holder.triggerName.setText(selectedTrigger.getTitle());
+        holder.triggerTarget.setText((new DatabaseHandler(context)).getTask(selectedTrigger.getId()).getTitle());
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, selectedTrigger.getTime()/60);
@@ -60,7 +60,6 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
 
         DateFormat dateFormat = android.text.format.DateFormat.getTimeFormat(context);
         holder.time.setText(dateFormat.format(new Date(calendar.getTimeInMillis())));
-
 
         setTextViewValue(holder.mon, selectedTrigger.isEnabledAtDay(0));
         setTextViewValue(holder.tue, selectedTrigger.isEnabledAtDay(1));
@@ -70,19 +69,33 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
         setTextViewValue(holder.sat, selectedTrigger.isEnabledAtDay(5));
         setTextViewValue(holder.sun, selectedTrigger.isEnabledAtDay(6));
 
-        Drawable d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_check_circle_outline_24, null);
-        if(!selectedTrigger.isEnabled()){
-            d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_block_24, null);
-        }
-        holder.triggerIcon.setImageDrawable(d);
+        updateTriggerIcon(selectedTrigger,holder.triggerIcon);
 
-        holder.trigger_options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showFileMenu(v, selectedTrigger);
+        holder.triggerIcon.setOnClickListener(v-> {
+            DatabaseHandler db = new DatabaseHandler(context);
+            selectedTrigger.setEnabled(!selectedTrigger.isEnabled());
+            db.updateTrigger(selectedTrigger);
+            updateTriggerIcon(selectedTrigger, holder.triggerIcon);
+
+            String message = context.getResources().getString(R.string.message_trigger_disabled);
+            if(selectedTrigger.isEnabled()){
+                message = context.getResources().getString(R.string.message_trigger_enabled);
             }
+            Toasty.info(context, message).show();
         });
 
+        holder.triggerOptions.setOnClickListener(v-> {
+            showFileMenu(v, selectedTrigger);
+        });
+
+    }
+
+    private void updateTriggerIcon(Trigger trigger, ImageButton button){
+        Drawable d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_check_circle_outline_24, null);
+        if(!trigger.isEnabled()){
+            d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_block_24, null);
+        }
+        button.setImageDrawable(d);
     }
 
     private void setTextViewValue(TextView view, boolean disabled){
@@ -152,10 +165,11 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         final View view;
-        final ImageView triggerIcon;
-        final ImageButton trigger_options;
+        final ImageButton triggerIcon;
+        final ImageButton triggerOptions;
         final TextView triggerName;
         final TextView time;
+        final TextView triggerTarget;
 
 
         final TextView mon;
@@ -171,7 +185,8 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
             this.view = itemView;
             this.triggerIcon = view.findViewById(R.id.triggerIcon);
             this.triggerName = view.findViewById(R.id.triggerName);
-            this.trigger_options = view.findViewById(R.id.trigger_options);
+            this.triggerOptions = view.findViewById(R.id.triggerOptions);
+            this.triggerTarget = view.findViewById(R.id.trigger_target);
             this.time = view.findViewById(R.id.time_starttime);
 
             this.mon = view.findViewById(R.id.trigger_enabled_mon);

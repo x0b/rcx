@@ -578,4 +578,15 @@
     <string name="notification_triggerservice_description">This is a notification that allows the triggermechanism to start a Task</string>
  <string name="notification_triggerservice_title">Triggerservice</string>
     <string name="intent_channel_notification_description">Channel for intent notifications</string>
+    <string name="message_trigger_enabled">Enabled Trigger</string>
+ <string name="message_trigger_disabled">Disabled Trigger</string>
+    <string name="trigger_time_label">Time:</string>
+    <string name="weekday_shorthand_mon">MON</string>
+ <string name="weekday_shorthand_tue">TUE</string>
+ <string name="weekday_shorthand_wed">WED</string>
+ <string name="weekday_shorthand_thur">THUR</string>
+ <string name="weekday_shorthand_fri">FRI</string>
+ <string name="weekday_shorthand_sat">SAT</string>
+ <string name="weekday_shorthand_sun">SUN</string>
+ <string name="trigger_task_label">Task:</string>
 </resources>
