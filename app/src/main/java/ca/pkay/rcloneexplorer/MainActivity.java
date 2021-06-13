@@ -55,6 +55,8 @@ import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
 import com.google.android.material.navigation.NavigationView;
+
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.rfc3339parser.Rfc3339Parser;
 import io.github.x0b.rfc3339parser.Rfc3339Strict;
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }
 
-        applyTheme();
+        ThemeHelper.applyTheme(this);
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
         availableDrawerPinnedRemoteId = 2;
@@ -241,15 +243,6 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         pinRemotesToDrawer();
-    }
-
-    private void applyTheme() {
-        isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.pref_key_dark_theme), false);
-        ActivityHelper.applyTheme(this);
-        TypedValue typedValue = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
-        getWindow().setStatusBarColor(typedValue.data);
     }
 
     @Override
@@ -475,7 +468,7 @@ public class MainActivity extends AppCompatActivity
 
     private void warnUserAboutOverwritingConfiguration() {
         AlertDialog.Builder builder;
-        if (isDarkTheme) {
+        if (ThemeHelper.isDarkTheme(this)) {
             builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(this);

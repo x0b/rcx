@@ -29,14 +29,6 @@
         <activity android:name=".OnboardingActivity">
         </activity>
         <activity
-            android:name=".TaskActivity"
-            android:label="@string/title_activity_task"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".TriggerActivity"
-            android:label="@string/title_activity_trigger"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
             android:name=".MainActivity"
             android:label="@string/app_short_name"
             android:launchMode="singleTop"
@@ -182,6 +174,14 @@
         <activity
             android:name=".RemoteConfig.RemoteConfig"
             android:label="@string/title_activity_remote_config"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TaskActivity"
+            android:label="@string/title_activity_task"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TriggerActivity"
+            android:label="@string/title_activity_trigger"
             android:theme="@style/AppTheme.NoActionBar" />
 
     </application>

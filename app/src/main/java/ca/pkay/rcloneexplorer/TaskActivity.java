@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -21,17 +22,17 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class TaskActivity extends AppCompatActivity {
 
 
     public static final String ID_EXTRA = "TASK_EDIT_ID";
+    private final int REQUEST_CODE_FP_LOCAL = 500;
     private Rclone rcloneInstance;
     private Task existingTask;
     private DatabaseHandler dbHandler;
-    final private int REQUEST_CODE_FP_LOCAL = 500;
-    private Uri sdCardUri;
 
 
     @Override
@@ -48,9 +49,14 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityHelper.applyTheme(this);
         setContentView(R.layout.activity_task);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         dbHandler = new DatabaseHandler(this);
 
@@ -71,27 +77,21 @@ public class TaskActivity extends AppCompatActivity {
         final Context c = this.getApplicationContext();
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Todo fix error when no remotes are available
-                if(existingTask==null){
-                    saveTask();
-                }else{
-                    persistTaskChanges();
-                }
+        fab.setOnClickListener(view -> {
+            //Todo fix error when no remotes are available
+            if(existingTask==null){
+                saveTask();
+            }else{
+                persistTaskChanges();
             }
         });
 
         EditText tv_local = findViewById(R.id.task_local_path_textfield);
-        tv_local.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
-                    Intent intent = new Intent(c, FilePicker.class);
-                    intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
-                    startActivityForResult(intent, REQUEST_CODE_FP_LOCAL);
-                }
+        tv_local.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus){
+                Intent intent = new Intent(c, FilePicker.class);
+                intent.putExtra(FilePicker.FILE_PICKER_PICK_DESTINATION_TYPE, true);
+                startActivityForResult(intent, REQUEST_CODE_FP_LOCAL);
             }
         });
 
@@ -116,6 +116,12 @@ public class TaskActivity extends AppCompatActivity {
         ArrayAdapter<String> directionAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, options);
         directionDropdown.setAdapter(directionAdapter);
         populateFields(items);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private void populateFields(String[] remotes) {
@@ -159,9 +165,6 @@ public class TaskActivity extends AppCompatActivity {
         taskToPopulate.setRemoteId(remotename);
 
         int direction = ((Spinner)findViewById(R.id.task_direction_spinner)).getSelectedItemPosition()+1;
-
-
-
         for (RemoteItem ri: rcloneInstance.getRemotes()) {
             if(ri.getName().equals(taskToPopulate.getRemoteId())){
                 taskToPopulate.setRemoteType(ri.getType());

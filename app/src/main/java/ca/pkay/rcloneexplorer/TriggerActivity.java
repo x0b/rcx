@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -24,6 +25,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class TriggerActivity extends AppCompatActivity {
@@ -37,14 +39,19 @@ public class TriggerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityHelper.applyTheme(this);
         setContentView(R.layout.activity_trigger);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         dbHandler = new DatabaseHandler(this);
 
         Bundle extras = getIntent().getExtras();
-        Long trigger_id;
+        long trigger_id;
 
         if (extras != null) {
             trigger_id = extras.getLong(ID_EXTRA);
@@ -57,23 +64,16 @@ public class TriggerActivity extends AppCompatActivity {
             }
         }
 
-        final Context c = this.getApplicationContext();
-
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(existingTrigger==null){
-                    saveTrigger();
-                }else{
-                    persistTaskChanges();
-                }
+        fab.setOnClickListener(v -> {
+            if(existingTrigger==null){
+                saveTrigger();
+            }else{
+                persistTaskChanges();
             }
         });
 
-
         Spinner taskDropdown = findViewById(R.id.trigger_targets);
-
         taskList = dbHandler.getAllTasks();
         String[] items = new String[taskList.size()];
 
@@ -85,6 +85,12 @@ public class TriggerActivity extends AppCompatActivity {
         taskDropdown.setAdapter(adapter);
 
         populateFields();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private void populateFields() {
@@ -182,9 +188,7 @@ public class TriggerActivity extends AppCompatActivity {
             sinceMidnight=tp.getCurrentHour()*60+tp.getCurrentMinute();
         }
 
-
         triggerToPopulate.setTime(sinceMidnight);
-
         return triggerToPopulate;
     }
 
