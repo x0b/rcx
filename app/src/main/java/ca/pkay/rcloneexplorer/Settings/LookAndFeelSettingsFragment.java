@@ -36,7 +36,6 @@ public class LookAndFeelSettingsFragment extends Fragment {
     private Switch wrapFilenamesSwitch;
     private View wrapFilenamesElement;
     private boolean isDarkTheme;
-    private boolean themeFollowSystem;
 
     public interface OnThemeHasChanged {
         void onThemeChanged();
@@ -65,7 +64,6 @@ public class LookAndFeelSettingsFragment extends Fragment {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
-        themeFollowSystem = sharedPreferences.getBoolean(getString(R.string.pref_key_theme_follow_system), false);
 
         getViews(view);
         setDefaultStates();
@@ -105,7 +103,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
-        boolean themeFollowSystem = sharedPreferences.getBoolean(getString(R.string.pref_key_theme_follow_system), false);
+        boolean themeFollowSystem = sharedPreferences.getBoolean(getString(R.string.pref_key_theme_follow_system), true);
         boolean isWrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
         darkThemeSwitch.setChecked(isDarkTheme);
