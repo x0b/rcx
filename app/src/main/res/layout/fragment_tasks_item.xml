@@ -43,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:textColor="?attr/textColorSecondary"
             android:text="From:"
             app:layout_constraintStart_toEndOf="@+id/task_sync_direction"
             app:layout_constraintTop_toTopOf="@+id/task_sync_direction" />
@@ -51,6 +52,7 @@
             android:id="@+id/fromID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="?attr/textColorSecondary"
             android:text="fromid"
             app:layout_constraintStart_toEndOf="@+id/fromPath"
             app:layout_constraintTop_toTopOf="@+id/fromLabel" />
@@ -60,6 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textColor="?attr/textColorSecondary"
             android:text="fromPath"
             app:layout_constraintStart_toEndOf="@+id/fromLabel"
             app:layout_constraintTop_toTopOf="@+id/fromLabel" />
@@ -69,6 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:textColor="?attr/textColorSecondary"
             android:text="To:"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/fromLabel"
@@ -78,6 +82,7 @@
             android:id="@+id/toID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="?attr/textColorSecondary"
             android:text="toid"
             app:layout_constraintStart_toEndOf="@+id/toPath"
             app:layout_constraintTop_toTopOf="@+id/toLabel" />
@@ -86,6 +91,7 @@
             android:id="@+id/toPath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="?attr/textColorSecondary"
             android:text="toPath"
             app:layout_constraintStart_toStartOf="@+id/fromPath"
             app:layout_constraintTop_toTopOf="@+id/toLabel" />
@@ -113,6 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:textColor="?attr/textColorSecondary"
             android:text="@string/sync"
             app:layout_constraintStart_toStartOf="@+id/taskName"
             app:layout_constraintTop_toBottomOf="@+id/taskName" />
