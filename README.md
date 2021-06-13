@@ -61,6 +61,20 @@ Developing
 ------------
 [See the developer-documentation](https://x0b.github.io/dev/).
 
+Build rclone manually run:
+
+```
+./gradlew rclone:buildNative
+```
+
+When building rclone with a go version that is too old (eg 1.15.5), this error may show up:
+
+```
+ld.lld: error: duplicate symbol: x_cgo_inittls
+```
+
+It can be fixed by using a more recent version of go.
+
 Known Issues
 ------------
 - Reauthorization of OAuth remotes shows intermittent failures. This is currently under investigation.
