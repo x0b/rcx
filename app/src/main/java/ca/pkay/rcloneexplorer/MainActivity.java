@@ -18,6 +18,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +39,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
+import ca.pkay.rcloneexplorer.Database.json.Importer;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
@@ -68,7 +70,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -755,8 +759,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Uri... uris) {
             try {
+                String json = rclone.readRCXConfig(uris[0]);
+                Importer.importJson(json, context);
                 return rclone.copyConfigFile(uris[0]);
-            } catch (IOException e) {
+            } catch (IOException | JSONException e) {
                 return false;
             }
         }

@@ -287,4 +287,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         trigger.setWhatToTrigger(cursor.getLong(5));
         return trigger;
     }
+
+
+    public void deleteEveryting(){
+        for (Trigger trigger : getAllTrigger()){
+            deleteTrigger(trigger.getId());
+        }
+        for (Task task : getAllTasks()){
+            deleteTask(task.getId());
+        }
+    }
 }
