@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -17,10 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.json.Exporter;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.TaskActivity;
@@ -29,9 +23,7 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TasksFragment extends Fragment {
 
-    private TasksRecyclerViewAdapter recyclerViewAdapter;
     private View fragmentView;
-
 
     public TasksFragment() {
         // Required empty public constructor
@@ -76,7 +68,6 @@ public class TasksFragment extends Fragment {
 
         if(activity==null){
             Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
-            return;
         }
     }
 
@@ -88,7 +79,7 @@ public class TasksFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(c));
         recyclerView.setItemAnimator(new LandingAnimator());
 
-        recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), c);
+        TasksRecyclerViewAdapter recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), c);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 }

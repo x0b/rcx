@@ -1,34 +1,25 @@
 package ca.pkay.rcloneexplorer.BroadcastReceivers;
 
-import android.app.AlarmManager;
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
-import androidx.annotation.Nullable;
-
-import java.util.Calendar;
-
-import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
+import ca.pkay.rcloneexplorer.util.FLog;
 
 public class TriggerReciever extends BroadcastReceiver {
 
+    private static final String TAG = "TriggerReciever";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("app", "onRec");
+        FLog.e(TAG, "Recieved Intent");
 
         assert intent != null;
         if(intent.getAction().equals(TriggerService.TRIGGER_RECIEVE)){
             long i = intent.getLongExtra(TriggerService.TRIGGER_ID, -1);
-            Log.e("app", "rec: "+i);
+            FLog.e(TAG, "Start Trigger: "+i);
             if(i==-1)
                 return;
 

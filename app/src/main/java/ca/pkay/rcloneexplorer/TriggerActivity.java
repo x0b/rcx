@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -135,7 +134,6 @@ public class TriggerActivity extends AppCompatActivity {
     }
 
     private boolean checkTaskExistence(){
-        Log.e("a", ""+taskList.size());
         if(taskList.size()==0){
             Toasty.error(this, this.getResources().getString(R.string.trigger_save_notasks)).show();
             return false;
@@ -177,10 +175,9 @@ public class TriggerActivity extends AppCompatActivity {
         //Todo implement proper valuegetting
         int item = ((Spinner)findViewById(R.id.trigger_targets)).getSelectedItemPosition();
         triggerToPopulate.setWhatToTrigger(taskList.get(item).getId());
+        TimePicker tp = findViewById(R.id.trigger_time);
 
-        TimePicker tp = (TimePicker)findViewById(R.id.trigger_time);
-
-        int sinceMidnight=0;
+        int sinceMidnight;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             sinceMidnight=tp.getHour()*60+tp.getMinute();

@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
@@ -34,8 +32,7 @@ import es.dmoral.toasty.Toasty;
 public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecyclerViewAdapter.ViewHolder>{
 
     private List<Trigger> triggers;
-    private View view;
-    private Context context;
+    private final Context context;
 
     public TriggerRecyclerViewAdapter(List<Trigger> triggers, Context context) {
         this.triggers = triggers;
@@ -45,7 +42,7 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trigger_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trigger_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -109,12 +106,6 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
             view.setPaintFlags(view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
     }
-
-    public void addTrigger(Trigger data) {
-        triggers.add(data);
-        notifyDataSetChanged();
-    }
-
     public void setList(ArrayList<Trigger> data) {
         triggers=data;
         notifyDataSetChanged();
@@ -146,29 +137,25 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     private void showFileMenu(View view, final Trigger trigger) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.trigger_item_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_edit_task:
-                        editTrigger(trigger);
-                        break;
-                    case R.id.action_delete_task:
-                        new DatabaseHandler(context).deleteTrigger(trigger.getId());
-                        notifyDataSetChanged();
-                        removeItem(trigger);
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_edit_task:
+                    editTrigger(trigger);
+                    break;
+                case R.id.action_delete_task:
+                    new DatabaseHandler(context).deleteTrigger(trigger.getId());
+                    notifyDataSetChanged();
+                    removeItem(trigger);
+                    break;
+                default:
+                    return false;
             }
+            return true;
         });
         popupMenu.show();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         final View view;
         final ImageButton triggerIcon;

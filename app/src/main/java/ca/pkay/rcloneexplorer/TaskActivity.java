@@ -11,7 +11,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -125,9 +124,7 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     private void populateFields(String[] remotes) {
-        Log.e("app!", "Populate Task");
         if(existingTask!=null){
-            Log.e("app!", "Populate Task"+existingTask.getTitle());
             ((TextView)findViewById(R.id.task_title_textfield)).setText(existingTask.getTitle());
             Spinner s = findViewById(R.id.task_remote_spinner);
 
@@ -147,13 +144,11 @@ public class TaskActivity extends AppCompatActivity {
 
     private void persistTaskChanges(){
         dbHandler.updateTask(getTaskValues(existingTask.getId()));
-        Log.e("app!", "Update Task: ");
         finish();
     }
 
     private void saveTask(){
         Task newTask = dbHandler.createTask(getTaskValues(0L));
-        Log.e("app!", "Task Dialog: "+newTask.toString());
         finish();
     }
 

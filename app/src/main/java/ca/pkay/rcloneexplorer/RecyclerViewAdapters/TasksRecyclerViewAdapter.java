@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,12 +40,11 @@ import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
 
-
     private static final String clipboardID = "rclone_explorer_task_id";
 
     private List<Task> tasks;
     private View view;
-    private Context context;
+    private final Context context;
 
 
     public TasksRecyclerViewAdapter(List<Task> tasks, Context context) {
@@ -68,7 +68,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         RemoteItem remote = new RemoteItem(selectedTask.getRemoteId(), String.valueOf(selectedTask.getRemoteType()));
 
-        holder.taskIcon.setImageDrawable(view.getResources().getDrawable(remote.getRemoteIcon()));
+        holder.taskIcon.setImageDrawable(AppCompatResources.getDrawable(context, remote.getRemoteIcon()));
 
         int direction = selectedTask.getDirection();
 
@@ -152,41 +152,37 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     private void showFileMenu(View view, final Task task) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.task_item_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_start_task:
-                        startTask(task);
-                        break;
-                    case R.id.action_edit_task:
-                        editTask(task);
-                        break;
-                    case R.id.action_delete_task:
-                        new DatabaseHandler(context).deleteTask(task.getId());
-                        notifyDataSetChanged();
-                        removeItem(task);
-                        break;
-                    case R.id.action_copy_id_task:
-                        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText(clipboardID, task.getId().toString());
-                        clipboard.setPrimaryClip(clip);
-                        Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
-                        break;
-                    case R.id.action_add_to_home_screen:
-                        createShortcut(context, task);
-                        break;
-                    default:
-                        return false;
-                }
-                return true;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_start_task:
+                    startTask(task);
+                    break;
+                case R.id.action_edit_task:
+                    editTask(task);
+                    break;
+                case R.id.action_delete_task:
+                    new DatabaseHandler(context).deleteTask(task.getId());
+                    notifyDataSetChanged();
+                    removeItem(task);
+                    break;
+                case R.id.action_copy_id_task:
+                    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(clipboardID, task.getId().toString());
+                    clipboard.setPrimaryClip(clip);
+                    Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
+                    break;
+                case R.id.action_add_to_home_screen:
+                    createShortcut(context, task);
+                    break;
+                default:
+                    return false;
             }
+            return true;
         });
         popupMenu.show();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         final View view;
         final ImageView taskIcon;
@@ -208,16 +204,13 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             this.toPath = view.findViewById(R.id.toPath);
             this.fromPath = view.findViewById(R.id.fromPath);
             this.taskSyncDirection = view.findViewById(R.id.task_sync_direction);
-
             this.fileOptions = view.findViewById(R.id.file_options);
         }
     }
 
     private static void createShortcut(Context c, Task task) {
-
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
-
 
             Intent i = new Intent(c, TaskStartService.class);
             i.putExtra("task", task.getId());
@@ -230,6 +223,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     .setIntent(i)
                     .build();
 
+            //https://developer.android.com/guide/topics/ui/shortcuts/creating-shortcuts
             shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
 
             if (shortcutManager.isRequestPinShortcutSupported()) {

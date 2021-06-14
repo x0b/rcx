@@ -11,10 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -197,7 +195,7 @@ public class SyncService extends IntentService {
         WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 
         if (wifiMgr == null) {
-            Log.e("wifi", "is null");
+            FLog.e(TAG, "No Wifi found.");
             return false;
         }
 
@@ -207,7 +205,7 @@ public class SyncService extends IntentService {
             return !cm.isActiveNetworkMetered();
         }
         else {
-            Log.e("wifi", "is off");
+            FLog.e(TAG, "Wifi not turned on.");
             return false; // Wi-Fi adapter is OFF
         }
     }

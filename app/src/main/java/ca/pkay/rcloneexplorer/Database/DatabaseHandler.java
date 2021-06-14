@@ -115,7 +115,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     private String[] getTaskProjection(){
-        String[] projection = {
+        String[] strings = {
                 Task.COLUMN_NAME_ID,
                 Task.COLUMN_NAME_TITLE,
                 Task.COLUMN_NAME_REMOTE_ID,
@@ -124,7 +124,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Task.COLUMN_NAME_LOCAL_PATH,
                 Task.COLUMN_NAME_SYNC_DIRECTION
         };
-        return projection;
+        return strings;
     }
 
     private Task taskFromCursor(Cursor cursor){
@@ -151,7 +151,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int retcode = db.delete(Task.TABLE_NAME, selection, selectionArgs);
         db.close();
         return retcode;
-
     }
 
     private ContentValues getTaskContentValues(Task task){
@@ -248,7 +247,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int retcode = db.delete(Trigger.TABLE_NAME, selection, selectionArgs);
         db.close();
         return retcode;
-
     }
 
     private ContentValues getTriggerContentValuesWithID(Trigger t){

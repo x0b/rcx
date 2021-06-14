@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,8 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Database.json.Exporter;
-import ca.pkay.rcloneexplorer.Database.json.Importer;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TriggerRecyclerViewAdapter;
@@ -29,7 +24,6 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TriggerFragment extends Fragment {
 
-    private TriggerRecyclerViewAdapter recyclerViewAdapter;
     private View fragmentView;
     private DatabaseHandler dbHandler;
 
@@ -80,7 +74,6 @@ public class TriggerFragment extends Fragment {
             transaction.replace(R.id.flFragment, fragment);
             transaction.commit();
         });
-
         return view;
     }
 
@@ -99,7 +92,7 @@ public class TriggerFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(c));
         recyclerView.setItemAnimator(new LandingAnimator());
 
-        recyclerViewAdapter = new TriggerRecyclerViewAdapter(dbHandler.getAllTrigger(), c);
+        TriggerRecyclerViewAdapter recyclerViewAdapter = new TriggerRecyclerViewAdapter(dbHandler.getAllTrigger(), c);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 }

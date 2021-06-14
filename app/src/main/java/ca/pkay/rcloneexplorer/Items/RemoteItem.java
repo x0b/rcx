@@ -9,7 +9,6 @@ import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.R;
 import io.github.x0b.safdav.file.SafConstants;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
