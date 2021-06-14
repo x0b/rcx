@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import ca.pkay.rcloneexplorer.Database.json.Exporter;
+import ca.pkay.rcloneexplorer.Database.json.SharedPreferencesBackup;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
@@ -1156,9 +1157,17 @@ public class Rclone {
         return null;
     }
 
-    public String readRCXConfig(Uri uri) throws IOException {
-        File temp = new File(context.getFilesDir().getPath(), "rcx.json-tmp");
-        temp = getFileFromZip(uri, "rcx.json", temp);
+    public String readDatabaseJson(Uri uri) throws IOException {
+        return readTextfileFromZip(uri, "rcx.json-tmp", "rcx.json");
+    }
+
+    public String readSharedPrefs(Uri uri) throws IOException {
+        return readTextfileFromZip(uri, "rcx.prefs-tmp", "rcx.prefs");
+    }
+
+    public String readTextfileFromZip(Uri uri, String tempfile, String targetfile) throws IOException {
+        File temp = new File(context.getFilesDir().getPath(), tempfile);
+        temp = getFileFromZip(uri, targetfile, temp);
 
         char[] buffer = new char[4096];
         StringBuilder json = new StringBuilder();
@@ -1229,6 +1238,10 @@ public class Rclone {
             ZipEntry zipEntry = new ZipEntry("rcx.json");
             zos.putNextEntry(zipEntry);
             zos.write(Exporter.create(this.context).getBytes());
+            zos.closeEntry();
+            zipEntry = new ZipEntry("rcx.prefs");
+            zos.putNextEntry(zipEntry);
+            zos.write(SharedPreferencesBackup.export(context).getBytes());
             zos.closeEntry();
             zipEntry = new ZipEntry("rclone.conf");
             zos.putNextEntry(zipEntry);

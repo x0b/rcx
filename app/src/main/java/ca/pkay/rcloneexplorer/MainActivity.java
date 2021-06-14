@@ -40,6 +40,7 @@ import androidx.preference.PreferenceManager;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Database.json.Importer;
+import ca.pkay.rcloneexplorer.Database.json.SharedPreferencesBackup;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
@@ -752,8 +753,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Uri... uris) {
             try {
-                String json = rclone.readRCXConfig(uris[0]);
+                String json = rclone.readDatabaseJson(uris[0]);
                 Importer.importJson(json, context);
+                json = rclone.readSharedPrefs(uris[0]);
+                SharedPreferencesBackup.importJson(json, context);
                 return rclone.copyConfigFile(uris[0]);
             } catch (IOException | JSONException e) {
                 return false;
