@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -145,8 +146,12 @@ public class UploadService extends IntentService {
 
                     updateNotification(uploadFileName, notificationContent, notificationBigText, isFile);
                 }
+            } catch (InterruptedIOException e) {
+                FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
             } catch (IOException e) {
-                FLog.w(TAG, "onHandleIntent: error reading stdout", e);
+                if (!"Stream closed".equals(e.getMessage())) {
+                    FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                }
             }
 
             try {

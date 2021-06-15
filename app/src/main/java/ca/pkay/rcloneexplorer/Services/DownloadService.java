@@ -21,6 +21,7 @@ import androidx.preference.PreferenceManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -135,8 +136,12 @@ public class DownloadService extends IntentService {
 
                     updateNotification(downloadItem, notificationContent, notificationBigText);
                 }
+            } catch (InterruptedIOException e) {
+                FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
             } catch (IOException e) {
-                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                if (!"Stream closed".equals(e.getMessage())) {
+                    FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                }
             }
 
             try {
