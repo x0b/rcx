@@ -343,8 +343,6 @@
     <string name="no_remotes">There are no remotes</string>
     <string name="choose_dir">Choose directory</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
-    <string name="firebase_msg_app_updates_topic" translatable="false">app_updates</string>
-    <string name="firebase_msg_beta_app_updates_topic" translatable="false">beta_app_updates</string>
     <string name="app_update_notification_title">App update available on Github</string>
     <string name="app_update_notification_beta">App update available on Github</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
@@ -380,9 +378,9 @@
     <string name="unpin_from_drawer">Unpin from drawer</string>
     <string name="shared_preferences_pinned_remotes" translatable="false">shared_preferences_pinned_remotes</string>
     <string name="shared_preferences_drawer_pinned_remotes" translatable="false">shared_preferences_drawer_pinned_remotes</string>
-    <string name="app_latest_release_url" translatable="false">https://github.com/x0b/rcloneExplorer/releases/latest</string>
-    <string name="app_relase_api_url" translatable="false">https://api.github.com/repos/x0b/rcloneExplorer/releases/latest</string>
-    <string name="app_pre_release_api_url" translatable="false">https://api.github.com/repos/x0b/rcloneExplorer/releases</string>
+    <string name="app_latest_release_url" translatable="false">https://github.com/x0b/rcx/releases/latest</string>
+    <string name="app_relase_api_url" translatable="false">https://api.github.com/repos/x0b/rcx/releases/latest</string>
+    <string name="app_pre_release_api_url" translatable="false">https://api.github.com/repos/x0b/rcx/releases</string>
     <string name="pref_key_update_release_version" translatable="false">github_release_version</string>
     <string name="pref_key_update_last_check" translatable="false">last_update_check</string>
     <string name="experimental_features">Experimental Features</string>

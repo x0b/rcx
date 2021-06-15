@@ -48,27 +48,22 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
+import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
 import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
-import io.github.x0b.rfc3339parser.Rfc3339Parser;
-import io.github.x0b.rfc3339parser.Rfc3339Strict;
 import java9.util.stream.Stream;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,7 +73,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
 public class MainActivity extends AppCompatActivity
@@ -93,7 +87,6 @@ public class MainActivity extends AppCompatActivity
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
     private static final int ONBOARDING_REQUEST = 93;
-    private static final int UPDATE_AVAILABLE = 201;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -104,33 +97,9 @@ public class MainActivity extends AppCompatActivity
     private HashMap<Integer, RemoteItem> drawerPinnedRemoteIds;
     private int availableDrawerPinnedRemoteId;
 
-    private Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            if(UPDATE_AVAILABLE == msg.what) {
-                Toasty.info(context, context.getString(R.string.app_update_notification_title), Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent() != null) {
-            String s = getIntent().getStringExtra(getString(R.string.firebase_msg_app_updates_topic));
-            if (s != null && s.equals("true")) {
-                openAppUpdate();
-                finish();
-                return;
-            }
-
-            s = getIntent().getStringExtra(getString(R.string.firebase_msg_beta_app_updates_topic));
-            if (s != null) {
-                openBetaUpdate(s);
-                finish();
-                return;
-            }
-        }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(
@@ -166,8 +135,19 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.locked_config_btn).setOnClickListener(v -> askForConfigPassword());
 
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
-        if ("rcloneExplorer".equals(BuildConfig.FLAVOR) && appUpdates) {
-            checkForUpdate(false);
+        if (appUpdates) {
+            // Google Play and F-Droid have their own update mechanisms
+            // => do not check for updates
+            PackageManager packageManager = getPackageManager();
+            if ("com.android.vending".equals(packageManager.getInstallerPackageName(getPackageName()))
+                    || BuildConfig.DEBUG) {
+                FLog.d(TAG, "Installed via Google Play, not checking for updates");
+            } else if ("oss".equals(BuildConfig.FLAVOR)){
+                FLog.d(TAG, "OSS flavor, not checking for updates");
+            } else {
+                PackageUpdate packageUpdate = new PackageUpdate(this);
+                packageUpdate.checkForUpdate(false);
+            }
         }
 
         Intent intent = getIntent();
@@ -525,18 +505,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void openAppUpdate() {
-        Uri uri = Uri.parse(getString(R.string.app_latest_release_url));
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        tryStartActivity(this, intent);
-    }
-
-    private void openBetaUpdate(String url) {
-        Uri uri = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        tryStartActivity(this, intent);
-    }
-
     @Override
     public void onRemoteClick(RemoteItem remote) {
         startRemote(remote, true);
@@ -600,104 +568,6 @@ public class MainActivity extends AppCompatActivity
         availableDrawerPinnedRemoteId = 1;
 
         pinRemotesToDrawer();
-    }
-
-    private void checkForUpdate(boolean force) {
-        Context context = this;
-        // only check if not disabled
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if(!force && !sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true)){
-            FLog.i(TAG, "checkForUpdate: Not checking, updates are disabled");
-            return;
-        }
-        // only check if the last check was >6 hours ago
-        long lastUpdateCheck = sharedPreferences.getLong(context.getString(R.string.pref_key_update_last_check), 0);
-        long now = System.currentTimeMillis();
-        if(lastUpdateCheck + 1000 * 60 * 60 * 6 > now){
-            FLog.i(TAG, "checkForUpdate: recent check to new, not checking for updates");
-            return;
-        }
-
-        OkHttpClient client = new OkHttpClient();
-        boolean checkBeta = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates_beta), false);
-        String url;
-        if (checkBeta) {
-            url = context.getString(R.string.app_pre_release_api_url);
-        } else {
-            url = context.getString(R.string.app_relase_api_url);
-        }
-        Request request = new Request.Builder().url(url).build();
-        client.newCall(request).enqueue(new UpdateRequestResultHandler(this, checkBeta, handler));
-    }
-
-    private static class UpdateRequestResultHandler implements Callback {
-
-        private SharedPreferences sharedPreferences;
-        private Context context;
-        private boolean betaCheck;
-        private Handler handler;
-
-        public UpdateRequestResultHandler(Context context, boolean betaCheck, Handler handler) {
-            this.context = context;
-            this.betaCheck = betaCheck;
-            this.handler = handler;
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        }
-
-        @Override
-        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-            FLog.w(TAG, "onFailure: Update check failed", e);
-            updateLastUpdateRequest();
-        }
-
-        @Override
-        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-            updateLastUpdateRequest();
-            long publishedAt = getLastPublishTimestamp(response);
-            // Since the app is not published immediately during build, 15 minutes are added
-            long publishBarrier = publishedAt - 1000 * 60 * 15;
-            if(BuildConfig.BUILD_TIME < publishBarrier) {
-                FLog.i(TAG, "onResponse: App is not up-to-date");
-                handler.obtainMessage(MainActivity.UPDATE_AVAILABLE).sendToTarget();
-            } else {
-                FLog.i(TAG, "onResponse: App is up-to-date");
-            }
-        }
-
-        private long getLastPublishTimestamp(Response response) throws IOException {
-            try (ResponseBody body = response.body()) {
-                long publishedAt = -1;
-                if (null == body) {
-                    return publishedAt;
-                }
-                try {
-                    Rfc3339Parser parser = new Rfc3339Strict();
-                    if(betaCheck){
-                        JSONArray releases = new JSONArray(body.string());
-                        for(int i = 0; i < releases.length(); i++) {
-                            JSONObject release = releases.getJSONObject(i);
-                            long timestamp = parser.parse(release.getString("published_at")).getTime();
-                            if(timestamp > publishedAt) {
-                                publishedAt = timestamp;
-                            }
-                        }
-                    } else {
-                        JSONObject json = new JSONObject(body.string());
-                        publishedAt = parser.parse(json.getString("published_at")).getTime();
-                    }
-                } catch (JSONException e) {
-                    FLog.e(TAG, "Update check failed: JSON error", e);
-                } catch (ParseException e) {
-                    FLog.e(TAG, "Update check failed: time format error", e);
-                }
-                return publishedAt;
-            }
-        }
-
-        private void updateLastUpdateRequest(){
-            long now = System.currentTimeMillis();
-            sharedPreferences.edit().putLong(context.getString(R.string.pref_key_update_last_check), now).apply();
-        }
     }
 
     @SuppressLint("StaticFieldLeak")
