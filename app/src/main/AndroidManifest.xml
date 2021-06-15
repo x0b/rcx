@@ -25,8 +25,11 @@
             android:extractNativeLibs="true"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="29">
-        <activity android:name=".OnboardingActivity">
+
+        <activity android:name=".OnboardingActivity"
+            android:theme="@style/OnboardingTheme">
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_short_name"
@@ -76,8 +79,6 @@
         <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
         <receiver android:name=".Services.RcdService$RcdServiceAction"/>
         <receiver android:name=".Services.ReportService$StopCollectionReceiver" />
-
-        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
