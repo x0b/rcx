@@ -46,6 +46,7 @@ public class Rclone {
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
     public static final int SERVE_PROTOCOL_DLNA = 4;
+    private static volatile Boolean isCompatible;
     private static SafDAVServer safDAVServer;
     private Context context;
     private String rclone;
@@ -1166,6 +1167,30 @@ public class Rclone {
         inputStream.close();
         outputStream.flush();
         outputStream.close();
+    }
+
+    public boolean isCompatible() {
+        if (isCompatible != null) {
+            return isCompatible;
+        }
+        synchronized (Rclone.class) {
+            if (isCompatible == null) {
+                isCompatible = checkCompatibility();
+            }
+        }
+        return isCompatible;
+    }
+
+    private boolean checkCompatibility() {
+        String nativelibraryDir = context.getApplicationInfo().nativeLibraryDir;
+        File nativeRcloneBinary = new File(nativelibraryDir, "librclone.so");
+        if (!nativeRcloneBinary.exists()) {
+            return false;
+        }
+        if ("-1".equals(getRcloneVersion())) {
+            return false;
+        }
+        return true;
     }
 
     /**

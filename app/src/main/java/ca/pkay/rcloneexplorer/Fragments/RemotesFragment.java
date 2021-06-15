@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,7 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +29,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
+import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.MainActivity;
@@ -93,37 +98,13 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view;
-        if (!rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
-            view = inflater.inflate(R.layout.empty_state_config_file, container, false);
-            view.findViewById(R.id.empty_state_btn).setOnClickListener(v -> {
-                Uri externalConfig;
-                if(null != (externalConfig = rclone.searchExternalConfig())){
-                    if (getActivity() != null) {
-                        ((MainActivity) getActivity()).askUseExternalConfig(externalConfig);
-                    }
-                } else {
-                    if (getActivity() != null) {
-                        ((MainActivity) getActivity()).importConfigFile();
-                    }
-                }
-            });
-
-            SpeedDialView speedDialView = view.findViewById(R.id.fab_empty_config);
-            speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
-                @Override
-                public boolean onMainActionSelected() {
-                    Intent intent = new Intent(context, RemoteConfig.class);
-                    startActivityForResult(intent, CONFIG_RECREATE_REQ_CODE);
-                    return false;
-                }
-
-                @Override
-                public void onToggleChanged(boolean isOpen) {
-
-                }
-            });
-            return view;
+        if (!rclone.isCompatible()) {
+            return getSpecialView(inflater, container, true);
         }
+        if (!rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
+            return getSpecialView(inflater, container, false);
+        }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
 
@@ -151,6 +132,59 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             }
         });
 
+        return view;
+    }
+
+    // Prepares special views if rclone does not work or does not have a config file
+    @NonNull
+    private View getSpecialView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, boolean wrongAbi) {
+        View view;
+        view = inflater.inflate(R.layout.empty_state_config_file, container, false);
+        if (wrongAbi) {
+            SpeedDialView speedDialView = view.findViewById(R.id.fab_empty_config);
+            speedDialView.setVisibility(View.GONE);
+            Button btn = view.findViewById(R.id.empty_state_btn);
+            btn.setVisibility(View.GONE);
+            TextView textView = view.findViewById(R.id.empty_state_message);
+            String[] abis = Build.SUPPORTED_ABIS;
+            if (abis.length >= 2 && (abis[0].equals("arm64-v8a") || abis[0].equals("x86") || abis[0].equals("x86_64"))) {
+                for (int i = 1; i < abis.length; i++) {
+                    if (abis[i].equals("armeabi-v7a") || abis[i].equals("armeabi")) {
+                        textView.setText(R.string.abi_not_supported_arm_downgrade);
+                        return view;
+                    }
+                }
+            }
+            textView.setText(R.string.abi_not_supported);
+            return view;
+        }
+        view.findViewById(R.id.empty_state_btn).setOnClickListener(v -> {
+            Uri externalConfig;
+            if(null != (externalConfig = rclone.searchExternalConfig())){
+                if (getActivity() != null) {
+                    ((MainActivity) getActivity()).askUseExternalConfig(externalConfig);
+                }
+            } else {
+                if (getActivity() != null) {
+                    ((MainActivity) getActivity()).importConfigFile();
+                }
+            }
+        });
+
+        SpeedDialView speedDialView = view.findViewById(R.id.fab_empty_config);
+        speedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+            @Override
+            public boolean onMainActionSelected() {
+                Intent intent = new Intent(context, RemoteConfig.class);
+                startActivityForResult(intent, CONFIG_RECREATE_REQ_CODE);
+                return false;
+            }
+
+            @Override
+            public void onToggleChanged(boolean isOpen) {
+
+            }
+        });
         return view;
     }
 
