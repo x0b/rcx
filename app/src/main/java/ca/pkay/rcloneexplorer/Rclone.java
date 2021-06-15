@@ -836,8 +836,11 @@ public class Rclone {
             } else {
                 return split[0];
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             FLog.e(TAG, "calculateMD5: error running rclone", e);
+            return context.getString(R.string.hash_error);
+        } catch (InterruptedException e) {
+            FLog.v(TAG, "calculateMD5: calculation stopped");
             return context.getString(R.string.hash_error);
         }
     }

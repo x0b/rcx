@@ -198,7 +198,7 @@ public class OneDriveConfig extends Fragment {
             try {
                 process.waitFor();
             } catch (InterruptedException e) {
-                FLog.e(TAG, "doInBackground: ", e);
+                FLog.w(TAG, "force-stopped rclone process", e);
             }
             return 0 == process.exitValue();
         }
