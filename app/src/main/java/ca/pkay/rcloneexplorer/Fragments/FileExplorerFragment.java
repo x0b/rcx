@@ -949,6 +949,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.refreshData();
         isInMoveMode = false;
         showNavDrawerButtonInToolbar();
+        if (moveList.size() < 1) {
+            Toasty.error(context, getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+            moveList.clear();
+            moveStartPath = null;
+            return;
+        }
         String oldPath = moveList.get(0).getPath();
         int index = oldPath.lastIndexOf(moveList.get(0).getName());
         String path2;
@@ -1517,6 +1523,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void moveFiles(List<FileItem> moveItems) {
+        if (moveItems.size() < 1) {
+            return;
+        }
         moveStartPath = directoryObject.getCurrentPath();
         moveList = new ArrayList<>(moveItems);
         recyclerViewAdapter.cancelSelection();
