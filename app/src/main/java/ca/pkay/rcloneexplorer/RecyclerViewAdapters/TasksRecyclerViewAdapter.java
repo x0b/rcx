@@ -76,12 +76,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             holder.fromID.setVisibility(View.GONE);
             holder.fromPath.setText(selectedTask.getLocalPath());
 
-            holder.toID.setText(String.format("@%s", selectedTask.getRemoteId()));
+            holder.toID.setText(String.format("%s:", selectedTask.getRemoteId()));
             holder.toPath.setText(selectedTask.getRemotePath());
         }
 
         if(direction == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL || direction == SyncDirectionObject.COPY_REMOTE_TO_LOCAL){
-            holder.fromID.setText(String.format("@%s", selectedTask.getRemoteId()));
+            holder.fromID.setText(String.format("%s:", selectedTask.getRemoteId()));
             holder.fromPath.setText(selectedTask.getRemotePath());
 
             holder.toID.setVisibility(View.GONE);
