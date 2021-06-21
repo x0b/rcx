@@ -54,7 +54,6 @@ public class LogFragment extends Fragment {
     private void populateLogs(View v){
         Context c = v.getContext();
 
-        SyncLog.error(c, "test"+Math.random());
         RecyclerView recyclerView =  v.findViewById(R.id.log_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(c));
         recyclerView.setItemAnimator(new LandingAnimator());

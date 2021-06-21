@@ -8,42 +8,63 @@
     android:background="?selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/log_item_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/log_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="54dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_right" />
 
         <TextView
             android:id="@+id/logtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="?attr/textColorPrimary"
             android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/log_icon"
+            app:layout_constraintStart_toEndOf="@+id/log_icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="64dp"
             tools:text="logtitle" />
 
         <TextView
             android:id="@+id/logdate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_height="19dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:text="date"
             android:textColor="?attr/textColorSecondary"
-            app:layout_constraintStart_toStartOf="@+id/logtitle"
-            app:layout_constraintTop_toBottomOf="@+id/logtitle" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/logDetails"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="?attr/textColorSecondary"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
             android:text="00:00"
-            app:layout_constraintStart_toEndOf="@+id/logdate"
-            app:layout_constraintTop_toTopOf="@+id/logdate" />
+            android:textColor="?attr/textColorSecondary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logtitle"
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

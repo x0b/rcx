@@ -594,4 +594,5 @@
     <string name="task_item_label_from">From:</string>
     <string name="task_item_label_to">To:</string>
     <string name="logFragment">Logs</string>
+    <string name="start_sync">Started Sync</string>
 </resources>

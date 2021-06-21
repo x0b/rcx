@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Copyright (C) 2021  Felix Nüsse
@@ -27,7 +29,14 @@ public class SyncLog {
 
     private static int loglength = 4;
 
-    public static JSONObject[] getLog(Context c){
+    public static String TIMESTAMP = "timestamp";
+    public static String TITLE = "title";
+    public static String CONTENT = "content";
+    public static String TYPE = "type";
+    public static final int TYPE_ERROR = 0;
+    public static final int TYPE_INFO = 1;
+
+    public static ArrayList<JSONObject> getLog(Context c){
         File log = new File(c.getFilesDir().getPath() + "/sync.log");
         StringBuilder file = new StringBuilder();
         try {
@@ -43,43 +52,23 @@ public class SyncLog {
 
         String lines[] = file.toString().split("\\r?\\n");
 
-        JSONObject[] jsons = new JSONObject[lines.length];
+        ArrayList<JSONObject> jsons = new ArrayList<>();
         for (int i = 0; i < lines.length; i++) {
             try {
-                Log.e("app", lines[i].toString());
-                jsons[i] = new JSONObject(lines[i]);
+                jsons.add(new JSONObject(lines[i]));
             } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
-
+        Collections.reverse(jsons);
         return jsons;
     }
 
     private static void appendLog(Context c, String entry){
 
-        JSONObject[] logs = getLog(c);
-        int logsToStore = loglength;
-        int availableLogs = logs.length;
-        if(availableLogs<logsToStore){
-            logsToStore=availableLogs;
-        }
-        JSONObject[] logList = new JSONObject[logsToStore];
-
-        for (int i = logsToStore; i > 0; i--) {
-            Log.e("app", "a: "+(i-logsToStore)*-1);
-            Log.e("app", "b: "+(i));
-            Log.e("app", "c: "+logs[i].toString());
-            logList[(i-logsToStore)*-1]=logs[i];
-        }
-
         File log = new File(c.getFilesDir().getPath() + "/sync.log");
         try {
-            FileWriter writer = new FileWriter(log);
-            for (JSONObject logEntry:logList) {
-                writer.append(logEntry.toString());
-                writer.append(System.lineSeparator());
-            }
+            FileWriter writer = new FileWriter(log, true);
+            writer.append(System.lineSeparator());
             writer.append(entry);
             writer.flush();
             writer.close();
@@ -88,15 +77,25 @@ public class SyncLog {
         }
     }
 
-    public static void error(Context c, String entry){
+    public static void log(Context c, String title, String content, int type){
         JSONObject json = new JSONObject();
         try {
-            json.put("timestamp", System.currentTimeMillis());
-            json.put("content", entry);
+            json.put(TIMESTAMP, System.currentTimeMillis());
+            json.put(CONTENT, content);
+            json.put(TITLE, title);
+            json.put(TYPE, type);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         appendLog(c, json.toString());
+    }
+
+    public static void error(Context c, String title, String content){
+        log(c, title, content, TYPE_ERROR);
+    }
+
+    public static void info(Context c, String title, String content){
+        log(c, title, content, TYPE_INFO);
     }
 
     public static void delete(Context c){

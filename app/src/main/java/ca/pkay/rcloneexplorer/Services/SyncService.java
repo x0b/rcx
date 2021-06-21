@@ -30,6 +30,7 @@ import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.SyncLog;
 
 public class SyncService extends IntentService {
 
@@ -116,6 +117,7 @@ public class SyncService extends IntentService {
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
+        SyncLog.info(this, getString(R.string.start_sync), getString(R.string.syncing_service, title));
 
         currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
         if (currentProcess != null) {
@@ -259,6 +261,7 @@ public class SyncService extends IntentService {
     }
 
     private void showFailedNotification(String title, String content, int notificationId) {
+        SyncLog.error(this, title, content);
         createSummaryNotificationForFailed();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -274,6 +277,7 @@ public class SyncService extends IntentService {
     }
 
     private void showSuccessNotification(String content, int notificationId) {
+        SyncLog.info(this, getString(R.string.operation_success), content);
         createSummaryNotificationForSuccess();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -291,6 +295,8 @@ public class SyncService extends IntentService {
 
 
     private void showConnectivityChangedNotification() {
+        //todo: add title to differentiate the logs
+        SyncLog.error(this, getString(R.string.sync_cancelled), getString(R.string.wifi_connections_isnt_available));
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_warning)
                 .setContentTitle(getString(R.string.sync_cancelled))
