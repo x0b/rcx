@@ -43,6 +43,7 @@ import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
+import ca.pkay.rcloneexplorer.Fragments.LogFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Fragments.TriggerFragment;
@@ -373,6 +374,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_trigger:
                 startTriggerFragment();
                 break;
+            case R.id.nav_logs:
+                startLogFragment();
+                break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
@@ -395,6 +399,10 @@ public class MainActivity extends AppCompatActivity
 
     private void startTriggerFragment() {
         startFragment(TriggerFragment.newInstance());
+    }
+
+    private void startLogFragment() {
+        startFragment(LogFragment.newInstance());
     }
 
     private void startFragment(Fragment fragmentToStart) {

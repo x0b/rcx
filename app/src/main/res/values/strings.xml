@@ -593,4 +593,5 @@
     <string name="triggeractivity_trigger_not_found">Trigger not found!</string>
     <string name="task_item_label_from">From:</string>
     <string name="task_item_label_to">To:</string>
+    <string name="logFragment">Logs</string>
 </resources>
