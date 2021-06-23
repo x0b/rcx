@@ -20,7 +20,6 @@ public class ThemeHelper {
 
 
     public static void applyTheme(Activity activity) {
-        Log.e("app", "settheme");
         ActivityHelper.applyTheme(activity);
         TypedValue typedValue = new TypedValue();
         activity.getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
