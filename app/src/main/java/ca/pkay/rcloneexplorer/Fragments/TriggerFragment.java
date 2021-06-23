@@ -19,6 +19,7 @@ import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TriggerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
+import ca.pkay.rcloneexplorer.TaskActivity;
 import ca.pkay.rcloneexplorer.TriggerActivity;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -73,6 +74,9 @@ public class TriggerFragment extends Fragment {
             FragmentTransaction transaction = fm.beginTransaction();
             transaction.replace(R.id.flFragment, fragment);
             transaction.commit();
+
+            Intent intent = new Intent(view.getContext(), TaskActivity.class);
+            startActivity(intent);
         });
         return view;
     }

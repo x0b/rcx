@@ -15,8 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
+import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.Services.TriggerService;
 import ca.pkay.rcloneexplorer.TaskActivity;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
@@ -47,8 +49,11 @@ public class TasksFragment extends Fragment {
         fragmentView = view;
         populateTaskList(fragmentView);
 
+        Intent intent = new Intent(view.getContext(), TaskActivity.class);
         view.findViewById(R.id.newTask).setOnClickListener(v -> {
-            Intent intent = new Intent(view.getContext(), TaskActivity.class);
+            startActivity(intent);
+        });
+        view.findViewById(R.id.newTask_empty).setOnClickListener(v -> {
             startActivity(intent);
         });
 
@@ -81,5 +86,10 @@ public class TasksFragment extends Fragment {
 
         TasksRecyclerViewAdapter recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), c);
         recyclerView.setAdapter(recyclerViewAdapter);
+
+        if(dbHandler.getAllTasks().size() > 0 ){
+            v.findViewById(R.id.layout_error).setVisibility(View.GONE);
+            v.findViewById(R.id.layout_tasklist).setVisibility(View.VISIBLE);
+        }
     }
 }
