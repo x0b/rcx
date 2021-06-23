@@ -353,6 +353,10 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     }
 
     public int getRemoteIcon() {
+        return getRemoteIcon(type);
+    }
+
+    public int getRemoteIcon(int type) {
         if (isCrypt()) {
             return R.drawable.ic_lock_black;
         } else {

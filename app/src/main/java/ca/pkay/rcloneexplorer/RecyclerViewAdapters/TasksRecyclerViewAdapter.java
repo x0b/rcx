@@ -11,7 +11,6 @@ import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -68,7 +67,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
         RemoteItem remote = new RemoteItem(selectedTask.getRemoteId(), String.valueOf(selectedTask.getRemoteType()));
 
-        holder.taskIcon.setImageDrawable(AppCompatResources.getDrawable(context, remote.getRemoteIcon()));
+        holder.taskIcon.setImageDrawable(AppCompatResources.getDrawable(context, remote.getRemoteIcon(selectedTask.getRemoteType())));
 
         int direction = selectedTask.getDirection();
 
