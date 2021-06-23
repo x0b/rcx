@@ -13,7 +13,7 @@
             android:title="@string/remotes" />
         <item
             android:id="@+id/nav_tasks"
-            android:icon="@drawable/ic_notification_sync"
+            android:icon="@drawable/ic_baseline_swap_vert_24"
             android:title="@string/tasks" />
         <item
             android:id="@+id/nav_trigger"
