@@ -77,10 +77,11 @@ public class SyncLog {
         }
     }
 
-    public static void log(Context c, String title, String content, int type){
+    public static long log(Context c, String title, String content, int type){
         JSONObject json = new JSONObject();
+        long now = System.currentTimeMillis();
         try {
-            json.put(TIMESTAMP, System.currentTimeMillis());
+            json.put(TIMESTAMP, now);
             json.put(CONTENT, content);
             json.put(TITLE, title);
             json.put(TYPE, type);
@@ -88,14 +89,15 @@ public class SyncLog {
             e.printStackTrace();
         }
         appendLog(c, json.toString());
+        return now;
     }
 
-    public static void error(Context c, String title, String content){
-        log(c, title, content, TYPE_ERROR);
+    public static long error(Context c, String title, String content){
+        return log(c, title, content, TYPE_ERROR);
     }
 
-    public static void info(Context c, String title, String content){
-        log(c, title, content, TYPE_INFO);
+    public static long info(Context c, String title, String content){
+        return log(c, title, content, TYPE_INFO);
     }
 
     public static void delete(Context c){

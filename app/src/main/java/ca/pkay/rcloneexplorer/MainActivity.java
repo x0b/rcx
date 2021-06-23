@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity
         InputDialog.OnPositive {
 
     private static final String TAG = "MainActivity";
+    public static final String MAIN_ACTIVITY_START_LOG = "MAIN_ACTIVITY_START_LOG";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
@@ -222,8 +223,19 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+        if(intent.getAction().equals(MAIN_ACTIVITY_START_LOG)){
+            startLogFragment();
+        }
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
+            startLogFragment();
+        }
     }
 
     @Override
