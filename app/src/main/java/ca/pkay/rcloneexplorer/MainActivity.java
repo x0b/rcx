@@ -324,16 +324,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        boolean superOnBackPressed = true;
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (fragment != null && fragment instanceof FileExplorerFragment) {
-            if (((FileExplorerFragment) fragment).onBackButtonPressed()) {
-                return;
-            } else {
-                fragment = null;
+        } else if (fragment != null) {
+            if(fragment instanceof FileExplorerFragment){
+                if (((FileExplorerFragment) fragment).onBackButtonPressed()) {
+                    return;
+                } else {
+                    fragment = null;
+                }
+            } else if(fragment instanceof TasksFragment){
+                startRemotesFragment();
+                superOnBackPressed=false;
+            } else if(fragment instanceof TriggerFragment){
+                startRemotesFragment();
+                superOnBackPressed=false;
             }
         }
-        super.onBackPressed();
+        if(superOnBackPressed){
+            super.onBackPressed();
+        }
     }
 
     @Override
