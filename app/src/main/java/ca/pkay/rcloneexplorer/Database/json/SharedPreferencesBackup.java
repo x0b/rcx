@@ -95,8 +95,11 @@ public class SharedPreferencesBackup {
         // Look and Feel
         editor.putBoolean(context.getString(R.string.pref_key_dark_theme), jsonObject.getBoolean("isDarkTheme"));
         editor.putBoolean(context.getString(R.string.pref_key_wrap_filenames), jsonObject.getBoolean("isWrapFilenames"));
-        editor.putInt(context.getString(R.string.pref_key_color_primary), jsonObject.getInt("defaultColorPrimary"));
-        editor.putInt(context.getString(R.string.pref_key_color_accent), jsonObject.getInt("defaultColorAccent"));
+
+        //Todo: migrate those keys to identifiers, to make it more robust.
+        // This is bound to break since resource id's are ephemeral. Therefore they are disabled for now.
+        // editor.putInt(context.getString(R.string.pref_key_color_primary), jsonObject.getInt("defaultColorPrimary"));
+        // editor.putInt(context.getString(R.string.pref_key_color_accent), jsonObject.getInt("defaultColorAccent"));
 
         // Notifications
         editor.putBoolean(context.getString(R.string.pref_key_app_updates), jsonObject.getBoolean("appUpdates"));
