@@ -14,6 +14,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
@@ -51,21 +53,14 @@ public class TriggerFragment extends Fragment {
         fragmentView = view;
 
         populateTriggerList(fragmentView);
+        updateVisibilities(fragmentView);
 
-        if(dbHandler.getAllTasks().size() > 0 ){
-            view.findViewById(R.id.layout_error).setVisibility(View.GONE);
-            view.findViewById(R.id.layout_list).setVisibility(View.VISIBLE);
-        } else {
-            //disable all trigger when no tasks are available.
-            TriggerService triggerService = new TriggerService(view.getContext());
-            for(Trigger trigger : dbHandler.getAllTrigger()){
-                triggerService.cancelTrigger(trigger.getId());
-            }
-        }
-
+        Intent newTriggerIntent = new Intent(view.getContext(), TriggerActivity.class);
         view.findViewById(R.id.newTrigger).setOnClickListener(v -> {
-            Intent intent = new Intent(view.getContext(), TriggerActivity.class);
-            startActivity(intent);
+            startActivity(newTriggerIntent);
+        });
+        view.findViewById(R.id.newTrigger_empty).setOnClickListener(v -> {
+            startActivity(newTriggerIntent);
         });
 
         view.findViewById(R.id.task_activity_button).setOnClickListener(v -> {
@@ -84,7 +79,34 @@ public class TriggerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateVisibilities(fragmentView);
         populateTriggerList(fragmentView);
+    }
+
+    private void updateVisibilities(View view){
+        if(dbHandler == null){
+            dbHandler = new DatabaseHandler(view.getContext());
+        }
+
+        //First check tasks:
+        if(dbHandler.getAllTasks().size() > 0 ){
+            view.findViewById(R.id.layout_error).setVisibility(View.GONE);
+        } else {
+            //disable all trigger when no tasks are available.
+            TriggerService triggerService = new TriggerService(view.getContext());
+            for(Trigger trigger : dbHandler.getAllTrigger()){
+                triggerService.cancelTrigger(trigger.getId());
+            }
+        }
+
+        //then check triggers
+        if(dbHandler.getAllTrigger().size() == 0){
+            view.findViewById(R.id.layout_triggerlist).setVisibility(View.GONE);
+            view.findViewById(R.id.layout_empty).setVisibility(View.VISIBLE);
+        } else {
+            view.findViewById(R.id.layout_triggerlist).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.layout_empty).setVisibility(View.GONE);
+        }
     }
 
     private void populateTriggerList(View v){
@@ -92,11 +114,16 @@ public class TriggerFragment extends Fragment {
         if(dbHandler == null){
             dbHandler = new DatabaseHandler(c);
         }
+
         RecyclerView recyclerView =  v.findViewById(R.id.trigger_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(c));
         recyclerView.setItemAnimator(new LandingAnimator());
 
         TriggerRecyclerViewAdapter recyclerViewAdapter = new TriggerRecyclerViewAdapter(dbHandler.getAllTrigger(), c);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override public void onChildViewAttachedToWindow(final View view) { updateVisibilities(fragmentView); }
+            @Override public void onChildViewDetachedFromWindow(View view) { updateVisibilities(fragmentView); }
+        });
     }
 }

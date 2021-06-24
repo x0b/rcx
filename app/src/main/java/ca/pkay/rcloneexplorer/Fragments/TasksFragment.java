@@ -48,6 +48,7 @@ public class TasksFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_tasks, container, false);
         fragmentView = view;
         populateTaskList(fragmentView);
+        updateVisibilities(fragmentView);
 
         Intent intent = new Intent(view.getContext(), TaskActivity.class);
         view.findViewById(R.id.newTask).setOnClickListener(v -> {
@@ -64,6 +65,7 @@ public class TasksFragment extends Fragment {
     public void onResume() {
         super.onResume();
         populateTaskList(fragmentView);
+        updateVisibilities(fragmentView);
     }
 
     @Override
@@ -73,6 +75,14 @@ public class TasksFragment extends Fragment {
 
         if(activity==null){
             Toasty.error(context, context.getResources().getString(R.string.importer_unknown_error), Toast.LENGTH_SHORT, true).show();
+        }
+    }
+
+    private void updateVisibilities(View view){
+        DatabaseHandler dbHandler = new DatabaseHandler(view.getContext());
+        if(dbHandler.getAllTasks().size() > 0 ){
+            view.findViewById(R.id.layout_error).setVisibility(View.GONE);
+            view.findViewById(R.id.layout_tasklist).setVisibility(View.VISIBLE);
         }
     }
 
@@ -86,10 +96,9 @@ public class TasksFragment extends Fragment {
 
         TasksRecyclerViewAdapter recyclerViewAdapter = new TasksRecyclerViewAdapter(dbHandler.getAllTasks(), c);
         recyclerView.setAdapter(recyclerViewAdapter);
-
-        if(dbHandler.getAllTasks().size() > 0 ){
-            v.findViewById(R.id.layout_error).setVisibility(View.GONE);
-            v.findViewById(R.id.layout_tasklist).setVisibility(View.VISIBLE);
-        }
+        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override public void onChildViewAttachedToWindow(final View view) { updateVisibilities(fragmentView); }
+            @Override public void onChildViewDetachedFromWindow(View view) { updateVisibilities(fragmentView); }
+        });
     }
 }

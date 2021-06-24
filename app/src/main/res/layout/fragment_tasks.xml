@@ -23,10 +23,11 @@
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="256dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:padding="24dp"
                 android:singleLine="false"
-                android:text="There are no tasks. Please define a task first!"
+                android:text="@string/no_tasks_warning"
+                android:lines="3"
                 android:textAlignment="center"
                 android:textSize="20sp" />
 
@@ -46,6 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:clickable="true"
+                    android:contentDescription="@string/add_task"
                     android:focusable="true"
                     android:src="@drawable/ic_add" />
 
@@ -80,9 +82,10 @@
             android:id="@+id/newTask"
             android:layout_width="358dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:clickable="true"
+            android:contentDescription="@string/add_task"
             android:focusable="true"
             android:src="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="parent"
