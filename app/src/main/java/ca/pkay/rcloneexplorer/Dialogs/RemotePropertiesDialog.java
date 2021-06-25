@@ -1,6 +1,7 @@
 package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -9,6 +10,8 @@ import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
@@ -24,6 +27,7 @@ import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.InitOauthStep;
 import ca.pkay.rcloneexplorer.RemoteConfig.OauthHelper.OauthFinishStep;
 import ca.pkay.rcloneexplorer.util.FLog;
+import es.dmoral.toasty.Toasty;
 
 public class RemotePropertiesDialog extends DialogFragment {
 
@@ -216,6 +220,7 @@ public class RemotePropertiesDialog extends DialogFragment {
 
         @Override
         protected Void doInBackground(Void... params) {
+            Context appContext = context.getApplicationContext();
             final Process process = rclone.reconnectRemote(remoteItem);
             if (process != null) {
                 // Since this is invoked on already existing remotes, we need
@@ -247,6 +252,10 @@ public class RemotePropertiesDialog extends DialogFragment {
                 ErrorHandler errorHandler = e -> {
                     FLog.e(TAG, "onError: The recipe for %s is probably bad", e, remoteItem.getTypeReadable());
                     process.destroy();
+                    // Appcenter #965158510
+                    if (e instanceof ActivityNotFoundException) {
+                        Toasty.error(appContext, appContext.getString(R.string.no_app_found_for_this_link), Toast.LENGTH_LONG).show();
+                    }
                 };
 
                 InteractiveRunner interactiveRunner = new InteractiveRunner(start, errorHandler, process);
