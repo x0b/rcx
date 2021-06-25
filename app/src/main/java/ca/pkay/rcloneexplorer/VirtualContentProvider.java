@@ -243,12 +243,7 @@ public class VirtualContentProvider extends SingleRootProvider {
         Context context = Objects.requireNonNull(getContext());
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean vcpEnabled = sharedPreferences.getBoolean(context.getString(R.string.pref_key_enable_vcp), false);
-        // TODO: build settings option
         boolean pretendLocal = sharedPreferences.getBoolean(context.getString(R.string.pref_key_vcp_declare_local), true);
-        if (!vcpEnabled || !acquireRcd()) {
-            return new MatrixCursor(DEFAULT_ROOT_PROJECTION);
-        }
-        String summary = context.getString(R.string.virtual_content_provider_summary, remotes.size());
         int flags = Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_IS_CHILD
                 | Root.FLAG_SUPPORTS_SEARCH;
@@ -265,7 +260,24 @@ public class VirtualContentProvider extends SingleRootProvider {
         if (pretendLocal) {
             flags |= Root.FLAG_LOCAL_ONLY;
         }
-        return buildRoot(R.mipmap.ic_launcher, R.string.app_name, summary, flags);
+        if (!vcpEnabled) {
+            FLog.v(TAG, "queryRoots: VCP disabled");
+            return new MatrixCursor(DEFAULT_ROOT_PROJECTION);
+        } else if (null != remotes) {
+            FLog.v(TAG, "queryRoots: VCP ready");
+            CompletableFuture.runAsync(this::acquireRcd, asyncExc).thenRunAsync(() -> {
+                context.getContentResolver().notifyChange(getRootUri(), null);
+            }, asyncExc);
+            String summary = context.getString(R.string.virtual_content_provider_summary, remotes.size());
+            return buildRoot(R.mipmap.ic_launcher, R.string.app_name, summary, flags);
+        } else {
+            FLog.v(TAG, "queryRoots: VCP loading");
+            CompletableFuture.runAsync(this::acquireRcd, asyncExc).thenRunAsync(() -> {
+                context.getContentResolver().notifyChange(getRootUri(), null);
+            }, asyncExc);
+            String loading = context.getString(R.string.loading);
+            return buildRoot(R.mipmap.ic_launcher, R.string.app_name, loading, flags);
+        }
     }
 
     @SuppressLint("InlinedApi")
