@@ -19,6 +19,9 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -112,34 +115,44 @@ public class SyncService extends IntentService {
         startForeground(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
 
         currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
+        JSONObject stats;
+        String notificationContent = "";
+        String[] notificationBigText = new String[5];
         if (currentProcess != null) {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
-                String notificationContent = "";
-                String[] notificationBigText = new String[5];
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+\\s+/\\s+\\d+,\\s+\\d+%$")) {
-                        String s = line.substring(12).trim();
-                        notificationBigText[0] = s;
-                        notificationContent = s;
-                    } else if (line.startsWith(" *")) {
-                        String s = line.substring(2).trim();
-                        notificationBigText[1] = s;
-                    } else if (line.startsWith("Errors:")) {
-                        notificationBigText[2] = line;
-                    } else if (line.startsWith("Checks:")) {
-                        notificationBigText[3] = line;
-                    } else if (line.matches("Transferred:\\s+\\d+\\s+/\\s+\\d+,\\s+\\d+%$")) {
-                        notificationBigText[4] = line;
-                    } else if (isLoggingEnable && line.startsWith("ERROR :")){
+                    JSONObject logline = new JSONObject(line);
+                    if(isLoggingEnable && logline.getString("level").equals("error")){
                         log2File.log(line);
+                    } else if(logline.getString("level").equals("warning")){
+                        //available stats:
+                        //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
+                        //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
+                        stats = logline.getJSONObject("stats");
+
+                        String speed = humanReadableBytes(stats.getLong("speed"))+"/s";
+                        String size = humanReadableBytes(stats.getLong("bytes"));
+                        String allsize = humanReadableBytes(stats.getLong("totalBytes"));
+                        double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
+
+                        //todo: translate
+                        notificationContent = String.format("Transfered:   %s / %s %.0f%% %s, ETA %s s",
+                                size, allsize, percent, speed, stats.get("eta"));
+                        notificationBigText[0]=notificationContent;
+                        notificationBigText[1]=String.format("Errors:      %d", stats.getInt("errors"));
+                        notificationBigText[2]=String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks"));
+                        notificationBigText[3]=String.format("Transferred: %s / %s", size, allsize);
+                        notificationBigText[4]=String.format("Elapsed:     %d", stats.getInt("elapsedTime"));
                     }
 
                     updateNotification(title, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+            } catch (JSONException e) {
+                //e.printStackTrace();
             }
 
             try {
@@ -162,6 +175,11 @@ public class SyncService extends IntentService {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
         stopForeground(true);
+    }
+
+    public static String humanReadableBytes(long bytes) {
+        //todo: implement conversion properly
+        return String.valueOf(bytes)+" MiB";
     }
 
     private void registerBroadcastReceivers() {

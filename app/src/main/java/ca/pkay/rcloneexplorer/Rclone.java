@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -59,55 +60,51 @@ public class Rclone {
         log2File = new Log2File(context);
     }
 
+    private String[] createCommand(ArrayList<String> args) {
+        String[] command = new String[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            command[i]= args.get(i);
+        }
+        return command;
+    }
+
     private String[] createCommand(String ...args) {
         boolean loggingEnabled = PreferenceManager
                 .getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_key_logs), false);
-        int staticArgSize = loggingEnabled ? 4 : 3;
-        int arraySize = args.length + staticArgSize;
-        String[] command = new String[arraySize];
+        ArrayList<String> command = new ArrayList<>();
 
-        command[0] = rclone;
-        command[1] = "--config";
-        command[2] = rcloneConf;
+        command.add(rclone);
+        command.add("--config");
+        command.add(rcloneConf);
 
         if(loggingEnabled) {
-            command[3] = "-vvv";
+            command.add("-vvv");
         }
-
-        int i = staticArgSize;
-        for (String arg : args) {
-            command[i++] = arg;
-        }
-        return command;
+        command.addAll(Arrays.asList(args));
+        return createCommand(command);
     }
 
     private String[] createCommandWithOptions(String ...args) {
         boolean loggingEnabled = PreferenceManager
                 .getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_key_logs), false);
-        int staticArgSize = loggingEnabled ? 8 : 7;
-        int arraySize = args.length + staticArgSize;
-        String[] command = new String[arraySize];
+        ArrayList<String> command = new ArrayList<>();
         String cachePath = context.getCacheDir().getAbsolutePath();
 
-        command[0] = rclone;
-        command[1] = "--cache-chunk-path";
-        command[2] = cachePath;
-        command[3] = "--cache-db-path";
-        command[4] = cachePath;
-        command[5] = "--config";
-        command[6] = rcloneConf;
+        command.add(rclone);
+        command.add("--cache-chunk-path");
+        command.add(cachePath);
+        command.add("--cache-db-path");
+        command.add(cachePath);
+        command.add("--config");
+        command.add(rcloneConf);
 
         if(loggingEnabled) {
-            command[7] = "-vvv";
+            command.add("-vvv");
         }
-
-        int i = staticArgSize;
-        for (String arg : args) {
-            command[i++] = arg;
-        }
-        return command;
+        Collections.addAll(command, args);
+        return createCommand(command);
     }
 
     public String[] getRcloneEnv(String... overwriteOptions) {
@@ -543,9 +540,9 @@ public class Rclone {
         String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
 
         if (syncDirection == 1) {
-            command = createCommandWithOptions("sync", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+            command = createCommandWithOptions("sync", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
         } else if (syncDirection == 2) {
-            command = createCommandWithOptions("sync", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+            command = createCommandWithOptions("sync", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
         } else {
             return null;
         }
