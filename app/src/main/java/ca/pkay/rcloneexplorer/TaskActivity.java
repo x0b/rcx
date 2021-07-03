@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -10,18 +11,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class TaskActivity extends AppCompatActivity {
@@ -29,10 +32,11 @@ public class TaskActivity extends AppCompatActivity {
 
     public static final String ID_EXTRA = "TASK_EDIT_ID";
     private final int REQUEST_CODE_FP_LOCAL = 500;
+    private final int REQUEST_CODE_FP_REMOTE = 444;
     private Rclone rcloneInstance;
     private Task existingTask;
     private DatabaseHandler dbHandler;
-
+    private String[] items;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -41,6 +45,29 @@ public class TaskActivity extends AppCompatActivity {
             case REQUEST_CODE_FP_LOCAL:
                 EditText tv_local = findViewById(R.id.task_local_path_textfield);
                 tv_local.setText(data.getStringExtra(FilePicker.FILE_PICKER_RESULT));
+                break;
+            case REQUEST_CODE_FP_REMOTE:
+                Uri uri = null;
+                if (data != null) {
+                   String path = data.getData().toString();
+                   try {
+                       path = URLDecoder.decode(path, "UTF-8");
+                   } catch (UnsupportedEncodingException e) {}
+                   String provider = "content://io.github.x0b.rcx.vcp/tree/rclone/remotes/";
+                   if(path.startsWith(provider)){
+                       String[] parts = path.substring(provider.length()).split(":");
+                       ((TextView)findViewById(R.id.task_remote_path_textfield)).setText(parts[1]);
+                       int i=0;
+                       for(String remote: items) {
+                           if(remote.equals(parts[0])){
+                               ((Spinner)findViewById(R.id.task_remote_spinner)).setSelection(i);
+                           }
+                           i++;
+                       }
+                   }else{
+                       Toasty.error(this, "This Remote is not a RCX-Remote.").show();
+                   }
+                }
                 break;
         }
     }
@@ -94,13 +121,22 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
+        EditText tv_remote = findViewById(R.id.task_remote_path_textfield);
+        tv_remote.setOnFocusChangeListener((v, hasFocus) -> {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            if(hasFocus && sharedPreferences.getBoolean(getString(R.string.pref_key_enable_vcp), false)){
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(intent, REQUEST_CODE_FP_REMOTE);
+            }
+        });
 
 
         rcloneInstance = new Rclone(this);
 
         Spinner remoteDropdown = findViewById(R.id.task_remote_spinner);
 
-        String[] items = new String[rcloneInstance.getRemotes().size()];
+        items = new String[rcloneInstance.getRemotes().size()];
 
         for (int i = 0; i< rcloneInstance.getRemotes().size(); i++) {
             items[i]= rcloneInstance.getRemotes().get(i).getName();
