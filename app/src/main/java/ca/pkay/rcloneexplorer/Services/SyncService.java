@@ -25,6 +25,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -124,6 +126,7 @@ public class SyncService extends IntentService {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     JSONObject logline = new JSONObject(line);
+                    FLog.e("LOG", logline.toString());
                     if(isLoggingEnable && logline.getString("level").equals("error")){
                         log2File.log(line);
                     } else if(logline.getString("level").equals("warning")){
@@ -178,8 +181,21 @@ public class SyncService extends IntentService {
     }
 
     public static String humanReadableBytes(long bytes) {
-        //todo: implement conversion properly
-        return String.valueOf(bytes)+" MiB";
+        final int base = 1000;
+        final String[] units = {"Kb", "Mb", "Gb", "Tb"};
+
+        String target = "bytes";
+        double target_size = bytes;
+
+        for (String unit: units) {
+            if(target_size>base){
+                target_size = target_size/base;
+                target = unit;
+            }
+        }
+
+        DecimalFormat df = new DecimalFormat("0.#");
+        return df.format(target_size)+" "+target;
     }
 
     private void registerBroadcastReceivers() {
