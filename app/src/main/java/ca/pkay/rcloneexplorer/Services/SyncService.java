@@ -25,8 +25,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -34,6 +32,8 @@ import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
+
+import static android.text.format.Formatter.formatFileSize;
 
 public class SyncService extends IntentService {
 
@@ -126,7 +126,6 @@ public class SyncService extends IntentService {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     JSONObject logline = new JSONObject(line);
-                    FLog.e("LOG", logline.toString());
                     if(isLoggingEnable && logline.getString("level").equals("error")){
                         log2File.log(line);
                     } else if(logline.getString("level").equals("warning")){
@@ -135,19 +134,30 @@ public class SyncService extends IntentService {
                         //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
                         stats = logline.getJSONObject("stats");
 
-                        String speed = humanReadableBytes(stats.getLong("speed"))+"/s";
-                        String size = humanReadableBytes(stats.getLong("bytes"));
-                        String allsize = humanReadableBytes(stats.getLong("totalBytes"));
-                        double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
+                        long totalBytes = stats.optLong("totalBytes");
+                        long bytes = stats.optLong("bytes");
+                        String speed = formatFileSize(this, stats.optLong("speed"))+"/s";
+                        String size = formatFileSize(this, bytes);
+                        String totalSize =  formatFileSize(this, totalBytes);
+                        double percent = ((double) bytes) / totalBytes * 100;
+
+                        if(totalBytes==0){
+                            if(bytes==0){
+                                percent=0;
+                            }else{
+                                //this should not occur, but handle it anyway
+                                percent=100;
+                            }
+                        }
 
                         //todo: translate
                         notificationContent = String.format("Transfered:   %s / %s %.0f%% %s, ETA %s s",
-                                size, allsize, percent, speed, stats.get("eta"));
+                                size, totalSize, percent, speed, stats.optString("eta", "--"));
                         notificationBigText[0]=notificationContent;
-                        notificationBigText[1]=String.format("Errors:      %d", stats.getInt("errors"));
-                        notificationBigText[2]=String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks"));
-                        notificationBigText[3]=String.format("Transferred: %s / %s", size, allsize);
-                        notificationBigText[4]=String.format("Elapsed:     %d", stats.getInt("elapsedTime"));
+                        notificationBigText[1]=String.format("Errors:      %d", stats.optInt("errors"));
+                        notificationBigText[2]=String.format("Checks:      %d / %d", stats.optInt("checks"),  stats.optInt("totalChecks"));
+                        notificationBigText[3]=String.format("Transferred: %s / %s", size, totalSize);
+                        notificationBigText[4]=String.format("Elapsed:     %d", stats.optInt("elapsedTime"));
                     }
 
                     updateNotification(title, notificationContent, notificationBigText);
@@ -178,24 +188,6 @@ public class SyncService extends IntentService {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
         stopForeground(true);
-    }
-
-    public static String humanReadableBytes(long bytes) {
-        final int base = 1000;
-        final String[] units = {"Kb", "Mb", "Gb", "Tb"};
-
-        String target = "bytes";
-        double target_size = bytes;
-
-        for (String unit: units) {
-            if(target_size>base){
-                target_size = target_size/base;
-                target = unit;
-            }
-        }
-
-        DecimalFormat df = new DecimalFormat("0.#");
-        return df.format(target_size)+" "+target;
     }
 
     private void registerBroadcastReceivers() {
