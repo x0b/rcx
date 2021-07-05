@@ -165,7 +165,7 @@ public class SyncService extends IntentService {
             } catch (IOException e) {
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e);
             } catch (JSONException e) {
-                //e.printStackTrace();
+                FLog.e(TAG, "onHandleIntent: error reading json", e);
             }
 
             try {
