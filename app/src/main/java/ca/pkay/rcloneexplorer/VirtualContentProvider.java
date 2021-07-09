@@ -265,8 +265,16 @@ public class VirtualContentProvider extends SingleRootProvider {
             return new MatrixCursor(DEFAULT_ROOT_PROJECTION);
         } else if (null != remotes) {
             FLog.v(TAG, "queryRoots: VCP ready");
+            Set<String> oldRemotes = new HashSet<>(remotes.keySet());
             CompletableFuture.runAsync(this::acquireRcd, asyncExc).thenRunAsync(() -> {
-                context.getContentResolver().notifyChange(getRootUri(), null);
+                // Only notify if the data has actually changed, otherwise the
+                // client(s) can get into loops.
+                if (!oldRemotes.equals(remotes.keySet())) {
+                    FLog.v(TAG, "queryRoots: notify remote data change");
+                    context.getContentResolver().notifyChange(getRootUri(), null);
+                } else {
+                    FLog.v(TAG, "queryRoots: no remote data change");
+                }
             }, asyncExc);
             String summary = context.getString(R.string.virtual_content_provider_summary, remotes.size());
             return buildRoot(R.mipmap.ic_launcher, R.string.app_name, summary, flags);
