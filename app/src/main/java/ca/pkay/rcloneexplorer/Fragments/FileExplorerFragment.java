@@ -1810,6 +1810,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         private String fileLocation;
         private Process process;
         private volatile boolean isCancelled = false;
+        private String mimeType;
 
         DownloadAndOpen() {
             this(-1);
@@ -1847,6 +1848,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(FileItem... fileItems) {
             FileItem fileItem = fileItems[0];
+            mimeType = fileItem.getMimeType();
             File[] extCacheDirs = ContextCompat.getExternalCacheDirs(context);
             if (extCacheDirs.length < 1) {
                 return false;
@@ -1899,11 +1901,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             } else if (openAs == OPEN_AS_IMAGE) {
                 intent.setDataAndType(sharedFileUri, "image/*");
             } else {
-                String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
-                String type = context.getContentResolver().getType(sharedFileUri);
-                if (extension == null || extension.trim().isEmpty()) {
-                    intent.setDataAndType(sharedFileUri, "*/*");
-                } else if (type == null || type.equals("application/octet-stream")) {
+                if (mimeType != null && !"application/octet-stream".equals(mimeType)) {
+                    intent.setDataAndTypeAndNormalize(sharedFileUri, mimeType);
+                } else {
                     intent.setDataAndType(sharedFileUri, "*/*");
                 }
             }
