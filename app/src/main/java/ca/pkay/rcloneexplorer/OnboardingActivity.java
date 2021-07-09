@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -20,9 +21,15 @@ import com.github.appintro.AppIntroFragment;
 
 import org.jetbrains.annotations.Nullable;
 
+import ca.pkay.rcloneexplorer.util.FLog;
+import es.dmoral.toasty.Toasty;
+
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
 
 public class OnboardingActivity extends AppIntro {
+
+    private static final String TAG = "OnboardingActivity";
+    private static final int REQ_ALL_FILES_ACCESS = 3101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +56,27 @@ public class OnboardingActivity extends AppIntro {
 
 
     @Override
-    protected void onNextPressed(@Nullable Fragment currentFragment) {
-        if (null == currentFragment || null == currentFragment.getTag()) {
-            return;
-        }
-        if (currentFragment.getTag().endsWith(":1")) {
+    protected void onPageSelected(int position) {
+        FLog.v(TAG, "onPageSelected(%s)", position);
+        super.onPageSelected(position);
+        if (position == 2) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+                FLog.d(TAG, "onPageSelected(%s): opening permissions", position);
                 Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 intent.setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
-                tryStartActivityForResult(this, intent, 3101);
+                tryStartActivityForResult(this, intent, REQ_ALL_FILES_ACCESS);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_ALL_FILES_ACCESS) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+                Toasty.success(this, "You can now access all local storage", Toast.LENGTH_LONG, true).show();
+            } else {
+                Toasty.info(this, "Manage files not granted", Toast.LENGTH_LONG, true).show();
             }
         }
     }
