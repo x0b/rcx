@@ -364,8 +364,8 @@ public class Rclone {
 
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
-                String type = remoteJSON.getString("type");
-                if (type == null || type.trim().isEmpty()) {
+                String type = remoteJSON.optString("type");
+                if (type.trim().isEmpty()) {
                     return null;
                 }
 
@@ -385,8 +385,8 @@ public class Rclone {
                 }
 
                 if (recurse && maxDepth > 0) {
-                    String remote = remoteJSON.getString("remote");
-                    if (remote == null || (!remote.contains(":") && !remote.startsWith("/"))) {
+                    String remote = remoteJSON.optString("remote");
+                    if (remote.trim().isEmpty() || (!remote.contains(":") && !remote.startsWith("/"))) {
                         return null;
                     }
 
