@@ -576,6 +576,9 @@ public class Rclone {
         } else {
             localFilePath = downloadPath;
         }
+
+        localFilePath = encodePath(localFilePath);
+
         command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
 
         String[] env = getRcloneEnv();
@@ -585,6 +588,26 @@ public class Rclone {
             FLog.e(TAG, "downloadFile: error starting rclone", e);
             return null;
         }
+    }
+
+    // Can't pass \u0000 as cmd arg - encode like rclone with U+2400
+    // Ref: Appcenter #22305285
+    // TODO Appcenter #170195533 - rclone serve
+    @NonNull
+    private String encodePath(String localFilePath) {
+        if (localFilePath.indexOf('\u0000') < 0) {
+            return localFilePath;
+        }
+        StringBuilder localPathBuilder = new StringBuilder(localFilePath.length());
+        for (char c : localFilePath.toCharArray()) {
+            if (c == '\u0000') {
+                localPathBuilder.append('\u2400');
+            } else {
+                localPathBuilder.append(c);
+            }
+
+        }
+        return localPathBuilder.toString();
     }
 
     public Process uploadFile(RemoteItem remote, String uploadPath, String uploadFile) {
