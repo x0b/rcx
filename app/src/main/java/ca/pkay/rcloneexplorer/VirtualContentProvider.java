@@ -1388,7 +1388,7 @@ public class VirtualContentProvider extends SingleRootProvider {
             if (lastModified > configModifiedTimestamp) {
                 configModifiedTimestamp = lastModified;
                 FLog.d(TAG, "reloadRemotesIfRequired(): requesting new remote config data");
-                Set<String> oldRemotes = remotes.keySet();
+                Set<String> oldRemotes = new HashSet<>(remotes.keySet());
                 for (RemoteItem remoteItem : rclone.getRemotes()) {
                     remotes.put(remoteItem.getName(), remoteItem);
                 }
