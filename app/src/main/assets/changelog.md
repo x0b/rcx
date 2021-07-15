@@ -1,3 +1,25 @@
+### 1.12.2
+* **Fix:** Crash when WebView is (temporarily) not available
+* **Fix:** Crash when app is paused while in large folder
+* **Fix:** Crash when moving files
+* **Fix:** Crash when retrieving thumbnail on SAF storage
+* **Fix:** Crash when view is not loaded in Onboarding
+* **Fix:** Crashes and errors when running on wrong ABI
+* **Fix:** DocumentsProvider not showing up or delaying DocumentsUI significantly
+* **Fix:** DocumentsProvider showing deleted remotes
+* **Fix:** Downloading file with ASCII null in path
+* **Fix:** OAuth locking up when reauthorizing remote
+* **Fix:** Onboarding being displayed with white background on some devices
+* **Fix:** Onboarding on Android R+ will now always request permissions
+* **Fix:** OneDrive will now show an error message if there is no Webbrowser available
+* **Fix:** Running jobs not keeping the service alive
+* **Fix:** Unreadable locations shown in file picker
+* **Fix:** Update notifications for GitHub release users
+* **Fix:** Validation when reading rclone config
+* **Internal:** Improve logging quality
+
+***
+
 ### 1.12.1
 * **Fix:** Crash when opening a file by tapping
 * **Fix:** Crash when opening logging settings and then immediately going back
