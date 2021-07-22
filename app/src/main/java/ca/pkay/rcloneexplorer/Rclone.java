@@ -60,14 +60,6 @@ public class Rclone {
         log2File = new Log2File(context);
     }
 
-    private String[] createCommand(ArrayList<String> args) {
-        String[] command = new String[args.size()];
-        for (int i = 0; i < args.size(); i++) {
-            command[i]= args.get(i);
-        }
-        return command;
-    }
-
     private String[] createCommand(String ...args) {
         boolean loggingEnabled = PreferenceManager
                 .getDefaultSharedPreferences(context)
@@ -82,7 +74,7 @@ public class Rclone {
             command.add("-vvv");
         }
         command.addAll(Arrays.asList(args));
-        return createCommand(command);
+        return command.toArray(new String[0]);
     }
 
     private String[] createCommandWithOptions(String ...args) {
@@ -104,7 +96,7 @@ public class Rclone {
             command.add("-vvv");
         }
         Collections.addAll(command, args);
-        return createCommand(command);
+        return command.toArray(new String[0]);
     }
 
     public String[] getRcloneEnv(String... overwriteOptions) {
