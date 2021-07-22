@@ -126,9 +126,9 @@ public class SyncService extends IntentService {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     JSONObject logline = new JSONObject(line);
-                    if(isLoggingEnable && logline.getString("level").equals("error")){
+                    if (isLoggingEnable && logline.getString("level").equals("error")) {
                         log2File.log(line);
-                    } else if(logline.getString("level").equals("warning")){
+                    } else if (logline.getString("level").equals("warning")) {
                         //available stats:
                         //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
                         //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
@@ -136,28 +136,28 @@ public class SyncService extends IntentService {
 
                         long totalBytes = stats.optLong("totalBytes");
                         long bytes = stats.optLong("bytes");
-                        String speed = formatFileSize(this, stats.optLong("speed"))+"/s";
+                        String speed = formatFileSize(this, stats.optLong("speed")) + "/s";
                         String size = formatFileSize(this, bytes);
-                        String totalSize =  formatFileSize(this, totalBytes);
+                        String totalSize = formatFileSize(this, totalBytes);
                         double percent = ((double) bytes) / totalBytes * 100;
 
-                        if(totalBytes==0){
-                            if(bytes==0){
-                                percent=0;
-                            }else{
+                        if (totalBytes == 0) {
+                            if (bytes == 0) {
+                                percent = 0;
+                            } else {
                                 //this should not occur, but handle it anyway
-                                percent=100;
+                                percent = 100;
                             }
                         }
 
                         //todo: translate
                         notificationContent = String.format("Transfered:   %s / %s %.0f%% %s, ETA %s s",
                                 size, totalSize, percent, speed, stats.optString("eta", "--"));
-                        notificationBigText[0]=notificationContent;
-                        notificationBigText[1]=String.format("Errors:      %d", stats.optInt("errors"));
-                        notificationBigText[2]=String.format("Checks:      %d / %d", stats.optInt("checks"),  stats.optInt("totalChecks"));
-                        notificationBigText[3]=String.format("Transferred: %s / %s", size, totalSize);
-                        notificationBigText[4]=String.format("Elapsed:     %d", stats.optInt("elapsedTime"));
+                        notificationBigText[0] = notificationContent;
+                        notificationBigText[1] = String.format("Errors:      %d", stats.optInt("errors"));
+                        notificationBigText[2] = String.format("Checks:      %d / %d", stats.optInt("checks"), stats.optInt("totalChecks"));
+                        notificationBigText[3] = String.format("Transferred: %s / %s", size, totalSize);
+                        notificationBigText[4] = String.format("Elapsed:     %d", stats.optInt("elapsedTime"));
                     }
 
                     updateNotification(title, notificationContent, notificationBigText);
