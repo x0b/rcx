@@ -41,17 +41,24 @@
         app:layout_constraintVertical_weight="5"
         app:srcCompat="@drawable/ic_heart_red_24dp" />
 
-    <TextView
+    <ScrollView
+        android:id="@+id/text_contribute_logs_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintBottom_toBottomOf="@+id/img_slide_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/switch_err_logs"
+        app:layout_constraintVertical_weight="3">
+        <TextView
             android:id="@+id/text_contribute_logs"
             style="@style/AppIntroDefaultText"
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:layout_height="0dp"
-            app:layout_constraintVertical_weight="3"
-            app:layout_constraintBottom_toTopOf="@+id/switch_err_logs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_slide_main"
             android:text="@string/intro_community_description"/>
+    </ScrollView>
 
     <Switch
             android:text="@string/intro_community_switch"
