@@ -9,6 +9,7 @@
     <array name="locales">
         <item>en-US</item>
         <item>de-DE</item>
+        <item>zh-CN</item>
     </array>
 
     <array name="provider_ids">

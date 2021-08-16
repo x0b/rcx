@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="provider_names">
+        <item>Box</item>
+        <item>Backblaze B2</item>
+        <item>Dropbox</item>
+        <item>FTP</item>
+        <item>HTTP</item>
+        <item>HubiC</item>
+        <item>pCloud</item>
+        <item>SFTP</item>
+        <item>Yandex Disk</item>
+        <item>WebDAV</item>
+        <item>Microsoft OneDrive</item>
+        <item>Alias</item>
+        <item>Crypt</item>
+        <item>QingCloud QingStor</item>
+        <item>Microsoft Azure Blob Storage</item>
+        <item>Cache</item>
+        <item>Local</item>
+        <item>Google Drive</item>
+        <item>Google Photos</item>
+        <item>Union</item>
+        <item>Mega</item>
+    </array>
+
+    <array name="provider_summaries">
+        <item>云储存</item>
+        <item>云储存</item>
+        <item>云储存</item>
+        <item>访问 FTP 服务器</item>
+        <item>访问 HTTP 服务器</item>
+        <item>云储存</item>
+        <item>云储存</item>
+        <item>访问 SFTP 服务器</item>
+        <item>云储存</item>
+        <item>访问 WebDAV 服务器</item>
+        <item>云储存</item>
+        <item>为远程储存或路径设置新名称</item>
+        <item>在任何远程储存加密文件</item>
+        <item>对象储存</item>
+        <item>对象储存</item>
+        <item>创建本地缓存以获得更快的访问速度</item>
+        <item>访问内置储存</item>
+        <item>云储存</item>
+        <item>云相册</item>
+        <item>组合多个远程储存为一个储存对象</item>
+        <item>云储存</item>
+    </array>
+</resources>
