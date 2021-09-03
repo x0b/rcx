@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -119,48 +120,43 @@ public class SyncService extends IntentService {
         currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
         JSONObject stats;
         String notificationContent = "";
-        String[] notificationBigText = new String[5];
+        ArrayList<String> notificationBigText = new ArrayList<>();
+        int notificationPercent = 0;
         if (currentProcess != null) {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     JSONObject logline = new JSONObject(line);
-                    if (isLoggingEnable && logline.getString("level").equals("error")) {
+                    if(isLoggingEnable && logline.getString("level").equals("error")){
                         log2File.log(line);
-                    } else if (logline.getString("level").equals("warning")) {
+                    } else if(logline.getString("level").equals("warning")){
                         //available stats:
                         //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
                         //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
                         stats = logline.getJSONObject("stats");
 
-                        long totalBytes = stats.optLong("totalBytes");
-                        long bytes = stats.optLong("bytes");
-                        String speed = formatFileSize(this, stats.optLong("speed")) + "/s";
-                        String size = formatFileSize(this, bytes);
-                        String totalSize = formatFileSize(this, totalBytes);
-                        double percent = ((double) bytes) / totalBytes * 100;
+                        String speed = formatFileSize(this, stats.getLong("speed"))+"/s";
+                        String size = formatFileSize(this, stats.getLong("bytes"));
+                        String allsize = formatFileSize(this, stats.getLong("totalBytes"));
+                        double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
 
-                        if (totalBytes == 0) {
-                            if (bytes == 0) {
-                                percent = 0;
-                            } else {
-                                //this should not occur, but handle it anyway
-                                percent = 100;
-                            }
+                        notificationContent = String.format("%s of %s, %ss remaining", size, allsize, stats.get("eta"));
+                        notificationBigText.clear();
+                        notificationBigText.add(String.format("Transferred %s of %s", size, allsize));
+                        notificationBigText.add(String.format("Speed:       %s", speed));
+                        notificationBigText.add(String.format("Remaining:   %s s", stats.get("eta")));
+                        if(stats.getInt("errors")>0){
+                            notificationBigText.add(String.format("Errors:      %d", stats.getInt("errors")));
                         }
-
-                        //todo: translate
-                        notificationContent = String.format("Transfered:   %s / %s %.0f%% %s, ETA %s s",
-                                size, totalSize, percent, speed, stats.optString("eta", "--"));
-                        notificationBigText[0] = notificationContent;
-                        notificationBigText[1] = String.format("Errors:      %d", stats.optInt("errors"));
-                        notificationBigText[2] = String.format("Checks:      %d / %d", stats.optInt("checks"), stats.optInt("totalChecks"));
-                        notificationBigText[3] = String.format("Transferred: %s / %s", size, totalSize);
-                        notificationBigText[4] = String.format("Elapsed:     %d", stats.optInt("elapsedTime"));
+                        //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
+                        //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
+                        notificationBigText.add(String.format("Elapsed:     %d seconds", stats.getInt("elapsedTime")));
+                        notificationPercent = (int) percent;
                     }
 
-                    updateNotification(title, notificationContent, notificationBigText);
+                    updateNotification(title, notificationContent, notificationBigText, notificationPercent);
+
                 }
             } catch (IOException e) {
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e);
@@ -222,10 +218,10 @@ public class SyncService extends IntentService {
         }
     }
 
-    private void updateNotification(String title, String content, String[] bigTextArray) {
+    private void updateNotification(String title, String content, ArrayList<String> bigTextArray, int percent) {
         StringBuilder bigText = new StringBuilder();
-        for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
+        for (int i = 0; i < bigTextArray.size(); i++) {
+            bigText.append(bigTextArray.get(i));
             if (i < 4) {
                 bigText.append("\n");
             }
@@ -242,6 +238,7 @@ public class SyncService extends IntentService {
                 .setContentTitle(getString(R.string.syncing_service, title))
                 .setContentText(content)
                 .setContentIntent(pendingIntent)
+                .setProgress(100, percent, false)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
