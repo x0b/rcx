@@ -141,17 +141,17 @@ public class SyncService extends IntentService {
                         String allsize = formatFileSize(this, stats.getLong("totalBytes"));
                         double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
 
-                        notificationContent = String.format("%s of %s, %ss remaining", size, allsize, stats.get("eta"));
+                        notificationContent = String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_short), size, allsize, stats.get("eta"));
                         notificationBigText.clear();
-                        notificationBigText.add(String.format("Transferred %s of %s", size, allsize));
-                        notificationBigText.add(String.format("Speed:       %s", speed));
-                        notificationBigText.add(String.format("Remaining:   %s s", stats.get("eta")));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_transferred), size, allsize));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_speed), speed));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_remaining), stats.get("eta")));
                         if(stats.getInt("errors")>0){
-                            notificationBigText.add(String.format("Errors:      %d", stats.getInt("errors")));
+                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_errors), stats.getInt("errors")));
                         }
                         //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
                         //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
-                        notificationBigText.add(String.format("Elapsed:     %d seconds", stats.getInt("elapsedTime")));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_elapsed), stats.getInt("elapsedTime")));
                         notificationPercent = (int) percent;
                     }
 
