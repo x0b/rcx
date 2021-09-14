@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -12,20 +13,26 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 
 import ca.pkay.rcloneexplorer.util.FLog;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.file.FileAccessError;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -120,23 +127,21 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                         .centerCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.ic_file);
-                if(localLoad) {
+                if (localLoad) {
+                    holder.fileIcon.setAlpha(1F);
                     bindSafFile(holder, item, glideOption);
                 } else {
-                    String[] serverParams = listener.getThumbnailServerParams();
-                    String hiddenPath = serverParams[0];
-                    int serverPort = Integer.parseInt(serverParams[1]);
-                    String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
-                    Glide
-                            .with(context)
-                            .load(new PersistentGlideUrl(url))
-                            .apply(glideOption)
-                            .thumbnail(0.1f)
-                            .into(holder.fileIcon);
+                    holder.fileIcon.setAlpha(0F);
+                    loadThumbIfExists(holder, item, glideOption, () -> {
+                        holder.fileIcon.setAlpha(1F);
+                    }, () -> {
+                        holder.fileIcon.setAlpha(1F);
+                    });
                 }
 
             } else {
                 holder.fileIcon.setImageResource(R.drawable.ic_file);
+                holder.fileIcon.setAlpha(1F);
             }
         }
 
@@ -207,6 +212,88 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 onLongClickAction(item, holder);
             }
         });
+    }
+
+    private void loadThumbIfExists(ViewHolder holder, FileItem item, RequestOptions glideOption,
+                                   Runnable onSuccessCallback, Runnable onFailedCallback) {
+        String[] serverParams = listener.getThumbnailServerParams();
+        String hiddenPath = serverParams[0];
+        int serverPort = Integer.parseInt(serverParams[1]);
+        loadThumbFromThumbDir(holder, serverPort, hiddenPath, item, glideOption, onSuccessCallback, () -> {
+            loadThumbFromSynologyEaDir(holder, serverPort, hiddenPath, item, glideOption, onSuccessCallback, () -> {
+                loadThumbFromOriginalFile(holder, serverPort, hiddenPath, item, glideOption, onSuccessCallback, onFailedCallback);
+            });
+        });
+    }
+
+    private void loadThumbFromOriginalFile(ViewHolder holder, int serverPort, String hiddenPath, FileItem item,
+                                           RequestOptions glideOption, Runnable onSuccessCallback, Runnable onFailedCallback) {
+        String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
+        Glide
+                .with(context)
+                .load(new PersistentGlideUrl(url))
+                .apply(glideOption)
+                .thumbnail(0.1f)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        holder.fileIcon.post(onFailedCallback);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.fileIcon.post(onSuccessCallback);
+                        return false;
+                    }
+                })
+                .into(holder.fileIcon);
+    }
+
+    private void loadThumbFromSynologyEaDir(ViewHolder holder, int serverPort, String hiddenPath, FileItem item,
+                                            RequestOptions glideOption, Runnable onSuccessCallback, Runnable onFailedCallback) {
+        String thumbUrl = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + new File(item.getPath()).getParent() + "/@eaDir/" + item.getName() + "/SYNOPHOTO_THUMB_M.jpg";
+        Glide
+                .with(context)
+                .load(new PersistentGlideUrl(thumbUrl))
+                .apply(glideOption)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        holder.fileIcon.post(onFailedCallback);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.fileIcon.post(onSuccessCallback);
+                        return false;
+                    }
+                })
+                .into(holder.fileIcon);
+    }
+
+    private void loadThumbFromThumbDir(ViewHolder holder, int serverPort, String hiddenPath, FileItem item,
+                                       RequestOptions glideOption, Runnable onSuccessCallback, Runnable onFailedCallback) {
+        String thumbUrl = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + new File(item.getPath()).getParent() + "/.thumb/" + item.getName() + ".webp";
+        Glide
+                .with(context)
+                .load(new PersistentGlideUrl(thumbUrl))
+                .apply(glideOption)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        holder.fileIcon.post(onFailedCallback);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.fileIcon.post(onSuccessCallback);
+                        return false;
+                    }
+                })
+                .into(holder.fileIcon);
     }
 
     private void bindSafFile(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
