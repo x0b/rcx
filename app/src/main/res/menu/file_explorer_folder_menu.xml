@@ -13,6 +13,11 @@
         android:title="@string/sort"
         android:icon="@drawable/ic_sort"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_view_mode"
+        android:title="@string/view_mode"
+        android:icon="@drawable/ic_view_mode"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_select_all"

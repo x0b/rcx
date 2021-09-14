@@ -11,12 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -50,6 +54,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private boolean wrapFileNames;
     private Context context;
     private long sizeLimit;
+    private int layoutRes;
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -60,12 +65,14 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         String[] getThumbnailServerParams();
     }
 
-    public FileExplorerRecyclerViewAdapter(Context context, View emptyView, View noSearchResultsView, OnClickListener listener) {
+    public FileExplorerRecyclerViewAdapter(Context context, View emptyView, View noSearchResultsView,
+                                           OnClickListener listener, @LayoutRes int layoutRes) {
         files = new ArrayList<>();
         this.context = context;
         this.emptyView = emptyView;
         this.noSearchResultsView = noSearchResultsView;
         this.listener = listener;
+        this.layoutRes = layoutRes;
         isInSelectMode = false;
         selectedItems = new ArrayList<>();
         isInMoveMode = false;
@@ -89,7 +96,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_file_explorer_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(this.layoutRes, parent, false);
         return new ViewHolder(view);
     }
 
@@ -147,7 +154,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileModTime.setVisibility(View.VISIBLE);
             holder.fileModTime.setText(item.getHumanReadableModTime());
         }
-        
+
         holder.fileName.setText(item.getName());
 
         if (isInSelectMode) {
@@ -202,9 +209,16 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             return true;
         });
 
+        holder.icons.setOnLongClickListener(v -> {
+            listener.onFileOptionsClicked(v, item);
+            return true;
+        });
+
         holder.icons.setOnClickListener(v -> {
-            if (!isInMoveMode && canSelect) {
+            if (isInSelectMode) {
                 onLongClickAction(item, holder);
+            } else {
+                onClickAction(item, holder.getAdapterPosition());
             }
         });
     }
@@ -452,6 +466,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             listener.onFilesSelected();
         }
         notifyDataSetChanged();
+    }
+
+    public void setLayoutRes(@LayoutRes int layoutRes) {
+        this.layoutRes = layoutRes;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -16,6 +16,7 @@
     <string name="export_rclone_config">Export rclone config</string>
     <string name="about">About</string>
     <string name="sort">Sort</string>
+    <string name="view_mode">Switch between grid or linear mode</string>
     <string name="select_all">Select all</string>
     <string name="serve">Serve…</string>
     <string name="action_sort_name">Name</string>

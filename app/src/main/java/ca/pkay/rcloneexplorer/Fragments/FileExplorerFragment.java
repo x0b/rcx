@@ -6,14 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -26,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -42,6 +39,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -89,7 +87,6 @@ import okhttp3.Response;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,6 +94,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.Callable;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
@@ -115,6 +113,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private static final String TAG = "FileExplorerFragment";
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
+    private static final String SHARED_PREFS_VIEW_MOE = "ca.pkay.rcexplorer.view_mode";
     private static final int FILE_PICKER_UPLOAD_RESULT = 186;
     private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
     private static final int FILE_PICKER_SYNC_RESULT = 45;
@@ -142,8 +141,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private Rclone rclone;
     private RemoteItem remote;
     private String remoteName;
+    private RecyclerView recyclerView;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
-    private LinearLayoutManager recyclerViewLinearLayoutManager;
+    private RecyclerView.LayoutManager recyclerViewLayoutManager;
+    private int recyclerViewLayoutManagerViewModeCurrentIndex = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View searchBar;
     private AsyncTask fetchDirectoryTask;
@@ -233,6 +234,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
+        recyclerViewLayoutManagerViewModeCurrentIndex = sharedPreferences.getInt(SHARED_PREFS_VIEW_MOE, 0);
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
@@ -274,16 +276,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         Context context = view.getContext();
 
-        RecyclerView recyclerView = view.findViewById(R.id.file_explorer_list);
-        recyclerViewLinearLayoutManager = new LinearLayoutManager(context);
+        recyclerView = view.findViewById(R.id.file_explorer_list);
         recyclerView.setItemAnimator(new LandingAnimator());
-        recyclerView.setLayoutManager(recyclerViewLinearLayoutManager);
         View emptyFolderView = view.findViewById(R.id.empty_folder_view);
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this, R.layout.fragment_file_explorer_item_linear);
         recyclerViewAdapter.showThumbnails(showThumbnails);
         recyclerViewAdapter.setWrapFileNames(wrapFilenames);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerViewSetLayoutManager(recyclerViewLayoutManagerViewModeCurrentIndex);
 
         if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
             showSFTPgoToDialog();
@@ -345,6 +346,42 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
         isRunning = true;
         return view;
+    }
+
+    private void recyclerViewSetLayoutManager(int index) {
+        Callable[] recyclerViewLayoutManagerSetters = new Callable[] {
+                () ->  {
+                    recyclerViewAdapter.setLayoutRes(R.layout.fragment_file_explorer_item_linear);
+                    recyclerViewLayoutManager = new LinearLayoutManager(FileExplorerFragment.this.getContext());
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                    recyclerView.setLayoutManager(recyclerViewLayoutManager);
+                    return null;
+                },
+                () -> {
+                    recyclerViewAdapter.setLayoutRes(R.layout.fragment_file_explorer_item_grid);
+                    recyclerViewLayoutManager = new GridLayoutManager(FileExplorerFragment.this.getContext(), 2);
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                    recyclerView.setLayoutManager(recyclerViewLayoutManager);
+                    return null;
+                },
+                () -> {
+                    recyclerViewAdapter.setLayoutRes(R.layout.fragment_file_explorer_item_grid);
+                    recyclerViewLayoutManager = new GridLayoutManager(FileExplorerFragment.this.getContext(), 3);
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                    recyclerView.setLayoutManager(recyclerViewLayoutManager);
+                    return null;
+                } ,
+        };
+
+        if (index >= recyclerViewLayoutManagerSetters.length) {
+            index = 0;
+            recyclerViewLayoutManagerViewModeCurrentIndex = 0;
+        }
+        try {
+            recyclerViewLayoutManagerSetters[index].call();
+        } catch (Exception e) {
+            new RuntimeException(e);
+        }
     }
 
     @Override
@@ -628,6 +665,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             case R.id.action_sort:
                 showSortMenu();
                 return true;
+            case R.id.action_view_mode:
+                toggleViewMode();
+                return true;
             case R.id.action_select_all:
                 recyclerViewAdapter.toggleSelectAll();
                 return true;
@@ -658,6 +698,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             default:
                     return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void toggleViewMode() {
+        recyclerViewSetLayoutManager(++recyclerViewLayoutManagerViewModeCurrentIndex);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putInt(SHARED_PREFS_VIEW_MOE, recyclerViewLayoutManagerViewModeCurrentIndex).apply();
     }
 
     private void serve() {
@@ -1173,7 +1219,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
             if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
                 int position = directoryPosition.get(directoryObject.getCurrentPath());
-                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+                recyclerViewScrollToPositionWithOffset(position, 10);
             }
             fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         } else if (directoryObject.isPathInCache(path)) {
@@ -1182,13 +1228,23 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
             if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
                 int position = directoryPosition.get(directoryObject.getCurrentPath());
-                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+                recyclerViewScrollToPositionWithOffset(position, 10);
             }
         } else {
             directoryObject.setPath(path);
             fetchDirectoryTask = new FetchDirectoryContent().execute();
         }
         return true;
+    }
+
+    private void recyclerViewScrollToPositionWithOffset(int position, int offset) {
+        if (recyclerViewLayoutManager instanceof LinearLayoutManager) {
+            ((LinearLayoutManager) recyclerViewLayoutManager).scrollToPositionWithOffset(position, offset);
+        } else if (recyclerViewLayoutManager instanceof LinearLayoutManager) {
+            ((GridLayoutManager) recyclerViewLayoutManager).scrollToPositionWithOffset(position, offset);
+        } else {
+            recyclerViewLayoutManager.scrollToPosition(position);
+        }
     }
 
     @Override
@@ -1407,7 +1463,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
             if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
                 int position = directoryPosition.get(directoryObject.getCurrentPath());
-                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+                recyclerViewScrollToPositionWithOffset(position, 10);
             }
             fetchDirectoryTask = new FetchDirectoryContent(true).execute();
         } else if (directoryObject.isPathInCache(path)) {
@@ -1416,7 +1472,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
             if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
                 int position = directoryPosition.get(directoryObject.getCurrentPath());
-                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
+                recyclerViewScrollToPositionWithOffset(position, 10);
             }
         } else {
             fetchDirectoryTask = new FetchDirectoryContent().execute();
