@@ -119,7 +119,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         View emptyFolderView = view.findViewById(R.id.empty_folder_view);
         View noSearchResultsView = view.findViewById(R.id.no_search_results_view);
-        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
+        recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this, R.layout.fragment_file_explorer_item_linear);
         recyclerViewAdapter.disableFileOptions();
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerViewAdapter.setMoveMode(true);

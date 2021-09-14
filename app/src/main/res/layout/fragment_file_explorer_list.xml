@@ -28,7 +28,7 @@
             android:clipToPadding="false"
             android:paddingBottom="54dp"
             app:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/fragment_file_explorer_item"
+            tools:listitem="@layout/fragment_file_explorer_item_grid"
             android:focusable="true"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
