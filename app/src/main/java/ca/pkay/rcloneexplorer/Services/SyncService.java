@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.Services;
 
 
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
@@ -79,7 +77,6 @@ public class SyncService extends IntentService {
         }
 
         final long taskID = intent.getLongExtra(TASK_ID, -1);
-        Log.e(TAG, "tid0: "+taskID);
         final RemoteItem remoteItem = intent.getParcelableExtra(REMOTE_ARG);
         final String remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
         final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
