@@ -162,7 +162,7 @@ public class SyncService extends IntentService {
                 showConnectivityChangedNotification();
             } else if (currentProcess == null || currentProcess.exitValue() != 0) {
                 String errorTitle = getString(R.string.notification_sync_failed);
-                showFailedNotification(errorTitle, title, notificationId);
+                showFailedNotification(errorTitle, title, notificationId, intent);
             }else{
                 showSuccessNotification(title, notificationId);
             }
@@ -256,15 +256,18 @@ public class SyncService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-    private void showFailedNotification(String title, String content, int notificationId) {
+    private void showFailedNotification(String title, String content, int notificationId, Intent originalIntent) {
         createSummaryNotificationForFailed();
+
+        PendingIntent retryPendingIntent = PendingIntent.getBroadcast(this, 0, originalIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification_error)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setGroup(OPERATION_FAILED_GROUP)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .addAction(R.drawable.ic_refresh, getString(R.string.retry_failed_sync), retryPendingIntent);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(notificationId, builder.build());

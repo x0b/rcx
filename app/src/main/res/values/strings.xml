@@ -597,4 +597,5 @@
     <string name="no_trigger_warning">There are no triggers. Please define a trigger first!</string>
     <string name="add_trigger">Add Trigger</string>
     <string name="add_task">Add Task</string>
+    <string name="retry_failed_sync">Retry</string>
 </resources>
