@@ -34,6 +34,8 @@ public class TaskStartService extends IntentService {
     public static final String TASK_ACTION= "START_TASK";
     public static final String EXTRA_TASK_ID= "task";
     public static final String EXTRA_TASK_SILENT= "notification";
+    public static final int PERSISTENT_NOTIFICATION_ID_FOR_TASKSTARTSERVICE = 313;
+
 
     public TaskStartService() {
         super("TaskStartService");
@@ -42,7 +44,7 @@ public class TaskStartService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        createPersistentNotification();
+        startForeground(PERSISTENT_NOTIFICATION_ID_FOR_TASKSTARTSERVICE, createPersistentNotification().build());
     }
 
     @Override
@@ -73,10 +75,12 @@ public class TaskStartService extends IntentService {
                         }else {
                             startService(taskIntent);
                         }
+                        break;
                     }
                 }
             }
         }
+        stopForeground(true);
     }
 
     public static Intent createInternalStartIntent(Context context, long id) {
@@ -90,16 +94,22 @@ public class TaskStartService extends IntentService {
      * This can be called when an intent is recieved. If no notification is created when a service is started via startForegroundService(), the service is beeing killed by
      * android after 5 seconds. In this case, we need to create a persistent notification because otherwise we cant start the sync task.
      */
-    private void createPersistentNotification() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            String CHANNEL_ID = "task_intent_notification";
-            String notification_description = this.getResources().getString(R.string.intent_channel_notification_description);
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, notification_description, NotificationManager.IMPORTANCE_DEFAULT);
+    private NotificationCompat.Builder createPersistentNotification() {
+        String CHANNEL_ID = "task_intent_notification";
+        String notification_description = this.getResources().getString(R.string.intent_channel_notification_description);
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, notification_description, NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManagerCompat.from(this).createNotificationChannel(channel);
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("").setContentText("").build();
-            startForeground(1, notification);
         }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(getString(R.string.task_service_notification_title))
+                .setContentText(getString(R.string.task_service_notification_description))
+                .setSmallIcon(R.drawable.ic_rclone_logo)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        return builder;
     }
 
 }
