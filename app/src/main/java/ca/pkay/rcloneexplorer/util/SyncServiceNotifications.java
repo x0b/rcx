@@ -54,6 +54,7 @@ public class SyncServiceNotifications {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(notificationId, builder.build());
+        createSummaryNotificationForFailed();
     }
 
     public void showSuccessNotification(String content, int notificationId) {
@@ -67,6 +68,7 @@ public class SyncServiceNotifications {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(notificationId, builder.build());
+        createSummaryNotificationForSuccess();
     }
 
 
