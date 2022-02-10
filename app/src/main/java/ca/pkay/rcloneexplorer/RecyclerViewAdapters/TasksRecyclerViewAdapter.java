@@ -32,7 +32,6 @@ import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.TaskStartService;
 import ca.pkay.rcloneexplorer.TaskActivity;
 import es.dmoral.toasty.Toasty;
@@ -115,14 +114,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private void startTask(Task task){
-        String path = task.getLocalPath();
-        RemoteItem ri = new RemoteItem(task.getRemoteId(), task.getRemoteType(), "");
-        Intent intent = new Intent(context, SyncService.class);
-        intent.putExtra(SyncService.REMOTE_ARG, ri);
-        intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
-        intent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
-        intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
-        intent.putExtra(SyncService.TASK_NAME, task.getTitle());
+        Intent intent = TaskStartService.createInternalStartIntent(context, task.getId());
         context.startService(intent);
     }
 
@@ -167,7 +159,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     break;
                 case R.id.action_copy_id_task:
                     ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(clipboardID, task.getId().toString());
+                    ClipData clip = ClipData.newPlainText(clipboardID, String.valueOf(task.getId()));
                     clipboard.setPrimaryClip(clip);
                     Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
                     break;
@@ -212,9 +204,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
 
-            Intent i = new Intent(c, TaskStartService.class);
-            i.putExtra("task", task.getId());
-            i.setAction(TaskStartService.TASK_ACTION);
+            Intent i = TaskStartService.createInternalStartIntent(c, task.getId());
 
             ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(task.getId()))
                     .setShortLabel(task.getTitle())

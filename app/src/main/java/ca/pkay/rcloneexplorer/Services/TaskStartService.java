@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
@@ -19,12 +20,17 @@ import ca.pkay.rcloneexplorer.R;
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
- * <p>
+ * Instead of moving this class to the SyncService, we keep it here so that we dont need to expose
+ * the more complicated SyncService to other apps.
+ *
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
 public class TaskStartService extends IntentService {
 
+
+    //those Extras do not follow the above schema, because they are exposed to external applications
+    //That means shorter values make it easier to use. There is no other technical reason
     public static final String TASK_ACTION= "START_TASK";
     public static final String EXTRA_TASK_ID= "task";
     public static final String EXTRA_TASK_SILENT= "notification";
@@ -46,7 +52,7 @@ public class TaskStartService extends IntentService {
             if (action.equals(TASK_ACTION)) {
                 DatabaseHandler db = new DatabaseHandler(this);
                 for (Task task: db.getAllTasks()){
-                    if(task.getId()==intent.getIntExtra(EXTRA_TASK_ID, -1)){
+                    if(task.getId()==intent.getLongExtra(EXTRA_TASK_ID, -1)){
                         String path = task.getLocalPath();
 
                         boolean silentRun =intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
@@ -60,6 +66,7 @@ public class TaskStartService extends IntentService {
                         taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
                         taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
                         taskIntent.putExtra(SyncService.TASK_NAME, task.getTitle());
+                        taskIntent.putExtra(SyncService.TASK_ID, task.getId());
                         taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             startForegroundService(taskIntent);
@@ -70,6 +77,13 @@ public class TaskStartService extends IntentService {
                 }
             }
         }
+    }
+
+    public static Intent createInternalStartIntent(Context context, long id) {
+        Intent i = new Intent(context, TaskStartService.class);
+        i.setAction(TASK_ACTION);
+        i.putExtra(EXTRA_TASK_ID, id);
+        return i;
     }
 
     /**

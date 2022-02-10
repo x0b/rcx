@@ -184,11 +184,11 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     private void saveTask(){
-        Task newTask = dbHandler.createTask(getTaskValues(0L));
+        Task newTask = dbHandler.createTask(getTaskValues(0));
         finish();
     }
 
-    private Task getTaskValues(Long id ){
+    private Task getTaskValues(long id ){
         Task taskToPopulate = new Task(id);
         taskToPopulate.setTitle(((EditText)findViewById(R.id.task_title_textfield)).getText().toString());
 

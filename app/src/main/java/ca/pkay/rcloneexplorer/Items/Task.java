@@ -12,7 +12,7 @@ public class Task {
     public static String COLUMN_NAME_LOCAL_PATH = "task_local_path";
     public static String COLUMN_NAME_SYNC_DIRECTION = "task_direction";
 
-    private Long id;
+    private long id;
 
     private String title="";
     private String remoteId ="";
@@ -22,15 +22,15 @@ public class Task {
     private int direction=0;
 
 
-    public Task(Long id) {
+    public Task(long id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

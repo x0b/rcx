@@ -1,9 +1,7 @@
 package ca.pkay.rcloneexplorer.Services;
 
+
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,10 +10,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -24,35 +21,31 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.SyncServiceNotifications;
 
 public class SyncService extends IntentService {
 
     private static final String TAG = "SyncService";
+
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_ARG";
     public static final String REMOTE_PATH_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_PATH_ARG";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG";
     public static final String SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG";
     public static final String SHOW_RESULT_NOTIFICATION = "ca.pkay.rcexplorer.SHOW_RESULT_NOTIFICATION";
     public static final String TASK_NAME = "ca.pkay.rcexplorer.TASK_NAME";
-    private final String OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP";
-    private final String OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP";
-    private final String CHANNEL_ID = "ca.pkay.rcexplorer.sync_service";
-    private final String CHANNEL_NAME = "Sync service";
-    private final int PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162;
-    private final int OPERATION_FAILED_NOTIFICATION_ID = 89;
-    private final int OPERATION_SUCCESS_NOTIFICATION_ID = 698;
-    private final int CONNECTIVITY_CHANGE_NOTIFICATION_ID = 462;
+    public static final String TASK_ID = "ca.pkay.rcexplorer.TASK_ID";
+
     private Rclone rclone;
     private Log2File log2File;
     private boolean connectivityChanged;
     private boolean transferOnWiFiOnly;
     Process currentProcess;
+    SyncServiceNotifications notificationManager = new SyncServiceNotifications(this);
 
     public SyncService() {
         super("ca.pkay.rcexplorer.SYNC_SERCVICE");
@@ -61,7 +54,7 @@ public class SyncService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        setNotificationChannel();
+        notificationManager.setNotificationChannel();
         rclone = new Rclone(this);
         log2File = new Log2File(this);
 
@@ -80,11 +73,13 @@ public class SyncService extends IntentService {
         }
 
         if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
-            showConnectivityChangedNotification();
+            notificationManager.showConnectivityChangedNotification();
             stopSelf();
             return;
         }
 
+        final long taskID = intent.getLongExtra(TASK_ID, -1);
+        Log.e(TAG, "tid0: "+taskID);
         final RemoteItem remoteItem = intent.getParcelableExtra(REMOTE_ARG);
         final String remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
         final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
@@ -100,20 +95,7 @@ public class SyncService extends IntentService {
             title = remotePath;
         }
 
-        Intent foregroundIntent = new Intent(this, SyncService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
-
-        Intent cancelIntent = new Intent(this, SyncCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(getString(R.string.syncing_service, title))
-                .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        startForeground(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
+        startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification(title).build());
 
         currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
         if (currentProcess != null) {
@@ -140,7 +122,7 @@ public class SyncService extends IntentService {
                         log2File.log(line);
                     }
 
-                    updateNotification(title, notificationContent, notificationBigText);
+                    notificationManager.updateNotification(title, notificationContent, notificationBigText);
                 }
             } catch (IOException e) {
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e);
@@ -159,19 +141,17 @@ public class SyncService extends IntentService {
 
         if(silentRun){
             if (transferOnWiFiOnly && connectivityChanged) {
-                showConnectivityChangedNotification();
+                notificationManager.showConnectivityChangedNotification();
             } else if (currentProcess == null || currentProcess.exitValue() != 0) {
                 String errorTitle = getString(R.string.notification_sync_failed);
-                showFailedNotification(errorTitle, title, notificationId, intent);
+                notificationManager.showFailedNotification(errorTitle, title, notificationId, taskID);
             }else{
-                showSuccessNotification(title, notificationId);
+                notificationManager.showSuccessNotification(title, notificationId);
             }
         }
 
-
-
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
+        notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
         stopForeground(true);
     }
 
@@ -208,34 +188,6 @@ public class SyncService extends IntentService {
         }
     }
 
-    private void updateNotification(String title, String content, String[] bigTextArray) {
-        StringBuilder bigText = new StringBuilder();
-        for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
-            if (i < 4) {
-                bigText.append("\n");
-            }
-        }
-
-        Intent foregroundIntent = new Intent(this, SyncService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
-
-        Intent cancelIntent = new Intent(this, SyncCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(getString(R.string.syncing_service, title))
-                .setContentText(content)
-                .setContentIntent(pendingIntent)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
-                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -256,100 +208,5 @@ public class SyncService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-    private void showFailedNotification(String title, String content, int notificationId, Intent originalIntent) {
-        createSummaryNotificationForFailed();
 
-        PendingIntent retryPendingIntent = PendingIntent.getBroadcast(this, 0, originalIntent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_error)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setGroup(OPERATION_FAILED_GROUP)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .addAction(R.drawable.ic_refresh, getString(R.string.retry_failed_sync), retryPendingIntent);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(notificationId, builder.build());
-
-        //as per developer.android.com, show notification first, then summary
-        createSummaryNotificationForSuccess();
-
-    }
-
-    private void showSuccessNotification(String content, int notificationId) {
-        createSummaryNotificationForSuccess();
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_success)
-                .setContentTitle(getString(R.string.operation_success))
-                .setContentText(content)
-                .setGroup(OPERATION_SUCCESS_GROUP)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(notificationId, builder.build());
-
-        //as per developer.android.com, show notification first, then summary
-        createSummaryNotificationForFailed();
-    }
-
-
-
-    private void showConnectivityChangedNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_warning)
-                .setContentTitle(getString(R.string.sync_cancelled))
-                .setContentText(getString(R.string.wifi_connections_isnt_available))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(CONNECTIVITY_CHANGE_NOTIFICATION_ID, builder.build());
-    }
-
-    private void createSummaryNotificationForFailed() {
-        Notification summaryNotification =
-                new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle(getString(R.string.operation_failed))
-                        //set content text to support devices running API level < 24
-                        .setContentText(getString(R.string.operation_failed))
-                        .setSmallIcon(R.drawable.ic_notification_error)
-                        .setGroup(OPERATION_FAILED_GROUP)
-                        .setGroupSummary(true)
-                        .setAutoCancel(true)
-                        .build();
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(OPERATION_FAILED_NOTIFICATION_ID, summaryNotification);
-    }
-
-    private void createSummaryNotificationForSuccess() {
-        Notification summaryNotification =
-                new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle(getString(R.string.operation_success))
-                        //set content text to support devices running API level < 24
-                        .setContentText(getString(R.string.operation_success))
-                        .setSmallIcon(R.drawable.ic_notification_success)
-                        .setGroup(OPERATION_SUCCESS_GROUP)
-                        .setGroupSummary(true)
-                        .setAutoCancel(true)
-                        .build();
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(OPERATION_SUCCESS_NOTIFICATION_ID, summaryNotification);
-    }
-
-    private void setNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription(getString(R.string.sync_service_notification_channel_description));
-            // Register the channel with the system
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
 }
