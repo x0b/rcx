@@ -59,6 +59,7 @@ public class TaskStartService extends IntentService {
                         taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
                         taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
                         taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
+                        taskIntent.putExtra(SyncService.TASK_NAME, task.getTitle());
                         taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             startForegroundService(taskIntent);

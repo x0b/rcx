@@ -122,6 +122,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
         intent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
         intent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
+        intent.putExtra(SyncService.TASK_NAME, task.getTitle());
         context.startService(intent);
     }
 
