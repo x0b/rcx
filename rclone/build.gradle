@@ -59,9 +59,9 @@ def configureNdk() {
     if (androidNdkHome != null) {
         ndkBasePath = Paths.get(ndkBasePath)
     } else {
-        def androidHome = System.getenv('ANDROID_HOME')
+        def androidHome = System.getenv('HOME')+"/Android/Sdk/"
         if (androidHome == null) {
-            throw new GradleException('ANDROID_HOME env var missing')
+            throw new GradleException(System.getenv('HOME')+ '/Android/Sdk/ env var missing')
         }
 
         def canonicalPath = Paths.get(androidHome, 'ndk', ext.ndkVersion)
@@ -72,7 +72,6 @@ def configureNdk() {
             ndkBasePath = bundlePath;
         }
     }
-
     // check NDK
     def propertiesPath = ndkBasePath.resolve('source.properties')
     def ndkProperties = new Properties()
