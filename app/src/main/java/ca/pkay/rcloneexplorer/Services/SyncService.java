@@ -15,10 +15,14 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
@@ -26,6 +30,8 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncServiceNotifications;
+
+import static android.text.format.Formatter.formatFileSize;
 
 public class SyncService extends IntentService {
 
@@ -96,31 +102,46 @@ public class SyncService extends IntentService {
         startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification(title).build());
 
         currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
+        JSONObject stats;
+        String notificationContent = "";
+        ArrayList<String> notificationBigText = new ArrayList<>();
+        int notificationPercent = 0;
         if (currentProcess != null) {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
-                String notificationContent = "";
-                String[] notificationBigText = new String[5];
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Transferred:") && !line.matches("Transferred:\\s+\\d+\\s+/\\s+\\d+,\\s+\\d+%$")) {
-                        String s = line.substring(12).trim();
-                        notificationBigText[0] = s;
-                        notificationContent = s;
-                    } else if (line.startsWith(" *")) {
-                        String s = line.substring(2).trim();
-                        notificationBigText[1] = s;
-                    } else if (line.startsWith("Errors:")) {
-                        notificationBigText[2] = line;
-                    } else if (line.startsWith("Checks:")) {
-                        notificationBigText[3] = line;
-                    } else if (line.matches("Transferred:\\s+\\d+\\s+/\\s+\\d+,\\s+\\d+%$")) {
-                        notificationBigText[4] = line;
-                    } else if (isLoggingEnable && line.startsWith("ERROR :")){
+                    JSONObject logline = new JSONObject(line);
+                    if(isLoggingEnable && logline.getString("level").equals("error")){
                         log2File.log(line);
+                    } else if(logline.getString("level").equals("warning")){
+                        //available stats:
+                        //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
+                        //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
+                        stats = logline.getJSONObject("stats");
+
+                        String speed = formatFileSize(this, stats.getLong("speed"))+"/s";
+                        String size = formatFileSize(this, stats.getLong("bytes"));
+                        String allsize = formatFileSize(this, stats.getLong("totalBytes"));
+                        double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
+
+                        notificationContent = String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_short), size, allsize, stats.get("eta"));
+                        notificationBigText.clear();
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_transferred), size, allsize));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_speed), speed));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_remaining), stats.get("eta")));
+                        if(stats.getInt("errors")>0){
+                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_errors), stats.getInt("errors")));
+                        }
+                        //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
+                        //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
+                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_elapsed), stats.getInt("elapsedTime")));
+                        notificationPercent = (int) percent;
                     }
 
                     notificationManager.updateNotification(title, notificationContent, notificationBigText);
+                    updateNotification(title, notificationContent, notificationBigText, notificationPercent);
+
                 }
             } catch (InterruptedIOException e) {
                 FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
@@ -128,6 +149,9 @@ public class SyncService extends IntentService {
                 if (!"Stream closed".equals(e.getMessage())) {
                     FLog.e(TAG, "onHandleIntent: error reading stdout", e);
                 }
+                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+            } catch (JSONException e) {
+                FLog.e(TAG, "onHandleIntent: error reading json", e);
             }
 
             try {
@@ -188,6 +212,35 @@ public class SyncService extends IntentService {
             FLog.e(TAG, "Wifi not turned on.");
             return false; // Wi-Fi adapter is OFF
         }
+    }
+
+    private void updateNotification(String title, String content, ArrayList<String> bigTextArray, int percent) {
+        StringBuilder bigText = new StringBuilder();
+        for (int i = 0; i < bigTextArray.size(); i++) {
+            bigText.append(bigTextArray.get(i));
+            if (i < 4) {
+                bigText.append("\n");
+            }
+        }
+
+        Intent foregroundIntent = new Intent(this, SyncService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+
+        Intent cancelIntent = new Intent(this, SyncCancelAction.class);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(getString(R.string.syncing_service, title))
+                .setContentText(content)
+                .setContentIntent(pendingIntent)
+                .setProgress(100, percent, false)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
+                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
     }
 
     @Override
