@@ -139,8 +139,7 @@ public class SyncService extends IntentService {
                         notificationPercent = (int) percent;
                     }
 
-                    notificationManager.updateNotification(title, notificationContent, notificationBigText);
-                    updateNotification(title, notificationContent, notificationBigText, notificationPercent);
+                    notificationManager.updateNotification(title, notificationContent, notificationBigText, notificationPercent);
 
                 }
             } catch (InterruptedIOException e) {
@@ -212,35 +211,6 @@ public class SyncService extends IntentService {
             FLog.e(TAG, "Wifi not turned on.");
             return false; // Wi-Fi adapter is OFF
         }
-    }
-
-    private void updateNotification(String title, String content, ArrayList<String> bigTextArray, int percent) {
-        StringBuilder bigText = new StringBuilder();
-        for (int i = 0; i < bigTextArray.size(); i++) {
-            bigText.append(bigTextArray.get(i));
-            if (i < 4) {
-                bigText.append("\n");
-            }
-        }
-
-        Intent foregroundIntent = new Intent(this, SyncService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
-
-        Intent cancelIntent = new Intent(this, SyncCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(getString(R.string.syncing_service, title))
-                .setContentText(content)
-                .setContentIntent(pendingIntent)
-                .setProgress(100, percent, false)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
-                .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
     }
 
     @Override

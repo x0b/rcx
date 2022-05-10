@@ -14,6 +14,8 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.ArrayList;
+
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.SyncService;
@@ -147,10 +149,10 @@ public class SyncServiceNotifications {
         return builder;
     }
 
-    public void updateNotification(String title, String content, String[] bigTextArray) {
+    public void updateNotification(String title, String content, ArrayList<String> bigTextArray, int percent) {
         StringBuilder bigText = new StringBuilder();
-        for (int i = 0; i < bigTextArray.length; i++) {
-            bigText.append(bigTextArray[i]);
+        for (int i = 0; i < bigTextArray.size(); i++) {
+            bigText.append(bigTextArray.get(i));
             if (i < 4) {
                 bigText.append("\n");
             }
@@ -169,7 +171,8 @@ public class SyncServiceNotifications {
                 .setContentIntent(pendingIntent)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(bigText.toString()))
                 .addAction(R.drawable.ic_cancel_download, mContext.getString(R.string.cancel), cancelPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setProgress(100, percent, false);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(mContext);
         notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder.build());
