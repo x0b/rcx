@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.Settings;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -7,7 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +31,7 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.RcdService;
 import ca.pkay.rcloneexplorer.VirtualContentProvider;
+import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.file.SafConstants;
 
@@ -54,6 +60,7 @@ public class FileAccessSettingsFragment extends Fragment {
     private View refreshLaContainer;
     private Switch refreshLaSwitch;
     private View openAllFilesPerm;
+    private View openAllFilesDivider;
     private View vcpGrantAllContainer;
     private Switch vcpGrantAllSwitch;
     private Rclone rclone;
@@ -109,6 +116,7 @@ public class FileAccessSettingsFragment extends Fragment {
         refreshLaContainer = view.findViewById(R.id.enable_refresh_la_container);
         refreshLaSwitch = view.findViewById(R.id.enable_refresh_la_switch);
         openAllFilesPerm = view.findViewById(R.id.open_all_files_setting_container);
+        openAllFilesDivider = view.findViewById(R.id.open_all_files_setting_divider);
         vcpEnabledContainer = view.findViewById(R.id.enable_saf_vcp_view);
         vcpEnabledSwitch = view.findViewById(R.id.enable_saf_vcp_switch);
         vcpDeclareLocalContainer = view.findViewById(R.id.vcp_declare_local_container);
@@ -133,6 +141,10 @@ public class FileAccessSettingsFragment extends Fragment {
         vcpDeclareLocalSwitch.setChecked(vcpDeclareLocal);
         boolean vcpGrantAll = sharedPreferences.getBoolean(getString(R.string.pref_key_vcp_grant_all), false);
         vcpGrantAllSwitch.setChecked(vcpGrantAll);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            openAllFilesPerm.setVisibility(View.GONE);
+            openAllFilesDivider.setVisibility(View.GONE);
+        }
     }
 
     private void setClickListeners() {
@@ -173,8 +185,8 @@ public class FileAccessSettingsFragment extends Fragment {
     }
 
     private void openAndroidRAllFilesSettings() {
-        // TODO @CompileSDK 30: Migrate to framework constants
-        Intent intent = new Intent("android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION");
+        @SuppressLint("InlinedApi")
+        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
         intent.setData(Uri.fromParts("package", BuildConfig.APPLICATION_ID, null));
         tryStartActivityForResult(this, intent, onAllFilesSettingOpened);
     }
@@ -221,7 +233,11 @@ public class FileAccessSettingsFragment extends Fragment {
                 onTreeResult(resultCode, data);
                 break;
             case onAllFilesSettingOpened:
-                Toasty.info(context, "All file access beta callback", Toast.LENGTH_LONG, true).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+                    Toasty.success(context, "You can now access all local storage", Toast.LENGTH_LONG, true).show();
+                } else {
+                    Toasty.info(context, "Manage files not granted", Toast.LENGTH_LONG, true).show();
+                }
                 break;
         }
     }

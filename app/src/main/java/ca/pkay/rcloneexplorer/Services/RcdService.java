@@ -70,9 +70,11 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
 
     @Override
     public void onRcdJobsUpdate(@NonNull SparseArray<RcloneRcd.JobStatusResponse> status) {
+        onNotifyUse();
         if(shutdown) {
-            FLog.w(TAG, "Unexpected jobs update after service shutdown");
-            return;
+            FLog.w(TAG, "Unexpected jobs update after service shutdown, reviving service");
+            showNotification();
+            shutdown = false;
         }
 
         Intent foregroundIntent = new Intent(this, RcdService.class);
@@ -89,6 +91,7 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
                 if (response.success) {
                     finished++;
                 } else {
+                    FLog.w(TAG, "Job (id=%d): %s", response.id, response.error);
                     failed++;
                 }
             } else {
@@ -106,8 +109,18 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.rcd_service_notification_btn_stop_all), stopServiceIntent());
 
+        if (running > 0) {
+            builder.setOngoing(true).setProgress(100, 25, true);
+        }
+
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID, builder.build());
+    }
+
+    public RcloneRcd.JobStatusHandler manageJob() {
+        return jobStatusResponse -> {
+            // ignored, we already get updates over main
+        };
     }
 
     public class RcdBinder extends Binder {
@@ -130,15 +143,18 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
         return true;
     }
 
+    // called when at least one client requested binder. Does not imply startService / onStartCommand!
     @Override
     public void onCreate() {
         super.onCreate();
         initNanosTimestamp = System.nanoTime();
         FLog.d(TAG, "onCreate: service is being created");
+        shutdown = false;
         notificationManager = NotificationManagerCompat.from(getApplicationContext());
         setNotificationChannel();
     }
 
+    // Called when service is startService()-ed
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         FLog.d(TAG, "onStartCommand: service onStart()");

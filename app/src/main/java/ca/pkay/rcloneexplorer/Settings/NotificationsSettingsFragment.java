@@ -15,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
 import es.dmoral.toasty.Toasty;
 
@@ -79,6 +80,15 @@ public class NotificationsSettingsFragment extends Fragment {
 
         appUpdatesSwitch.setChecked(appUpdates);
         betaAppUpdatesSwitch.setChecked(betaUpdates);
+
+        String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+        boolean isPlayStore = "com.android.vending".equals(installer);
+        boolean isOss = "oss".equals(BuildConfig.FLAVOR);
+        if (isOss || isPlayStore) {
+            appUpdatesElement.setVisibility(View.GONE);
+            betaAppUpdatesElement.setVisibility(View.GONE);
+            return;
+        }
 
         if (appUpdates) {
             betaAppUpdatesElement.setVisibility(View.VISIBLE);

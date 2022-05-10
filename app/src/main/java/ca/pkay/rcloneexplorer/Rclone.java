@@ -57,6 +57,7 @@ public class Rclone {
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
     public static final int SERVE_PROTOCOL_DLNA = 4;
+    private static volatile Boolean isCompatible;
     private static SafDAVServer safDAVServer;
     private Context context;
     private String rclone;
@@ -388,8 +389,8 @@ public class Rclone {
 
             try {
                 JSONObject remoteJSON = new JSONObject(remotesJSON.get(key).toString());
-                String type = remoteJSON.getString("type");
-                if (type == null || type.trim().isEmpty()) {
+                String type = remoteJSON.optString("type");
+                if (type.trim().isEmpty()) {
                     return null;
                 }
 
@@ -409,8 +410,8 @@ public class Rclone {
                 }
 
                 if (recurse && maxDepth > 0) {
-                    String remote = remoteJSON.getString("remote");
-                    if (remote == null || (!remote.contains(":") && !remote.startsWith("/"))) {
+                    String remote = remoteJSON.optString("remote");
+                    if (remote.trim().isEmpty() || (!remote.contains(":") && !remote.startsWith("/"))) {
                         return null;
                     }
 
@@ -604,6 +605,9 @@ public class Rclone {
         } else {
             localFilePath = downloadPath;
         }
+
+        localFilePath = encodePath(localFilePath);
+
         command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
 
         String[] env = getRcloneEnv();
@@ -613,6 +617,26 @@ public class Rclone {
             FLog.e(TAG, "downloadFile: error starting rclone", e);
             return null;
         }
+    }
+
+    // Can't pass \u0000 as cmd arg - encode like rclone with U+2400
+    // Ref: Appcenter #22305285
+    // TODO Appcenter #170195533 - rclone serve
+    @NonNull
+    private String encodePath(String localFilePath) {
+        if (localFilePath.indexOf('\u0000') < 0) {
+            return localFilePath;
+        }
+        StringBuilder localPathBuilder = new StringBuilder(localFilePath.length());
+        for (char c : localFilePath.toCharArray()) {
+            if (c == '\u0000') {
+                localPathBuilder.append('\u2400');
+            } else {
+                localPathBuilder.append(c);
+            }
+
+        }
+        return localPathBuilder.toString();
     }
 
     public Process uploadFile(RemoteItem remote, String uploadPath, String uploadFile) {
@@ -865,8 +889,11 @@ public class Rclone {
             } else {
                 return split[0];
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             FLog.e(TAG, "calculateMD5: error running rclone", e);
+            return context.getString(R.string.hash_error);
+        } catch (InterruptedException e) {
+            FLog.v(TAG, "calculateMD5: calculation stopped");
             return context.getString(R.string.hash_error);
         }
     }
@@ -1254,6 +1281,30 @@ public class Rclone {
             outputStream.flush();
             outputStream.close();
         }
+    }
+
+    public boolean isCompatible() {
+        if (isCompatible != null) {
+            return isCompatible;
+        }
+        synchronized (Rclone.class) {
+            if (isCompatible == null) {
+                isCompatible = checkCompatibility();
+            }
+        }
+        return isCompatible;
+    }
+
+    private boolean checkCompatibility() {
+        String nativelibraryDir = context.getApplicationInfo().nativeLibraryDir;
+        File nativeRcloneBinary = new File(nativelibraryDir, "librclone.so");
+        if (!nativeRcloneBinary.exists()) {
+            return false;
+        }
+        if ("-1".equals(getRcloneVersion())) {
+            return false;
+        }
+        return true;
     }
 
     /**

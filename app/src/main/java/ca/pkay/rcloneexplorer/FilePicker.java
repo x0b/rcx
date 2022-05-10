@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
@@ -537,6 +538,14 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 }
             } catch (IOException | SecurityException | NullPointerException e) {
                 FLog.i(TAG, "File discovery exception ", e);
+            }
+        }
+
+        Iterator<String> iterator = storageDirectories.iterator();
+        while (iterator.hasNext()){
+            File location = new File(iterator.next());
+            if (!location.canRead()) {
+                iterator.remove();
             }
         }
 

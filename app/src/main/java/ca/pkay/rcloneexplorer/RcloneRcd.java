@@ -15,19 +15,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import io.github.x0b.rfc3339parser.Rfc3339Parser;
-import io.github.x0b.rfc3339parser.Rfc3339Strict;
-import java9.util.stream.Collectors;
-import java9.util.stream.Stream;
+import ca.pkay.rcloneexplorer.util.Rfc3339Deserializer;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -41,7 +34,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.ServerSocket;
 import java.security.SecureRandom;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -972,6 +964,19 @@ public class RcloneRcd {
         long used;
     }
 
+    // Example
+    // ===
+    // {
+    //	"duration": 0.514823698,
+    //	"endTime": "2021-05-11T22:21:41.780060917Z",
+    //	"error": "mkdir /Alarms: read-only file system",
+    //	"finished": true,
+    //	"group": "job/1",
+    //	"id": 1,
+    //	"output": {},
+    //	"startTime": "2021-05-11T22:21:41.265237323Z",
+    //	"success": false
+    //}
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class JobStatusResponse implements RcOpResponse {
         public int id;
@@ -981,8 +986,9 @@ public class RcloneRcd {
         public long startTime;
         @JsonDeserialize(using = Rfc3339Deserializer.class)
         public long endTime;
-        //public Object output;
-        //public String progress;
+        public String error;
+        public Object output;
+        public String progress;
     }
 
     public static class JobListResponse implements RcOpResponse {
@@ -1066,29 +1072,5 @@ public class RcloneRcd {
 
     private static class PublicLinkRcOpResponse implements RcOpResponse {
         String url;
-    }
-
-
-    ///
-    /// Custom Serializers & Deserializers
-    ///
-    private static class Rfc3339Deserializer extends StdDeserializer<Long> {
-
-        private Rfc3339Parser rfc3339Parser;
-
-        protected Rfc3339Deserializer() {
-            super(Rfc3339Deserializer.class);
-            rfc3339Parser = new Rfc3339Strict();
-        }
-
-        @Override
-        public Long deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            JsonNode timeNode = parser.getCodec().readTree(parser);
-            try {
-                return rfc3339Parser.parseCalendar(timeNode.asText()).getTimeInMillis();
-            } catch (ParseException e) {
-                return 0L;
-            }
-        }
     }
 }

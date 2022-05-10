@@ -13,7 +13,11 @@ public class ContributorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityHelper.applyTheme(this);
-        setContentView(R.layout.activity_contributors);
+        try {
+            setContentView(R.layout.activity_contributors);
+        } catch (Exception e) {
+            MarkdownView.closeOnMissingWebView(this, e);
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();

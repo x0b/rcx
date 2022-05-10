@@ -54,35 +54,33 @@ def configureNdk() {
 
 
     // locate NDK
-    def androidNdkHome = System.getenv('ANDROID_NDK_HOME')
+    def androidHome = System.getenv('HOME')+"/Android/Sdk/"
     def ndkBasePath
-    if (androidNdkHome != null) {
-        ndkBasePath = Paths.get(ndkBasePath)
-    } else {
-        def androidHome = System.getenv('HOME')+"/Android/Sdk/"
-        if (androidHome == null) {
-            throw new GradleException(System.getenv('HOME')+ '/Android/Sdk/ env var missing')
-        }
-
+    if (androidHome != null) {
         def canonicalPath = Paths.get(androidHome, 'ndk', ext.ndkVersion)
         def bundlePath = Paths.get(androidHome, 'ndk-bundle')
-        if (Files.exists(canonicalPath)) {
+        if (Files.exists(canonicalPath) && checkNdk(canonicalPath)) {
             ndkBasePath = canonicalPath;
-        } else if (Files.exists(bundlePath)) {
+        } else if (Files.exists(bundlePath) && checkNdk(bundlePath)) {
             ndkBasePath = bundlePath;
         }
+    } else if (androidNdkHome != null && checkNdk(androidNdkHome)) {
+        ndkBasePath = Paths.get(androidNdkHome)
     }
     // check NDK
-    def propertiesPath = ndkBasePath.resolve('source.properties')
-    def ndkProperties = new Properties()
-    ndkProperties.load(file(propertiesPath).newReader())
 
-    if (ndkProperties['Pkg.Revision'] != ext.ndkVersion) {
-        throw new GradleException("Wrong NDK version in ${propertiesPath}: " +
-                "expected ${ext.ndkVersion}, got ${ndkProperties['Pkg.Revision']}")
+    if (ndkBasePath == null) {
+        throw GradleException("NDK ${ext.ndkVersion} not found")
     }
 
     return ndkBasePath.resolve(Paths.get('toolchains', 'llvm', 'prebuilt', os, 'bin'))
+}
+
+def checkNdk(ndkBasePath) {
+    def propertiesPath = ndkBasePath.resolve('source.properties')
+    def ndkProperties = new Properties()
+    ndkProperties.load(file(propertiesPath).newReader())
+    return ndkProperties['Pkg.Revision'] == ext.ndkVersion
 }
 
 def configureGo() {

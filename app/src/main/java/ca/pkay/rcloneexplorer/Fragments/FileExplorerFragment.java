@@ -77,6 +77,8 @@ import ca.pkay.rcloneexplorer.util.FLog;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import ca.pkay.rcloneexplorer.util.LargeParcel;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;
@@ -394,18 +396,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (syncRemotePath != null) {
             outState.putString(SAVED_SYNC_REMOTE_PATH, syncRemotePath);
         }
-        if (calculateBundleSize(outState) > 500 * 1024) {
+        if (LargeParcel.calculateBundleSize(outState) > 250 * 1024) {
             outState.remove(SAVED_CONTENT);
         }
     }
 
-    private int calculateBundleSize(@NonNull Bundle bundle) {
-        Parcel parcel = Parcel.obtain();
-        parcel.writeBundle(bundle);
-        int size = parcel.dataSize();
-        parcel.recycle();
-        return size;
-    }
+
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
@@ -954,6 +950,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         recyclerViewAdapter.refreshData();
         isInMoveMode = false;
         showNavDrawerButtonInToolbar();
+        if (moveList.size() < 1) {
+            Toasty.error(context, getString(R.string.error_moving_file), Toast.LENGTH_SHORT, true).show();
+            moveList.clear();
+            moveStartPath = null;
+            return;
+        }
         String oldPath = moveList.get(0).getPath();
         int index = oldPath.lastIndexOf(moveList.get(0).getName());
         String path2;
@@ -1525,6 +1527,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void moveFiles(List<FileItem> moveItems) {
+        if (moveItems.size() < 1) {
+            return;
+        }
         moveStartPath = directoryObject.getCurrentPath();
         moveList = new ArrayList<>(moveItems);
         recyclerViewAdapter.cancelSelection();
@@ -1809,6 +1814,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         private String fileLocation;
         private Process process;
         private volatile boolean isCancelled = false;
+        private String mimeType;
 
         DownloadAndOpen() {
             this(-1);
@@ -1846,6 +1852,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         @Override
         protected Boolean doInBackground(FileItem... fileItems) {
             FileItem fileItem = fileItems[0];
+            mimeType = fileItem.getMimeType();
             File[] extCacheDirs = ContextCompat.getExternalCacheDirs(context);
             if (extCacheDirs.length < 1) {
                 return false;
@@ -1898,11 +1905,9 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             } else if (openAs == OPEN_AS_IMAGE) {
                 intent.setDataAndType(sharedFileUri, "image/*");
             } else {
-                String extension = MimeTypeMap.getFileExtensionFromUrl(sharedFileUri.toString());
-                String type = context.getContentResolver().getType(sharedFileUri);
-                if (extension == null || extension.trim().isEmpty()) {
-                    intent.setDataAndType(sharedFileUri, "*/*");
-                } else if (type == null || type.equals("application/octet-stream")) {
+                if (mimeType != null && !"application/octet-stream".equals(mimeType)) {
+                    intent.setDataAndTypeAndNormalize(sharedFileUri, mimeType);
+                } else {
                     intent.setDataAndType(sharedFileUri, "*/*");
                 }
             }

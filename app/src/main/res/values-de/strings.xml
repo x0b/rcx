@@ -507,4 +507,6 @@
     <string name="triggeractivity_trigger_not_found">Auslöser nicht gefunden!</string>
     <string name="task_item_label_from">Von:</string>
     <string name="task_item_label_to">Zu:</string>
+    <string name="abi_not_supported_arm_downgrade">Diese RCX-Version wird nicht unterstützt. Eventuell funktioniert die armeabi-v7a-APK von github.com/x0b/rcx."</string>
+    <string name="abi_not_supported">Diese RCX-Version wird auf dem Gerät nicht unterstützt.</string>
 </resources>
