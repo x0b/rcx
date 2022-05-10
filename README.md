@@ -83,6 +83,21 @@ Contributing
 ------------
 See [CONTRIBUTING](./CONTRIBUTING.md)
 
+
+Building
+------------
+```
+// choose the appropriate version for your device
+cd rclone
+../gradlew rclone:buildNative // For all devices
+../gradlew rclone:buildArm64
+../gradlew rclone:buildArm
+../gradlew rclone:buildx86
+../gradlew rclone:buildx64
+```
+
+
+
 License
 -----------------
 ### About this app

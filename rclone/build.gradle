@@ -101,7 +101,7 @@ task fetchRclone(type: Exec) {
     mkdir "gopath"
     environment 'GOPATH', goPath
     environment "GO111MODULE", "on"
-    commandLine 'go', 'get', '-d', repositoryRef
+    commandLine 'go', 'install', repositoryRef
 
     ignoreExitValue true
     errorOutput = new ByteArrayOutputStream()
