@@ -43,8 +43,8 @@ public class RuntimeConfiguration {
         }
 
         boolean darkTheme = preferences.getBoolean(context.getString(R.string.pref_key_dark_theme), false);
-        int themeRes = darkTheme ? R.style.LightTheme : R.style.DarkTheme;
-        return new ContextThemeWrapper(context, themeRes);
+        //int themeRes = darkTheme ? R.style.LightTheme : R.style.DarkTheme;
+        return new ContextThemeWrapper(context, R.style.AppTheme);
     }
 
     @NonNull
@@ -81,10 +81,8 @@ public class RuntimeConfiguration {
     }
 
     public static Context applyTheme(@NonNull Context context, boolean darkTheme) {
-        int themeRes = R.style.LightTheme;
-        if (darkTheme) {
-            themeRes = R.style.DarkTheme;
-        }
+        int themeRes = R.style.AppTheme;
+
         return new ContextThemeWrapper(context, themeRes);
     }
 

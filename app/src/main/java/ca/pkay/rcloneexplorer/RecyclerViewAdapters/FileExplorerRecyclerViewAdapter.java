@@ -75,10 +75,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.cardColor, typedValue, true);
+        //theme.resolveAttribute(R.attr.cardColor, typedValue, true);
         cardColor = typedValue.data;
 
-        theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
+        //theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
         selectionColor = typedValue.data;
         optionsDisabled = false;
         sizeLimit = PreferenceManager.getDefaultSharedPreferences(context)

@@ -21,7 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:text="@string/provider_ftp"/>
 
         <RadioButton
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:text="@string/serve_dlna"/>
 
         <RadioButton
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:checked="true"
             android:text="@string/provider_http" />
 
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:text="@string/provider_webdav" />
     </RadioGroup>
 
@@ -55,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/allow_remote_access"
-        android:textColor="?attr/textColorPrimary" />
+        android:textColor="@color/textColorPrimary" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:text="@string/authentication"
-        android:textColor="?attr/colorAccent" />
+        android:textColor="@color/colorAccent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout_user"
@@ -74,7 +74,7 @@
             android:id="@+id/edit_text_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:inputType="text"
             tools:text="Username" />
 
@@ -84,7 +84,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="0dp"
             android:textSize="12sp"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:text="@string/optional"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,13 +93,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="?attr/iconTint">
+        app:passwordToggleTint="@color/iconTint">
 
         <EditText
             android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:inputType="textPassword"
             tools:text="Username" />
 
@@ -109,7 +109,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="0dp"
             android:textSize="12sp"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:text="@string/optional"/>
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -25,6 +25,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class TaskActivity extends AppCompatActivity {
@@ -75,7 +76,7 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityHelper.applyTheme(this);
+        ThemeHelper.applyTheme(this);
         setContentView(R.layout.activity_task);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -5,7 +5,7 @@
     android:id="@+id/no_search_results_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundColor"
+    android:background="@color/backgroundColor"
     android:visibility="invisible"
     tools:visibility="visible">
 
@@ -22,14 +22,14 @@
             <ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
-                android:tint="?attr/cardColor"
+                android:tint="@color/cardColor"
                 android:src="@drawable/ic_circle"
                 android:contentDescription="@string/content_description_circle"/>
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_search"
-                android:tint="?attr/iconTint"
+                android:tint="@color/iconTint"
                 android:layout_gravity="center"
                 android:contentDescription="@string/no_search_results" />
         </FrameLayout>
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="@string/no_search_results"
             android:textStyle="bold"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:paddingTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/graphic"
             app:layout_constraintStart_toStartOf="parent"

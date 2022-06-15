@@ -35,14 +35,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/textColorPrimary"
+                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold"
                     android:text="@string/use_logs"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/textColorSecondary"
+                    android:textColor="@color/textColorSecondary"
                     android:text="@string/use_logs_summary"/>
 
             </LinearLayout>
@@ -58,7 +58,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/crash_reporting"
@@ -80,7 +80,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/send_anonymous_crash_reports"/>
 
@@ -88,7 +88,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/txt_crash_report_summary"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:autoLink="web"
                         android:textIsSelectable="false" />
 
@@ -105,7 +105,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
                 android:id="@+id/send_test_report"
@@ -127,14 +127,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_send_test_report_title"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_send_test_report_summary"/>
 
             </LinearLayout>
@@ -143,7 +143,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"
+            android:background="@color/dividerColor"
             android:visibility="gone" />
 
         <RelativeLayout
@@ -169,14 +169,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_bugreport_start_title"
-                    android:textColor="?attr/textColorPrimary"
+                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_bugreport_start_summary"
-                    android:textColor="?attr/textColorSecondary" />
+                    android:textColor="@color/textColorSecondary" />
 
             </LinearLayout>
         </RelativeLayout>
@@ -184,7 +184,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/send_sigquit_to_rclone"
@@ -208,14 +208,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_send_sigquit_title"
-                    android:textColor="?attr/textColorPrimary"
+                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_send_sigquit_summary"
-                    android:textColor="?attr/textColorSecondary" />
+                    android:textColor="@color/textColorSecondary" />
 
             </LinearLayout>
         </RelativeLayout>
@@ -223,7 +223,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

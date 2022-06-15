@@ -4,12 +4,12 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   android:background="?attr/backgroundColor">
+                                                   android:background="@color/backgroundColor">
 
     <ScrollView
         android:layout_width="600dp"
         android:layout_height="0dp"
-        android:background="?attr/cardColor"
+        android:background="@color/cardColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,7 +27,7 @@
         android:id="@+id/nav_bar"
         android:layout_width="600dp"
         android:layout_height="wrap_content"
-        android:background="?attr/cardColor"
+        android:background="@color/cardColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

@@ -13,7 +13,7 @@
             android:id="@+id/spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:popupBackground="?attr/cardColor" />
+            android:popupBackground="@color/cardColor" />
         <View
             android:id="@+id/spinner_line"
             android:layout_width="match_parent"

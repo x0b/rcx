@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:text="@string/open_as_text"/>
     </LinearLayout>
 
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:text="@string/open_as_audio"/>
     </LinearLayout>
 
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:text="@string/open_as_video"/>
     </LinearLayout>
 
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:text="@string/open_as_image"/>
     </LinearLayout>
 

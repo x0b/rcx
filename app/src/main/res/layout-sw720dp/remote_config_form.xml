@@ -3,7 +3,7 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   android:background="?attr/backgroundColor"
+                                                   android:background="@color/backgroundColor"
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    android:orientation="vertical">
 
@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         tools:visibility="visible"
-        android:background="?attr/backgroundColor"
+        android:background="@color/backgroundColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         layout="@layout/auth_screen" />
@@ -56,7 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/remote_name_hint"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:inputType="textAutoCorrect"
                         tools:text="Remote name" />
                 </com.google.android.material.textfield.TextInputLayout>

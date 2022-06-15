@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/primary_color"/>
 
@@ -44,14 +44,14 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_circle"
                 android:contentDescription="@string/content_description_circle"
-                android:tint="?attr/colorPrimary" />
+                app:tint="@color/colorPrimary" />
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/accent_color"
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/accent_color"/>
 
@@ -79,7 +79,7 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:tint="?attr/colorAccent"
+                android:tint="@color/colorAccent"
                 android:src="@drawable/ic_circle"
                 android:contentDescription="@string/content_description_circle"/>
 
@@ -88,7 +88,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/dark_theme"
@@ -106,7 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/dark_theme"/>
 
@@ -121,7 +121,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/wrap_filenames"
@@ -139,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/wrap_filenames"/>
 
@@ -154,7 +154,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

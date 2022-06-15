@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
         android:text="@string/app_icon_made_by"/>
 
     <TextView
@@ -26,7 +26,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
         android:text="@string/from"/>
 
     <TextView

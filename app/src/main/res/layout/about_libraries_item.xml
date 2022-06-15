@@ -7,7 +7,7 @@
                                    android:layout_marginTop="16dp"
                                    android:layout_marginStart="8dp"
                                    android:layout_marginEnd="8dp"
-                                   card_view:cardBackgroundColor="?attr/cardColor"
+                                   card_view:cardBackgroundColor="@color/cardColor"
                                    card_view:cardCornerRadius="4dp"
                                    card_view:contentPadding="16dp">
 
@@ -20,7 +20,7 @@
             android:id="@+id/library_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:background="?selectableItemBackground"
@@ -35,7 +35,7 @@
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:background="?selectableItemBackground"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:clickable="true"
             android:focusable="true"
             tools:text="Licence"/>

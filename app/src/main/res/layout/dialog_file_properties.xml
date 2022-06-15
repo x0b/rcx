@@ -18,7 +18,7 @@
         android:id="@+id/filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorSecondary"
+        android:textColor="@color/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="Test file"/>
 
@@ -34,7 +34,7 @@
         android:id="@+id/file_modtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorSecondary"
+        android:textColor="@color/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="May 30, 2018 1:23:45 PM"/>
 
@@ -50,7 +50,7 @@
         android:id="@+id/file_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textColorSecondary"
+        android:textColor="@color/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="12 MB"/>
 
@@ -79,7 +79,7 @@
             android:id="@+id/file_md5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:text="@string/tap_to_calculate"/>
     </LinearLayout>
 
@@ -99,7 +99,7 @@
             android:id="@+id/file_sha1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:text="@string/tap_to_calculate"/>
     </LinearLayout>
 </LinearLayout>

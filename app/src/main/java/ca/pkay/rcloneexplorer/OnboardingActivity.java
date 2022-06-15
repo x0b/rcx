@@ -34,14 +34,9 @@ public class OnboardingActivity extends AppIntro {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addSlide(AppIntroFragment.newInstance(
-                getString(R.string.intro_welcome_title),
-                getString(R.string.intro_welcome_description)));
 
-        addSlide(AppIntroFragment.newInstance(
-                getString(R.string.intro_storage_title),
-                getString(R.string.intro_storage_description)));
-
+        addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.intro_welcome));
+        addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.intro_storage));
         addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.intro_community));
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {

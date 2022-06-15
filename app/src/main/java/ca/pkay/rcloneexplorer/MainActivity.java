@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }
 
-        ThemeHelper.applyTheme(this);
+        //ThemeHelper.applyTheme(this);
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
         availableDrawerPinnedRemoteId = 2;

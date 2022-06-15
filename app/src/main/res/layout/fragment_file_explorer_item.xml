@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:minHeight="76dp"
     android:orientation="vertical"
-    android:background="?attr/cardColor">
+    android:background="@color/cardColor">
 
     <RelativeLayout
         android:orientation="vertical"
@@ -33,7 +33,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_folder"
-                android:tint="?attr/iconTint"
+                android:tint="@color/iconTint"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/file_icon" />
         </FrameLayout>
@@ -50,13 +50,13 @@
                     android:id="@+id/file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceListItem"
                     android:fontFamily="sans-serif"
                     android:textSize="16sp"
-                    android:textColor="?attr/textColorPrimary"
+                    android:textColor="@color/textColorPrimary"
                     android:ellipsize="middle"
                     android:singleLine="true"
                     tools:text="Test File"/>
+                <!-- android:textAppearance="@color/textAppearanceListItem" -->
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -69,7 +69,7 @@
                         android:id="@+id/file_modtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         tools:text="2018-01-01"/>
 
                     <TextView
@@ -78,14 +78,14 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/interpunct"/>
 
                     <TextView
                         android:id="@+id/file_size"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         tools:text="2 MB"/>
                 </LinearLayout>
             </LinearLayout>
@@ -102,14 +102,14 @@
             android:paddingEnd="16dp"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_more_vert"
-            android:tint="?attr/iconTint"
+            android:tint="@color/iconTint"
             android:contentDescription="@string/file_options_content_description" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
     </RelativeLayout>
 
 </LinearLayout>

@@ -18,11 +18,11 @@
             android:paddingStart="16dp"
             android:paddingEnd="0dp"
             android:contentDescription="@string/remote_icon"
-            android:tint="?attr/iconTint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:src="@drawable/ic_cloud" />
+            tools:src="@drawable/ic_cloud"
+            app:tint="@color/iconTint" />
 
         <TextView
             android:id="@+id/remoteName"
@@ -31,7 +31,7 @@
             android:paddingStart="32dp"
             android:paddingEnd="0dp"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:fontFamily="sans-serif"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/remoteIcon"
@@ -46,13 +46,13 @@
             android:paddingStart="16dp"
             android:paddingEnd="0dp"
             android:src="@drawable/ic_pin"
-            android:tint="?attr/iconTint"
             android:visibility="invisible"
             android:rotation="40"
             tools:visibility="visible"
             app:layout_constraintEnd_toStartOf="@id/remote_options"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="@color/iconTint" />
 
         <ImageButton
             android:id="@+id/remote_options"
@@ -61,7 +61,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:src="@drawable/ic_more_vert"
-            android:tint="?attr/iconTint"
+            android:tint="@color/iconTint"
             android:background="?selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

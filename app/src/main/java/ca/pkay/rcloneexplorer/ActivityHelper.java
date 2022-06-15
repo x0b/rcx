@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -92,31 +93,17 @@ public class ActivityHelper {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int customPrimaryColor = sharedPreferences.getInt(context.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
         int customAccentColor = sharedPreferences.getInt(context.getString(R.string.pref_key_color_accent), R.color.colorAccent);
-        Boolean isDarkTheme = sharedPreferences.getBoolean(context.getString(R.string.pref_key_dark_theme), false);
         context.getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(context, customPrimaryColor), true);
         context.getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(context, customAccentColor), true);
+
+        /*
+        Boolean isDarkTheme = sharedPreferences.getBoolean(context.getString(R.string.pref_key_dark_theme), false);
         if (isDarkTheme) {
             context.getTheme().applyStyle(R.style.DarkTheme, true);
         } else {
             context.getTheme().applyStyle(R.style.LightTheme, true);
-        }
-
-        //TODO: remove when support for pre marshmallow devices is dropped.
-        //      Also this will cause a regression, since now older devices wont fully apply the theme.
-        //      I am not sure why this ever worked, since customPrimaryColor was always an identifier, not a color.
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            int color = context.getColor(customPrimaryColor);
-            // set recents app color to the primary color
-            ActivityManager.TaskDescription taskDesc;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                taskDesc = new ActivityManager.TaskDescription(
-                        context.getString(R.string.app_name), R.mipmap.ic_launcher_round, color);
-            } else {
-                Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round);
-                //noinspection deprecation
-                taskDesc = new ActivityManager.TaskDescription(context.getString(R.string.app_name), bm, color);
-            }
-            context.setTaskDescription(taskDesc);
-        }
+        }*/
+        //todo: implement three switches in settings->lookandfeel (Dark/Light/Auto)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 }

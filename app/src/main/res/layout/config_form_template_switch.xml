@@ -15,7 +15,7 @@
             android:id="@+id/switch_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             tools:text="Directory encryption"
             android:layout_alignParentStart="true"/>
         <Switch

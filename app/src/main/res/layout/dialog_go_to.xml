@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="24dp"
-        android:background="?attr/cardColor"
+        android:background="@color/cardColor"
         android:elevation="4dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -30,14 +30,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_pound"
-            android:tint="?attr/iconTint" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/sftp_root"
-            android:textColor="?attr/textColorPrimary" />
+            android:textColor="@color/textColorPrimary" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="24dp"
-        android:background="?attr/cardColor"
+        android:background="@color/cardColor"
         android:elevation="4dp"
         android:orientation="vertical"
         android:paddingBottom="24dp"
@@ -64,14 +64,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_home"
-            android:tint="?attr/iconTint" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/sftp_home"
-            android:textColor="?attr/textColorPrimary" />
+            android:textColor="@color/textColorPrimary" />
     </LinearLayout>
 
     <LinearLayout
@@ -95,6 +95,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/set_default_for_all_sftp_ssh_remotes"
-            android:textColor="?attr/textColorPrimary" />
+            android:textColor="@color/textColorPrimary" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,7 +18,7 @@
             android:paddingBottom="8dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             tools:text="Remote or path to alias/crypt" />
         <View
             android:id="@+id/text_view_line"

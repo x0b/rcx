@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         tools:visibility="visible"
-        android:background="?attr/backgroundColor">
+        android:background="@color/backgroundColor">
 
     <ProgressBar
             style="?android:attr/progressBarStyle"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/waiting_for_code"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:id="@+id/progressText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

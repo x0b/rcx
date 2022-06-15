@@ -6,20 +6,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="?attr/backgroundColor" >
+    android:background="@color/backgroundColor" >
 
     <include
         android:id="@+id/empty_folder_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/backgroundColor"
+        android:background="@color/backgroundColor"
         android:visibility="invisible"
         android:layout_gravity="center"
         layout="@layout/empty_directory_state" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="@dimen/actionBarSize"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <LinearLayout
@@ -41,7 +41,7 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="600dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/actionBarSize"
         android:layout_gravity="center_horizontal"
         android:layout_above="@+id/bottom_bar">
 
@@ -63,8 +63,8 @@
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="?attr/iconTint"
-                    android:contentDescription="@string/file_icon" />
+                    android:contentDescription="@string/file_icon"
+                    app:tint="@color/iconTint" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -78,10 +78,9 @@
                         android:id="@+id/previous_dir_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceListItem"
                         android:fontFamily="sans-serif"
                         android:textSize="16sp"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:ellipsize="middle"
                         android:singleLine="true"
                         tools:text="Previous"/>
@@ -91,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentBottom="true"
-                    android:background="?attr/dividerColor"/>
+                    android:background="@color/dividerColor"/>
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

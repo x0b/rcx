@@ -38,14 +38,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_saf_enable"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_saf_summary"/>
 
             </LinearLayout>
@@ -63,7 +63,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:background="?attr/backgroundColor"
+                android:background="@color/backgroundColor"
                 app:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/fragment_permission_item"
                 tools:itemCount="2"/>
@@ -92,7 +92,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/dividerColor"/>
+                android:background="@color/dividerColor"/>
 
         <!-- local alias toggle -->
         <RelativeLayout
@@ -119,14 +119,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_enable_local_alias_title"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_enable_local_alias_summary"/>
 
             </LinearLayout>
@@ -146,7 +146,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/dividerColor"/>
+                android:background="@color/dividerColor"/>
 
         <!-- All file access view -->
         <RelativeLayout
@@ -172,14 +172,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_open_all_files_setting_label"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_open_all_files_setting_summary"/>
 
             </LinearLayout>
@@ -189,7 +189,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:id="@+id/open_all_files_setting_divider"
-                android:background="?attr/dividerColor"/>
+                android:background="@color/dividerColor"/>
 
         <RelativeLayout
                 android:id="@+id/enable_saf_vcp_view"
@@ -216,14 +216,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_saf_virtual_content_provider_enable"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_saf_virtual_content_provider_summary"/>
 
             </LinearLayout>
@@ -237,7 +237,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/dividerColor"/>
+                android:background="@color/dividerColor"/>
 
         <RelativeLayout
                 android:id="@+id/vcp_declare_local_container"
@@ -264,14 +264,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_saf_vcp_local_pretend_enable"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_saf_vcp_local_pretend_summary"/>
 
             </LinearLayout>
@@ -285,7 +285,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/dividerColor"/>
+                android:background="@color/dividerColor"/>
 
         <RelativeLayout
                 android:id="@+id/vcp_grant_all_container"
@@ -312,14 +312,14 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_saf_vcp_grant_all_enable"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/textColorSecondary"
+                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_saf_vcp_grant_all_summary"/>
 
             </LinearLayout>
@@ -333,7 +333,7 @@
         <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/dividerColor"/>
+                android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

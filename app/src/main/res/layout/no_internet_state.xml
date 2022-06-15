@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/no_internet_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundColor"
-    android:visibility="invisible" >
+    android:background="@color/backgroundColor"
+    android:visibility="invisible">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,14 +18,14 @@
             <ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
-                android:tint="?attr/cardColor"
+                app:tint="@color/cardColor"
                 android:src="@drawable/ic_circle"
                 android:contentDescription="@string/content_description_circle"/>
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_signal_wifi_off"
-                android:tint="?attr/iconTint"
+                app:tint="@color/iconTint"
                 android:layout_gravity="center"
                 android:contentDescription="@string/no_internet_connection" />
         </FrameLayout>
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_internet_connection"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="bold"
             android:paddingTop="16dp"/>
     </LinearLayout>

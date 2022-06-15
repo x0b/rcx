@@ -20,7 +20,6 @@
         app:layout_constraintEnd_toEndOf="parent">
 
 
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -50,7 +49,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/remote_name_hint"
-                            android:textColor="?attr/textColorPrimary"
+                            android:textColor="@color/textColorPrimary"
                             android:inputType="textAutoCorrect"
                             tools:text="Remote name" />
                 </com.google.android.material.textfield.TextInputLayout>

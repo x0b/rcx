@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/open_system_settings"/>
         </RelativeLayout>
@@ -40,7 +40,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/app_updates"
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/app_updates_notifications"/>
 
@@ -73,7 +73,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/beta_app_updates"
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="?attr/textColorPrimary"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/beta_app_updates_notifications"/>
 
@@ -106,7 +106,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/dividerColor"/>
+            android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

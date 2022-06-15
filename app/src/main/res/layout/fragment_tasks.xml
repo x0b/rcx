@@ -71,7 +71,6 @@
             android:id="@+id/task_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/backgroundColor"
             android:clipToPadding="false"
             android:paddingBottom="88dp"
             tools:listitem="@layout/fragment_tasks_item">

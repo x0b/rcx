@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/backgroundColor"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
@@ -17,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_empty_box"
-            app:tint="?attr/iconTint"
+            app:tint="@color/iconTint"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/empty_state_icon" />
@@ -29,7 +28,7 @@
             android:layout_below="@+id/empty_state_ic"
             android:layout_centerHorizontal="true"
             android:text="@string/ooops"
-            android:textColor="?attr/colorAccent"
+            android:textColor="@color/colorAccent"
             android:textStyle="bold"
             android:textSize="30sp" />
 
@@ -40,7 +39,7 @@
             android:layout_below="@+id/empty_state_title"
             android:layout_centerHorizontal="true"
             android:text="@string/no_config_found"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:layout_marginTop="8dp" />
 
         <Button

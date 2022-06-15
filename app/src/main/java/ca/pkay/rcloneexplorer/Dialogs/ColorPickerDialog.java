@@ -119,7 +119,7 @@ public class ColorPickerDialog extends DialogFragment {
             View item = layoutInflater.inflate(R.layout.color_picker_item, null);
             ImageView colorOption = item.findViewById(R.id.color_option);
             TypedValue typedValue = new TypedValue();
-            context.getTheme().resolveAttribute(R.attr.cardColor, typedValue, true);
+            //context.getTheme().resolveAttribute(R.attr.cardColor, typedValue, true);
             colorOption.setColorFilter(typedValue.data);
             rowLayout.addView(item);
             i++;

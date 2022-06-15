@@ -35,7 +35,7 @@
             android:id="@+id/provider_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textIsSelectable="true"
             android:textSize="18sp"
             tools:text="ExampleProvider" />
@@ -58,7 +58,7 @@
             android:id="@+id/providerIcon"
             android:contentDescription="@null"
             android:layout_marginEnd="16dp"
-            app:tint="?attr/iconTint"
+            app:tint="@color/iconTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

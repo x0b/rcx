@@ -1,227 +1,154 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
-        <!-- overwritten during runtime, only for designing in tools -->
-        <item name="textColorPrimary">#212121</item>
-        <item name="textColorSecondary">#757575</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="iconTint">#FFFFFF</item>
+        <item name="iconTint">@color/white</item>
     </style>
 
     <style name="OnboardingTheme" parent="AppTheme.NoActionBar">
-        <item name="android:background">#424242</item>
-        <item name="android:textColorPrimary">#FFFFFFFF</item>
-        <item name="textColorAlertDialogListItem">#FFFFFFFF</item>
         <item name="android:colorPrimary">?attr/colorPrimary</item>
         <item name="android:colorAccent">?attr/colorAccent</item>
-        <item name="colorControlNormal">#B3FFFFFF</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="colorControlHighlight">#B3FFFFFF</item>
-        <item name="android:textColorHint">#B3FFFFFF</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="DarkDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:background">#424242</item>
-        <item name="android:textColorPrimary">#FFFFFFFF</item>
-        <item name="textColorAlertDialogListItem">#FFFFFFFF</item>
         <item name="android:colorPrimary">?attr/colorPrimary</item>
         <item name="android:colorAccent">?attr/colorAccent</item>
-        <item name="colorControlNormal">#B3FFFFFF</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="colorControlHighlight">#B3FFFFFF</item>
-        <item name="android:textColorHint">#B3FFFFFF</item>
     </style>
 
     <style name="DialogThemeFullScreen">
-        <item name="android:background">#424242</item>
-        <item name="android:textColorPrimary">#FFFFFFFF</item>
-        <item name="textColorAlertDialogListItem">#FFFFFFFF</item>
         <item name="android:colorPrimary">?attr/colorPrimary</item>
         <item name="android:colorAccent">?attr/colorAccent</item>
-        <item name="colorControlNormal">#B3FFFFFF</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="colorControlHighlight">#B3FFFFFF</item>
-        <item name="android:textColorHint">#B3FFFFFF</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
     </style>
-
-    <style name="NumberPicker" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:textColorPrimary">?attr/textColorPrimary</item>
-        <item name="android:colorControlNormal">?attr/textColorSecondary</item>
-    </style>
-
-    <style name="LightTheme">
-        <item name="backgroundColor">#FAFAFA</item>
-        <item name="cardColor">#FFFFFF</item>
-        <item name="textColorPrimary">#212121</item>
-        <item name="textColorSecondary">#757575</item>
-        <item name="dividerColor">#BDBDBD</item>
-        <item name="iconTint">#4A4A4A</item>
-        <item name="colorControlNormal">#757575</item>
-        <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="colorControlHighlight">#757575</item>
-    </style>
-
-    <style name="DarkTheme">
-        <item name="backgroundColor">#303030</item>
-        <item name="cardColor">#424242</item>
-        <item name="textColorPrimary">#FFFFFFFF</item>
-        <item name="textColorSecondary">#B3FFFFFF</item>
-        <item name="android:textColorSecondary">#B3FFFFFF</item>
-        <item name="dividerColor">#1FFFFFFF</item>
-        <item name="iconTint">#FFFFFF</item>
-        <item name="colorControlNormal">#B3FFFFFF</item>
-        <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="colorControlHighlight">#B3FFFFFF</item>
-        <item name="android:textColorHint">#B3FFFFFF</item>
-    </style>
-
     <style name="CustomPrimaryRed">
         <item name="colorPrimary">@color/colorPrimary_Red</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Red</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Red</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Red</item>
     </style>
 
     <style name="CustomPrimaryPink">
         <item name="colorPrimary">@color/colorPrimary_Pink</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Pink</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Pink</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Pink</item>
     </style>
 
     <style name="CustomPrimaryPurple">
         <item name="colorPrimary">@color/colorPrimary_Purple</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Purple</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Purple</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Purple</item>
     </style>
 
     <style name="CustomPrimaryDeepPurple">
         <item name="colorPrimary">@color/colorPrimary_DeepPurple</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_DeepPurple</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_DeepPurple</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_DeepPurple</item>
     </style>
 
     <style name="CustomPrimaryIndigo">
         <item name="colorPrimary">@color/colorPrimary_Indigo</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Indigo</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Indigo</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Indigo</item>
     </style>
 
     <style name="CustomPrimaryBlue">
         <item name="colorPrimary">@color/colorPrimary_Blue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Blue</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Blue</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Blue</item>
     </style>
 
     <style name="CustomPrimaryLightBlue">
         <item name="colorPrimary">@color/colorPrimary_LightBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_LightBlue</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_LightBlue</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_LightBlue</item>
     </style>
 
     <style name="CustomPrimaryCyan">
         <item name="colorPrimary">@color/colorPrimary_Cyan</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Cyan</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Cyan</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Cyan</item>
     </style>
 
     <style name="CustomPrimaryTeal">
         <item name="colorPrimary">@color/colorPrimary_Teal</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Teal</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Teal</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Teal</item>
     </style>
 
     <style name="CustomPrimaryGreen">
         <item name="colorPrimary">@color/colorPrimary_Green</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Green</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Green</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Green</item>
     </style>
 
     <style name="CustomPrimaryLightGreen">
         <item name="colorPrimary">@color/colorPrimary_LightGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_LightGreen</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_LightGreen</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_LightGreen</item>
     </style>
 
     <style name="CustomPrimaryLime">
         <item name="colorPrimary">@color/colorPrimary_Lime</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Lime</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Lime</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Lime</item>
     </style>
 
     <style name="CustomPrimaryYellow">
         <item name="colorPrimary">@color/colorPrimary_Yellow</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Yellow</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Yellow</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Yellow</item>
     </style>
 
     <style name="CustomPrimaryAmber">
         <item name="colorPrimary">@color/colorPrimary_Amber</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Amber</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Amber</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Amber</item>
     </style>
 
     <style name="CustomPrimaryOrange">
         <item name="colorPrimary">@color/colorPrimary_Orange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Orange</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Orange</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Orange</item>
     </style>
 
     <style name="CustomPrimaryDeepOrange">
         <item name="colorPrimary">@color/colorPrimary_DeepOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_DeepOrange</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_DeepOrange</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_DeepOrange</item>
     </style>
 
     <style name="CustomPrimaryBrown">
         <item name="colorPrimary">@color/colorPrimary_Brown</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Brown</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Brown</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Brown</item>
     </style>
 
     <style name="CustomPrimaryGrey">
         <item name="colorPrimary">@color/colorPrimary_Grey</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_Grey</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_Grey</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_Grey</item>
     </style>
 
     <style name="CustomPrimaryBlueGrey">
         <item name="colorPrimary">@color/colorPrimary_BlueGrey</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_BlueGrey</item>
-        <item name="colorPrimaryLight">@color/colorPrimaryLight_BlueGrey</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark_BlueGrey</item>
     </style>
 

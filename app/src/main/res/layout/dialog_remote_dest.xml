@@ -62,7 +62,7 @@
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="?attr/iconTint"
+                    android:tint="@color/iconTint"
                     android:contentDescription="@string/file_icon" />
 
                 <LinearLayout
@@ -80,7 +80,7 @@
                         android:textAppearance="?attr/textAppearanceListItem"
                         android:fontFamily="sans-serif"
                         android:textSize="16sp"
-                        android:textColor="?attr/textColorPrimary"
+                        android:textColor="@color/textColorPrimary"
                         android:ellipsize="middle"
                         android:singleLine="true"
                         tools:text="Previous"/>
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentBottom="true"
-                    android:background="?attr/dividerColor"/>
+                    android:background="@color/dividerColor"/>
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

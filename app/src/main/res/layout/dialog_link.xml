@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/public_link"
-        android:textColor="?attr/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
         android:paddingBottom="16dp"/>
 
     <TextView
@@ -20,5 +20,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        android:textColor="?attr/textColorSecondary"/>
+        android:textColor="@color/textColorSecondary"/>
 </LinearLayout>

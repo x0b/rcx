@@ -4,8 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="?selectableItemBackground">
+    android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:contentDescription="@string/remote_icon"
-            android:tint="?attr/iconTint"
+            app:tint="@color/iconTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,8 +30,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/taskIcon"
             app:layout_constraintTop_toTopOf="parent"
@@ -44,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/task_item_label_from"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="@+id/taskName"
             app:layout_constraintTop_toBottomOf="@+id/taskName" />
 
@@ -53,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:text="@string/task_item_label_to"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/fromLabel"
@@ -65,14 +63,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/file_options_content_description"
             android:paddingStart="16dp"
             android:paddingTop="26dp"
             android:paddingEnd="16dp"
             android:paddingBottom="26dp"
             android:src="@drawable/ic_more_vert"
-            android:tint="?attr/iconTint"
+            android:tint="@color/iconTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -83,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="@string/sync"
-            android:textColor="?attr/textColorSecondary"
+            android:textColor="@color/textColorSecondary"
             android:textSize="12sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toBottomOf="@+id/taskName"
@@ -112,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="fromid"
-                    android:textColor="?attr/textColorSecondary"
+                    android:textColor="@color/textColorSecondary"
                     tools:ignore="HardcodedText" />
 
                 <TextView
@@ -121,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="fromPath"
-                    android:textColor="?attr/textColorSecondary"
+                    android:textColor="@color/textColorSecondary"
                     tools:ignore="HardcodedText" />
 
             </LinearLayout>
@@ -138,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="toid"
-                    android:textColor="?attr/textColorSecondary"
+                    android:textColor="@color/textColorSecondary"
                     tools:ignore="HardcodedText" />
 
                 <TextView
@@ -147,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="toPath"
-                    android:textColor="?attr/textColorSecondary"
+                    android:textColor="@color/textColorSecondary"
                     tools:ignore="HardcodedText" />
 
             </LinearLayout>

@@ -5,7 +5,6 @@
     android:id="@+id/empty_folder_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundColor"
     android:visibility="invisible"
     tools:visibility="visible">
 
@@ -22,14 +21,14 @@
             <ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
-                android:tint="?attr/cardColor"
+                app:tint="@color/cardColor"
                 android:src="@drawable/ic_circle"
                 android:contentDescription="@string/content_description_circle"/>
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_folder_open"
-                android:tint="?attr/iconTint"
+                app:tint="@color/iconTint"
                 android:layout_gravity="center"
                 android:contentDescription="@string/empty_folder" />
         </FrameLayout>
@@ -39,7 +38,7 @@
             android:layout_height="wrap_content"
             android:text="@string/empty_folder"
             android:textStyle="bold"
-            android:textColor="?attr/textColorPrimary"
+            android:textColor="@color/textColorPrimary"
             android:paddingTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/graphic"
             app:layout_constraintStart_toStartOf="parent"
