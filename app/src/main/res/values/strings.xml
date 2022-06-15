@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">RCX - Rclone for Android</string>
-    <string name="app_short_name">RCX</string>
+    <string name="app_name">extRact - Rclone for Android</string>
+    <string name="app_short_name">extRact</string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -50,10 +50,10 @@
     <string name="select">Select</string>
     <string name="app_icon">App Icon</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="github_app_url" translatable="false">https://github.com/x0b/rcx</string>
-    <string name="github_issue_url" translatable="false">https://github.com/x0b/rcx/issues/new/choose</string>
+    <string name="github_app_url" translatable="false">https://github.com/newhinton/extRact</string>
+    <string name="github_issue_url" translatable="false">https://github.com/newhinton/extRact/issues/new/choose</string>
     <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
-    <string name="github_maintainer_url" translatable="false">https://github.com/x0b</string>
+    <string name="github_maintainer_url" translatable="false">https://github.com/newhinton</string>
     <string name="about_check_updates">Check</string>
     <string name="replace_config_file_question">Replace current configuration file?</string>
     <string name="config_file_lost_statement">Your current configuration will be lost</string>
@@ -145,11 +145,11 @@
     <string name="flaticon" translatable="false">Flaticon</string>
     <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
     <string name="intro_welcome_title">Welcome</string>
-    <string name="intro_welcome_description">RCX manages your files, whether they are stored on your device or online in the cloud. Check out the documentation at x0b.github.io/docs for more information.</string>
+    <string name="intro_welcome_description">extRact manages your files, whether they are stored on your device or online in the cloud. Check out the documentation at x0b.github.io/docs for more information.</string>
     <string name="intro_storage_title">Storage access required</string>
-    <string name="intro_storage_description">RCX uses rclone, and we need your permission to access files. First, please allow storage access.</string>
+    <string name="intro_storage_description">extRact uses rclone, and we need your permission to access files. First, please allow storage access.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">RCX is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
+    <string name="intro_community_description">extRact is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
     <string name="intro_community_switch">Contribute error reports</string>
     <string name="pref_key_stream_max" translatable="false">pref_key_stream_max</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
@@ -474,7 +474,7 @@
     <string name="virtual_content_provider_exception_error">Support info: \n%1$s</string>
     <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>
     <string name="virtual_content_provider_service_error">Rclone service connection failure. Force stop and retry.</string>
-    <string name="virtual_content_provider_no_remotes">No remotes configured. Open RCX to add a storage location.</string>
+    <string name="virtual_content_provider_no_remotes">No remotes configured. Open extRact to add a storage location.</string>
     <string name="remote_properties_remote_name">Remote name</string>
     <string name="remote_properties_storage_usage">Storage usage</string>
     <string name="remote_properties_storage_stats">%1$s / %2$s used (%3$s free)</string>
@@ -565,8 +565,8 @@
  <string name="sync_notification_errors">Errors:      %d</string>
  <string name="sync_notification_elapsed">Elapsed:     %d seconds</string>
  <string name="sync_notification_short">%s of %s, %ss remaining</string>
-    <string name="abi_not_supported_arm_downgrade">Unfortunately, your device does not support this version of RCX. Try the armeabi-v7a APK from github.com/x0b/rcx instead.</string>
-    <string name="abi_not_supported">Unfortunately, your device does not support this version of RCX.</string>
+    <string name="abi_not_supported_arm_downgrade">Unfortunately, your device does not support this version of extRact. Try the armeabi-v7a APK from github.com/x0b/rcx instead.</string>
+    <string name="abi_not_supported">Unfortunately, your device does not support this version of extRact.</string>
     <string name="trigger">Trigger</string>
     <string name="title_activity_trigger">Trigger</string>
     <string name="enabled">Enabled</string>
