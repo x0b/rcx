@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:padding="24dp"
                 android:singleLine="false"
-                android:text="@string/no_tasks_warning"
+                android:text="@string/taskfragment_no_tasks_warning"
                 android:lines="3"
                 android:textAlignment="center"
                 android:textSize="20sp" />

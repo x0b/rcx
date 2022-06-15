@@ -606,4 +606,5 @@
     <string name="retry_failed_sync">Retry</string>
     <string name="task_service_notification_title">Task Start Service</string>
     <string name="task_service_notification_description">This Service starts your selected task. Please wait a moment.</string>
+    <string name="taskfragment_no_tasks_warning">There are no tasks. Add one here!</string>
 </resources>

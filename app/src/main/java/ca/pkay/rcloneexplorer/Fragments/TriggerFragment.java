@@ -63,7 +63,7 @@ public class TriggerFragment extends Fragment {
 
         view.findViewById(R.id.task_activity_button).setOnClickListener(v -> {
             Fragment fragment = new TasksFragment();
-            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            FragmentManager fm = ((FragmentActivity) requireContext()).getSupportFragmentManager();
             FragmentTransaction transaction = fm.beginTransaction();
             transaction.replace(R.id.flFragment, fragment);
             transaction.commit();
@@ -86,10 +86,17 @@ public class TriggerFragment extends Fragment {
             dbHandler = new DatabaseHandler(view.getContext());
         }
 
+        boolean doTasksExist = false;
+
+        view.findViewById(R.id.layout_empty).setVisibility(View.GONE);
+        view.findViewById(R.id.layout_error).setVisibility(View.GONE);
+        view.findViewById(R.id.layout_triggerlist).setVisibility(View.GONE);
+
         //First check tasks:
         if(dbHandler.getAllTasks().size() > 0 ){
-            view.findViewById(R.id.layout_error).setVisibility(View.GONE);
+            doTasksExist = true;
         } else {
+            view.findViewById(R.id.layout_error).setVisibility(View.VISIBLE);
             //disable all trigger when no tasks are available.
             TriggerService triggerService = new TriggerService(view.getContext());
             for(Trigger trigger : dbHandler.getAllTrigger()){
@@ -97,14 +104,15 @@ public class TriggerFragment extends Fragment {
             }
         }
 
-        //then check triggers
-        if(dbHandler.getAllTrigger().size() == 0){
-            view.findViewById(R.id.layout_triggerlist).setVisibility(View.GONE);
-            view.findViewById(R.id.layout_empty).setVisibility(View.VISIBLE);
-        } else {
-            view.findViewById(R.id.layout_triggerlist).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.layout_empty).setVisibility(View.GONE);
+        if(doTasksExist) {
+            //then check triggers
+            if(dbHandler.getAllTrigger().size() == 0){
+                view.findViewById(R.id.layout_empty).setVisibility(View.VISIBLE);
+            } else {
+                view.findViewById(R.id.layout_triggerlist).setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
     private void populateTriggerList(View v){
