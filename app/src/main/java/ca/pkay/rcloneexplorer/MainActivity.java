@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         //ThemeHelper.applyTheme(this);
+        ActivityHelper.applyTheme(this);
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
         availableDrawerPinnedRemoteId = 2;
