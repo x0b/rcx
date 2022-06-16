@@ -9,15 +9,15 @@
         android:checkableBehavior="none">
         <item
             android:id="@+id/nav_remotes"
-            android:icon="@drawable/ic_cloud"
+            android:icon="@drawable/ic_twotone_cloud_24"
             android:title="@string/remotes" />
         <item
             android:id="@+id/nav_tasks"
-            android:icon="@drawable/ic_baseline_swap_vert_24"
+            android:icon="@drawable/ic_round_swap_vert_24"
             android:title="@string/tasks" />
         <item
             android:id="@+id/nav_trigger"
-            android:icon="@drawable/ic_baseline_av_timer_24"
+            android:icon="@drawable/ic_round_av_timer_24"
             android:title="@string/trigger" />
     </group>
 

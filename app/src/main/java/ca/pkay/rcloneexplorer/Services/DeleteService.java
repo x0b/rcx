@@ -68,7 +68,7 @@ public class DeleteService extends IntentService {
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_twotone_rounded_cloud_sync_24)
                 .setContentTitle(getString(R.string.delete_service))
                 .setContentText(content)
                 .setContentIntent(pendingIntent)

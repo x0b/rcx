@@ -47,7 +47,7 @@ public class SyncServiceNotifications {
         PendingIntent retryPendingIntent = PendingIntent.getService(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_error)
+                .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setGroup(OPERATION_FAILED_GROUP)
@@ -62,7 +62,7 @@ public class SyncServiceNotifications {
     public void showSuccessNotification(String content, int notificationId) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_success)
+                .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
                 .setContentTitle(mContext.getString(R.string.operation_success))
                 .setContentText(content)
                 .setGroup(OPERATION_SUCCESS_GROUP)
@@ -92,7 +92,7 @@ public class SyncServiceNotifications {
                         .setContentTitle(mContext.getString(R.string.operation_failed))
                         //set content text to support devices running API level < 24
                         .setContentText(mContext.getString(R.string.operation_failed))
-                        .setSmallIcon(R.drawable.ic_notification_error)
+                        .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
                         .setGroup(OPERATION_FAILED_GROUP)
                         .setGroupSummary(true)
                         .setAutoCancel(true)
@@ -108,7 +108,7 @@ public class SyncServiceNotifications {
                         .setContentTitle(mContext.getString(R.string.operation_success))
                         //set content text to support devices running API level < 24
                         .setContentText(mContext.getString(R.string.operation_success))
-                        .setSmallIcon(R.drawable.ic_notification_success)
+                        .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
                         .setGroup(OPERATION_SUCCESS_GROUP)
                         .setGroupSummary(true)
                         .setAutoCancel(true)
@@ -140,7 +140,7 @@ public class SyncServiceNotifications {
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_twotone_rounded_cloud_sync_24)
                 .setContentTitle(mContext.getString(R.string.syncing_service, title))
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, mContext.getString(R.string.cancel), cancelPendingIntent)
@@ -165,7 +165,7 @@ public class SyncServiceNotifications {
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_twotone_rounded_cloud_sync_24)
                 .setContentTitle(mContext.getString(R.string.syncing_service, title))
                 .setContentText(content)
                 .setContentIntent(pendingIntent)
