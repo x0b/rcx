@@ -1,5 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">extRact - Rclone for Android</string>
+    <string name="app_name">extRact</string>
+    <string name="app_description">Rclone for Android</string>
     <string name="app_short_name">extRact</string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
 
