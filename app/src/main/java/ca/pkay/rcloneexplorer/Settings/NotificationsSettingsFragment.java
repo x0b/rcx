@@ -11,7 +11,6 @@ import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -47,7 +46,7 @@ public class NotificationsSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.notification_settings_fragment, container, false);
+        View view = inflater.inflate(R.layout.settings_fragment_notification, container, false);
         getViews(view);
         setDefaultStates();
         setClickListeners();

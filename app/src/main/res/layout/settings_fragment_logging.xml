@@ -13,16 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingStart="@dimen/settings_padding_ends"
+        android:paddingEnd="@dimen/settings_padding_ends"
         android:paddingBottom="16dp">
 
         <RelativeLayout
             android:id="@+id/use_logs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -31,19 +31,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:orientation="vertical" >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorPrimary"
-                    android:textStyle="bold"
-                    android:text="@string/use_logs"/>
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@+id/use_logs_switch"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary"
-                    android:text="@string/use_logs_summary"/>
+                    android:text="@string/use_logs"
+                    android:textColor="@color/textColorPrimary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/use_logs_summary"
+                    android:textColor="@color/textColorSecondary" />
 
             </LinearLayout>
 
@@ -51,23 +54,22 @@
                 android:id="@+id/use_logs_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/crash_reporting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -98,23 +100,22 @@
                 android:id="@+id/crash_reporting_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
                 android:id="@+id/send_test_report"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp"
+                android:paddingTop="@dimen/settings_padding_topbottom"
+                android:paddingBottom="@dimen/settings_padding_topbottom"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?selectableItemBackground" >
@@ -142,7 +143,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"
             android:visibility="gone" />
 
@@ -153,10 +154,8 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:paddingStart="16dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:visibility="gone">
 
             <LinearLayout
@@ -183,7 +182,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
@@ -193,10 +192,8 @@
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:paddingStart="16dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="24dp">
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -222,7 +219,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
     </LinearLayout>
 

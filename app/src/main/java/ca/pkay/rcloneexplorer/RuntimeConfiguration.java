@@ -1,5 +1,7 @@
 package ca.pkay.rcloneexplorer;
 
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.FOLLOW_SYSTEM;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,6 +20,7 @@ import androidx.preference.PreferenceManager;
 import java.util.Locale;
 
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 
 /**
  * Design goal: Manage runtime resource configuration (locale, theme)
@@ -42,8 +45,7 @@ public class RuntimeConfiguration {
             applyLocalePre24(context, locale);
         }
 
-        boolean darkTheme = preferences.getBoolean(context.getString(R.string.pref_key_dark_theme), false);
-        //int themeRes = darkTheme ? R.style.LightTheme : R.style.DarkTheme;
+        //ThemeHelper.applyDarkMode(host.getApplicationContext());
         return new ContextThemeWrapper(context, R.style.AppTheme);
     }
 

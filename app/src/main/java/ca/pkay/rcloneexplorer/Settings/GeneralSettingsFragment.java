@@ -1,7 +1,6 @@
 package ca.pkay.rcloneexplorer.Settings;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
@@ -15,7 +14,6 @@ import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -32,6 +30,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class GeneralSettingsFragment extends Fragment {
@@ -77,7 +76,7 @@ public class GeneralSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.general_settings_fragment, container, false);
+        View view = inflater.inflate(R.layout.settings_fragment_general, container, false);
         getViews(view);
         setDefaultStates();
         setClickListeners();
@@ -125,7 +124,7 @@ public class GeneralSettingsFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         boolean isWifiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
         boolean useProxy = sharedPreferences.getBoolean(getString(R.string.pref_key_use_proxy), false);
         String proxyProtocol = sharedPreferences.getString(getString(R.string.pref_key_proxy_protocol), "http");
         String proxyHost = sharedPreferences.getString(getString(R.string.pref_key_proxy_host), "localhost");

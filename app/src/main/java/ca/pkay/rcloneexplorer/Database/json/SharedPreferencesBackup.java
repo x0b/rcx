@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 
 public class SharedPreferencesBackup {
 
@@ -31,7 +32,7 @@ public class SharedPreferencesBackup {
         boolean vcpGrantAll = sharedPreferences.getBoolean(context.getString(R.string.pref_key_vcp_grant_all), false);
 
         // Look and Feel
-        boolean isDarkTheme = sharedPreferences.getBoolean(context.getString(R.string.pref_key_dark_theme), false);
+        boolean isDarkTheme = ThemeHelper.isDarkTheme(context);
         boolean isWrapFilenames = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wrap_filenames), true);
         int defaultColorPrimary = sharedPreferences.getInt(context.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
         int defaultColorAccent = sharedPreferences.getInt(context.getString(R.string.pref_key_color_accent), R.color.colorAccent);

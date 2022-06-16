@@ -21,7 +21,6 @@ import com.microsoft.appcenter.AppCenter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,7 +62,7 @@ public class LoggingSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.logging_settings_fragment, container, false);
+        View view = inflater.inflate(R.layout.settings_fragment_logging, container, false);
         getViews(view);
         setDefaultStates();
         setClickListeners();

@@ -79,6 +79,7 @@ import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import ca.pkay.rcloneexplorer.util.LargeParcel;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;
@@ -235,7 +236,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
         String wrapFilenamesKey = getString(R.string.pref_key_wrap_filenames);
         prefChangeListener = (pref, key) -> {

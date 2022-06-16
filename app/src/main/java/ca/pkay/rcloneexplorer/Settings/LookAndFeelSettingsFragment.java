@@ -1,21 +1,27 @@
 package ca.pkay.rcloneexplorer.Settings;
 
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.DARK;
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.FOLLOW_SYSTEM;
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.LIGHT;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 
 public class LookAndFeelSettingsFragment extends Fragment {
 
@@ -25,11 +31,12 @@ public class LookAndFeelSettingsFragment extends Fragment {
     private ImageView primaryColorPreview;
     private View accentColorElement;
     private ImageView accentColorPreview;
+    private Switch autoThemeSwitch;
     private Switch darkThemeSwitch;
-    private View darkThemeElement;
+    private Switch lightThemeSwitch;
     private Switch wrapFilenamesSwitch;
     private View wrapFilenamesElement;
-    private boolean isDarkTheme;
+    private int theme = FOLLOW_SYSTEM;
 
     public interface OnThemeHasChanged {
         void onThemeChanged();
@@ -54,10 +61,10 @@ public class LookAndFeelSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.look_and_feel_settings_fragment, container, false);
+        View view = inflater.inflate(R.layout.settings_fragment_look_and_feel, container, false);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        theme = sharedPreferences.getInt(getString(R.string.pref_key_dark_theme), FOLLOW_SYSTEM);
 
         getViews(view);
         setDefaultStates();
@@ -86,26 +93,28 @@ public class LookAndFeelSettingsFragment extends Fragment {
         primaryColorPreview = view.findViewById(R.id.primary_color_preview);
         accentColorElement = view.findViewById(R.id.accent_color);
         accentColorPreview = view.findViewById(R.id.accent_color_preview);
+        autoThemeSwitch = view.findViewById(R.id.auto_theme_switch);
         darkThemeSwitch = view.findViewById(R.id.dark_theme_switch);
-        darkThemeElement = view.findViewById(R.id.dark_theme);
+        lightThemeSwitch = view.findViewById(R.id.light_theme_switch);
         wrapFilenamesSwitch = view.findViewById(R.id.wrap_filenames_switch);
         wrapFilenamesElement = view.findViewById(R.id.wrap_filenames);
     }
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        int theme = sharedPreferences.getInt(getString(R.string.pref_key_dark_theme), FOLLOW_SYSTEM);
         boolean isWrapFilenames = sharedPreferences.getBoolean(getString(R.string.pref_key_wrap_filenames), true);
 
-        darkThemeSwitch.setChecked(isDarkTheme);
+        setThemeSelectionSwitches(theme);
         wrapFilenamesSwitch.setChecked(isWrapFilenames);
     }
 
     private void setClickListeners() {
         primaryColorElement.setOnClickListener(v -> showPrimaryColorPicker());
         accentColorElement.setOnClickListener(v -> showAccentColorPicker());
-        darkThemeElement.setOnClickListener(v -> darkThemeSwitch.setChecked(!darkThemeSwitch.isChecked()));
-        darkThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onDarkThemeClicked(isChecked));
+        autoThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> selectTheme(FOLLOW_SYSTEM, isChecked));
+        darkThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> selectTheme(DARK, isChecked));
+        lightThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> selectTheme(LIGHT, isChecked));
         wrapFilenamesElement.setOnClickListener(v -> wrapFilenamesSwitch.setChecked(!wrapFilenamesSwitch.isChecked()));
         wrapFilenamesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onWrapFilenamesClicked(isChecked));
     }
@@ -118,7 +127,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
                 .setTitle(R.string.primary_color_picker_title)
                 .setColorChoices(R.array.primary_color_choices)
                 .setDefaultColor(defaultColor)
-                .setDarkTheme(isDarkTheme)
+                .setDarkTheme(ThemeHelper.isDarkTheme(this.getActivity()))
                 .setListener(this::onPrimaryColorSelected);
 
         colorPickerDialog.show(getChildFragmentManager(), "primary color picker");
@@ -132,7 +141,7 @@ public class LookAndFeelSettingsFragment extends Fragment {
                 .setTitle(R.string.accent_color_picker_title)
                 .setColorChoices(R.array.accent_color_choices)
                 .setDefaultColor(defaultColor)
-                .setDarkTheme(isDarkTheme)
+                .setDarkTheme(ThemeHelper.isDarkTheme(this.getActivity()))
                 .setListener(this::onAccentColorSelected);
 
         colorPickerDialog.show(getChildFragmentManager(), "accent color picker");
@@ -160,13 +169,36 @@ public class LookAndFeelSettingsFragment extends Fragment {
         listener.onThemeChanged();
     }
 
-    private void onDarkThemeClicked(boolean isChecked) {
+    //Todo: Update this to radiobuttons
+    private void selectTheme(int mode, boolean isChecked) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(getString(R.string.pref_key_dark_theme), isChecked);
-        editor.apply();
+        if(isChecked) {
+            editor.putInt(getString(R.string.pref_key_dark_theme), mode);
+            editor.apply();
+            setThemeSelectionSwitches(mode);
+        }
 
         listener.onThemeChanged();
+    }
+
+    private void setThemeSelectionSwitches(int mode) {
+        autoThemeSwitch.setChecked(false);
+        darkThemeSwitch.setChecked(false);
+        lightThemeSwitch.setChecked(false);
+
+        switch(mode) {
+            case LIGHT:
+                lightThemeSwitch.setChecked(true);
+                break;
+            case DARK:
+                darkThemeSwitch.setChecked(true);
+                break;
+            case FOLLOW_SYSTEM:
+            default:
+                autoThemeSwitch.setChecked(true);
+                break;
+        }
     }
 
     private void onWrapFilenamesClicked(boolean isChecked) {

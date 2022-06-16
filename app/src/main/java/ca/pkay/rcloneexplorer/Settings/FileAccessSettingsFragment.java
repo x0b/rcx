@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +30,6 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.RcdService;
 import ca.pkay.rcloneexplorer.VirtualContentProvider;
-import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.file.SafConstants;
 
@@ -77,7 +75,7 @@ public class FileAccessSettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_file_access_settings, container, false);
+        View view = inflater.inflate(R.layout.settings_fragment_file_access_settings, container, false);
 
         permissionList = new PermissionListAdapter(context.getContentResolver().getPersistedUriPermissions());
         listView = view.findViewById(R.id.file_permission_list);

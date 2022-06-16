@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class ActivityHelper {
@@ -89,21 +90,12 @@ public class ActivityHelper {
         }
     }
 
-    public static void applyTheme(Activity context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int customPrimaryColor = sharedPreferences.getInt(context.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
-        int customAccentColor = sharedPreferences.getInt(context.getString(R.string.pref_key_color_accent), R.color.colorAccent);
-        context.getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(context, customPrimaryColor), true);
-        context.getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(context, customAccentColor), true);
-
-        /*
-        Boolean isDarkTheme = sharedPreferences.getBoolean(context.getString(R.string.pref_key_dark_theme), false);
-        if (isDarkTheme) {
-            context.getTheme().applyStyle(R.style.DarkTheme, true);
-        } else {
-            context.getTheme().applyStyle(R.style.LightTheme, true);
-        }*/
-        //todo: implement three switches in settings->lookandfeel (Dark/Light/Auto)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+    public static void applyTheme(Activity activity) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        int customPrimaryColor = sharedPreferences.getInt(activity.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
+        int customAccentColor = sharedPreferences.getInt(activity.getString(R.string.pref_key_color_accent), R.color.colorAccent);
+        activity.getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(activity, customPrimaryColor), true);
+        activity.getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(activity, customAccentColor), true);
+        //ThemeHelper.applyDarkMode(activity);
     }
 }

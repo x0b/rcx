@@ -7,23 +7,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Settings.SettingsActivity"
-    tools:showIn="@layout/activity_settings"
     android:orientation="vertical">
+    <!--tools:showIn="@layout/activity_settings"-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingStart="@dimen/settings_padding_ends"
+        android:paddingEnd="@dimen/settings_padding_ends"
         android:paddingBottom="16dp">
 
         <RelativeLayout
             android:id="@+id/primary_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -38,8 +38,8 @@
 
             <ImageView
                 android:id="@+id/primary_color_preview"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/settings_padding_topbottom"
+                android:layout_height="@dimen/settings_padding_topbottom"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_circle"
@@ -50,17 +50,15 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/accent_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -75,29 +73,26 @@
 
             <ImageView
                 android:id="@+id/accent_color_preview"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/settings_padding_topbottom"
+                android:layout_height="@dimen/settings_padding_topbottom"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:tint="@color/colorAccent"
                 android:src="@drawable/ic_circle"
-                android:contentDescription="@string/content_description_circle"/>
+                android:contentDescription="@string/content_description_circle"
+                app:tint="@color/colorAccent" />
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
-            android:id="@+id/dark_theme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -108,6 +103,50 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
+                android:text="@string/theme_title"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/auto_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/textColorPrimary"
+                android:text="@string/auto_theme"/>
+
+            <Switch
+                android:id="@+id/auto_theme_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/dark_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/textColorPrimary"
                 android:text="@string/dark_theme"/>
 
             <Switch
@@ -118,19 +157,42 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/light_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/light_theme"
+                android:textColor="@color/textColorPrimary" />
+
+            <Switch
+                android:id="@+id/light_theme_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/wrap_filenames"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -153,7 +215,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
     </LinearLayout>
 

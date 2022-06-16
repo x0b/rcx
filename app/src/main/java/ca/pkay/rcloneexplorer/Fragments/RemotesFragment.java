@@ -28,6 +28,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import ca.pkay.rcloneexplorer.ActivityHelper;
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
@@ -38,6 +40,8 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -57,7 +61,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     private OnRemoteClickListener remoteClickListener;
     private AddRemoteToNavDrawer pinToDrawerListener;
     private Context context;
-    private boolean isDarkTheme;
 
     public interface OnRemoteClickListener {
         void onRemoteClick(RemoteItem remote);
@@ -105,9 +108,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             return getSpecialView(inflater, container, false);
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
-
+        //ActivityHelper.applyTheme(this.context);
         view = inflater.inflate(R.layout.fragment_remotes_list, container, false);
 
         final Context context = view.getContext();
@@ -353,7 +354,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     private void showRemotePropertiesDialog(RemoteItem remoteItem) {
-        RemotePropertiesDialog dialog = RemotePropertiesDialog.newInstance(remoteItem, isDarkTheme);
+        RemotePropertiesDialog dialog = RemotePropertiesDialog.newInstance(remoteItem, ThemeHelper.isDarkTheme(this.getActivity()));
         if (getFragmentManager() != null) {
             dialog.show(getChildFragmentManager(), "remote properties");
         }
@@ -364,7 +365,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
 
         AlertDialog.Builder builder;
-        if (isDarkTheme) {
+        if (ThemeHelper.isDarkTheme(this.getActivity())) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(context);
@@ -493,7 +494,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
     private void renameRemote(final RemoteItem remoteItem) {
         AlertDialog.Builder builder;
-        if (isDarkTheme) {
+        if (ThemeHelper.isDarkTheme(this.getActivity())) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(context);
@@ -522,7 +523,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
     private void deleteRemote(final RemoteItem remoteItem) {
         AlertDialog.Builder builder;
-        if (isDarkTheme) {
+        if (ThemeHelper.isDarkTheme(this.getActivity())) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(context);

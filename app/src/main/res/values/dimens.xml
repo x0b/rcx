@@ -7,4 +7,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="config_form_template">32dp</dimen>
     <dimen name="actionBarSize">12dp</dimen>
+    <dimen name="settings_padding_ends">24dp</dimen>
+    <dimen name="settings_padding_topbottom">18dp</dimen>
+    <dimen name="settings_icon_image_size">24dp</dimen>
+    <dimen name="settings_divider_size">1dp</dimen>
 </resources>

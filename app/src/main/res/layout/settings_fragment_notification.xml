@@ -7,13 +7,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Settings.SettingsActivity"
-    tools:showIn="@layout/activity_settings"
     android:orientation="vertical">
+    <!--tools:showIn="@layout/activity_settings"-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingStart="@dimen/settings_padding_ends"
+        android:paddingEnd="@dimen/settings_padding_ends"
         android:paddingBottom="16dp"
         android:animateLayoutChanges="true">
 
@@ -21,10 +23,8 @@
             android:id="@+id/notifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -32,24 +32,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textColorPrimary"
-                android:textStyle="bold"
-                android:text="@string/open_system_settings"/>
+                android:text="@string/open_system_settings"
+                android:textColor="@color/textColorPrimary" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/settings_divider_size"
             android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/app_updates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -59,30 +54,30 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:textColor="@color/textColorPrimary"
-                android:textStyle="bold"
+                android:paddingTop="@dimen/settings_padding_topbottom"
+                android:paddingBottom="@dimen/settings_padding_topbottom"
                 android:text="@string/app_updates_notifications"/>
 
             <Switch
                 android:id="@+id/app_updates_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true" />
 
+            <View
+                android:id="@+id/app_updates_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_divider_size"
+                android:layout_alignParentBottom="true"
+                android:background="@color/dividerColor"/>
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/beta_app_updates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
             android:clickable="true"
             android:focusable="true"
             android:background="?selectableItemBackground" >
@@ -91,22 +86,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/textColorPrimary"
-                android:textStyle="bold"
-                android:text="@string/beta_app_updates_notifications"/>
+                android:paddingTop="@dimen/settings_padding_topbottom"
+                android:paddingBottom="@dimen/settings_padding_topbottom"
+                android:text="@string/beta_app_updates_notifications"
+                android:textColor="@color/textColorPrimary" />
 
             <Switch
                 android:id="@+id/beta_app_updates_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
 
+            <View
+                android:id="@+id/beta_app_updates_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_divider_size"
+                android:layout_alignParentBottom="true"
+                android:background="@color/dividerColor" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>
