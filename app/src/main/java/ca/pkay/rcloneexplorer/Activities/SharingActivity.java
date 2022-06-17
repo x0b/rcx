@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,11 +18,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
 import ca.pkay.rcloneexplorer.Fragments.ShareRemotesFragment;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
@@ -34,7 +39,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartService;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartService;
 
 public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
                                                                     ShareFragment.OnShareDestinationSelected {

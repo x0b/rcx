@@ -3,22 +3,19 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import ca.pkay.rcloneexplorer.InteractiveRunner;
 import ca.pkay.rcloneexplorer.InteractiveRunner.Step;
-import ca.pkay.rcloneexplorer.MainActivity;
+import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -27,8 +24,6 @@ import es.dmoral.toasty.Toasty;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class OneDriveConfig extends Fragment {
 

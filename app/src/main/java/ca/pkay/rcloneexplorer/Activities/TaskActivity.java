@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,9 +22,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
+import ca.pkay.rcloneexplorer.FilePicker;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 

@@ -26,7 +26,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.TriggerActivity;
+import ca.pkay.rcloneexplorer.Activities.TriggerActivity;
 import es.dmoral.toasty.Toasty;
 
 public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecyclerViewAdapter.ViewHolder>{

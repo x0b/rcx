@@ -6,11 +6,9 @@ import static ca.pkay.rcloneexplorer.util.ThemeHelper.LIGHT;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -19,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 
-import ca.pkay.rcloneexplorer.ActivityHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;

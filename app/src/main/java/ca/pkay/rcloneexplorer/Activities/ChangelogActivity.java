@@ -1,10 +1,12 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.util.MarkdownView;
 
 public class ChangelogActivity extends AppCompatActivity {

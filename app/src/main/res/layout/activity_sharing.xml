@@ -6,7 +6,7 @@
     android:id="@+id/cl_activity_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SharingActivity">
+    tools:context=".Activities.SharingActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

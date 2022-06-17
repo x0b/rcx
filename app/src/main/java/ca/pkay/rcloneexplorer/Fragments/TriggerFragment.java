@@ -19,8 +19,8 @@ import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TriggerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
-import ca.pkay.rcloneexplorer.TaskActivity;
-import ca.pkay.rcloneexplorer.TriggerActivity;
+import ca.pkay.rcloneexplorer.Activities.TaskActivity;
+import ca.pkay.rcloneexplorer.Activities.TriggerActivity;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TriggerFragment extends Fragment {

@@ -33,7 +33,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.SyncService;
-import ca.pkay.rcloneexplorer.TaskActivity;
+import ca.pkay.rcloneexplorer.Activities.TaskActivity;
 import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{

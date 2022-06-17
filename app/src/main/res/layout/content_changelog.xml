@@ -7,6 +7,6 @@
     android:layout_height="match_parent"
     android:id="@+id/markdownView"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".AboutActivity"
+    tools:context=".Activities.AboutActivity"
     tools:showIn="@layout/activity_about" >
 </ca.pkay.rcloneexplorer.util.MarkdownView>

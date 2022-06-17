@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:visibility="gone"
     tools:visibility="visible"
-    tools:context="ca.pkay.rcloneexplorer.MainActivity" >
+    tools:context="ca.pkay.rcloneexplorer.Activities.MainActivity" >
 
     <RelativeLayout
         android:layout_width="wrap_content"

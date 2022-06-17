@@ -35,7 +35,7 @@ import io.github.x0b.safdav.file.SafConstants;
 
 import java.util.List;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
 
 public class FileAccessSettingsFragment extends Fragment {
 

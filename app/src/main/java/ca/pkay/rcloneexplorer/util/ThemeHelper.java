@@ -8,7 +8,6 @@ import android.util.TypedValue;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
-import ca.pkay.rcloneexplorer.ActivityHelper;
 import ca.pkay.rcloneexplorer.R;
 
 /**

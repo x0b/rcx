@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.TasksRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.TaskActivity;
+import ca.pkay.rcloneexplorer.Activities.TaskActivity;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 

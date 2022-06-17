@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -18,9 +18,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
+import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
 import es.dmoral.toasty.Toasty;
 

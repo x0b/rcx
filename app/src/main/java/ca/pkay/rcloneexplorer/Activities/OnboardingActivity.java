@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -17,14 +17,16 @@ import androidx.preference.PreferenceManager;
 
 import com.github.appintro.AppIntro;
 import com.github.appintro.AppIntroCustomLayoutFragment;
-import com.github.appintro.AppIntroFragment;
 
 import org.jetbrains.annotations.Nullable;
 
+import ca.pkay.rcloneexplorer.BuildConfig;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
 
 public class OnboardingActivity extends AppIntro {
 

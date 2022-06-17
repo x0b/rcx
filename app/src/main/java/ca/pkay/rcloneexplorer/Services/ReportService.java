@@ -44,7 +44,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
 
 /**
  * A service for collecting bug reports.

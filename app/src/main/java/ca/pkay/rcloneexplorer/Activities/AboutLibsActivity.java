@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -14,9 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.AboutLibrariesAdapter;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
 
 public class AboutLibsActivity extends AppCompatActivity implements AboutLibrariesAdapter.OnClickListener {
 

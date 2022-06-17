@@ -27,12 +27,12 @@
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="29">
 
-        <activity android:name=".OnboardingActivity"
+        <activity android:name=".Activities.OnboardingActivity"
             android:theme="@style/OnboardingTheme">
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/app_short_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -106,23 +106,23 @@
         </provider>
 
         <activity
-            android:name=".AboutActivity"
+            android:name=".Activities.AboutActivity"
             android:label="@string/title_activity_about"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ChangelogActivity"
+            android:name=".Activities.ChangelogActivity"
             android:label="@string/title_activity_changelog"
-            android:parentActivityName=".AboutActivity"
+            android:parentActivityName=".Activities.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ContributorActivity"
+            android:name=".Activities.ContributorActivity"
             android:label="@string/title_activity_contributors"
-            android:parentActivityName=".AboutActivity"
+            android:parentActivityName=".Activities.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AboutLibsActivity"
+            android:name=".Activities.AboutLibsActivity"
             android:label="@string/credits_libraries"
-            android:parentActivityName=".AboutActivity"
+            android:parentActivityName=".Activities.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
                 android:name=".Settings.SettingsActivity"
@@ -135,7 +135,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SharingActivity"
+            android:name=".Activities.SharingActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -177,11 +177,11 @@
             android:label="@string/title_activity_remote_config"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".TaskActivity"
+            android:name=".Activities.TaskActivity"
             android:label="@string/title_activity_task"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".TriggerActivity"
+            android:name=".Activities.TriggerActivity"
             android:label="@string/title_activity_trigger"
             android:theme="@style/AppTheme.NoActionBar" />
 

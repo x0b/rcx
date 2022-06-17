@@ -1,18 +1,21 @@
-package ca.pkay.rcloneexplorer;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
+
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import ca.pkay.rcloneexplorer.BuildConfig;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 
 
 public class AboutActivity extends AppCompatActivity {

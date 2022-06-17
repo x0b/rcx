@@ -29,12 +29,10 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import ca.pkay.rcloneexplorer.ActivityHelper;
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
-import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.MainActivity;
+import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
@@ -42,7 +40,6 @@ import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
-import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 import java.util.ArrayList;
