@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="76dp"
+    android:paddingTop="@dimen/filepicker_row_padding"
+    android:paddingBottom="@dimen/filepicker_row_padding"
     android:orientation="vertical"
     android:background="@color/cardColor">
 
@@ -17,78 +19,76 @@
         <FrameLayout
             android:id="@+id/icons"
             android:layout_width="wrap_content"
-            android:layout_height="76dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_centerVertical="true">
             <ImageView
                 android:id="@+id/file_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/filepicker_icon_size"
+                android:layout_height="@dimen/filepicker_icon_size"
                 android:src="@drawable/ic_file"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/file_icon" />
             <ImageView
                 android:id="@+id/dir_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/filepicker_icon_size"
+                android:layout_height="@dimen/filepicker_icon_size"
                 android:src="@drawable/ic_folder"
-                android:tint="@color/iconTint"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="@string/file_icon" />
+                android:contentDescription="@string/file_icon"
+                app:tint="@color/iconTint" />
         </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/file_options"
+            android:layout_toEndOf="@id/icons"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:fontFamily="sans-serif"
+                android:singleLine="true"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16sp"
+                tools:text="Test File" />
+            <!-- android:textAppearance="@color/textAppearanceListItem" -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/icons"
-                android:orientation="vertical"
-                android:layout_toStartOf="@id/file_options"
-                android:layout_centerVertical="true">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/file_name"
+                    android:id="@+id/file_modtime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:textSize="16sp"
-                    android:textColor="@color/textColorPrimary"
-                    android:ellipsize="middle"
-                    android:singleLine="true"
-                    tools:text="Test File"/>
-                <!-- android:textAppearance="@color/textAppearanceListItem" -->
+                    android:textColor="@color/textColorSecondary"
+                    tools:text="2018-01-01" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/interpunct"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp" >
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/interpunct"
+                    android:textColor="@color/textColorSecondary" />
 
-                    <TextView
-                        android:id="@+id/file_modtime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/textColorSecondary"
-                        tools:text="2018-01-01"/>
-
-                    <TextView
-                        android:id="@+id/interpunct"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:textColor="@color/textColorSecondary"
-                        android:text="@string/interpunct"/>
-
-                    <TextView
-                        android:id="@+id/file_size"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/textColorSecondary"
-                        tools:text="2 MB"/>
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/file_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColorSecondary"
+                    tools:text="2 MB" />
             </LinearLayout>
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/file_options"
@@ -96,20 +96,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:paddingStart="16dp"
-            android:paddingTop="26dp"
-            android:paddingBottom="26dp"
-            android:paddingEnd="16dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/file_options_content_description"
+            android:paddingStart="@dimen/filepicker_more_padding"
+            android:paddingEnd="@dimen/filepicker_more_padding"
+            android:paddingTop="@dimen/filepicker_more_padding"
+            android:paddingBottom="@dimen/filepicker_more_padding"
             android:src="@drawable/ic_more_vert"
-            android:tint="@color/iconTint"
-            android:contentDescription="@string/file_options_content_description" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/dividerColor"/>
+            android:tint="@color/iconTint" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -11,4 +11,8 @@
     <dimen name="settings_padding_topbottom">18dp</dimen>
     <dimen name="settings_icon_image_size">24dp</dimen>
     <dimen name="settings_divider_size">1dp</dimen>
+
+    <dimen name="filepicker_icon_size">24dp</dimen>
+    <dimen name="filepicker_more_padding">12dp</dimen>
+    <dimen name="filepicker_row_padding">8dp</dimen>
 </resources>
