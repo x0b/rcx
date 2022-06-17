@@ -1,7 +1,7 @@
 package ca.pkay.rcloneexplorer.util;
 
-import static ca.pkay.rcloneexplorer.Services.TaskStartService.EXTRA_TASK_ID;
-import static ca.pkay.rcloneexplorer.Services.TaskStartService.TASK_ACTION;
+import static ca.pkay.rcloneexplorer.Services.SyncService.EXTRA_TASK_ID;
+import static ca.pkay.rcloneexplorer.Services.SyncService.TASK_ACTION;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.SyncService;
-import ca.pkay.rcloneexplorer.Services.TaskStartService;
 
 public class SyncServiceNotifications {
 
@@ -40,7 +39,7 @@ public class SyncServiceNotifications {
 
     public void showFailedNotification(String title, String content, int notificationId, long taskid) {
 
-        Intent i = new Intent(mContext, TaskStartService.class);
+        Intent i = new Intent(mContext, SyncService.class);
         i.setAction(TASK_ACTION);
         i.putExtra(EXTRA_TASK_ID, taskid);
         PendingIntent retryPendingIntent = PendingIntent.getService(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);

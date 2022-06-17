@@ -35,7 +35,7 @@ The intent needs the following:
 | Intent        | Content       |         |
 | :------------- | :-------------: | -------------: |
 | packageName      | ca.pkay.rcloneexplorer | |
-| className      | ca.pkay.rcloneexplorer.Services.TaskStartService | |
+| className      | ca.pkay.rcloneexplorer.Services.SyncService | |
 | Action    | START_TASK | |
 | Integer Extra    | task | idOfTask |
 | Boolean Extra    | notification | true or false |

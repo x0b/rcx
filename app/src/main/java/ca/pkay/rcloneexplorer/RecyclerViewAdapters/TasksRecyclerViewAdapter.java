@@ -32,7 +32,7 @@ import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Services.TaskStartService;
+import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.TaskActivity;
 import es.dmoral.toasty.Toasty;
 
@@ -114,7 +114,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private void startTask(Task task){
-        Intent intent = TaskStartService.createInternalStartIntent(context, task.getId());
+        Intent intent = SyncService.createInternalStartIntent(context, task.getId());
         context.startService(intent);
     }
 
@@ -204,7 +204,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
 
-            Intent i = TaskStartService.createInternalStartIntent(c, task.getId());
+            Intent i = SyncService.createInternalStartIntent(c, task.getId());
 
             ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(task.getId()))
                     .setShortLabel(task.getTitle())

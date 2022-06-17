@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Log2File;
@@ -40,6 +40,12 @@ import static android.text.format.Formatter.formatFileSize;
 
 public class SyncService extends IntentService {
 
+
+    //those Extras do not follow the above schema, because they are exposed to external applications
+    //That means shorter values make it easier to use. There is no other technical reason
+    public static final String TASK_ACTION= "START_TASK";
+    public static final String EXTRA_TASK_ID= "task";
+    public static final String EXTRA_TASK_SILENT= "notification";
 
     enum FAILURE_REASON {
         NONE,
@@ -62,6 +68,9 @@ public class SyncService extends IntentService {
     private boolean transferOnWiFiOnly;
     Process currentProcess;
     SyncServiceNotifications notificationManager = new SyncServiceNotifications(this);
+
+    private Queue<InternalTaskItem> mTaskQueue = new PriorityQueue();
+    private boolean mTaskRecieved = false;
 
     public SyncService() {
         super("ca.pkay.rcexplorer.SYNC_SERCVICE");
@@ -87,11 +96,12 @@ public class SyncService extends IntentService {
         if (intent == null) {
             return;
         }
+
+        InternalTaskItem t = handleTaskStartIntent(intent);
         Log.e(TAG, "onHandleIntent "+intent.getStringExtra(TASK_NAME));
 
         startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification("SyncService").build());
 
-        InternalTaskItem t = InternalTaskItem.newInstance(intent);
         handleTask(t);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
@@ -196,6 +206,42 @@ public class SyncService extends IntentService {
                 notificationManager.showSuccessNotification(title, notificationId);
             }
         }
+    }
+
+    private InternalTaskItem handleTaskStartIntent(Intent intent) {
+        final String action = intent.getAction();
+        if (action.equals(TASK_ACTION)) {
+            DatabaseHandler db = new DatabaseHandler(this);
+            for (Task task: db.getAllTasks()){
+                if(task.getId() == intent.getLongExtra(EXTRA_TASK_ID, -1)){
+                    String path = task.getLocalPath();
+
+                    boolean silentRun = intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
+
+                    RemoteItem remoteItem = new RemoteItem(task.getRemoteId(), task.getRemoteType(), "");
+                    Intent taskIntent = new Intent();
+                    taskIntent.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
+
+                    taskIntent.putExtra(SyncService.REMOTE_ARG, remoteItem);
+                    taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
+                    taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
+                    taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
+                    taskIntent.putExtra(SyncService.TASK_NAME, task.getTitle());
+                    taskIntent.putExtra(SyncService.TASK_ID, task.getId());
+                    taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
+                    return InternalTaskItem.newInstance(taskIntent);
+                }
+            }
+            return null;
+        } else {
+            return InternalTaskItem.newInstance(intent);
+        }
+    }
+    public static Intent createInternalStartIntent(Context context, long id) {
+        Intent i = new Intent(context, SyncService.class);
+        i.setAction(TASK_ACTION);
+        i.putExtra(EXTRA_TASK_ID, id);
+        return i;
     }
 
     private void registerBroadcastReceivers() {

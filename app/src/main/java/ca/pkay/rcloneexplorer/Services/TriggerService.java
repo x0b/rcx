@@ -102,7 +102,7 @@ public class TriggerService extends Service {
             return;
         }
 
-        Intent i = TaskStartService.createInternalStartIntent(this, trigger.getWhatToTrigger());
+        Intent i = SyncService.createInternalStartIntent(this, trigger.getWhatToTrigger());
         context.startService(i);
     }
 
