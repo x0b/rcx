@@ -94,9 +94,9 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     }
 
     private void updateTriggerIcon(Trigger trigger, ImageButton button){
-        Drawable d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_check_circle_outline_24, null);
+        Drawable d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_twotone_check_circle_24, null);
         if(!trigger.isEnabled()){
-            d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_baseline_block_24, null);
+            d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_twotone_cancel_24, null);
         }
         button.setImageDrawable(d);
     }

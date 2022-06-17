@@ -55,14 +55,14 @@
 
                 <item
                     android:id="@+id/nav_settings"
-                    android:icon="@drawable/ic_settings"
-                    android:title="@string/settings"
-                    android:checkable="false" />
+                    android:checkable="false"
+                    android:icon="@drawable/ic_twotone_settings_24"
+                    android:title="@string/settings" />
                 <item
                     android:id="@+id/nav_about"
-                    android:icon="@drawable/ic_about"
-                    android:title="@string/about"
-                    android:checkable="false"/>
+                    android:checkable="false"
+                    android:icon="@drawable/ic_twotone_info_24"
+                    android:title="@string/about" />
             </group>
         </menu>
     </item>
