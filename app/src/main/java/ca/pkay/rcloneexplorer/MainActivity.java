@@ -122,8 +122,6 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }
 
-        //ThemeHelper.applyTheme(this);
-        ActivityHelper.applyTheme(this);
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
         availableDrawerPinnedRemoteId = 2;
@@ -204,6 +202,10 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+
+        ThemeHelper.applyTheme(this);
+        ActivityHelper.applyTheme(this);
+
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();
     }

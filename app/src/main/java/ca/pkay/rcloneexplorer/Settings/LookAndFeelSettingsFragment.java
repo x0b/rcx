@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 
+import ca.pkay.rcloneexplorer.ActivityHelper;
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
@@ -179,7 +180,8 @@ public class LookAndFeelSettingsFragment extends Fragment {
             setThemeSelectionSwitches(mode);
         }
 
-        listener.onThemeChanged();
+        //listener.onThemeChanged();
+        ActivityHelper.applyTheme(this.getActivity());
     }
 
     private void setThemeSelectionSwitches(int mode) {

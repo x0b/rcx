@@ -96,6 +96,6 @@ public class ActivityHelper {
         int customAccentColor = sharedPreferences.getInt(activity.getString(R.string.pref_key_color_accent), R.color.colorAccent);
         activity.getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(activity, customPrimaryColor), true);
         activity.getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(activity, customAccentColor), true);
-        //ThemeHelper.applyDarkMode(activity);
+        ThemeHelper.applyDarkMode(activity);
     }
 }
