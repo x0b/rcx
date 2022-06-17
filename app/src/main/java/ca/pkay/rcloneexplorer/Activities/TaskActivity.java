@@ -11,8 +11,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
+import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -21,8 +25,12 @@ import android.widget.TextView;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.FilePicker;
+import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
+import ca.pkay.rcloneexplorer.Fragments.FolderSelectorCallback;
+import ca.pkay.rcloneexplorer.Fragments.RemoteFolderPickerFragment;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
@@ -31,7 +39,7 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
-public class TaskActivity extends AppCompatActivity {
+public class TaskActivity extends AppCompatActivity implements FolderSelectorCallback {
 
 
     public static final String ID_EXTRA = "TASK_EDIT_ID";
@@ -125,19 +133,7 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
-        EditText tv_remote = findViewById(R.id.task_remote_path_textfield);
-        tv_remote.setOnFocusChangeListener((v, hasFocus) -> {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            if(hasFocus && sharedPreferences.getBoolean(getString(R.string.pref_key_enable_vcp), false)){
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                startActivityForResult(intent, REQUEST_CODE_FP_REMOTE);
-            }
-        });
-
-
         rcloneInstance = new Rclone(this);
-
         Spinner remoteDropdown = findViewById(R.id.task_remote_spinner);
 
         items = new String[rcloneInstance.getRemotes().size()];
@@ -155,6 +151,14 @@ public class TaskActivity extends AppCompatActivity {
         ArrayAdapter<String> directionAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, options);
         directionDropdown.setAdapter(directionAdapter);
         populateFields(items);
+
+
+        EditText tv_remote = findViewById(R.id.task_remote_path_textfield);
+        tv_remote.setOnFocusChangeListener((v, hasFocus) -> {
+            startRemotePicker(rcloneInstance.getRemoteItemFromName(remoteDropdown.getSelectedItem().toString()));
+            tv_remote.clearFocus();
+        });
+
     }
 
     @Override
@@ -212,4 +216,19 @@ public class TaskActivity extends AppCompatActivity {
         return taskToPopulate;
     }
 
+    private void startRemotePicker(RemoteItem remote) {
+        Fragment fragment = RemoteFolderPickerFragment.newInstance(remote, this);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.create_task_layout, fragment, "FILE_EXPLORER_FRAGMENT_TAG");
+        transaction.addToBackStack("FILE_EXPLORER_FRAGMENT_TAG");
+        transaction.commit();
+        ((FloatingActionButton)findViewById(R.id.fab)).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void selectFolder(String path) {
+        Log.e("TEST", "path: "+path);
+        ((TextView)findViewById(R.id.task_remote_path_textfield)).setText(path);
+        ((FloatingActionButton)findViewById(R.id.fab)).setVisibility(View.VISIBLE);
+    }
 }

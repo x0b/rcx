@@ -18,6 +18,17 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+        <ca.pkay.rcloneexplorer.BreadcrumbView
+            android:id="@+id/breadcrumb_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:scrollbars="none"
+            android:visibility="gone" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_task" />
@@ -28,6 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_menu_save" />
+        app:srcCompat="@drawable/ic_twotone_save_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

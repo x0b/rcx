@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (bundle != null && bundle.containsKey(AppShortcutsHelper.APP_SHORTCUT_REMOTE_NAME)) {
             String remoteName = bundle.getString(AppShortcutsHelper.APP_SHORTCUT_REMOTE_NAME);
-            RemoteItem remoteItem = getRemoteItemFromName(remoteName);
+            RemoteItem remoteItem = rclone.getRemoteItemFromName(remoteName);
             if (remoteItem != null) {
                 AppShortcutsHelper.reportAppShortcutUsage(this, remoteItem.getName());
                 startRemote(remoteItem, false);
@@ -442,16 +442,6 @@ public class MainActivity extends AppCompatActivity
         if (!isFinishing()) {
             fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commitAllowingStateLoss();
         }
-    }
-
-    private RemoteItem getRemoteItemFromName(String remoteName) {
-        List<RemoteItem> remoteItemList = rclone.getRemotes();
-        for (RemoteItem remoteItem : remoteItemList) {
-            if (remoteItem.getName().equals(remoteName)) {
-                return remoteItem;
-            }
-        }
-        return null;
     }
 
     private void warnUserAboutOverwritingConfiguration() {

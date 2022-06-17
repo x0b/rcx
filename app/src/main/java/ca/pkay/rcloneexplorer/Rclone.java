@@ -350,20 +350,31 @@ public class Rclone {
         return remoteItemList;
     }
 
-        private Process getRuntimeProcess(String[] command) throws IOException {
-            return getRuntimeProcess(command, new String[0]);
-        }
-
-        private Process getRuntimeProcess(String[] command, String[] env) throws IOException {
-            try{
-                Runtime.getRuntime().exec(rclone);
-            } catch (IOException e){
-                FLog.e("rclone", "Error executing rclone!" +e.getMessage());
-                throw new IOException("Error executing rclone!" +e.getMessage());
+    public RemoteItem getRemoteItemFromName(String remoteName) {
+        List<RemoteItem> remoteItemList = getRemotes();
+        for (RemoteItem remoteItem : remoteItemList) {
+            if (remoteItem.getName().equals(remoteName)) {
+                return remoteItem;
             }
-
-            return Runtime.getRuntime().exec(command, env);
         }
+        return null;
+    }
+
+
+    private Process getRuntimeProcess(String[] command) throws IOException {
+        return getRuntimeProcess(command, new String[0]);
+    }
+
+    private Process getRuntimeProcess(String[] command, String[] env) throws IOException {
+        try{
+            Runtime.getRuntime().exec(rclone);
+        } catch (IOException e){
+            FLog.e("rclone", "Error executing rclone!" +e.getMessage());
+            throw new IOException("Error executing rclone!" +e.getMessage());
+        }
+
+        return Runtime.getRuntime().exec(command, env);
+    }
 
     @Nullable
     private RemoteItem getRemoteType(JSONObject remotesJSON, RemoteItem remoteItem, String remoteName, int maxDepth) {
