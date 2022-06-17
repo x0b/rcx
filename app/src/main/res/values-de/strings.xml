@@ -468,7 +468,7 @@
     <string name="operation_success">Synchronisation war erfolgreich</string>
     <string name="notification_sync_failed">Synchronisation war fehlerhaft</string>
     <string name="pin_to_dektop">Auf Startbildschirm anpinnen</string>
-    <string name="title_activity_task">Aufgaben</string>
+    <string name="title_activity_task">Neue Aufgabe anlegen</string>
     <string name="previous">Vorheriges</string>
     <string name="task_edit_label_name">Name:</string>
     <string name="task_edit_label_local">Lokaler Pfad:</string>
@@ -510,4 +510,23 @@
     <string name="task_item_label_to">Zu:</string>
     <string name="abi_not_supported_arm_downgrade">Diese extRact-Version wird nicht unterstützt. Eventuell funktioniert die armeabi-v7a-APK von github.com/x0b/rcx."</string>
     <string name="abi_not_supported">Diese extRact-Version wird auf dem Gerät nicht unterstützt.</string>
+    <string name="title_activity_main" translatable="false">extRact</string>
+    <string name="sync_notification_transferred">%s von %s übertragen</string>
+    <string name="sync_notification_speed">Geschwindigkeit:   %s</string>
+    <string name="sync_notification_remaining">Verbleibend:             %s Sekunden</string>
+    <string name="sync_notification_errors">Fehler:                         %d</string>
+    <string name="sync_notification_elapsed">Vergangen:               %d Sekunden</string>
+    <string name="sync_notification_short">%s von %s, %s Sekunden verbleibend</string>
+    <string name="no_tasks_warning">Noch keine Aufgaben. Lege doch eine an!</string>
+    <string name="no_trigger_warning">Noch keine Auslöser. Lege bitte zuerst einen an!</string>
+    <string name="add_trigger">Neuen Auslöser</string>
+    <string name="add_task">Neue Aufgabe</string>
+    <string name="retry_failed_sync">Neu Versuchen</string>
+    <string name="task_service_notification_title">Aufgabenservice</string>
+    <string name="task_service_notification_description">Dieser Service startet eine Aufgabe. Bitte warte einen Moment.</string>
+    <string name="taskfragment_no_tasks_warning">Noch keine Aufgabe. Leg hier eine an!</string>
+    <string name="auto_theme">Wie System</string>
+    <string name="light_theme">Helles Thema</string>
+    <string name="theme_title">Thema</string>
+    <string name="remote_folder_picker_title">Ordnerauswahl</string>
 </resources>
