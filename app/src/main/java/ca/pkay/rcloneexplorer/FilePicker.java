@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class FilePicker extends AppCompatActivity implements    FilePickerAdapter.OnClickListener,
@@ -74,7 +75,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
-        isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
+        isDarkTheme = ThemeHelper.isDarkTheme(this);
 
         if (savedInstanceState != null) {
             destinationPickerType = savedInstanceState.getBoolean(SAVED_DESTINATION_PICKER_TYPE);
