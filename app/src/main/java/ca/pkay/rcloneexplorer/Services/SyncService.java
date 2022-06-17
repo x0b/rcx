@@ -9,6 +9,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
@@ -23,8 +25,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -82,30 +87,33 @@ public class SyncService extends IntentService {
         if (intent == null) {
             return;
         }
+        Log.e(TAG, "onHandleIntent "+intent.getStringExtra(TASK_NAME));
 
-        final long taskID = intent.getLongExtra(TASK_ID, -1);
-        final RemoteItem remoteItem = intent.getParcelableExtra(REMOTE_ARG);
-        final String remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
-        final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
-        String title = intent.getStringExtra(TASK_NAME);
-        FAILURE_REASON failureReason = FAILURE_REASON.NONE;
-        final int syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
+        startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification("SyncService").build());
 
-        final boolean silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
+        InternalTaskItem t = InternalTaskItem.newInstance(intent);
+        handleTask(t);
 
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
+        stopForeground(true);
+
+    }
+
+    private void handleTask(InternalTaskItem t) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
-        if(title.equals("")){
-            title = remotePath;
+        String title = "";
+        FAILURE_REASON failureReason = FAILURE_REASON.NONE;
+        if(t.title.equals("")){
+            title = t.remotePath;
         }
-
-        startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification(title).build());
 
         if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
             failureReason = FAILURE_REASON.NO_WIFI;
         } else {
-            currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
+            currentProcess = rclone.sync(t.remoteItem, t.remotePath, t.localPath, t.syncDirection);
             JSONObject stats;
             String notificationContent = "";
             ArrayList<String> notificationBigText = new ArrayList<>();
@@ -163,12 +171,12 @@ public class SyncService extends IntentService {
                     FLog.e(TAG, "onHandleIntent: error waiting for process", e);
                 }
             }
-            sendUploadFinishedBroadcast(remoteItem.getName(), remotePath);
+            sendUploadFinishedBroadcast(t.remoteItem.getName(), t.remotePath);
         }
 
         int notificationId = (int)System.currentTimeMillis();
 
-        if(silentRun){
+        if(t.silentRun){
             if (transferOnWiFiOnly && connectivityChanged || (currentProcess == null || currentProcess.exitValue() != 0)) {
                 String errorTitle = getString(R.string.notification_sync_failed);
                 String content = title;
@@ -183,15 +191,11 @@ public class SyncService extends IntentService {
                         content = title+" failed because wifi was not available";
                         break;
                 }
-                notificationManager.showFailedNotification(errorTitle, content, notificationId, taskID);
+                notificationManager.showFailedNotification(errorTitle, content, notificationId, t.id);
             }else{
                 notificationManager.showSuccessNotification(title, notificationId);
             }
         }
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
-        stopForeground(true);
     }
 
     private void registerBroadcastReceivers() {
@@ -247,5 +251,30 @@ public class SyncService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+
+    private static class InternalTaskItem {
+        public long id;
+        public RemoteItem remoteItem;
+        public String remotePath;
+        public String localPath;
+        public String title;
+        public int syncDirection = 1;
+        public boolean silentRun = true;
+
+
+        public static InternalTaskItem newInstance(Intent intent)
+        {
+            InternalTaskItem itt = new InternalTaskItem();
+            itt.id = intent.getLongExtra(TASK_ID, -1);
+            itt.remoteItem = intent.getParcelableExtra(REMOTE_ARG);
+            itt.remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
+            itt.localPath = intent.getStringExtra(LOCAL_PATH_ARG);
+            itt.title = intent.getStringExtra(TASK_NAME);
+            itt.syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
+            itt.silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
+            return itt;
+        }
+
+    }
 
 }
