@@ -1,24 +1,17 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
 import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartService;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,20 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -50,11 +33,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.leinardi.android.speeddial.SpeedDialActionItem;
-import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
-import com.leinardi.android.speeddial.SpeedDialView;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.security.SecureRandom;
@@ -65,44 +43,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.BreadcrumbView;
-import ca.pkay.rcloneexplorer.BuildConfig;
-import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
-import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
 import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
-import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
-import ca.pkay.rcloneexplorer.Dialogs.LinkDialog;
-import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
-import ca.pkay.rcloneexplorer.Dialogs.OpenAsDialog;
-import ca.pkay.rcloneexplorer.Dialogs.ServeDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
-import ca.pkay.rcloneexplorer.FilePicker;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.Services.DeleteService;
-import ca.pkay.rcloneexplorer.Services.DownloadService;
-import ca.pkay.rcloneexplorer.Services.MoveService;
-import ca.pkay.rcloneexplorer.Services.StreamingService;
-import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
-import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.LargeParcel;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
-import java9.util.stream.Collectors;
-import java9.util.stream.StreamSupport;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class RemoteFolderPickerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                             SwipeRefreshLayout.OnRefreshListener,
@@ -111,13 +67,9 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                                                                             GoToDialog.Callbacks {
 
 
-    public static final int STREAMING_INTENT_RESULT = 468;
     private static final String TAG = "FileExplorerFragment";
     private static final String ARG_REMOTE = "remote_param";
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
-    private static final int FILE_PICKER_UPLOAD_RESULT = 186;
-    private static final int FILE_PICKER_DOWNLOAD_RESULT = 204;
-    private static final int FILE_PICKER_SYNC_RESULT = 45;
 
     private final String SAVED_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_PATH";
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SAVED_CONTENT";
@@ -125,22 +77,13 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     private final String SAVED_SEARCH_STRING = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SEARCH_STRING";
     private final String SAVED_RENAME_ITEM = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_RENAME_ITEM";
     private final String SAVED_SELECTED_ITEMS = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SELECTED_ITEMS";
-    private final String SAVED_IS_IN_MOVE_MODE = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_IS_IN_MOVE_MODE";
     private final String SAVED_START_AT_BOOT = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_START_AT_BOOT";
-    private final String SAVED_DOWNLOAD_LIST = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_DOWNLOAD_LIST";
-    private final String SAVED_MOVE_START_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_MOVE_START_PATH";
-    private final String SAVED_SYNC_DIRECTION = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SYNC_DIRECTION";
-    private final String SAVED_SYNC_REMOTE_PATH = "ca.pkay.rcexplorer.FILE_EXPLORER_FRAG_SYNC_REMOTE_PATH";
 
 
-    private String originalToolbarTitle;
     private Stack<String> pathStack;
     private Map<String, Integer> directoryPosition;
     private DirectoryObject directoryObject;
-    private List<FileItem> moveList;
-    private String moveStartPath;
-    private List<FileItem> downloadList;
-    private FileItem renameItem;
+
     private BreadcrumbView breadcrumbView;
     private Rclone rclone;
     private RemoteItem remote;
@@ -151,14 +94,12 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
 
     private AsyncTask fetchDirectoryTask;
 
+    private String originalToolbarTitle;
     private int sortOrder;
-    private boolean isInMoveMode;
     private FloatingActionButton fab;
     private Boolean isDarkTheme;
     private Boolean isSearchMode;
     private String searchString;
-    private String syncRemotePath;
-    private int syncDirection;
     private boolean showThumbnails;
     private boolean isThumbnailsServiceRunning;
     private boolean startAtRoot;
@@ -175,8 +116,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RemoteFolderPickerFragment() {
-    }
+    public RemoteFolderPickerFragment() {}
 
     @SuppressWarnings("unused")
     public static RemoteFolderPickerFragment newInstance(RemoteItem remoteItem, FolderSelectorCallback fsc) {
@@ -221,14 +161,11 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
             }
 
             buildStackFromPath(remoteName, path);
-            renameItem = savedInstanceState.getParcelable(SAVED_RENAME_ITEM);
         }
 
         if (getContext() == null) {
             return;
         }
-        originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
-        setTitle();
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -252,7 +189,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         rclone = new Rclone(getContext());
 
         isSearchMode = false;
-        isInMoveMode = false;
     }
 
     @Nullable
@@ -298,12 +234,16 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         fab = view.findViewById(R.id.selectFloatingButton);
 
 
+        originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
+        setTitle();
         breadcrumbView = ((FragmentActivity) context).findViewById(R.id.breadcrumb_view);
         breadcrumbView.setOnClickListener(this);
         breadcrumbView.setVisibility(View.VISIBLE);
-        breadcrumbView.addCrumb(remote.getDisplayName(), "//" + remoteName);
+        // this will be called twice for an unknown reason. Therefore we need to clear the Crumbs.
+        breadcrumbView.clearCrumbs();
+        breadcrumbView.addCrumb(remote.getDisplayName(), "//");
         if (savedInstanceState != null) {
-            if (!directoryObject.getCurrentPath().equals("//" + remoteName)) {
+            if (!directoryObject.getCurrentPath().equals("//")) {
                 breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
             }
         }
@@ -351,29 +291,14 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         outState.putString(SAVED_PATH, directoryObject.getCurrentPath());
         ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
         outState.putParcelableArrayList(SAVED_CONTENT, content);
-        outState.putBoolean(SAVED_SEARCH_MODE, isSearchMode);
-        outState.putParcelable(SAVED_RENAME_ITEM, renameItem);
         outState.putBoolean(SAVED_START_AT_BOOT, startAtRoot);
-        outState.putInt(SAVED_SYNC_DIRECTION, syncDirection);
         if (isSearchMode) {
             outState.putString(SAVED_SEARCH_STRING, searchString);
         }
         if (recyclerViewAdapter.isInSelectMode()) {
             outState.putParcelableArrayList(SAVED_SELECTED_ITEMS, new ArrayList<>(recyclerViewAdapter.getSelectedItems()));
         }
-        if (isInMoveMode) {
-            outState.putBoolean(SAVED_IS_IN_MOVE_MODE, true);
-            outState.putParcelableArrayList(SAVED_SELECTED_ITEMS, new ArrayList<>(moveList));
-        }
-        if (downloadList != null && !downloadList.isEmpty()) {
-            outState.putParcelableArrayList(SAVED_DOWNLOAD_LIST, new ArrayList<>(downloadList));
-        }
-        if (moveStartPath != null) {
-            outState.putString(SAVED_MOVE_START_PATH, moveStartPath);
-        }
-        if (syncRemotePath != null) {
-            outState.putString(SAVED_SYNC_REMOTE_PATH, syncRemotePath);
-        }
+
         if (LargeParcel.calculateBundleSize(outState) > 250 * 1024) {
             outState.remove(SAVED_CONTENT);
         }
@@ -387,28 +312,10 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         if (savedInstanceState == null) {
             return;
         }
-
-        List<FileItem> selectedItems = savedInstanceState.getParcelableArrayList(SAVED_SELECTED_ITEMS);
-        boolean moveMode = savedInstanceState.getBoolean(SAVED_IS_IN_MOVE_MODE, false);
-        if (selectedItems != null && !selectedItems.isEmpty() && !moveMode) {
-            recyclerViewAdapter.setSelectedItems(selectedItems);
-            handleFilesSelected();
-        }
-
-        downloadList = savedInstanceState.getParcelableArrayList(SAVED_DOWNLOAD_LIST);
-        moveStartPath = savedInstanceState.getString(SAVED_MOVE_START_PATH);
-        syncDirection = savedInstanceState.getInt(SAVED_SYNC_DIRECTION, -1);
-        syncRemotePath = savedInstanceState.getString(SAVED_SYNC_REMOTE_PATH);
     }
 
     private void setTitle() {
-        String title;
-        if (remote.isCrypt()) {
-            title = "crypt" + " " + "(" + remote.getTypeReadable() + ")";
-        } else {
-            title = remote.getTypeReadable();
-        }
-        ((FragmentActivity) context).setTitle(title);
+        ((FragmentActivity) context).setTitle(getString(R.string.remote_folder_picker_title));
     }
 
     private void buildStackFromPath(String remote, String path) {
@@ -479,49 +386,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == FILE_PICKER_UPLOAD_RESULT && resultCode == FragmentActivity.RESULT_OK) {
-            @SuppressWarnings("unchecked")
-            ArrayList<File> result = (ArrayList<File>) data.getSerializableExtra(FilePicker.FILE_PICKER_RESULT);
-            ArrayList<String> uploadList = new ArrayList<>();
-            for (File file : result) {
-                uploadList.add(file.getPath());
-            }
-
-            for (String uploadFile : uploadList) {
-                Intent intent = new Intent(getContext(), UploadService.class);
-                intent.putExtra(UploadService.LOCAL_PATH_ARG, uploadFile);
-                intent.putExtra(UploadService.UPLOAD_PATH_ARG, directoryObject.getCurrentPath());
-                intent.putExtra(UploadService.REMOTE_ARG, remote);
-                tryStartService(context, intent);
-            }
-        } else if (requestCode == FILE_PICKER_DOWNLOAD_RESULT) {
-            if (resultCode != FragmentActivity.RESULT_OK) {
-                downloadList.clear();
-                return;
-            }
-            String selectedPath = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
-            recyclerViewAdapter.cancelSelection();
-
-            for (FileItem downloadItem : downloadList) {
-                Intent intent = new Intent(getContext(), DownloadService.class);
-                intent.putExtra(DownloadService.DOWNLOAD_ITEM_ARG, downloadItem);
-                intent.putExtra(DownloadService.DOWNLOAD_PATH_ARG, selectedPath);
-                intent.putExtra(DownloadService.REMOTE_ARG, remote);
-                tryStartService(context, intent);
-            }
-            downloadList.clear();
-        } else if (requestCode == FILE_PICKER_SYNC_RESULT && resultCode == FragmentActivity.RESULT_OK) {
-            String path = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
-            Intent intent = new Intent(getContext(), SyncService.class);
-            intent.putExtra(SyncService.REMOTE_ARG, remote);
-            intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
-            intent.putExtra(SyncService.SYNC_DIRECTION_ARG, syncDirection);
-            intent.putExtra(SyncService.REMOTE_PATH_ARG, syncRemotePath);
-            tryStartService(context, intent);
-        } else if (requestCode == STREAMING_INTENT_RESULT) {
-            Intent serveIntent = new Intent(getContext(), StreamingService.class);
-            context.stopService(serveIntent);
-        }
     }
 
     @Override
@@ -532,17 +396,12 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.action_search:
                 searchClicked();
                 return true;
             case R.id.action_sort:
                 showSortMenu();
-                return true;
-            case R.id.action_select_all:
-                recyclerViewAdapter.toggleSelectAll();
                 return true;
             case R.id.action_go_to:
                 showSFTPgoToDialog();
@@ -551,19 +410,19 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                 exitFragment();
                 return true;
             default:
-                    return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
     private void exitFragment() {
         breadcrumbView.clearCrumbs();
+        ((FragmentActivity) context).setTitle(originalToolbarTitle);
         FragmentManager fm = this.getActivity().getSupportFragmentManager();
         fm.beginTransaction().remove(this).commit();
     }
 
     private void showSFTPgoToDialog() {
-        GoToDialog goToDialog = new GoToDialog()
-                .isDarkTheme(isDarkTheme);
+        GoToDialog goToDialog = new GoToDialog().isDarkTheme(isDarkTheme);
         goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 
@@ -771,7 +630,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
             context.stopService(intent);
             isThumbnailsServiceRunning = false;
         }
-
+        ((FragmentActivity) context).setTitle(originalToolbarTitle);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(backgroundTaskBroadcastReceiver);
     }
 
@@ -781,59 +640,11 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         if (fetchDirectoryTask != null) {
             fetchDirectoryTask.cancel(true);
         }
+        ((FragmentActivity) context).setTitle(originalToolbarTitle);
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
-        ((FragmentActivity) context).setTitle(originalToolbarTitle);
         prefChangeListener = null;
         context = null;
-    }
-
-    public boolean onBackButtonPressed() {
-        if (recyclerViewAdapter.isInSelectMode()) {
-            recyclerViewAdapter.cancelSelection();
-            return true;
-        } else if (isSearchMode) {
-            searchClicked();
-            return true;
-        } else if (pathStack.isEmpty()) {
-            return false;
-        }
-        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
-            fab.show();
-        }
-        if (fetchDirectoryTask != null) {
-            fetchDirectoryTask.cancel(true);
-        }
-        swipeRefreshLayout.setRefreshing(false);
-        if (fetchDirectoryTask != null) {
-            fetchDirectoryTask.cancel(true);
-        }
-        breadcrumbView.removeLastCrumb();
-        String path = pathStack.pop();
-        recyclerViewAdapter.clear();
-        if (!directoryObject.isContentValid(path)) {
-            swipeRefreshLayout.setRefreshing(true);
-            directoryObject.restoreFromCache(path);
-            sortDirectory();
-            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
-            if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
-                int position = directoryPosition.get(directoryObject.getCurrentPath());
-                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
-            }
-            fetchDirectoryTask = new FetchDirectoryContent(true).execute();
-        } else if (directoryObject.isPathInCache(path)) {
-            directoryObject.restoreFromCache(path);
-            sortDirectory();
-            recyclerViewAdapter.newData(directoryObject.getDirectoryContent());
-            if (directoryPosition.containsKey(directoryObject.getCurrentPath())) {
-                int position = directoryPosition.get(directoryObject.getCurrentPath());
-                recyclerViewLinearLayoutManager.scrollToPositionWithOffset(position, 10);
-            }
-        } else {
-            directoryObject.setPath(path);
-            fetchDirectoryTask = new FetchDirectoryContent().execute();
-        }
-        return true;
     }
 
     @Override
@@ -845,9 +656,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         breadcrumbView.addCrumb(fileItem.getName(), fileItem.getPath());
         swipeRefreshLayout.setRefreshing(true);
         pathStack.push(directoryObject.getCurrentPath());
-        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
-            fab.show();
-        }
 
         if (isSearchMode) {
             searchClicked();
@@ -876,38 +684,9 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     }
 
     @Override
-    public void onFilesSelected() {
-        handleFilesSelected();
-    }
-
-    private void handleFilesSelected() {
-        int numOfSelected = recyclerViewAdapter.getNumberOfSelectedItems();
-
-        if (numOfSelected > 0) { // something is selected
-            ((FragmentActivity) context).setTitle(numOfSelected + " " + getString(R.string.selected));
-            fab.hide();
-            fab.setVisibility(View.INVISIBLE);
-            if (numOfSelected > 1) {
-                ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(.5f);
-                ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(false);
-            } else {
-                ((FragmentActivity) context).findViewById(R.id.file_rename).setAlpha(1f);
-                ((FragmentActivity) context).findViewById(R.id.file_rename).setClickable(true);
-            }
-        }
-    }
-
+    public void onFilesSelected() {}
     @Override
-    public void onFileDeselected() {
-        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
-            setTitle();
-            fab.show();
-            fab.setVisibility(View.VISIBLE);
-        } else {
-            handleFilesSelected();
-        }
-    }
-
+    public void onFileDeselected() {}
     @Override
     public void onFileOptionsClicked(View view, FileItem fileItem) {}
 
@@ -920,9 +699,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     public void onBreadCrumbClicked(String path) {
         if (isSearchMode) {
             searchClicked();
-        }
-        if (!isInMoveMode && !recyclerViewAdapter.isInSelectMode()) {
-            fab.show();
         }
         if (directoryObject.getCurrentPath().equals(path)) {
             return;

@@ -611,4 +611,5 @@
     <string name="auto_theme">Follow System Theme</string>
     <string name="light_theme">Light Mode</string>
     <string name="theme_title">Theme</string>
+    <string name="remote_folder_picker_title">Folderpicker</string>
 </resources>

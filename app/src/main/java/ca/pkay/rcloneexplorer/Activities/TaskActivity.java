@@ -91,10 +91,6 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
         setContentView(R.layout.activity_task);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         dbHandler = new DatabaseHandler(this);
 
@@ -113,7 +109,6 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
         }
 
         final Context c = this.getApplicationContext();
-
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
             //Todo fix error when no remotes are available
