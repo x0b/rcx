@@ -35,6 +35,12 @@ import static android.text.format.Formatter.formatFileSize;
 
 public class SyncService extends IntentService {
 
+
+    enum FAILURE_REASON {
+        NONE,
+        NO_WIFI,
+        RCLONE_ERROR
+    }
     private static final String TAG = "SyncService";
 
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_ARG";
@@ -77,17 +83,12 @@ public class SyncService extends IntentService {
             return;
         }
 
-        if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
-            notificationManager.showConnectivityChangedNotification();
-            stopSelf();
-            return;
-        }
-
         final long taskID = intent.getLongExtra(TASK_ID, -1);
         final RemoteItem remoteItem = intent.getParcelableExtra(REMOTE_ARG);
         final String remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
         final String localPath = intent.getStringExtra(LOCAL_PATH_ARG);
         String title = intent.getStringExtra(TASK_NAME);
+        FAILURE_REASON failureReason = FAILURE_REASON.NONE;
         final int syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
 
         final boolean silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
@@ -101,75 +102,88 @@ public class SyncService extends IntentService {
 
         startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification(title).build());
 
-        currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
-        JSONObject stats;
-        String notificationContent = "";
-        ArrayList<String> notificationBigText = new ArrayList<>();
-        int notificationPercent = 0;
-        if (currentProcess != null) {
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    JSONObject logline = new JSONObject(line);
-                    if(isLoggingEnable && logline.getString("level").equals("error")){
-                        log2File.log(line);
-                    } else if(logline.getString("level").equals("warning")){
-                        //available stats:
-                        //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
-                        //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
-                        stats = logline.getJSONObject("stats");
+        if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
+            failureReason = FAILURE_REASON.NO_WIFI;
+        } else {
+            currentProcess = rclone.sync(remoteItem, remotePath, localPath, syncDirection);
+            JSONObject stats;
+            String notificationContent = "";
+            ArrayList<String> notificationBigText = new ArrayList<>();
+            int notificationPercent = 0;
+            if (currentProcess != null) {
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        JSONObject logline = new JSONObject(line);
+                        if(isLoggingEnable && logline.getString("level").equals("error")){
+                            log2File.log(line);
+                        } else if(logline.getString("level").equals("warning")){
+                            //available stats:
+                            //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
+                            //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
+                            stats = logline.getJSONObject("stats");
 
-                        String speed = formatFileSize(this, stats.getLong("speed"))+"/s";
-                        String size = formatFileSize(this, stats.getLong("bytes"));
-                        String allsize = formatFileSize(this, stats.getLong("totalBytes"));
-                        double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
+                            String speed = formatFileSize(this, stats.getLong("speed"))+"/s";
+                            String size = formatFileSize(this, stats.getLong("bytes"));
+                            String allsize = formatFileSize(this, stats.getLong("totalBytes"));
+                            double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
 
-                        notificationContent = String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_short), size, allsize, stats.get("eta"));
-                        notificationBigText.clear();
-                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_transferred), size, allsize));
-                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_speed), speed));
-                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_remaining), stats.get("eta")));
-                        if(stats.getInt("errors")>0){
-                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_errors), stats.getInt("errors")));
+                            notificationContent = String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_short), size, allsize, stats.get("eta"));
+                            notificationBigText.clear();
+                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_transferred), size, allsize));
+                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_speed), speed));
+                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_remaining), stats.get("eta")));
+                            if(stats.getInt("errors")>0){
+                                notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_errors), stats.getInt("errors")));
+                            }
+                            //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
+                            //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
+                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_elapsed), stats.getInt("elapsedTime")));
+                            notificationPercent = (int) percent;
                         }
-                        //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
-                        //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
-                        notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_elapsed), stats.getInt("elapsedTime")));
-                        notificationPercent = (int) percent;
+
+                        notificationManager.updateNotification(title, notificationContent, notificationBigText, notificationPercent);
+
                     }
-
-                    notificationManager.updateNotification(title, notificationContent, notificationBigText, notificationPercent);
-
-                }
-            } catch (InterruptedIOException e) {
-                FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
-            } catch (IOException e) {
-                if (!"Stream closed".equals(e.getMessage())) {
+                } catch (InterruptedIOException e) {
+                    FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
+                } catch (IOException e) {
+                    if (!"Stream closed".equals(e.getMessage())) {
+                        FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                    }
                     FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                } catch (JSONException e) {
+                    FLog.e(TAG, "onHandleIntent: error reading json", e);
                 }
-                FLog.e(TAG, "onHandleIntent: error reading stdout", e);
-            } catch (JSONException e) {
-                FLog.e(TAG, "onHandleIntent: error reading json", e);
-            }
 
-            try {
-                currentProcess.waitFor();
-            } catch (InterruptedException e) {
-                FLog.e(TAG, "onHandleIntent: error waiting for process", e);
+                try {
+                    currentProcess.waitFor();
+                } catch (InterruptedException e) {
+                    FLog.e(TAG, "onHandleIntent: error waiting for process", e);
+                }
             }
+            sendUploadFinishedBroadcast(remoteItem.getName(), remotePath);
         }
-
-        sendUploadFinishedBroadcast(remoteItem.getName(), remotePath);
 
         int notificationId = (int)System.currentTimeMillis();
 
         if(silentRun){
-            if (transferOnWiFiOnly && connectivityChanged) {
-                notificationManager.showConnectivityChangedNotification();
-            } else if (currentProcess == null || currentProcess.exitValue() != 0) {
+            if (transferOnWiFiOnly && connectivityChanged || (currentProcess == null || currentProcess.exitValue() != 0)) {
                 String errorTitle = getString(R.string.notification_sync_failed);
-                notificationManager.showFailedNotification(errorTitle, title, notificationId, taskID);
+                String content = title;
+
+                switch (failureReason) {
+                    case NONE:
+                        if(connectivityChanged){
+                            content = title+" failed because the device lost wifi connection and mobile data was not allowed.";
+                        }
+                        break;
+                    case NO_WIFI:
+                        content = title+" failed because wifi was not available";
+                        break;
+                }
+                notificationManager.showFailedNotification(errorTitle, content, notificationId, taskID);
             }else{
                 notificationManager.showSuccessNotification(title, notificationId);
             }

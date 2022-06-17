@@ -31,7 +31,6 @@ public class SyncServiceNotifications {
     public static final int PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162;
     private static final int OPERATION_FAILED_NOTIFICATION_ID = 89;
     private static final int OPERATION_SUCCESS_NOTIFICATION_ID = 698;
-    private static final int CONNECTIVITY_CHANGE_NOTIFICATION_ID = 462;
 
     Context mContext;
 
@@ -50,6 +49,7 @@ public class SyncServiceNotifications {
                 .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
                 .setContentTitle(title)
                 .setContentText(content)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 .setGroup(OPERATION_FAILED_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .addAction(R.drawable.ic_refresh, mContext.getString(R.string.retry_failed_sync), retryPendingIntent);
@@ -65,25 +65,13 @@ public class SyncServiceNotifications {
                 .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
                 .setContentTitle(mContext.getString(R.string.operation_success))
                 .setContentText(content)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 .setGroup(OPERATION_SUCCESS_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
         notificationManager.notify(notificationId, builder.build());
         createSummaryNotificationForSuccess();
-    }
-
-
-
-    public void showConnectivityChangedNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_warning)
-                .setContentTitle(mContext.getString(R.string.sync_cancelled))
-                .setContentText(mContext.getString(R.string.wifi_connections_isnt_available))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
-        notificationManager.notify(CONNECTIVITY_CHANGE_NOTIFICATION_ID, builder.build());
     }
 
     public void createSummaryNotificationForFailed() {
