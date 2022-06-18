@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -23,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -34,9 +32,10 @@ import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
-import ca.pkay.rcloneexplorer.util.SyncServiceNotifications;
+import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
+import ca.pkay.rcloneexplorer.notifications.StatusObject;
+import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
 
-import static android.text.format.Formatter.formatFileSize;
 
 public class SyncService extends IntentService {
 
@@ -120,49 +119,29 @@ public class SyncService extends IntentService {
             title = t.remotePath;
         }
 
-        if (transferOnWiFiOnly && !checkWifiOnAndConnected()) {
+        if (transferOnWiFiOnly && !WifiConnectivitiyUtil.Companion.checkWifiOnAndConnected(this.getApplicationContext())) {
             failureReason = FAILURE_REASON.NO_WIFI;
         } else {
             currentProcess = rclone.sync(t.remoteItem, t.remotePath, t.localPath, t.syncDirection);
-            JSONObject stats;
-            String notificationContent = "";
-            ArrayList<String> notificationBigText = new ArrayList<>();
-            int notificationPercent = 0;
             if (currentProcess != null) {
                 try {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                     String line;
                     while ((line = reader.readLine()) != null) {
+                        StatusObject so = new StatusObject();
                         JSONObject logline = new JSONObject(line);
                         if(isLoggingEnable && logline.getString("level").equals("error")){
                             log2File.log(line);
-                        } else if(logline.getString("level").equals("warning")){
-                            //available stats:
-                            //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
-                            //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
-                            stats = logline.getJSONObject("stats");
-
-                            String speed = formatFileSize(this, stats.getLong("speed"))+"/s";
-                            String size = formatFileSize(this, stats.getLong("bytes"));
-                            String allsize = formatFileSize(this, stats.getLong("totalBytes"));
-                            double percent = ((double)  stats.getLong("bytes")/stats.getLong("totalBytes"))*100;
-
-                            notificationContent = String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_short), size, allsize, stats.get("eta"));
-                            notificationBigText.clear();
-                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_transferred), size, allsize));
-                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_speed), speed));
-                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_remaining), stats.get("eta")));
-                            if(stats.getInt("errors")>0){
-                                notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_errors), stats.getInt("errors")));
-                            }
-                            //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
-                            //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
-                            notificationBigText.add(String.format(getString(ca.pkay.rcloneexplorer.R.string.sync_notification_elapsed), stats.getInt("elapsedTime")));
-                            notificationPercent = (int) percent;
+                        } else if(logline.getString("level").equals("warning")){;
+                            so.readStuff(this, logline);
                         }
 
-                        notificationManager.updateNotification(title, notificationContent, notificationBigText, notificationPercent);
-
+                        notificationManager.updateSyncNotification(
+                                title,
+                                so.getNotificationContent(),
+                                so.getNotificationBigText(),
+                                so.getNotificationPercent()
+                        );
                     }
                 } catch (InterruptedIOException e) {
                     FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
@@ -257,25 +236,6 @@ public class SyncService extends IntentService {
             stopSelf();
         }
     };
-
-    private boolean checkWifiOnAndConnected() {
-        WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-
-        if (wifiMgr == null) {
-            FLog.e(TAG, "No Wifi found.");
-            return false;
-        }
-
-        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
-            // WifiManager requires location access. This is not available, so we query the metered instead.
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            return !cm.isActiveNetworkMetered();
-        }
-        else {
-            FLog.e(TAG, "Wifi not turned on.");
-            return false; // Wi-Fi adapter is OFF
-        }
-    }
 
     @Override
     public void onDestroy() {

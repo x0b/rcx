@@ -608,7 +608,7 @@ public class Rclone {
 
         localFilePath = encodePath(localFilePath);
 
-        command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+        command = createCommandWithOptions("copy", remoteFilePath, localFilePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
 
         String[] env = getRcloneEnv();
         try {
@@ -660,7 +660,7 @@ public class Rclone {
             path = (uploadPath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + uploadPath;
         }
 
-        command = createCommandWithOptions("copy", uploadFile, path, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE");
+        command = createCommandWithOptions("copy", uploadFile, path, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log", "--bwlimit=10k");
 
         String[] env = getRcloneEnv();
         try {

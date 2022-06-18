@@ -53,7 +53,6 @@ import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
-import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;

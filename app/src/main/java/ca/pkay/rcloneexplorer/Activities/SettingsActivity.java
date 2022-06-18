@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer.Settings;
+package ca.pkay.rcloneexplorer.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +10,18 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import ca.pkay.rcloneexplorer.Settings.FileAccessSettingsFragment;
+import ca.pkay.rcloneexplorer.Settings.GeneralSettingsFragment;
+import ca.pkay.rcloneexplorer.Settings.LoggingSettingsFragment;
+import ca.pkay.rcloneexplorer.Settings.LookAndFeelSettingsFragment;
+import ca.pkay.rcloneexplorer.Settings.NotificationsSettingsFragment;
+import ca.pkay.rcloneexplorer.Settings.SettingsFragment;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 
-public class SettingsActivity extends AppCompatActivity implements  SettingsFragment.OnSettingCategorySelectedListener,
-                                                                    LookAndFeelSettingsFragment.OnThemeHasChanged {
+public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnSettingCategorySelectedListener,
+        LookAndFeelSettingsFragment.OnThemeHasChanged {
 
     public final static String THEME_CHANGED = "ca.pkay.rcexplorer.SettingsActivity.THEME_CHANGED";
     private final String SAVED_THEME_CHANGE = "ca.pkay.rcexplorer.SettingsActivity.OUTSTATE_THEME_CHANGED";

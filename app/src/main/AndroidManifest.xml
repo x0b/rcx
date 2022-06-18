@@ -125,7 +125,7 @@
             android:parentActivityName=".Activities.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-                android:name=".Settings.SettingsActivity"
+                android:name=".Activities.SettingsActivity"
                 android:label="@string/title_activity_settings"
                 android:theme="@style/AppTheme.NoActionBar"
                 tools:ignore="InnerclassSeparator"
