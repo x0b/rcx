@@ -111,6 +111,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener;
 
     private FolderSelectorCallback mSelectedFolderCallback;
+    private String mInitialPath = "";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -119,12 +120,13 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     public RemoteFolderPickerFragment() {}
 
     @SuppressWarnings("unused")
-    public static RemoteFolderPickerFragment newInstance(RemoteItem remoteItem, FolderSelectorCallback fsc) {
+    public static RemoteFolderPickerFragment newInstance(RemoteItem remoteItem, FolderSelectorCallback fsc, String initialPath) {
         RemoteFolderPickerFragment fragment = new RemoteFolderPickerFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_REMOTE, remoteItem);
         fragment.setArguments(args);
         fragment.setSelectedFolderCallback(fsc);
+        fragment.setInitialPath(initialPath);
         return fragment;
     }
 
@@ -241,12 +243,13 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         breadcrumbView.setVisibility(View.VISIBLE);
         // this will be called twice for an unknown reason. Therefore we need to clear the Crumbs.
         breadcrumbView.clearCrumbs();
-        breadcrumbView.addCrumb(remote.getDisplayName(), "//");
-        if (savedInstanceState != null) {
-            if (!directoryObject.getCurrentPath().equals("//")) {
-                breadcrumbView.buildBreadCrumbsFromPath(directoryObject.getCurrentPath());
-            }
+        if (!mInitialPath.isEmpty()) {
+            directoryObject.setPath(mInitialPath);
+            breadcrumbView.buildBreadCrumbsFromPath(remote.getDisplayName()+directoryObject.getCurrentPath());
+        } else {
+            breadcrumbView.addCrumb(remote.getDisplayName(), "//");
         }
+
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
@@ -697,6 +700,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
 
     @Override
     public void onBreadCrumbClicked(String path) {
+        Log.e("TAG", path);
         if (isSearchMode) {
             searchClicked();
         }
@@ -785,6 +789,9 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         editor.apply();
     }
 
+    public void setInitialPath(String initialPath) {
+        mInitialPath = initialPath;
+    }
     public void setSelectedFolderCallback(FolderSelectorCallback fsc) {
         mSelectedFolderCallback = fsc;
     }

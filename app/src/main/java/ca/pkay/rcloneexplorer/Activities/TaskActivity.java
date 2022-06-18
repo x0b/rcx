@@ -150,7 +150,7 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
 
         EditText tv_remote = findViewById(R.id.task_remote_path_textfield);
         tv_remote.setOnFocusChangeListener((v, hasFocus) -> {
-            startRemotePicker(rcloneInstance.getRemoteItemFromName(remoteDropdown.getSelectedItem().toString()));
+            startRemotePicker(rcloneInstance.getRemoteItemFromName(remoteDropdown.getSelectedItem().toString()), tv_remote.getText().toString());
             tv_remote.clearFocus();
         });
 
@@ -211,8 +211,8 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
         return taskToPopulate;
     }
 
-    private void startRemotePicker(RemoteItem remote) {
-        Fragment fragment = RemoteFolderPickerFragment.newInstance(remote, this);
+    private void startRemotePicker(RemoteItem remote, String initialPath) {
+        Fragment fragment = RemoteFolderPickerFragment.newInstance(remote, this, initialPath);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.create_task_layout, fragment, "FILE_EXPLORER_FRAGMENT_TAG");
         transaction.addToBackStack("FILE_EXPLORER_FRAGMENT_TAG");
