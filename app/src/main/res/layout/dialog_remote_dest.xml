@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="?attr/backgroundColor" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/empty_folder_view"
+        layout="@layout/empty_directory_state"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/backgroundColor"
-        android:visibility="invisible"
         android:layout_gravity="center"
-        layout="@layout/empty_directory_state" />
+        android:background="@color/backgroundColor"
+        android:visibility="invisible" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -25,15 +24,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/dialog_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:textSize="18sp"
                 android:textColor="@color/white"
-                android:layout_gravity="center_vertical" />
+                android:textSize="18sp" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -41,8 +41,8 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_above="@+id/bottom_bar" >
+        android:layout_above="@+id/bottom_bar"
+        android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,52 +51,54 @@
 
             <RelativeLayout
                 android:id="@+id/previous_dir"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="76dp"
-                android:background="?selectableItemBackground">
+                android:background="?selectableItemBackground"
+                android:orientation="vertical">
+
                 <ImageView
                     android:id="@+id/previous_dir_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="76dp"
+                    android:contentDescription="@string/file_icon"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="@color/iconTint"
-                    android:contentDescription="@string/file_icon" />
+                    android:tint="@color/iconTint" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/previous_dir_icon"
-                    android:orientation="vertical"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_centerVertical="true">
+                    android:layout_toEndOf="@id/previous_dir_icon"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/previous_dir_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceListItem"
-                        android:fontFamily="sans-serif"
-                        android:textSize="16sp"
-                        android:textColor="@color/textColorPrimary"
                         android:ellipsize="middle"
+                        android:fontFamily="sans-serif"
                         android:singleLine="true"
-                        tools:text="Previous"/>
+                        android:textAppearance="?attr/textAppearanceListItem"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="16sp"
+                        tools:text="Previous" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/dividerColor"/>
+                    android:background="@color/dividerColor" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/recycler_view"
                 android:clipToPadding="false"
                 android:paddingBottom="54dp"
                 app:layoutManager="LinearLayoutManager"
@@ -104,6 +106,5 @@
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <include
-        layout="@layout/move_bar"/>
+    <include layout="@layout/move_bar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

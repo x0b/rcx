@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="88dp"
-        android:background="?attr/backgroundColor"
+        android:background="@color/backgroundColor"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/fragment_share_remotes_item" />
 

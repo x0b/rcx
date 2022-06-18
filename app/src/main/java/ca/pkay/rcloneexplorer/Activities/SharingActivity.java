@@ -30,6 +30,7 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 import java.io.File;
@@ -59,8 +60,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityHelper.applyTheme(this);
-        isDarkTheme = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.pref_key_dark_theme), false);
+        isDarkTheme = ThemeHelper.isDarkTheme(this);
         setContentView(R.layout.activity_sharing);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
