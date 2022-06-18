@@ -71,7 +71,7 @@ class UploadNotifications(var mContext: Context) {
         val summaryNotification = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setContentTitle(mContext.getString(R.string.upload_complete)) //set content text to support devices running API level < 24
             .setContentText(mContext.getString(R.string.upload_complete))
-            .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setGroup(UPLOAD_FINISHED_GROUP)
             .setGroupSummary(true)
             .setAutoCancel(true)

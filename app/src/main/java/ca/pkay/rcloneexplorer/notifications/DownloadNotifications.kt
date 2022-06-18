@@ -56,7 +56,7 @@ class DownloadNotifications(var mContext: Context) {
         var builder = GenericSyncNotification(mContext).updateGenericNotification(
             title,
             content,
-            R.drawable.ic_twotone_cloud_upload_24,
+            R.drawable.ic_twotone_cloud_download_24,
             bigTextArray!!,
             percent,
             SyncService::class.java,
@@ -69,7 +69,7 @@ class DownloadNotifications(var mContext: Context) {
 
     fun showConnectivityChangedNotification() {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.stat_sys_warning)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
             .setContentTitle(mContext.getString(R.string.download_cancelled))
             .setContentText(mContext.getString(R.string.wifi_connections_isnt_available))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -94,7 +94,7 @@ class DownloadNotifications(var mContext: Context) {
         val summaryNotification = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setContentTitle(mContext.getString(R.string.download_complete)) //set content text to support devices running API level < 24
             .setContentText(mContext.getString(R.string.download_complete))
-            .setSmallIcon(android.R.drawable.stat_sys_download_done)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setGroup(DOWNLOAD_FINISHED_GROUP)
             .setGroupSummary(true)
             .setAutoCancel(true)
