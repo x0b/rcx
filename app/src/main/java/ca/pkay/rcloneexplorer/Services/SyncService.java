@@ -118,7 +118,7 @@ public class SyncService extends IntentService {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
-        String title = "";
+        String title = t.title;
         FAILURE_REASON failureReason = FAILURE_REASON.NONE;
         if(t.title.equals("")){
             title = t.remotePath;
