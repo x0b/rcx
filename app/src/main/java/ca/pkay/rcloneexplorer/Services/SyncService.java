@@ -31,6 +31,7 @@ import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
@@ -78,7 +79,11 @@ public class SyncService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        notificationManager.setNotificationChannel();
+        (new GenericSyncNotification(this)).setNotificationChannel(
+                SyncServiceNotifications.CHANNEL_ID,
+                SyncServiceNotifications.CHANNEL_NAME,
+                R.string.sync_service_notification_channel_description
+        );
         rclone = new Rclone(this);
         log2File = new Log2File(this);
 

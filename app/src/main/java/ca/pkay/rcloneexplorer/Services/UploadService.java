@@ -1,5 +1,8 @@
 package ca.pkay.rcloneexplorer.Services;
 
+import static ca.pkay.rcloneexplorer.notifications.UploadNotifications.CHANNEL_ID;
+import static ca.pkay.rcloneexplorer.notifications.UploadNotifications.CHANNEL_NAME;
+
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,7 +32,9 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
+import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
@@ -62,7 +67,12 @@ public class UploadService extends IntentService {
         rclone = new Rclone(this);
         log2File = new Log2File(this);
         mNotifications = new UploadNotifications(this);
-        mNotifications.setNotificationChannel();
+
+        (new GenericSyncNotification(this)).setNotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                R.string.upload_service_notification_channel_description
+        );
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);

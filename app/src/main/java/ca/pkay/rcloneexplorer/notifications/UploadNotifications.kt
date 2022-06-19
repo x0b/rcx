@@ -118,7 +118,6 @@ class UploadNotifications(var mContext: Context) {
         notificationManager.notify(notificationID, builder.build())
     }
 
-
     fun showConnectivityChangedNotification() {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
@@ -129,15 +128,4 @@ class UploadNotifications(var mContext: Context) {
         notificationManager.notify(CONNECTIVITY_CHANGE_NOTIFICATION_ID, builder.build())
     }
 
-    fun setNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW)
-            channel.description = mContext.getString(R.string.upload_service_notification_channel_description)
-            // Register the channel with the system
-            val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
-            notificationManager?.createNotificationChannel(channel)
-        }
-    }
 }

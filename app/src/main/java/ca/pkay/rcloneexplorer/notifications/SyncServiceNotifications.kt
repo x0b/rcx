@@ -19,8 +19,8 @@ class SyncServiceNotifications(var mContext: Context) {
 
 
     companion object {
-        private const val CHANNEL_ID = "ca.pkay.rcexplorer.sync_service"
-        private const val CHANNEL_NAME = "Sync service"
+        const val CHANNEL_ID = "ca.pkay.rcexplorer.sync_service"
+        const val CHANNEL_NAME = "Sync service"
         const val PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162
         private const val OPERATION_FAILED_NOTIFICATION_ID = 89
         private const val OPERATION_SUCCESS_NOTIFICATION_ID = 698
@@ -95,21 +95,6 @@ class SyncServiceNotifications(var mContext: Context) {
             .build()
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(OPERATION_SUCCESS_NOTIFICATION_ID, summaryNotification)
-    }
-
-    fun setNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            val channel =
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW)
-            channel.description =
-                mContext.getString(R.string.sync_service_notification_channel_description)
-            // Register the channel with the system
-            val notificationManager =
-                mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager?.createNotificationChannel(channel)
-        }
     }
 
     fun getPersistentNotification(title: String?): NotificationCompat.Builder {

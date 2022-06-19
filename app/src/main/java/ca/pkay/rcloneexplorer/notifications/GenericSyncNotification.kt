@@ -1,8 +1,11 @@
 package ca.pkay.rcloneexplorer.notifications
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import ca.pkay.rcloneexplorer.R
 
@@ -46,5 +49,18 @@ class GenericSyncNotification(var mContext: Context) {
             )
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setProgress(100, percent, false)
+    }
+
+    fun setNotificationChannel(channelID: String, channelName: String, descriptionResource: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            val channel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_LOW)
+            channel.description =
+                mContext.getString(descriptionResource)
+            // Register the channel with the system
+            val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager?.createNotificationChannel(channel)
+        }
     }
 }

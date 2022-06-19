@@ -127,18 +127,4 @@ class DownloadNotifications(var mContext: Context) {
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(FAILED_DOWNLOAD_NOTIFICATION_ID, summaryNotification)
     }
-
-    fun setNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            val channel =
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW)
-            channel.description = mContext.getString(R.string.download_service_notification_description)
-            // Register the channel with the system
-            val notificationManager =
-                mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
-            notificationManager?.createNotificationChannel(channel)
-        }
-    }
 }

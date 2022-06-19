@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.Services;
 
 import static ca.pkay.rcloneexplorer.notifications.DownloadNotifications.CHANNEL_ID;
 import static ca.pkay.rcloneexplorer.notifications.DownloadNotifications.PERSISTENT_NOTIFICATION_ID;
+import static ca.pkay.rcloneexplorer.notifications.UploadNotifications.CHANNEL_NAME;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -39,6 +40,7 @@ import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.notifications.DownloadNotifications;
+import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
 import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -73,7 +75,11 @@ public class DownloadService extends IntentService {
         log2File = new Log2File(this);
 
         mNotifications = new DownloadNotifications(this);
-        mNotifications.setNotificationChannel();
+        (new GenericSyncNotification(this)).setNotificationChannel(
+                UploadNotifications.CHANNEL_ID,
+                CHANNEL_NAME,
+                R.string.download_service_notification_description
+        );
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
