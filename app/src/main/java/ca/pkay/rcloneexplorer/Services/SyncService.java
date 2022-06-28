@@ -172,20 +172,19 @@ public class SyncService extends IntentService {
 
         if(t.silentRun){
             if (transferOnWiFiOnly && connectivityChanged || (currentProcess == null || currentProcess.exitValue() != 0)) {
-                String errorTitle = getString(R.string.notification_sync_failed);
-                String content = title;
+                String content = getString(R.string.operation_failed_unknown, title);
 
                 switch (failureReason) {
                     case NONE:
                         if(connectivityChanged){
-                            content = title+" failed because the device lost wifi connection and mobile data was not allowed.";
+                            content = getString(R.string.operation_failed_data_change, title);
                         }
                         break;
                     case NO_WIFI:
-                        content = title+" failed because wifi was not available";
+                        content = getString(R.string.operation_failed_no_wifi, title);
                         break;
                 }
-                notificationManager.showFailedNotification(errorTitle, content, notificationId, t.id);
+                notificationManager.showFailedNotification(content, notificationId, t.id);
             }else{
                 notificationManager.showSuccessNotification(title, notificationId);
             }

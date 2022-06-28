@@ -168,7 +168,10 @@
     <string name="sync_service_notification_channel_description">Hintergrunddienst für Synchronisation</string>
     <string name="moving_info">Verschiebe…</string>
     <string name="deleting_info">Lösche…</string>
-    <string name="operation_failed">Aktion fehlgeschlagen</string>
+    <string name="operation_failed">Synchronisation fehlgeschlagen</string>
+    <string name="operation_failed_unknown">%1$s schlug aufgrund eines unbekannten Fehlers fehl.</string>
+    <string name="operation_failed_no_wifi">Wir konnten %1$s nicht synchronisieren da Wlan nicht verfügbar war.</string>
+    <string name="operation_failed_data_change">Wir konnten %1$s nicht synchronisieren da die Internetverbindung geändert worden ist und Mobile Daten nicht erlaubt sind.</string>
     <string name="moving_service">Verschieben-Dienst</string>
     <string name="delete_service">Lösch-Dienst</string>
     <string name="syncing_service">Synchronisiere %1$s</string>
@@ -466,6 +469,7 @@
     <string name="task_dialog_title_local_path">Lokaler Dateipfad</string>
     <string name="task_dialog_title_sync_direction">Synchronisationsrichtung</string>
     <string name="operation_success">Synchronisation war erfolgreich</string>
+    <string name="operation_success_description">Wir haben %1$s erfolgreich synchronisiert!</string>
     <string name="notification_sync_failed">Synchronisation war fehlerhaft</string>
     <string name="pin_to_dektop">Auf Startbildschirm anpinnen</string>
     <string name="title_activity_task">Neue Aufgabe anlegen</string>

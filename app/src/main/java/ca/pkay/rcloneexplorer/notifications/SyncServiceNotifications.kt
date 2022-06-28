@@ -30,7 +30,6 @@ class SyncServiceNotifications(var mContext: Context) {
     private val OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP"
 
     fun showFailedNotification(
-        title: String?,
         content: String?,
         notificationId: Int,
         taskid: Long
@@ -42,9 +41,11 @@ class SyncServiceNotifications(var mContext: Context) {
             PendingIntent.getService(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
-            .setContentTitle(title)
+            .setContentTitle(mContext.getString(R.string.operation_failed))
             .setContentText(content)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(content))
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(content)
+            )
             .setGroup(OPERATION_FAILED_GROUP)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .addAction(
@@ -61,8 +62,12 @@ class SyncServiceNotifications(var mContext: Context) {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setContentTitle(mContext.getString(R.string.operation_success))
-            .setContentText(content)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(content))
+            .setContentText(mContext.getString(R.string.operation_success_description, content))
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(
+                    mContext.getString(R.string.operation_success_description, content)
+                )
+            )
             .setGroup(OPERATION_SUCCESS_GROUP)
             .setPriority(NotificationCompat.PRIORITY_LOW)
         val notificationManager = NotificationManagerCompat.from(mContext)

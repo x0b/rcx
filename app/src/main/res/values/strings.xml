@@ -220,7 +220,10 @@
     <string name="sync_service_notification_channel_description">Background service for sync</string>
     <string name="moving_info">Moving…</string>
     <string name="deleting_info">Deleting…</string>
-    <string name="operation_failed">Operation failed</string>
+    <string name="operation_failed">Sync failed</string>
+    <string name="operation_failed_unknown">%1$s failed to be synced for an unknown reason.</string>
+    <string name="operation_failed_no_wifi">We could not sync %1$s because wifi was unavailable.</string>
+    <string name="operation_failed_data_change">We could not sync %1$s because the connection changed and mobile data is not allowed.</string>
     <string name="moving_service">Moving Service</string>
     <string name="delete_service">Delete Service</string>
     <string name="syncing_service">Syncing %1$s</string>
@@ -530,6 +533,7 @@
     <string name="task_dialog_title_local_path">Local Path</string>
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
     <string name="operation_success">Sync was successful</string>
+    <string name="operation_success_description">We successfully synced %1$s!</string>
     <string name="notification_sync_failed">Sync operation failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
     <string name="title_activity_task">Create a new Task</string>
