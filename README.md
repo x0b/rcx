@@ -42,6 +42,9 @@ Todo
 - [ ] Unify Sync Service with similar services. (Upload/Download)
 - [ ] Update Rclone
 - [ ] Clear up Licensing
+- [ ] Merge log2file and SyncLog
+- [ ] Update Notificationbuilding
+- [ ] Update Notification titles
 
 
 Screenshots
