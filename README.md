@@ -1,5 +1,5 @@
 # RCX - Rclone for Android
-[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/x0b/rcx/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/x0b/rcx/total.svg)](https://github.com/x0b/rcx/releases) [![GitHub release](https://img.shields.io/github/v/release/x0b/rcx?include_prereleases)](https://github.com/x0b/rcx/releases/latest) [![Google Play](https://img.shields.io/badge/Google_Play-stable-brightgreen)](https://play.google.com/store/apps/details?id=io.github.x0b.rcx) [![F-Droid](https://img.shields.io/badge/F%E2%80%93Droid-stable-blue)](https://f-droid.org/packages/io.github.x0b.rcx)
+[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/extract/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/newhinton/extract/total.svg)](https://github.com/newhinton/extract/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/extract?include_prereleases)](https://github.com/newhinton/extract/releases/latest) [![Google Play](https://img.shields.io/badge/Google_Play-stable-brightgreen)](https://play.google.com/store/apps/details?id=io.github.x0b.rcx) [![F-Droid](https://img.shields.io/badge/F%E2%80%93Droid-stable-blue)](https://f-droid.org/packages/io.github.x0b.rcx)
 
 A cloud file manager, powered by rclone. 
 
@@ -19,6 +19,17 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 - **All architectures** (runs on ARM, ARM64, x86 and x64 devices, Android 7+)
 - **Storage Access Framework (SAF)** ([see docs](https://x0b.github.io/docs/#adding-local-storage-saf)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
+- **Task Management** to allow regular runs of your important tasks!
+
+
+Todo
+-------------
+- [ ] Migrate to Kotlin
+- [ ] Clean up unused resources
+- [ ] Unify Sync Service with similar services. (Upload/Download)
+- [ ] Update Rclone
+- [ ] Clear up Licensing
+
 
 Screenshots
 -----------
