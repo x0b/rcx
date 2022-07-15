@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -34,7 +35,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Database.json.Importer;
@@ -55,30 +70,13 @@ import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
 import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
-import com.google.android.material.navigation.NavigationView;
-
+import ca.pkay.rcloneexplorer.util.SharedPreferencesUtil;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Stream;
-
-import org.json.JSONException;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -214,6 +212,8 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
             startLogFragment();
+        } else {
+            startFragmentById(SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes));
         }
     }
 
@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         pinRemotesToDrawer();
+        startFragmentById(SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes));
     }
 
     @Override
@@ -349,6 +350,29 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        // set the last used fragment on each call.
+        switch (id) {
+            case R.id.nav_remotes:
+            case R.id.nav_tasks:
+            case R.id.nav_trigger:
+            case R.id.nav_logs:
+                SharedPreferencesUtil.Companion.setLastOpenFragment(this, id);
+                break;
+            case R.id.nav_settings:
+            case R.id.nav_about:
+            case R.id.nav_import:
+            case R.id.nav_export:
+                SharedPreferencesUtil.Companion.setLastOpenFragment(this, R.id.nav_remotes);
+                break;
+        }
+        startFragmentById(id);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void startFragmentById(int id){
         switch (id) {
             case R.id.nav_remotes:
                 startRemotesFragment();
@@ -388,10 +412,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(aboutIntent);
                 break;
         }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
 
