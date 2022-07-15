@@ -1,7 +1,20 @@
-# RCX - Rclone for Android
-[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/extract/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/newhinton/extract/total.svg)](https://github.com/newhinton/extract/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/extract?include_prereleases)](https://github.com/newhinton/extract/releases/latest) [![Google Play](https://img.shields.io/badge/Google_Play-stable-brightgreen)](https://play.google.com/store/apps/details?id=io.github.x0b.rcx) [![F-Droid](https://img.shields.io/badge/F%E2%80%93Droid-stable-blue)](https://f-droid.org/packages/io.github.x0b.rcx)
+# extRact - Rclone for Android
+[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/extract/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/newhinton/extract/total.svg)](https://github.com/newhinton/extract/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/extract?include_prereleases)](https://github.com/newhinton/extract/releases/latest)
 
 A cloud file manager, powered by rclone. 
+
+<br/>
+<br/>
+
+Current State
+-------- 
+## ⚠️ 🏗️  This app is currently undergoing many changes. It may not be fully stable and contain bugs or untested features. Use at your own risk!  ⚠️ 🏗️
+
+<br/>
+<br/>
+
+
+
 
 Features
 --------
