@@ -12,6 +12,7 @@ class StatusObject {
     var notificationBigText = ArrayList<String>()
 
 
+    //Todo: rename this. It's bad style
     fun readStuff(context: Context, logline: JSONObject) {
         //available stats:
         //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError

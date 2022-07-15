@@ -21,7 +21,7 @@
             android:title="@string/trigger" />
         <item
             android:id="@+id/nav_logs"
-            android:icon="@drawable/ic_baseline_format_list_bulleted_24"
+            android:icon="@drawable/ic_round_list_24"
             android:title="@string/logFragment" />
     </group>
 
