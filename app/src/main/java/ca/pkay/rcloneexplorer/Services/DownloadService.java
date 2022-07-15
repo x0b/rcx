@@ -5,18 +5,13 @@ import static ca.pkay.rcloneexplorer.notifications.DownloadNotifications.PERSIST
 import static ca.pkay.rcloneexplorer.notifications.UploadNotifications.CHANNEL_NAME;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -44,6 +39,7 @@ import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
 import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.SyncLog;
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
 
 
@@ -117,6 +113,8 @@ public class DownloadService extends IntentService {
 
         currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
 
+
+        //Todo: Check if this can be moved together with UploadService;SyncService etc.
         if (currentProcess != null) {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
@@ -160,8 +158,11 @@ public class DownloadService extends IntentService {
         if (transferOnWiFiOnly && connectivityChanged) {
             mNotifications.showConnectivityChangedNotification();
         } else if (currentProcess != null && currentProcess.exitValue() == 0) {
+
+            SyncLog.info(this, getString(R.string.download_complete), downloadItem.getName());
             mNotifications.showDownloadFinishedNotification(notificationId, downloadItem.getName());
         } else {
+            SyncLog.error(this, getString(R.string.download_failed), downloadItem.getName());
             mNotifications.showDownloadFailedNotification(notificationId, downloadItem.getName());
         }
 

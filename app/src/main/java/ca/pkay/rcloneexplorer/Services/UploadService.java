@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -34,9 +33,9 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
-import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.SyncLog;
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
 
 
@@ -117,6 +116,7 @@ public class UploadService extends IntentService {
                 notificationBigText
         ).build());
 
+        //Todo: Check if this can be moved together with UploadService;SyncService etc.
         currentProcess = rclone.uploadFile(remote, uploadPath, uploadFilePath);
         if (currentProcess != null) {
             try {
@@ -179,6 +179,7 @@ public class UploadService extends IntentService {
     };
 
 
+    //Todo: Check if this can be moved together with UploadService;SyncService etc.
     private void onUploadFinished(String remote, String uploadPath, String file, boolean result) {
         int notificationId = (int)System.currentTimeMillis();
         int startIndex = file.lastIndexOf("/");
@@ -193,10 +194,13 @@ public class UploadService extends IntentService {
 
         if (result) {
             mNotifications.showUploadFinishedNotification(notificationId, fileName);
+            SyncLog.error(this, getString(R.string.upload_complete), fileName);
         } else if (transferOnWiFiOnly && connectivityChanged) {
             mNotifications.showConnectivityChangedNotification();
+            SyncLog.error(this, getString(R.string.upload_cancelled), fileName);
         } else {
             mNotifications.showUploadFailedNotification(notificationId, fileName);
+            SyncLog.error(this, getString(R.string.upload_failed), fileName);
         }
     }
 

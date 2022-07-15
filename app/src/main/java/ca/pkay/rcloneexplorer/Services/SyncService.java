@@ -32,9 +32,10 @@ import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
-import ca.pkay.rcloneexplorer.util.FLog;
-import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
+import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
+import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.SyncLog;
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
 
 
@@ -184,8 +185,10 @@ public class SyncService extends IntentService {
                         content = getString(R.string.operation_failed_no_wifi, title);
                         break;
                 }
+                SyncLog.error(this, getString(R.string.operation_failed), content);
                 notificationManager.showFailedNotification(content, notificationId, t.id);
             }else{
+                SyncLog.info(this, getString(R.string.operation_failed), getString(R.string.operation_success_description, title));
                 notificationManager.showSuccessNotification(title, notificationId);
             }
         }
