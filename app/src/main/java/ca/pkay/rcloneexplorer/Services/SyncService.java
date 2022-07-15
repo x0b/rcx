@@ -188,7 +188,7 @@ public class SyncService extends IntentService {
                 SyncLog.error(this, getString(R.string.operation_failed), content);
                 notificationManager.showFailedNotification(content, notificationId, t.id);
             }else{
-                SyncLog.info(this, getString(R.string.operation_failed), getString(R.string.operation_success_description, title));
+                SyncLog.info(this, getString(R.string.operation_success), getString(R.string.operation_success_description, title));
                 notificationManager.showSuccessNotification(title, notificationId);
             }
         }

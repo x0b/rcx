@@ -15,7 +15,7 @@
         android:background="@color/backgroundColor"
         android:clipToPadding="false"
         android:paddingBottom="88dp"
-        tools:listitem="@layout/fragment_trigger_item">
+        tools:listitem="@layout/fragment_log_item">
 
     </androidx.recyclerview.widget.RecyclerView>
 

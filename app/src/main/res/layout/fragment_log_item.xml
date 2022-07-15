@@ -19,11 +19,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="54dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_arrow_right" />
+            app:srcCompat="@drawable/ic_twotone_info_24" />
 
         <TextView
             android:id="@+id/logtitle"
@@ -65,6 +65,14 @@
             app:layout_constraintStart_toStartOf="@+id/logtitle"
             app:layout_constraintTop_toBottomOf="@+id/logtitle"
             app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_divider_size"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/dividerColor"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

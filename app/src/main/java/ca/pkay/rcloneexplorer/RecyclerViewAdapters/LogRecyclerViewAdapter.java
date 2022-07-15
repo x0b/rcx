@@ -2,11 +2,9 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.icu.text.DateFormat;
 import android.os.Build;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +14,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,8 +68,10 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             Context c = holder.view.getContext();
             switch (selectedTrigger.getInt(SyncLog.TYPE)){
                 case SyncLog.TYPE_ERROR:
-                    holder.log_icon.setImageDrawable(AppCompatResources.getDrawable(c, R.drawable.ic_warning));
-                    holder.log_icon.setVisibility(View.VISIBLE);
+                    holder.log_icon.setImageDrawable(AppCompatResources.getDrawable(c, R.drawable.ic_twotone_error_24));
+                    break;
+                case SyncLog.TYPE_INFO:
+                    holder.log_icon.setImageDrawable(AppCompatResources.getDrawable(c, R.drawable.ic_twotone_info_24));
                     break;
             }
         } catch (JSONException e) {
