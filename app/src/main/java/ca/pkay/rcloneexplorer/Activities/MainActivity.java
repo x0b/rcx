@@ -1,5 +1,7 @@
 package ca.pkay.rcloneexplorer.Activities;
 
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
