@@ -43,6 +43,7 @@ import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
+import ca.pkay.rcloneexplorer.Fragments.LogFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Fragments.TriggerFragment;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity
         InputDialog.OnPositive {
 
     private static final String TAG = "MainActivity";
+    public static final String MAIN_ACTIVITY_START_LOG = "MAIN_ACTIVITY_START_LOG";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
@@ -196,12 +198,23 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+        if(intent.getAction().equals(MAIN_ACTIVITY_START_LOG)){
+            startLogFragment();
+        }
 
         ThemeHelper.applyTheme(this);
         ActivityHelper.applyTheme(this);
 
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
+            startLogFragment();
+        }
     }
 
     @Override
@@ -363,6 +376,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_trigger:
                 startTriggerFragment();
                 break;
+            case R.id.nav_logs:
+                startLogFragment();
+                break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
@@ -385,6 +401,10 @@ public class MainActivity extends AppCompatActivity
 
     private void startTriggerFragment() {
         startFragment(TriggerFragment.newInstance());
+    }
+
+    private void startLogFragment() {
+        startFragment(LogFragment.newInstance());
     }
 
     private void startFragment(Fragment fragmentToStart) {

@@ -612,4 +612,6 @@
     <string name="light_theme">Light Mode</string>
     <string name="theme_title">Theme</string>
     <string name="remote_folder_picker_title">Folderpicker</string>
+    <string name="logFragment">Logs</string>
+    <string name="start_sync">Started Sync</string>
 </resources>
