@@ -125,6 +125,8 @@ public class SyncService extends IntentService {
             title = t.remotePath;
         }
 
+        StatusObject so = new StatusObject(this);
+
         if (transferOnWiFiOnly && !WifiConnectivitiyUtil.Companion.checkWifiOnAndConnected(this.getApplicationContext())) {
             failureReason = FAILURE_REASON.NO_WIFI;
         } else {
@@ -134,12 +136,12 @@ public class SyncService extends IntentService {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        StatusObject so = new StatusObject();
+
                         JSONObject logline = new JSONObject(line);
                         if(isLoggingEnable && logline.getString("level").equals("error")){
                             log2File.log(line);
-                        } else if(logline.getString("level").equals("warning")){;
-                            so.readStuff(this, logline);
+                        } else if(logline.getString("level").equals("warning")){
+                            so.readStuff(logline);
                         }
 
                         notificationManager.updateSyncNotification(
@@ -188,8 +190,9 @@ public class SyncService extends IntentService {
                 SyncLog.error(this, getString(R.string.operation_failed), content);
                 notificationManager.showFailedNotification(content, notificationId, t.id);
             }else{
-                SyncLog.info(this, getString(R.string.operation_success), getString(R.string.operation_success_description, title));
-                notificationManager.showSuccessNotification(title, notificationId);
+                String message = getString(R.string.operation_success_description, title, so.getTotalSize(), so.getTotalTransfers());
+                SyncLog.info(this, getString(R.string.operation_success), message);
+                notificationManager.showSuccessNotification(message , notificationId);
             }
         }
     }

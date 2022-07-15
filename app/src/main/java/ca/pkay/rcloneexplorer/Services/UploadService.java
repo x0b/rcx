@@ -123,13 +123,13 @@ public class UploadService extends IntentService {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    StatusObject so = new StatusObject();
+                    StatusObject so = new StatusObject(this);
                     JSONObject logline = new JSONObject(line);
                     Log.e("TAG", line);
                     if(isLoggingEnable && logline.getString("level").equals("error")){
                         log2File.log(line);
                     } else if(logline.getString("level").equals("warning")){
-                        so.readStuff(this, logline);
+                        so.readStuff(logline);
                     }
 
                     mNotifications.updateUploadNotification(

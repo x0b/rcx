@@ -5,15 +5,45 @@ import android.text.format.Formatter
 import ca.pkay.rcloneexplorer.R
 import org.json.JSONObject
 
-class StatusObject {
+class StatusObject(var mContext: Context){
 
     var notificationPercent: Int = 0
     var notificationContent: String = ""
     var notificationBigText = ArrayList<String>()
+    lateinit var mStats: JSONObject
+
+
+    fun getSpeed(): String {
+        return Formatter.formatFileSize(mContext, mStats.getLong("speed")) + "/s"
+    }
+
+    fun getSize(): String {
+        return Formatter.formatFileSize(mContext, mStats.getLong("bytes"))
+    }
+
+    fun getTotalSize(): String {
+        return Formatter.formatFileSize(mContext, mStats.getLong("totalBytes"))
+    }
+
+    fun getPercentage(): Double {
+        return mStats.getLong("bytes").toDouble() / mStats.getLong("totalBytes") * 100
+    }
+
+    fun getTransfers(): Int {
+        return mStats.getInt("transfers")
+    }
+
+    fun getTotalTransfers(): Int {
+        return mStats.getInt("totalTransfers")
+    }
+
 
 
     //Todo: rename this. It's bad style
-    fun readStuff(context: Context, logline: JSONObject) {
+    fun readStuff(logline: JSONObject) {
+        clearObject()
+        mStats = logline.getJSONObject("stats")
+
         //available stats:
         //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
         //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
@@ -21,44 +51,44 @@ class StatusObject {
         //available stats:
         //bytes,checks,deletedDirs,deletes,elapsedTime,errors,eta,fatalError,renames,retryError
         //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
-        var stats = logline.getJSONObject("stats")
 
-        val speed = Formatter.formatFileSize(context, stats.getLong("speed")) + "/s"
-        val size = Formatter.formatFileSize(context, stats.getLong("bytes"))
-        val allsize = Formatter.formatFileSize(context, stats.getLong("totalBytes"))
-        val percent: Double = stats.getLong("bytes").toDouble() / stats.getLong("totalBytes") * 100
+
+        val speed = getSpeed()
+        val size = getSize()
+        val allsize = getTotalSize()
+        val percent: Double = getPercentage()
 
         notificationContent = String.format(
-            context.getString(R.string.sync_notification_short),
+            mContext.getString(R.string.sync_notification_short),
             size,
             allsize,
-            stats.get("eta")
+            mStats.get("eta")
         )
         notificationBigText.clear()
         notificationBigText.add(
             String.format(
-                context.getString(R.string.sync_notification_transferred),
+                mContext.getString(R.string.sync_notification_transferred),
                 size,
                 allsize
             )
         )
         notificationBigText.add(
             String.format(
-                context.getString(R.string.sync_notification_speed),
+                mContext.getString(R.string.sync_notification_speed),
                 speed
             )
         )
         notificationBigText.add(
             String.format(
-                context.getString(R.string.sync_notification_remaining),
-                stats.get("eta")
+                mContext.getString(R.string.sync_notification_remaining),
+                mStats.get("eta")
             )
         )
-        if (stats.getInt("errors") > 0) {
+        if (mStats.getInt("errors") > 0) {
             notificationBigText.add(
                 String.format(
-                    context.getString(R.string.sync_notification_errors),
-                    stats.getInt("errors")
+                    mContext.getString(R.string.sync_notification_errors),
+                    mStats.getInt("errors")
                 )
             )
         }
@@ -68,11 +98,21 @@ class StatusObject {
         //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
         notificationBigText.add(
             String.format(
-                context.getString(R.string.sync_notification_elapsed),
-                stats.getInt("elapsedTime")
+                mContext.getString(R.string.sync_notification_elapsed),
+                mStats.getInt("elapsedTime")
             )
         )
         notificationPercent = percent.toInt()
+    }
+
+    fun clearObject() {
+        notificationPercent = 0
+        notificationContent = ""
+        notificationBigText = ArrayList<String>()
+    }
+
+    override fun toString(): String {
+        return "StatusObject(getSpeed=${getSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()})"
     }
 
 

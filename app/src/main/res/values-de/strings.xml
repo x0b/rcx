@@ -469,7 +469,7 @@
     <string name="task_dialog_title_local_path">Lokaler Dateipfad</string>
     <string name="task_dialog_title_sync_direction">Synchronisationsrichtung</string>
     <string name="operation_success">Synchronisation war erfolgreich</string>
-    <string name="operation_success_description">Wir haben %1$s erfolgreich synchronisiert!</string>
+    <string name="operation_success_description">Wir haben %1$s erfolgreich synchronisiert!\nEs wurden %2$s in %3$d Dateien synchronisiert.</string>
     <string name="notification_sync_failed">Synchronisation war fehlerhaft</string>
     <string name="pin_to_dektop">Auf Startbildschirm anpinnen</string>
     <string name="title_activity_task">Neue Aufgabe anlegen</string>
@@ -516,10 +516,10 @@
     <string name="abi_not_supported">Diese extRact-Version wird auf dem Gerät nicht unterstützt.</string>
     <string name="title_activity_main" translatable="false">extRact</string>
     <string name="sync_notification_transferred">%s von %s übertragen</string>
-    <string name="sync_notification_speed">Geschwindigkeit:   %s</string>
-    <string name="sync_notification_remaining">Verbleibend:             %s Sekunden</string>
-    <string name="sync_notification_errors">Fehler:                         %d</string>
-    <string name="sync_notification_elapsed">Vergangen:               %d Sekunden</string>
+    <string name="sync_notification_speed">Geschwindigkeit: %14s</string>
+    <string name="sync_notification_remaining">Verbleibend: %14s Sekunden</string>
+    <string name="sync_notification_errors">Fehler: %14d</string>
+    <string name="sync_notification_elapsed">Vergangen: %15d Sekunden</string>
     <string name="sync_notification_short">%s von %s, %s Sekunden verbleibend</string>
     <string name="no_tasks_warning">Noch keine Aufgaben. Lege doch eine an!</string>
     <string name="no_trigger_warning">Noch keine Auslöser. Lege bitte zuerst einen an!</string>

@@ -62,10 +62,10 @@ class SyncServiceNotifications(var mContext: Context) {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setContentTitle(mContext.getString(R.string.operation_success))
-            .setContentText(mContext.getString(R.string.operation_success_description, content))
+            .setContentText(content)
             .setStyle(
                 NotificationCompat.BigTextStyle().bigText(
-                    mContext.getString(R.string.operation_success_description, content)
+                    content
                 )
             )
             .setGroup(OPERATION_SUCCESS_GROUP)
