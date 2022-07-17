@@ -136,14 +136,17 @@ public class SyncService extends IntentService {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                     String line;
                     while ((line = reader.readLine()) != null) {
-
                         JSONObject logline = new JSONObject(line);
+
+                        //todo: migrate this to StatusObject, so that we can handle everything properly.
                         if(isLoggingEnable && logline.getString("level").equals("error")){
                             log2File.log(line);
+                            so.readStuff(logline);
                         } else if(logline.getString("level").equals("warning")){
                             so.readStuff(logline);
                         }
 
+                        //Log.e("TAG", logline.toString());
                         notificationManager.updateSyncNotification(
                                 title,
                                 so.getNotificationContent(),
@@ -187,6 +190,8 @@ public class SyncService extends IntentService {
                         content = getString(R.string.operation_failed_no_wifi, title);
                         break;
                 }
+                //Todo: check if we should also add errors on success
+                content += "\n\n\n"+so.getAllErrorMessages();
                 SyncLog.error(this, getString(R.string.operation_failed), content);
                 notificationManager.showFailedNotification(content, notificationId, t.id);
             }else{
