@@ -468,8 +468,8 @@
     <string name="task_dialog_title_remote_path">Remote-Dateipfad</string>
     <string name="task_dialog_title_local_path">Lokaler Dateipfad</string>
     <string name="task_dialog_title_sync_direction">Synchronisationsrichtung</string>
-    <string name="operation_success">Synchronisation war erfolgreich</string>
-    <string name="operation_success_description">Wir haben %1$s erfolgreich synchronisiert!\nEs wurden %2$s in %3$d Dateien synchronisiert.</string>
+    <string name="operation_success">%s war erfolgreich</string>
+    <string name="operation_success_description">Es wurden %2$s in %3$d Dateien erfolgreich synchronisiert.</string>
     <string name="notification_sync_failed">Synchronisation war fehlerhaft</string>
     <string name="pin_to_dektop">Auf Startbildschirm anpinnen</string>
     <string name="title_activity_task">Neue Aufgabe anlegen</string>

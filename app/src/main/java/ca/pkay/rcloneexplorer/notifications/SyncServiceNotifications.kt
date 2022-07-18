@@ -58,10 +58,10 @@ class SyncServiceNotifications(var mContext: Context) {
         createSummaryNotificationForFailed()
     }
 
-    fun showSuccessNotification(content: String?, notificationId: Int) {
+    fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
-            .setContentTitle(mContext.getString(R.string.operation_success))
+            .setContentTitle(mContext.getString(R.string.operation_success, title))
             .setContentText(content)
             .setStyle(
                 NotificationCompat.BigTextStyle().bigText(
