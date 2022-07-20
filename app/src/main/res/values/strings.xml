@@ -382,6 +382,7 @@
     <string name="unpin_from_drawer">Unpin from drawer</string>
     <string name="shared_preferences_pinned_remotes" translatable="false">shared_preferences_pinned_remotes</string>
     <string name="shared_preferences_drawer_pinned_remotes" translatable="false">shared_preferences_drawer_pinned_remotes</string>
+    <string name="shared_preferences_allow_sync_trigger_while_idle" translatable="false">shared_preferences_allow_sync_trigger_while_idle</string>
     <string name="app_latest_release_url" translatable="false">https://github.com/x0b/rcx/releases/latest</string>
     <string name="app_relase_api_url" translatable="false">https://api.github.com/repos/x0b/rcx/releases/latest</string>
     <string name="app_pre_release_api_url" translatable="false">https://api.github.com/repos/x0b/rcx/releases</string>

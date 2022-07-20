@@ -8,11 +8,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.Calendar;
 
@@ -72,11 +74,23 @@ public class TriggerService extends Service {
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pi = getIntent(trigger.getId());
             am.cancel(pi);
-            am.setExact(
-                    AlarmManager.RTC_WAKEUP,
-                    timeToTrigger,
-                    pi
-            );
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean allowWhileIdle = sharedPreferences.getBoolean(context.getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && allowWhileIdle) {
+                am.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        timeToTrigger,
+                        pi
+                );
+            } else {
+
+                am.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        timeToTrigger,
+                        pi
+                );
+            }
             return;
         }
     }
