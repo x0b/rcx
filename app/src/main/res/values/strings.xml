@@ -615,4 +615,6 @@
     <string name="remote_folder_picker_title">Folderpicker</string>
     <string name="logFragment">Logs</string>
     <string name="start_sync">Started Sync</string>
+    <string name="alarm_while_idle">Allow tasks to run while the device is idle</string>
+    <string name="alarm_while_idle_summary">This may consume more battery since the device has to wake up for the task. If disabled, tasks can be heavily delayed.</string>
 </resources>

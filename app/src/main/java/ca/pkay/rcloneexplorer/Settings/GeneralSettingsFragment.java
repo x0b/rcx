@@ -4,18 +4,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
-import android.widget.EditText;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,8 @@ public class GeneralSettingsFragment extends Fragment {
     private View showThumbnailsElement;
     private Switch showThumbnailsSwitch;
     private View wifiOnlyElement;
+    private Switch allowWhileIdleSwitch;
+    private View allowWhileIdleElement;
     private Switch wifiOnlySwitch;
     private boolean isDarkTheme;
 
@@ -106,6 +109,8 @@ public class GeneralSettingsFragment extends Fragment {
         showThumbnailsSwitch = view.findViewById(R.id.show_thumbnails_switch);
         wifiOnlyElement = view.findViewById(R.id.wifi_only);
         wifiOnlySwitch = view.findViewById(R.id.wifi_only_switch);
+        allowWhileIdleElement = view.findViewById(R.id.alarm_while_idle);
+        allowWhileIdleSwitch = view.findViewById(R.id.alarm_while_idle_switch);
         useProxyElement = view.findViewById(R.id.use_proxy);
         useProxySwitch = view.findViewById(R.id.use_proxy_switch);
         proxyProtocolElement = view.findViewById(R.id.proxy_protocol);
@@ -124,6 +129,7 @@ public class GeneralSettingsFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         boolean isWifiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
+        boolean allowSyncWhileIdle = sharedPreferences.getBoolean(getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
         isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
         boolean useProxy = sharedPreferences.getBoolean(getString(R.string.pref_key_use_proxy), false);
         String proxyProtocol = sharedPreferences.getString(getString(R.string.pref_key_proxy_protocol), "http");
@@ -134,6 +140,7 @@ public class GeneralSettingsFragment extends Fragment {
 
         showThumbnailsSwitch.setChecked(showThumbnails);
         wifiOnlySwitch.setChecked(isWifiOnly);
+        allowWhileIdleSwitch.setChecked(allowSyncWhileIdle);
         useProxySwitch.setChecked(useProxy);
         proxyProtocolSummary.setText(proxyProtocol);
         proxyHostSummary.setText(proxyHost);
@@ -182,6 +189,14 @@ public class GeneralSettingsFragment extends Fragment {
             }
         });
         wifiOnlySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setWifiOnlyTransfers(isChecked));
+        allowWhileIdleSwitch.setOnClickListener(v -> {
+            if (allowWhileIdleSwitch.isChecked()) {
+                allowWhileIdleSwitch.setChecked(false);
+            } else {
+                allowWhileIdleSwitch.setChecked(true);
+            }
+        });
+        allowWhileIdleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> setAllowWhileIdle(isChecked));
         useProxyElement.setOnClickListener(v -> {
             if(useProxySwitch.isChecked()) {
                 useProxySwitch.setChecked(false);
@@ -324,6 +339,13 @@ public class GeneralSettingsFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_wifi_only_transfers), isChecked);
+        editor.apply();
+    }
+
+    private void setAllowWhileIdle(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.shared_preferences_allow_sync_trigger_while_idle), isChecked);
         editor.apply();
     }
 
