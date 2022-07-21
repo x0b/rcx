@@ -19,13 +19,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Set up Go 1.16
+    - name: Set up Go 1.18
       uses: actions/setup-go@v1
       with:
-        go-version: 1.16
+        go-version: 1.18
       id: go
     - name: Force NDK version
-      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;22.1.7171670"
+      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;24.0.8215888"
     - name: Build rclone
       run: ./gradlew rclone:buildNative
     - name: Build app
