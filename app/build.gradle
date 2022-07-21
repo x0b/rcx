@@ -10,7 +10,7 @@ android {
     compileSdkVersion 30
     ndkVersion '22.1.7171670'
     defaultConfig {
-        applicationId 'io.github.x0b.rcx'
+        applicationId 'de.felixnuesse.extract'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 200 // last digit is reserved for ABI, only ever end on 0!
