@@ -537,4 +537,5 @@
     <string name="logFragment">Logs</string>
     <string name="start_sync">Synchronisation wurde gestartet</string>
     <string name="alarm_while_idle">Erlaube Aufgaben wenn das Gerät im Schlafmodus ist</string>
+    <string name="alarm_while_idle_summary">Dies kann mehr Akku verbrauchen da das Gerät extra aufwachen muss. Falls verboten können Aufgaben sehr verspätet starten</string>
 </resources>
