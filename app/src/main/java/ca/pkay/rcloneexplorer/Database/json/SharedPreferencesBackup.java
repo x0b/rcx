@@ -1,5 +1,9 @@
 package ca.pkay.rcloneexplorer.Database.json;
 
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.DARK;
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.FOLLOW_SYSTEM;
+import static ca.pkay.rcloneexplorer.util.ThemeHelper.LIGHT;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -9,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
 
 public class SharedPreferencesBackup {
 
@@ -19,6 +22,7 @@ public class SharedPreferencesBackup {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean showThumbnails = sharedPreferences.getBoolean(context.getString(R.string.pref_key_show_thumbnails), false);
         boolean isWifiOnly = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wifi_only_transfers), false);
+        boolean allowWhileIdle = sharedPreferences.getBoolean(context.getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
         boolean useProxy = sharedPreferences.getBoolean(context.getString(R.string.pref_key_use_proxy), false);
         String proxyProtocol = sharedPreferences.getString(context.getString(R.string.pref_key_proxy_protocol), "http");
         String proxyHost = sharedPreferences.getString(context.getString(R.string.pref_key_proxy_host), "localhost");
@@ -32,7 +36,7 @@ public class SharedPreferencesBackup {
         boolean vcpGrantAll = sharedPreferences.getBoolean(context.getString(R.string.pref_key_vcp_grant_all), false);
 
         // Look and Feel
-        boolean isDarkTheme = ThemeHelper.isDarkTheme(context);
+        int darkTheme = sharedPreferences.getInt(context.getString(R.string.pref_key_dark_theme), FOLLOW_SYSTEM);
         boolean isWrapFilenames = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wrap_filenames), true);
         int defaultColorPrimary = sharedPreferences.getInt(context.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
         int defaultColorAccent = sharedPreferences.getInt(context.getString(R.string.pref_key_color_accent), R.color.colorAccent);
@@ -51,6 +55,7 @@ public class SharedPreferencesBackup {
 
         main.put("showThumbnails", showThumbnails);
         main.put("isWifiOnly", isWifiOnly);
+        main.put("allowWhileIdle", allowWhileIdle);
         main.put("useProxy", useProxy);
         main.put("proxyProtocol", proxyProtocol);
         main.put("proxyHost", proxyHost);
@@ -60,7 +65,7 @@ public class SharedPreferencesBackup {
         main.put("vcpEnabled", vcpEnabled);
         main.put("vcpDeclareLocal", vcpDeclareLocal);
         main.put("vcpGrantAll", vcpGrantAll);
-        main.put("isDarkTheme", isDarkTheme);
+        main.put("isDarkTheme", darkTheme);
         main.put("isWrapFilenames", isWrapFilenames);
         main.put("defaultColorPrimary", defaultColorPrimary);
         main.put("defaultColorAccent", defaultColorAccent);
@@ -82,6 +87,7 @@ public class SharedPreferencesBackup {
         editor.putBoolean(context.getString(R.string.pref_key_app_updates_beta), jsonObject.getBoolean("showThumbnails"));
         editor.putBoolean(context.getString(R.string.pref_key_wifi_only_transfers), jsonObject.getBoolean("isWifiOnly"));
         editor.putBoolean(context.getString(R.string.pref_key_use_proxy), jsonObject.getBoolean("useProxy"));
+        editor.putBoolean(context.getString(R.string.shared_preferences_allow_sync_trigger_while_idle), jsonObject.optBoolean("allowWhileIdle", false));
         editor.putString(context.getString(R.string.pref_key_proxy_protocol), jsonObject.getString("proxyProtocol"));
         editor.putString(context.getString(R.string.pref_key_proxy_host), jsonObject.getString("proxyHost"));
         editor.putInt(context.getString(R.string.pref_key_proxy_port), jsonObject.getInt("proxyPort"));
@@ -94,7 +100,22 @@ public class SharedPreferencesBackup {
         editor.putBoolean(context.getString(R.string.pref_key_vcp_grant_all), jsonObject.getBoolean("vcpGrantAll"));
 
         // Look and Feel
-        editor.putBoolean(context.getString(R.string.pref_key_dark_theme), jsonObject.getBoolean("isDarkTheme"));
+        // The type changed. So we try to use boolean first, and if it fails we use the proper int
+        Object darkTheme = jsonObject.get("isDarkTheme");
+        int valueForTheme;
+        if (darkTheme instanceof Integer) {
+            valueForTheme = (Integer) darkTheme;
+        } else {
+           if((boolean) darkTheme) {
+               valueForTheme = DARK;
+           } else {
+               valueForTheme = LIGHT;
+           }
+            editor.putInt(context.getString(R.string.pref_key_dark_theme), valueForTheme);
+        }
+
+        editor.putInt(context.getString(R.string.pref_key_dark_theme), valueForTheme);
+
         editor.putBoolean(context.getString(R.string.pref_key_wrap_filenames), jsonObject.getBoolean("isWrapFilenames"));
 
         //Todo: migrate those keys to identifiers, to make it more robust.
