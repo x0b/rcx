@@ -19,15 +19,14 @@
 
 // Rclone version - any git reference (tag, branch, hash) should work
 def buildTag = 'v1.58.1'
-ext.ndkVersion = '24.0.8215888'
+ext.ndkVersion = '25.0.8775105'
 
 //
 // DO NOT EDIT ANYTHING BELOW
 //
-import java.io.ByteArrayOutputStream
-import java.nio.file.Paths
+
 import java.nio.file.Files
-import java.util.Properties
+import java.nio.file.Paths
 
 def configureNdk() {
     def osName = System.properties['os.name'].toLowerCase()
@@ -190,7 +189,7 @@ task buildx64(type: Exec) {
     commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
 }
 
-task buildNative {
+task buildAll {
     dependsOn fetchRclone
     dependsOn buildArm
     dependsOn buildArm64
@@ -202,5 +201,5 @@ task prepareKotlinBuildScriptModel {
     // ignore, does not build from kotlin sources
 }
 
-buildNative.mustRunAfter(buildArm, buildArm64, buildx86, buildx64)
-defaultTasks 'buildNative'
+buildAll.mustRunAfter(buildArm, buildArm64, buildx86, buildx64)
+defaultTasks 'buildAll'

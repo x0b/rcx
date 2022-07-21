@@ -91,7 +91,7 @@ Developing
 Build rclone manually run:
 
 ```
-./gradlew rclone:buildNative
+./gradlew rclone:buildAll
 ```
 
 When building rclone with a go version that is too old (eg 1.15.5), this error may show up:

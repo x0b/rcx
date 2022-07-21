@@ -10,7 +10,7 @@ android {
         }
     }
     compileSdkVersion 30
-    ndkVersion '24.0.8215888'
+    ndkVersion '25.0.8775105'
     defaultConfig {
         applicationId 'de.felixnuesse.extract'
         minSdkVersion 21
