@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ActivityHelper.applyTheme(this);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(
                 getString(R.string.pref_key_crash_reports),
@@ -203,9 +205,6 @@ public class MainActivity extends AppCompatActivity
         if(intent.getAction().equals(MAIN_ACTIVITY_START_LOG)){
             startLogFragment();
         }
-
-        ThemeHelper.applyTheme(this);
-        ActivityHelper.applyTheme(this);
 
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();

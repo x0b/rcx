@@ -26,7 +26,6 @@ public class ThemeHelper {
 
 
     public static void applyTheme(Activity activity) {
-        //ActivityHelper.applyTheme(activity);
         TypedValue typedValue = new TypedValue();
         activity.getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
         activity.getWindow().setStatusBarColor(typedValue.data);
