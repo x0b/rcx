@@ -365,7 +365,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/maintainer_name"
+                        android:contentDescription="@string/old_maintainer_name"
                         android:src="@drawable/ic_person_outline"
                         app:tint="@color/iconTint" />
 
@@ -374,7 +374,7 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
-                        android:text="@string/maintainer_name"
+                        android:text="@string/old_maintainer_name"
                         android:textColor="@color/textColorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>

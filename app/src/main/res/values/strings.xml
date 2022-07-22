@@ -39,7 +39,7 @@
     <string name="maintainer">Maintainer</string>
     <string name="maintainer_name" translatable="false">Felix Nüsse &lt;github.com/newhinton&gt;</string>
     <string name="old_maintainer">Old Maintainer</string>
-    <string name="old_old_maintainer_name" translatable="false">x0b &lt;github.com/x0b&gt;</string>
+    <string name="old_maintainer_name" translatable="false">x0b &lt;github.com/x0b&gt;</string>
     <string name="empty_folder">The folder is empty</string>
     <string name="ooops">Ooops!</string>
     <string name="no_config_found">No configuration found, please import or add remote</string>
