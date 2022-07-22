@@ -6,7 +6,7 @@
     <group
         android:id="@+id/nav_top"
         android:orderInCategory="0"
-        android:checkableBehavior="none">
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_remotes"
             android:icon="@drawable/ic_twotone_cloud_24"
@@ -28,7 +28,8 @@
     <item
         android:title="@string/nav_drawer_pinned_header"
         android:id="@+id/drawer_pinned_header"
-        android:orderInCategory="1">
+        android:orderInCategory="1"
+        android:checkableBehavior="single">
         <menu>
             <group
                 android:id="@+id/nav_pinned"
@@ -40,7 +41,8 @@
 
     <item
         android:title="@string/nav_header_options_header"
-        android:orderInCategory="2">
+        android:orderInCategory="2"
+        android:checkableBehavior="single">
         <menu>
             <group
                 android:id="@+id/nav_bottom"

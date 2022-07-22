@@ -215,8 +215,11 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
             startLogFragment();
+            navigationView.setCheckedItem(R.id.nav_logs);
         } else {
-            startFragmentById(SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes));
+            int id = SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes);
+            navigationView.setCheckedItem(id);
+            startFragmentById(id);
         }
     }
 
@@ -347,7 +350,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        navigationView.setCheckedItem(id);
         if (drawerPinnedRemoteIds.containsKey(id)) {
             startPinnedRemote(drawerPinnedRemoteIds.get(id));
             return true;
@@ -594,7 +597,7 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
 
         AppShortcutsHelper.reportAppShortcutUsage(this, remote.getName());
-        navigationView.getMenu().getItem(0).setChecked(false);
+        //navigationView.getMenu().getItem(0).setChecked(false);
     }
 
     private void startPinnedRemote(RemoteItem remoteItem) {
