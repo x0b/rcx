@@ -6,150 +6,159 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="16dp">
 
-        <ImageView
-            android:id="@+id/taskIcon"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:contentDescription="@string/remote_icon"
-            app:tint="@color/iconTint"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_cloud" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/taskName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/taskIcon"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Google Drive" />
+            <ImageView
+                android:id="@+id/taskIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:contentDescription="@string/remote_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/iconTint"
+                tools:src="@drawable/ic_cloud" />
 
-        <TextView
-            android:id="@+id/fromLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/task_item_label_from"
-            android:textColor="@color/textColorSecondary"
-            app:layout_constraintStart_toStartOf="@+id/taskName"
-            app:layout_constraintTop_toBottomOf="@+id/taskName" />
+            <TextView
+                android:id="@+id/taskName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/taskIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Google Drive" />
 
-        <TextView
-            android:id="@+id/toLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:textColor="@color/textColorSecondary"
-            android:text="@string/task_item_label_to"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/fromLabel"
-            app:layout_constraintTop_toBottomOf="@+id/fromLabel" />
+            <TextView
+                android:id="@+id/fromLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/task_item_label_from"
+                android:textColor="@color/textColorSecondary"
+                app:layout_constraintStart_toStartOf="@+id/taskName"
+                app:layout_constraintTop_toBottomOf="@+id/taskName" />
 
-        <ImageButton
-            android:id="@+id/file_options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/file_options_content_description"
-            android:paddingStart="16dp"
-            android:paddingTop="26dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="26dp"
-            android:src="@drawable/ic_more_vert"
-            android:tint="@color/iconTint"
-            android:background="?selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/toLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/task_item_label_to"
+                android:textColor="@color/textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/fromLabel"
+                app:layout_constraintTop_toBottomOf="@+id/fromLabel" />
 
-        <TextView
-            android:id="@+id/task_sync_direction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/sync"
-            android:textColor="@color/textColorSecondary"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="@+id/taskName"
-            app:layout_constraintStart_toEndOf="@+id/taskName"
-            app:layout_constraintTop_toTopOf="@+id/taskName" />
+            <ImageButton
+                android:id="@+id/file_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/file_options_content_description"
+                android:paddingStart="16dp"
+                android:paddingTop="26dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="26dp"
+                android:src="@drawable/ic_more_vert"
+                android:tint="@color/iconTint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/toLabel"
-            app:layout_constraintEnd_toStartOf="@+id/file_options"
-            app:layout_constraintStart_toEndOf="@+id/fromLabel"
-            app:layout_constraintTop_toTopOf="@+id/fromLabel">
+            <TextView
+                android:id="@+id/task_sync_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/sync"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                app:layout_constraintBottom_toBottomOf="@+id/taskName"
+                app:layout_constraintStart_toEndOf="@+id/taskName"
+                app:layout_constraintTop_toTopOf="@+id/taskName" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:orientation="horizontal">
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/toLabel"
+                app:layout_constraintEnd_toStartOf="@+id/file_options"
+                app:layout_constraintStart_toEndOf="@+id/fromLabel"
+                app:layout_constraintTop_toTopOf="@+id/fromLabel">
 
-                <TextView
-                    android:id="@+id/fromID"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="fromid"
-                    android:textColor="@color/textColorSecondary"
-                    tools:ignore="HardcodedText" />
+                    android:gravity="start"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/fromPath"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/fromID"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="fromid"
+                        android:textColor="@color/textColorSecondary"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/fromPath"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="fromPath"
+                        android:textColor="@color/textColorSecondary"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="fromPath"
-                    android:textColor="@color/textColorSecondary"
-                    tools:ignore="HardcodedText" />
+                    android:gravity="start"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/toID"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="toid"
+                        android:textColor="@color/textColorSecondary"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/toPath"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="toPath"
+                        android:textColor="@color/textColorSecondary"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:orientation="horizontal">
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:id="@+id/toID"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="toid"
-                    android:textColor="@color/textColorSecondary"
-                    tools:ignore="HardcodedText" />
-
-                <TextView
-                    android:id="@+id/toPath"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="toPath"
-                    android:textColor="@color/textColorSecondary"
-                    tools:ignore="HardcodedText" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

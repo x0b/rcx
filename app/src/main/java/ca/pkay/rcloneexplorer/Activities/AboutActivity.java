@@ -1,21 +1,22 @@
 package ca.pkay.rcloneexplorer.Activities;
 
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
-
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -52,6 +53,7 @@ public class AboutActivity extends AppCompatActivity {
         findViewById(R.id.report_bug).setOnClickListener(v -> reportBug());
         findViewById(R.id.author_github_link).setOnClickListener(v -> openAuthorGitHubLink());
         findViewById(R.id.maintainer_github_link).setOnClickListener(v -> openMaintainerGithubLink());
+        findViewById(R.id.old_maintainer_github_link).setOnClickListener(v -> openOldMaintainerGithubLink());
     }
 
     @Override
@@ -96,6 +98,11 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void openMaintainerGithubLink() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_maintainer_url)));
+        tryStartActivity(this, browserIntent);
+    }
+
+    private void openOldMaintainerGithubLink() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_maintainer_url)));
         tryStartActivity(this, browserIntent);
     }
