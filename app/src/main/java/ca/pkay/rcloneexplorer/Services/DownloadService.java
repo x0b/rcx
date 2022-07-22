@@ -120,21 +120,24 @@ public class DownloadService extends IntentService {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    StatusObject so = new StatusObject(this);
-                    JSONObject logline = new JSONObject(line);
-                    Log.e("TAG", line);
-                    if(isLoggingEnable && logline.getString("level").equals("error")){
-                        log2File.log(line);
-                    } else if(logline.getString("level").equals("warning")){
-                        so.readStuff(logline);
-                    }
+                    try {
+                        StatusObject so = new StatusObject(this);
+                        JSONObject logline = new JSONObject(line);
+                        if (isLoggingEnable && logline.getString("level").equals("error")) {
+                            log2File.log(line);
+                        } else if (logline.getString("level").equals("warning")) {
+                            so.readStuff(logline);
+                        }
 
-                    mNotifications.updateDownloadNotification(
-                            downloadItem.getName(),
-                            so.getNotificationContent(),
-                            so.getNotificationBigText(),
-                            so.getNotificationPercent()
-                    );
+                        mNotifications.updateDownloadNotification(
+                                downloadItem.getName(),
+                                so.getNotificationContent(),
+                                so.getNotificationBigText(),
+                                so.getNotificationPercent()
+                        );
+                    } catch (JSONException e) {
+                        FLog.e(TAG, "onHandleIntent: error reading json", e);
+                    }
                 }
             } catch (InterruptedIOException e) {
                 FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
@@ -142,8 +145,6 @@ public class DownloadService extends IntentService {
                 if (!"Stream closed".equals(e.getMessage())) {
                     FLog.e(TAG, "onHandleIntent: error reading stdout", e);
                 }
-            } catch (JSONException e) {
-                FLog.e(TAG, "onHandleIntent: error reading json", e);
             }
 
             try {
