@@ -3,6 +3,7 @@ package ca.pkay.rcloneexplorer.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -29,9 +30,9 @@ class GenericSyncNotification(var mContext: Context) {
             }
         }
         val foregroundIntent = Intent(mContext, cls)
-        val pendingIntent = PendingIntent.getActivity(mContext, 0, foregroundIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(mContext, 0, foregroundIntent, FLAG_IMMUTABLE)
         val cancelIntent = Intent(mContext, cancelClass)
-        val cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, 0)
+        val cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, FLAG_IMMUTABLE)
 
         return NotificationCompat.Builder(
             mContext,

@@ -1,12 +1,14 @@
 package ca.pkay.rcloneexplorer.Services;
 
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -43,8 +45,6 @@ import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
-
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
 
 /**
  * A service for collecting bug reports.
@@ -154,11 +154,16 @@ public class ReportService extends Service {
             logcatThread.start();
         }
 
+        int intentflags = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentflags = PendingIntent.FLAG_IMMUTABLE;
+        }
         Intent foregroundIntent = new Intent(this, ReportService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, intentflags);
 
         Intent stopIntent = new Intent(this, StopCollectionReceiver.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
+
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, intentflags);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_bug_report)

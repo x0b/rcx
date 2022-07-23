@@ -229,7 +229,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
                 // Configure the intent so that your app's broadcast receiver gets
                 // the callback successfully.For details, see PendingIntent.getBroadcast().
-                PendingIntent successCallback = PendingIntent.getBroadcast(c, 0, pinnedShortcutCallbackIntent, 0);
+                PendingIntent successCallback = PendingIntent.getBroadcast(c, 0, pinnedShortcutCallbackIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 shortcutManager.requestPinShortcut(shortcut, successCallback.getIntentSender());
             }

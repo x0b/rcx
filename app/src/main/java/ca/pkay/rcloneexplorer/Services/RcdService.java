@@ -76,9 +76,12 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
             showNotification();
             shutdown = false;
         }
-
+        int flags = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = PendingIntent.FLAG_IMMUTABLE;
+        }
         Intent foregroundIntent = new Intent(this, RcdService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, flags);
 
         // build job statistics
         long running = 0;
@@ -288,7 +291,11 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
     private PendingIntent stopServiceIntent() {
         Intent cancelIntent = new Intent(this, RcdServiceAction.class);
         cancelIntent.setAction(RcdServiceAction.ACTION_STOP_ALL);
-        return PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+        int flags = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = PendingIntent.FLAG_IMMUTABLE;
+        }
+        return PendingIntent.getBroadcast(this, 0, cancelIntent, flags);
     }
 
     public boolean waitOnline(long timeout) {

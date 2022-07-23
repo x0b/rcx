@@ -7,8 +7,8 @@
 
     <color name="backgroundColor">#FAFAFA</color>
     <color name="cardColor">#FFFFFF</color>
-    <color name="textColorPrimary">#212121</color>
-    <color name="textColorSecondary">#757575</color>
+    <color name="textColorPrimary">#5E5E5E</color>
+    <color name="textColorSecondary">#717070</color>
     <color name="dividerColor">#E4E4E4</color>
     <color name="iconTint">#4A4A4A</color>
     <color name="colorControlNormal">#757575</color>

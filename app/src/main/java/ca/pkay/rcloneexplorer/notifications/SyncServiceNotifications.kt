@@ -1,19 +1,14 @@
 package ca.pkay.rcloneexplorer.notifications
 
-import android.content.Intent
-import ca.pkay.rcloneexplorer.Services.SyncService
 import android.app.PendingIntent
-import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications
-import ca.pkay.rcloneexplorer.R
-import android.os.Build
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
-import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification
-import java.util.ArrayList
+import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.Services.SyncService
 
 class SyncServiceNotifications(var mContext: Context) {
 
@@ -103,12 +98,17 @@ class SyncServiceNotifications(var mContext: Context) {
     }
 
     fun getPersistentNotification(title: String?): NotificationCompat.Builder {
+
+        var flags = 0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = PendingIntent.FLAG_IMMUTABLE
+        }
         val foregroundIntent = Intent(mContext, SyncService::class.java)
         val pendingIntent =
-            PendingIntent.getActivity(mContext, 0, foregroundIntent, 0)
+            PendingIntent.getActivity(mContext, 0, foregroundIntent, flags)
         val cancelIntent = Intent(mContext, SyncCancelAction::class.java)
         val cancelPendingIntent =
-            PendingIntent.getBroadcast(mContext, 0, cancelIntent, 0)
+            PendingIntent.getBroadcast(mContext, 0, cancelIntent, flags)
         return NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_rounded_cloud_sync_24)
             .setContentTitle(mContext.getString(R.string.syncing_service, title))
