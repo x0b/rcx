@@ -9,12 +9,12 @@ android {
             keyAlias 'github_x0b'
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 32
     ndkVersion '25.0.8775105'
     defaultConfig {
         applicationId 'de.felixnuesse.extract'
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 200 // last digit is reserved for ABI, only ever end on 0!
         versionName '2.0.2-dev'
         resConfigs "en", "de" // restrict to used languages
@@ -81,6 +81,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 
