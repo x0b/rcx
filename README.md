@@ -51,7 +51,7 @@ Screenshots
 -----------
 Manage Storage|Upload Files|Explore Files|Manage Files
 :-----:|:--------------:|:-----------:|:---------:|
-![screenshot1](https://github.com/x0b/rcx/blob/master/docs/screenshot_1.png?raw=true)|![screenshot3](https://github.com/x0b/rcx/blob/master/docs/screenshot_3.png?raw=true)|![screenshot7](https://github.com/x0b/rcx/blob/master/docs/screenshot_7.png?raw=true)|![screenshot8](https://github.com/x0b/rcx/blob/master/docs/screenshot_8.png?raw=true)
+![screenshot1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)|![screenshot3](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)|![screenshot7](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)|
 
 
 Intentservice
