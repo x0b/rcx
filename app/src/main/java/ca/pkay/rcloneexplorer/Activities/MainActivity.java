@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity
 
         ActivityHelper.applyTheme(this);
 
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enableCrashReports = sharedPreferences.getBoolean(
                 getString(R.string.pref_key_crash_reports),
@@ -479,6 +480,7 @@ public class MainActivity extends AppCompatActivity
     private void startRemotesFragment() {
         fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
+        this.setTitle(R.string.remotes);
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
             fragmentManager.popBackStack();

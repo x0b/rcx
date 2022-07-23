@@ -2,12 +2,7 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +10,17 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
-import es.dmoral.toasty.Toasty;
 
 public class WebdavConfig extends Fragment {
 
@@ -127,7 +126,7 @@ public class WebdavConfig extends Fragment {
         String urlString = url.getText().toString();
         String passString = pass.getText().toString();
         String vendorString = vendor.getSelectedItem().toString();
-        int color = ((ColorDrawable)vendorLine.getBackground()).getColor();
+        //int color = ((ColorDrawable)vendorLine.getBackground()).getColor();
 
         boolean error = false;
 
@@ -163,7 +162,7 @@ public class WebdavConfig extends Fragment {
             vendorLine.setBackgroundColor(Color.parseColor("#B14525"));
             error = true;
         } else {
-            vendorLine.setBackgroundColor(color);
+            //vendorLine.setBackgroundColor(color);
         }
         if (error) {
             return;
