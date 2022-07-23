@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -763,23 +764,33 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void searchClicked() {
+        InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         if (isSearchMode) {
-            if (!is720dp) {
-                breadcrumbView.setVisibility(View.VISIBLE);
-            }
             searchBar.setVisibility(View.GONE);
             searchDirContent("");
             ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
             recyclerViewAdapter.setSearchMode(false);
             isSearchMode = false;
         } else {
-            if (!is720dp) {
-                breadcrumbView.setVisibility(View.GONE);
-            }
             searchBar.setVisibility(View.VISIBLE);
             recyclerViewAdapter.setSearchMode(true);
             isSearchMode = true;
+            EditText search = searchBar.findViewById(R.id.search_field);
+            search.requestFocus();
+            keyboard.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
         }
+
+        searchBar.findViewById(R.id.search_clear).setOnClickListener(v -> {
+            EditText searchField = searchBar.findViewById(R.id.search_field);
+            if (searchField.getText().toString().isEmpty()) {
+                searchClicked();
+            } else {
+                searchDirContent("");
+                searchField.setText("");
+                keyboard.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
     }
 
     private void showOpenAsDialog(FileItem fileItem) {
@@ -858,16 +869,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             @Override
             public void afterTextChanged(Editable s) {
 
-            }
-        });
-
-        searchBar.findViewById(R.id.search_clear).setOnClickListener(v -> {
-            EditText searchField = searchBar.findViewById(R.id.search_field);
-            if (searchField.getText().toString().isEmpty()) {
-                searchClicked();
-            } else {
-                searchDirContent("");
-                searchField.setText("");
             }
         });
     }

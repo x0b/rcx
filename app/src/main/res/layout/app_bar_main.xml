@@ -6,23 +6,90 @@
                                                      android:layout_height="match_parent"
                                                      tools:context="ca.pkay.rcloneexplorer.Activities.MainActivity">
 
+
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/transparent"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:theme="@style/ToolbarTheme"
+        app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                app:cardBackgroundColor="?attr/colorPrimary"
+                app:cardCornerRadius="36dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                    <LinearLayout
+                        android:id="@+id/search_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:visibility="invisible"
+                        android:paddingEnd="16dp"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/search_field"
+                            android:layout_height="match_parent"
+                            android:layout_width="match_parent"
+                            android:hint="@string/search"
+                            android:background="#00000000"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="start"
+                            android:lines="1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/search_clear"/>
+
+                        <ImageButton
+                            android:id="@+id/search_clear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginStart="2dp"
+                            android:src="@drawable/ic_cancel"
+                            android:background="@null"
+                            android:tint="@color/grey300"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/search_field"
+                            android:contentDescription="@string/search_clear_button" />
+
+
+                    </LinearLayout>
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp" >
+            android:paddingEnd="16dp">
 
             <ca.pkay.rcloneexplorer.BreadcrumbView
                 android:id="@+id/breadcrumb_view"
@@ -31,11 +98,24 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:scrollbars="none"
-                android:visibility="gone" />
-
-            <include
-                layout="@layout/search_bar" />
+                android:visibility="visible" />
         </FrameLayout>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/search_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:titleMarginStart="0dp"
+            tools:title="@string/app_name">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

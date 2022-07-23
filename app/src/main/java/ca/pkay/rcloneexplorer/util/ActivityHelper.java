@@ -8,8 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -93,6 +98,20 @@ public class ActivityHelper {
         int customAccentColor = sharedPreferences.getInt(activity.getString(R.string.pref_key_color_accent), R.color.colorAccent);
         activity.getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(activity, customPrimaryColor), true);
         activity.getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(activity, customAccentColor), true);
+
+        Window window = activity.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.backgroundColor));
+
+        int newUiVisibility = (int) window.getDecorView().getSystemUiVisibility();
+        if(ThemeHelper.isDarkTheme(activity)) {
+            newUiVisibility &= ~(int) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        } else {
+            newUiVisibility |= (int) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(newUiVisibility);
+
         ThemeHelper.applyDarkMode(activity);
     }
 }

@@ -565,7 +565,7 @@ public class MainActivity extends AppCompatActivity
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String localTime = date.format(Calendar.getInstance().getTime());
 
-        intent.putExtra(Intent.EXTRA_TITLE, "rcx-backup-"+localTime+".zip");
+        intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.app_name)+"-backup-"+localTime+".zip");
         tryStartActivityForResult(this, intent, WRITE_REQUEST_CODE);
     }
 
