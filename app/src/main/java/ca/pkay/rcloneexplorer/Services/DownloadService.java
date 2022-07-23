@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -37,7 +36,6 @@ import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.notifications.DownloadNotifications;
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
-import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncLog;
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
@@ -72,7 +70,7 @@ public class DownloadService extends IntentService {
 
         mNotifications = new DownloadNotifications(this);
         (new GenericSyncNotification(this)).setNotificationChannel(
-                UploadNotifications.CHANNEL_ID,
+                DownloadNotifications.CHANNEL_ID,
                 CHANNEL_NAME,
                 R.string.download_service_notification_description
         );
