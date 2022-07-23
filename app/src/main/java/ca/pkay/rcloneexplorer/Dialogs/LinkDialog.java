@@ -5,14 +5,15 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.R;
 import es.dmoral.toasty.Toasty;
@@ -20,10 +21,8 @@ import es.dmoral.toasty.Toasty;
 public class LinkDialog extends DialogFragment {
 
     private final String SAVED_LINK_URL = "ca.pkay.rcexplorer.LinkDialog.LINK_URL";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.LinkDialog.IS_DARK_THEME";
     private Context context;
     private String linkUrl;
-    private boolean isDarkTheme;
 
     public LinkDialog() {}
 
@@ -32,16 +31,10 @@ public class LinkDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             linkUrl = savedInstanceState.getString(SAVED_LINK_URL);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
         }
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_link, null);
 
@@ -67,18 +60,12 @@ public class LinkDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(SAVED_LINK_URL, linkUrl);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-    }
-
-    public LinkDialog isDarkTheme(boolean isDarkTheme) {
-        this.isDarkTheme = isDarkTheme;
-        return this;
     }
 
     public LinkDialog setLinkUrl(String url) {

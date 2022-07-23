@@ -1,5 +1,7 @@
 package ca.pkay.rcloneexplorer.Activities;
 
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartService;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -17,9 +20,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.PreferenceManager;
 
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.ShareFragment;
@@ -29,18 +37,10 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
 import ca.pkay.rcloneexplorer.Services.UploadService;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartService;
 
 public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
                                                                     ShareFragment.OnShareDestinationSelected {
@@ -175,7 +175,6 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
                     .setTitle(R.string.loading)
-                    .setDarkTheme(isDarkTheme)
                     .setNegativeButton(R.string.cancel)
                     .setOnNegativeListener(() -> cancel(true));
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");

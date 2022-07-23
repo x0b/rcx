@@ -425,7 +425,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     }
 
     private void showSFTPgoToDialog() {
-        GoToDialog goToDialog = new GoToDialog().isDarkTheme(isDarkTheme);
+        GoToDialog goToDialog = new GoToDialog();
         goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 
@@ -521,8 +521,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setSortOrder(sortOrder)
-                .setDarkTheme(isDarkTheme);
+                .setSortOrder(sortOrder);
         sortDialog.show(getChildFragmentManager(), "sort dialog");
     }
 

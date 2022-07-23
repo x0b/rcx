@@ -538,7 +538,6 @@ public class MainActivity extends AppCompatActivity
                 .setMessage(R.string.please_enter_password)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.okay_confirmation)
-                .setDarkTheme(ThemeHelper.isDarkTheme(this))
                 .setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
                 .show(getSupportFragmentManager(), "input dialog");
     }

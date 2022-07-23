@@ -2,18 +2,17 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.R;
 
@@ -27,14 +26,12 @@ public class NumberPickerDialog extends DialogFragment {
     public static final int UNITS_M = 21;
     public static final int UNITS_H = 22;
     private final String SAVED_TITLE = "ca.pkay.rcexplorer.NumberPickerDialog.TITLE";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.NumberPickerDialog.IS_DARK_THEME";
     private final String SAVED_OPTION_UNITS = "ca.pkay.rcexplorer.NumberPickerDialog.OPTION_UNITS";
     private final String SAVED_SET_VALUE = "ca.pkay.rcexplorer.NumberPickerDialog.SET_VALUE";
     private Context context;
     private Spinner spinner;
     private NumberPicker numberPicker;
     private int title;
-    private boolean isDarkTheme;
     private int optionUnits;
     private int defaultValue;
     private OnValueSelected listener;
@@ -48,20 +45,13 @@ public class NumberPickerDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             title = savedInstanceState.getInt(SAVED_TITLE);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
             optionUnits = savedInstanceState.getInt(SAVED_OPTION_UNITS);
             defaultValue = savedInstanceState.getInt(SAVED_SET_VALUE);
         }
 
         listener = (OnValueSelected) getParentFragment();
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_number_picker, null);
 
@@ -94,7 +84,6 @@ public class NumberPickerDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SAVED_TITLE, title);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         outState.putInt(SAVED_OPTION_UNITS, optionUnits);
         outState.putInt(SAVED_SET_VALUE, numberPicker.getValue());
     }
@@ -132,11 +121,6 @@ public class NumberPickerDialog extends DialogFragment {
         }
 
         listener.onValueSelected(getTag(), number, unit);
-    }
-
-    public NumberPickerDialog setDarkTheme(boolean isDarkTheme) {
-        this.isDarkTheme = isDarkTheme;
-        return this;
     }
 
     public NumberPickerDialog setTitle(int title) {

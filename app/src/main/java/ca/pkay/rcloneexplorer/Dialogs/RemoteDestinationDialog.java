@@ -7,20 +7,21 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +50,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
     private static final String SHARED_PREFS_SORT_ORDER = "ca.pkay.rcexplorer.sort_order";
     private final String SAVED_REMOTE = "ca.pkay.rcexplorer.RemoteDestinationDialog.REMOTE";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.RemoteDestinationDialog.IS_DARK_THEME";
     private final String SAVED_PATH = "ca.pkay.rcexplorer.RemoteDestinationDialog.PATH";
     private final String SAVED_CONTENT = "ca.pkay.rcexplorer.RemoteDestinationDialog.CONTENT";
     private final String SAVED_PREVIOUS_DIR_TEXT = "ca.pkay.rcexplorer.RemoteDestinationDialog.PREVIOUS_DIR_TEXT";
@@ -57,7 +57,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     private Context context;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RemoteItem remote;
-    private boolean isDarkTheme;
     private FileExplorerRecyclerViewAdapter recyclerViewAdapter;
     private Rclone rclone;
     private Stack<String> pathStack;
@@ -74,7 +73,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     public RemoteDestinationDialog() {
         pathStack = new Stack<>();
         directoryObject = new DirectoryObject();
-        isDarkTheme = false;
     }
 
     @NonNull
@@ -86,7 +84,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
         if (savedInstanceState != null) {
             remote = savedInstanceState.getParcelable(SAVED_REMOTE);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME, false);
             directoryObject.setPath(savedInstanceState.getString(SAVED_PATH));
             if (savedInstanceState.containsKey(SAVED_CONTENT)) {
                 directoryObject.setContent(savedInstanceState.<FileItem>getParcelableArrayList(SAVED_CONTENT));
@@ -177,7 +174,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVED_REMOTE, remote);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         outState.putString(SAVED_PATH, directoryObject.getCurrentPath());
         ArrayList<FileItem> content = new ArrayList<>(directoryObject.getDirectoryContent());
         outState.putParcelableArrayList(SAVED_CONTENT, content);
@@ -221,11 +217,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
     public RemoteDestinationDialog setRemote(RemoteItem remote) {
         this.remote = remote;
-        return this;
-    }
-
-    public RemoteDestinationDialog setDarkTheme(boolean isDarkTheme) {
-        this.isDarkTheme = isDarkTheme;
         return this;
     }
 
@@ -296,7 +287,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
                     .setMessage(R.string.type_new_folder_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
-                    .setDarkTheme(isDarkTheme)
                     .show(getChildFragmentManager(), "input dialog");
         }
     }
@@ -365,8 +355,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
     }
 
     private void showSFTPgoToDialog() {
-        GoToDialog goToDialog = new GoToDialog()
-                .isDarkTheme(isDarkTheme);
+        GoToDialog goToDialog = new GoToDialog();
         goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 

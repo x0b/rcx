@@ -2,14 +2,14 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.R;
 
@@ -20,7 +20,6 @@ public class LoadingDialog extends DialogFragment {
     }
 
     private final String SAVED_CANCELABLE = "ca.pkay.rcexplorer.LoadingDialog.CANCELABLE";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.LoadingDialog.IS_DARK_THEME";
     private final String SAVED_TITLE = "ca.pkay.rcexplorer.LoadingDialog.TITLE";
     private final String SAVED_TITLE_ID = "ca.pkay.rcexplorer.LoadingDialog.TITLE_ID";
     private final String SAVED_NEGATIVE_TEXT = "ca.pkay.rcexplorer.NEGATIVE_TEXT";
@@ -28,7 +27,6 @@ public class LoadingDialog extends DialogFragment {
     private Context context;
     private OnNegative onNegativeListener;
     private Boolean cancelable;
-    private Boolean isDarkTheme;
     private String title;
     private int titleId;
     private String negativeText;
@@ -36,7 +34,6 @@ public class LoadingDialog extends DialogFragment {
 
     public LoadingDialog() {
         cancelable = false;
-        isDarkTheme = false;
     }
 
     @NonNull
@@ -44,20 +41,13 @@ public class LoadingDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             cancelable = savedInstanceState.getBoolean(SAVED_CANCELABLE);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
             title = savedInstanceState.getString(SAVED_TITLE);
             titleId = savedInstanceState.getInt(SAVED_TITLE_ID);
             negativeText = savedInstanceState.getString(SAVED_NEGATIVE_TEXT);
             negativeTextId = savedInstanceState.getInt(SAVED_NEGATIVE_TEXT_ID);
         }
 
-        AlertDialog.Builder builder;
-
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_loading_indicator, null);
         builder.setCancelable(cancelable);
@@ -88,7 +78,6 @@ public class LoadingDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_CANCELABLE, cancelable);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         outState.putString(SAVED_TITLE, title);
         outState.putInt(SAVED_TITLE_ID, titleId);
         outState.putString(SAVED_NEGATIVE_TEXT, negativeText);
@@ -127,12 +116,6 @@ public class LoadingDialog extends DialogFragment {
         this.cancelable = cancelable;
         return this;
     }
-
-    public LoadingDialog setDarkTheme(Boolean darkTheme) {
-        isDarkTheme = darkTheme;
-        return this;
-    }
-
 
     public LoadingDialog setOnNegativeListener(OnNegative l) {
         onNegativeListener = l;

@@ -1,5 +1,9 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartService;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -26,6 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -42,6 +47,23 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
+import com.leinardi.android.speeddial.SpeedDialView;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
+import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
@@ -59,7 +81,6 @@ import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
-import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
@@ -71,10 +92,6 @@ import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.FLog;
-import com.leinardi.android.speeddial.SpeedDialActionItem;
-import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
-import com.leinardi.android.speeddial.SpeedDialView;
-
 import ca.pkay.rcloneexplorer.util.LargeParcel;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
@@ -84,21 +101,6 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivity;
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
-import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartService;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
                                                                 SwipeRefreshLayout.OnRefreshListener,
@@ -660,7 +662,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void serve() {
         ServeDialog serveDialog = new ServeDialog();
-        serveDialog.setDarkTheme(isDarkTheme);
         serveDialog.show(getChildFragmentManager(), "serve dialog");
     }
 
@@ -713,8 +714,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void showSFTPgoToDialog() {
-        GoToDialog goToDialog = new GoToDialog()
-                .isDarkTheme(isDarkTheme);
+        GoToDialog goToDialog = new GoToDialog();
         goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 
@@ -785,8 +785,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void showOpenAsDialog(FileItem fileItem) {
         OpenAsDialog openAsDialog = new OpenAsDialog();
         openAsDialog
-                .setFileItem(fileItem)
-                .setDarkTheme(isDarkTheme);
+                .setFileItem(fileItem);
         if (getFragmentManager() != null) {
             openAsDialog.show(getChildFragmentManager(), "open as");
         }
@@ -818,8 +817,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void showFileProperties(FileItem fileItem) {
         FilePropertiesDialog filePropertiesDialog = new FilePropertiesDialog()
                 .setFile(fileItem)
-                .setRemote(remote)
-                .setDarkTheme(isDarkTheme);
+                .setRemote(remote);
         if (remote.isCrypt()) {
             filePropertiesDialog.withHashCalculations(false);
         }
@@ -996,8 +994,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setSortOrder(sortOrder)
-                .setDarkTheme(isDarkTheme);
+                .setSortOrder(sortOrder);
         sortDialog.show(getChildFragmentManager(), "sort dialog");
     }
 
@@ -1511,7 +1508,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setFilledText(renameItem.getName())
-                    .setDarkTheme(isDarkTheme)
                     .setTag("rename file")
                     .show(getChildFragmentManager(), "input dialog");
         }
@@ -1548,7 +1544,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setMessage(R.string.type_new_folder_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
-                    .setDarkTheme(isDarkTheme)
                     .setTag("new dir")
                     .show(getChildFragmentManager(), "input dialog");
         }
@@ -1834,7 +1829,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
             loadingDialog = new LoadingDialog()
                     .setCanCancel(false)
-                    .setDarkTheme(isDarkTheme)
                     .setTitle(getString(R.string.loading_file))
                     .setNegativeButton(getResources().getString(R.string.cancel))
                     .setOnNegativeListener(() -> {
@@ -1938,7 +1932,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
                     .setCanCancel(false)
-                    .setDarkTheme(isDarkTheme)
                     .setTitle(R.string.loading);
 
             if (getFragmentManager() != null) {
@@ -2084,8 +2077,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         protected void onPreExecute() {
             super.onPreExecute();
             loadingDialog = new LoadingDialog()
-                    .setTitle(R.string.generating_public_link)
-                    .setDarkTheme(isDarkTheme);
+                    .setTitle(R.string.generating_public_link);
             if (getFragmentManager() != null) {
                 loadingDialog.show(getChildFragmentManager(), "loading dialog");
             }
@@ -2110,7 +2102,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             }
 
             LinkDialog linkDialog = new LinkDialog()
-                    .isDarkTheme(isDarkTheme)
                     .setLinkUrl(link);
             if (getFragmentManager() != null && !getChildFragmentManager().isStateSaved()) {
                 linkDialog.show(getChildFragmentManager(), "link dialog");

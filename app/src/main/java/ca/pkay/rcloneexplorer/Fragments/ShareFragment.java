@@ -7,14 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.preference.PreferenceManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -352,8 +353,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
     }
 
     private void showSFTPgoToDialog() {
-        GoToDialog goToDialog = new GoToDialog()
-                .isDarkTheme(isDarkTheme);
+        GoToDialog goToDialog = new GoToDialog();
         goToDialog.show(getChildFragmentManager(), "go to dialog");
     }
 
@@ -363,8 +363,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setSortOrder(sortOrder)
-                .setDarkTheme(isDarkTheme);
+                .setSortOrder(sortOrder);
         sortDialog.show(getChildFragmentManager(), "sort dialog");
     }
 
@@ -480,7 +479,6 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
                     .setMessage(R.string.type_new_folder_name)
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
-                    .setDarkTheme(isDarkTheme)
                     .show(getChildFragmentManager(), "input dialog");
         }
     }

@@ -36,14 +36,12 @@ public class RemotePropertiesDialog extends DialogFragment {
     private static final String ARG_IS_DARK_THEME = "dark_theme";
 
     private final String SAVED_REMOTE = "ca.pkay.rcexplorer.RemotePropertiesDialog.REMOTE";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.RemotePropertiesDialog.IS_DARK_THEME";
     private final String SAVED_STORAGE_BYTES_USED = "ca.pkay.rcexplorer.RemotePropertiesDialog.STORAGE_BYTES_USED";
     private final String SAVED_STORAGE_BYTES_TOTAL = "ca.pkay.rcexplorer.RemotePropertiesDialog.STORAGE_BYTES_TOTAL";
     private final String SAVED_STORAGE_BYTES_FREE = "ca.pkay.rcexplorer.RemotePropertiesDialog.STORAGE_BYTES_FREE";
     private final String SAVED_STORAGE_BYTES_TRASHED = "ca.pkay.rcexplorer.RemotePropertiesDialog.STORAGE_BYTES_TRASHED";
 
     private RemoteItem remote;
-    private Boolean isDarkTheme;
     private long storageUsed;
     private long storageTotal;
     private long storageFree;
@@ -54,9 +52,7 @@ public class RemotePropertiesDialog extends DialogFragment {
     private TextView remoteStorageStats;
     private Context context;
 
-    public RemotePropertiesDialog() {
-        isDarkTheme = false;
-    }
+    public RemotePropertiesDialog() {}
 
     public static RemotePropertiesDialog newInstance(RemoteItem remoteItem, boolean isDarkTheme) {
         RemotePropertiesDialog dialog = new RemotePropertiesDialog();
@@ -73,12 +69,10 @@ public class RemotePropertiesDialog extends DialogFragment {
         Bundle arguments;
         if (null != (arguments = getArguments())) {
             remote = arguments.getParcelable(ARG_REMOTE);
-            isDarkTheme = arguments.getBoolean(ARG_IS_DARK_THEME);
         }
 
         if (savedInstanceState != null) {
             remote = savedInstanceState.getParcelable(SAVED_REMOTE);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
             storageUsed = savedInstanceState.getLong(SAVED_STORAGE_BYTES_USED);
             storageTotal = savedInstanceState.getLong(SAVED_STORAGE_BYTES_TOTAL);
             storageFree = savedInstanceState.getLong(SAVED_STORAGE_BYTES_FREE);
@@ -86,12 +80,8 @@ public class RemotePropertiesDialog extends DialogFragment {
         }
 
         rclone = new Rclone(context);
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity) context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_remote_properties, null);
 
@@ -125,7 +115,6 @@ public class RemotePropertiesDialog extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVED_REMOTE, remote);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         outState.putLong(SAVED_STORAGE_BYTES_TOTAL, storageTotal);
         outState.putLong(SAVED_STORAGE_BYTES_USED, storageUsed);
         outState.putLong(SAVED_STORAGE_BYTES_FREE, storageFree);
@@ -134,11 +123,6 @@ public class RemotePropertiesDialog extends DialogFragment {
 
     public RemotePropertiesDialog setRemote(RemoteItem remote) {
         this.remote = remote;
-        return this;
-    }
-
-    public RemotePropertiesDialog setDarkTheme(Boolean darkTheme) {
-        isDarkTheme = darkTheme;
         return this;
     }
 

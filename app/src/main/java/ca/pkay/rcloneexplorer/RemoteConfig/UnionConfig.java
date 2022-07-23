@@ -1,32 +1,36 @@
 package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnDestinationSelectedListener {
 
@@ -152,7 +156,6 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
 
     private void setPath() {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
-                .setDarkTheme(isDarkTheme)
                 .setRemote(selectedRemote)
                 .setTitle(R.string.union_select_remote);
         remoteDestinationDialog.show(getChildFragmentManager(), "remote destination dialog");

@@ -2,16 +2,16 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.R;
 
@@ -33,13 +33,10 @@ public class SortDialog extends DialogFragment {
     private int positiveText;
     private int negativeText;
     private int sortOrder;
-    private Boolean isDarkTheme;
     private OnClickListener listener;
     private View view;
 
-    public SortDialog() {
-        isDarkTheme = false;
-    }
+    public SortDialog() {}
 
     @NonNull
     @Override
@@ -49,19 +46,13 @@ public class SortDialog extends DialogFragment {
         }
 
         if (savedInstanceState != null) {
-            isDarkTheme = savedInstanceState.getBoolean("isDarkTheme");
             title = savedInstanceState.getInt("title");
             positiveText = savedInstanceState.getInt("positiveText");
             negativeText = savedInstanceState.getInt("negativeText");
             sortOrder = savedInstanceState.getInt("sortOrder");
         }
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         view = layoutInflater.inflate(R.layout.dialog_sort, null);
 
@@ -98,7 +89,6 @@ public class SortDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("isDarkTheme", isDarkTheme);
         outState.putInt("title", title);
         outState.putInt("positiveText", positiveText);
         outState.putInt("negativeText", negativeText);
@@ -122,11 +112,6 @@ public class SortDialog extends DialogFragment {
 
     public SortDialog setSortOrder(int sortOrder) {
         this.sortOrder = sortOrder;
-        return this;
-    }
-
-    public SortDialog setDarkTheme(boolean darkTheme) {
-        isDarkTheme = darkTheme;
         return this;
     }
 

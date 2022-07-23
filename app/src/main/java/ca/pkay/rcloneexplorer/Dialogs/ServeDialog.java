@@ -2,22 +2,23 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
@@ -25,7 +26,6 @@ import ca.pkay.rcloneexplorer.Rclone;
 public class ServeDialog extends DialogFragment {
 
     private Context context;
-    private boolean isDarkTheme;
     private Callback callback;
     private RadioGroup protocol;
     private CheckBox allowRemoteAccess;
@@ -43,17 +43,8 @@ public class ServeDialog extends DialogFragment {
             callback = (Callback) getParentFragment();
         }
 
-        if (savedInstanceState != null) {
-            isDarkTheme = savedInstanceState.getBoolean("isDarkTheme");
-        }
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_serve, null);
 
@@ -92,7 +83,6 @@ public class ServeDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("isDarkTheme", isDarkTheme);
         outState.putInt("protocol", protocol.getCheckedRadioButtonId());
         outState.putBoolean("allowRemoteAccess", allowRemoteAccess.isChecked());
         if (!user.getText().toString().trim().isEmpty()) {
@@ -136,11 +126,6 @@ public class ServeDialog extends DialogFragment {
         if (context instanceof Callback) {
             callback = (Callback) context;
         }
-    }
-
-    public ServeDialog setDarkTheme(boolean isDarkTheme) {
-        this.isDarkTheme = isDarkTheme;
-        return this;
     }
 
     private void sendCallback() {

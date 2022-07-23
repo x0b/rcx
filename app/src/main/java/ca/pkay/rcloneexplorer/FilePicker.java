@@ -4,14 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +11,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
-import ca.pkay.rcloneexplorer.util.FLog;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.io.File;
@@ -34,6 +33,8 @@ import java.util.regex.Pattern;
 import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
@@ -293,7 +294,6 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 .setMessage(R.string.type_new_folder_name)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.okay_confirmation)
-                .setDarkTheme(isDarkTheme)
                 .show(getSupportFragmentManager(), "input dialog");
     }
 
@@ -365,8 +365,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 .setTitle(R.string.sort)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.ok)
-                .setSortOrder(sortOrder)
-                .setDarkTheme(isDarkTheme);
+                .setSortOrder(sortOrder);
         if (getFragmentManager() != null) {
             sortDialog.show(getSupportFragmentManager(), "sort dialog");
         }

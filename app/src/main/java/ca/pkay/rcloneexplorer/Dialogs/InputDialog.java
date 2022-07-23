@@ -30,7 +30,6 @@ public class InputDialog extends DialogFragment {
     private final String SAVED_FILLED_TEXT = "ca.pkay.rcexplorer.InputDialog.FILLED_TEXT";
     private final String SAVED_INPUT_TYPE = "ca.pkay.rcexplorer.InputDialog.INPUT_TYPE";
     private final String SAVED_TAG = "ca.pkay.rcexplorer.InputDialog.TAG";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.InputDialog.IS_DARK_THEME";
     private Context context;
     private EditText editText;
     private String title;
@@ -41,13 +40,10 @@ public class InputDialog extends DialogFragment {
     private int negativeTextId;
     private String filledText;
     private int inputType;
-    private Boolean isDarkTheme;
     private String tag;
     private OnPositive onPositiveListener;
 
-    public InputDialog() {
-        isDarkTheme = false;
-    }
+    public InputDialog() {}
 
     @NonNull
     @Override
@@ -62,20 +58,13 @@ public class InputDialog extends DialogFragment {
             filledText = savedInstanceState.getString(SAVED_FILLED_TEXT);
             inputType = savedInstanceState.getInt(SAVED_INPUT_TYPE);
             tag = savedInstanceState.getString(SAVED_TAG);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
         }
 
         if (getParentFragment() != null) {
             onPositiveListener = (OnPositive) getParentFragment();
         }
 
-        AlertDialog.Builder builder;
-
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_input, null);
         editText = view.findViewById(R.id.dialog_input);
@@ -124,7 +113,6 @@ public class InputDialog extends DialogFragment {
         outState.putString(SAVED_FILLED_TEXT, filledText);
         outState.putInt(SAVED_INPUT_TYPE, inputType);
         outState.putString(SAVED_TAG, tag);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
     }
 
     @Override
@@ -175,11 +163,6 @@ public class InputDialog extends DialogFragment {
 
     public InputDialog setNegativeButton(int id) {
         negativeTextId = id;
-        return this;
-    }
-
-    public InputDialog setDarkTheme(Boolean darkTheme) {
-        isDarkTheme = darkTheme;
         return this;
     }
 

@@ -2,17 +2,9 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
-import androidx.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -28,8 +19,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -260,8 +258,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
     }
 
     private void showPasswordGenerator(int editTextField) {
-        PasswordGeneratorDialog passwordGeneratorDialog = new PasswordGeneratorDialog()
-                .setDarkTheme(isDarkTheme);
+        PasswordGeneratorDialog passwordGeneratorDialog = new PasswordGeneratorDialog();
         String tag = (editTextField == 0) ? "password" : "password2";
         if (getFragmentManager() != null) {
             passwordGeneratorDialog.show(getChildFragmentManager(), tag);
@@ -320,7 +317,6 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
 
     private void setPath() {
         RemoteDestinationDialog remoteDestinationDialog = new RemoteDestinationDialog()
-                .setDarkTheme(isDarkTheme)
                 .setRemote(selectedRemote)
                 .setTitle(R.string.select_path_to_crypt);
         remoteDestinationDialog.show(getChildFragmentManager(), "remote destination dialog");

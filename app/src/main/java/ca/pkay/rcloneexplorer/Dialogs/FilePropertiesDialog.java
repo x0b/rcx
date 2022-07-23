@@ -8,14 +8,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -30,7 +31,6 @@ public class FilePropertiesDialog extends DialogFragment {
     private final String SAVED_MD5 = "ca.pkay.rcexplorer.FilePropertiesDialog.MD5";
     private final String SAVED_SHA1 = "ca.pkay.rcexplorer.FilePropertiesDialog.SHA1";
     private final String SAVED_SHOW_HASH = "ca.pkay.rcexplorer.FilePropertiesDialog.SHOW_HASH";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.FilePropertiesDialog.IS_DARK_THEME";
     private FileItem fileItem;
     private RemoteItem remote;
     private View view;
@@ -39,12 +39,10 @@ public class FilePropertiesDialog extends DialogFragment {
     private String md5String;
     private String sha1String;
     private Boolean showHash;
-    private Boolean isDarkTheme;
     private Context context;
 
     public FilePropertiesDialog() {
         showHash = true;
-        isDarkTheme = false;
     }
 
     @NonNull
@@ -56,17 +54,11 @@ public class FilePropertiesDialog extends DialogFragment {
             md5String = savedInstanceState.getString(SAVED_MD5);
             sha1String = savedInstanceState.getString(SAVED_SHA1);
             showHash = savedInstanceState.getBoolean(SAVED_SHOW_HASH);
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
         }
 
         rclone = new Rclone(context);
         asyncTasks = new AsyncTask[2];
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 
@@ -131,7 +123,6 @@ public class FilePropertiesDialog extends DialogFragment {
         outState.putParcelable(SAVED_FILEITEM, fileItem);
         outState.putParcelable(SAVED_REMOTE, remote);
         outState.putBoolean(SAVED_SHOW_HASH, showHash);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         if (md5String != null) {
             outState.putString(SAVED_MD5, md5String);
         }
@@ -158,11 +149,6 @@ public class FilePropertiesDialog extends DialogFragment {
 
     public FilePropertiesDialog withHashCalculations(Boolean showHash) {
         this.showHash = showHash;
-        return this;
-    }
-
-    public FilePropertiesDialog setDarkTheme(Boolean darkTheme) {
-        isDarkTheme = darkTheme;
         return this;
     }
 

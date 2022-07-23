@@ -7,20 +7,20 @@ import static ca.pkay.rcloneexplorer.util.ThemeHelper.LIGHT;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+
 import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 
 public class LookAndFeelSettingsFragment extends Fragment {
 
@@ -126,7 +126,6 @@ public class LookAndFeelSettingsFragment extends Fragment {
                 .setTitle(R.string.primary_color_picker_title)
                 .setColorChoices(R.array.primary_color_choices)
                 .setDefaultColor(defaultColor)
-                .setDarkTheme(ThemeHelper.isDarkTheme(this.getActivity()))
                 .setListener(this::onPrimaryColorSelected);
 
         colorPickerDialog.show(getChildFragmentManager(), "primary color picker");
@@ -140,7 +139,6 @@ public class LookAndFeelSettingsFragment extends Fragment {
                 .setTitle(R.string.accent_color_picker_title)
                 .setColorChoices(R.array.accent_color_choices)
                 .setDefaultColor(defaultColor)
-                .setDarkTheme(ThemeHelper.isDarkTheme(this.getActivity()))
                 .setListener(this::onAccentColorSelected);
 
         colorPickerDialog.show(getChildFragmentManager(), "accent color picker");

@@ -3,12 +3,13 @@ package ca.pkay.rcloneexplorer.Dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.R;
@@ -23,10 +24,8 @@ public class OpenAsDialog extends DialogFragment {
     }
 
     private final String SAVED_FILE_ITEM = "ca.pkay.rcexplorer.OpenAsDialog.FILE_ITEM";
-    private final String SAVED_IS_DARK_THEME = "ca.pkay.rcexplorer.OpenAsDialog.IS_DARK_THEME";
     private Context context;
     private View view;
-    private Boolean isDarkTheme;
     private FileItem fileItem;
     private OnClickListener listener;
 
@@ -34,19 +33,12 @@ public class OpenAsDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            isDarkTheme = savedInstanceState.getBoolean(SAVED_IS_DARK_THEME);
             fileItem = savedInstanceState.getParcelable(SAVED_FILE_ITEM);
         }
 
         listener = (OnClickListener) getParentFragment();
 
-        AlertDialog.Builder builder;
-
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_open_as, null);
         setListeners();
@@ -57,7 +49,6 @@ public class OpenAsDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVED_IS_DARK_THEME, isDarkTheme);
         outState.putParcelable(SAVED_FILE_ITEM, fileItem);
     }
 
@@ -87,11 +78,6 @@ public class OpenAsDialog extends DialogFragment {
             listener.onClickImage(fileItem);
             dismiss();
         });
-    }
-
-    public OpenAsDialog setDarkTheme(Boolean darkTheme) {
-        isDarkTheme = darkTheme;
-        return this;
     }
 
     public OpenAsDialog setFileItem(FileItem fileItem) {

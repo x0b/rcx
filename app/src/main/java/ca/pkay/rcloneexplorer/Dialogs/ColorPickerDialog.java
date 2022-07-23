@@ -2,17 +2,17 @@ package ca.pkay.rcloneexplorer.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import ca.pkay.rcloneexplorer.R;
 
@@ -22,13 +22,11 @@ public class ColorPickerDialog extends DialogFragment {
         void onColorSelected(int color);
     }
 
-    private final String SAVED_IS_DARK_MODE = "ca.pkay.rcexplorer.ColorPickerDialog.IS_DARK_MODE";
     private final String SAVED_SELECTED_COLOR = "ca.pkay.rcexplorer.ColorPickerDialog.SELECTED_COLOR";
     private final String SAVED_DEFAULT_COLOR = "ca.pkay.rcexplorer.ColorPickerDialog.DEFAULT_COLOR";
     private final String SAVED_TITLE = "ca.pkay.rcexplorer.ColorPickerDialog.TITLE";
     private final String SAVED_COLOR_CHOICES = "ca.pkay.rcexplorer.ColorPickerDialog.COLOR_CHOICES";
     private Context context;
-    private boolean isDarkMode;
     private int[] colorChoices;
     private View visibleCheckmark;
     private int selectedColor;
@@ -37,15 +35,12 @@ public class ColorPickerDialog extends DialogFragment {
     private int colorChoicesArrayId;
     private OnClickListener listener;
 
-    public ColorPickerDialog() {
-        isDarkMode = false;
-    }
+    public ColorPickerDialog() {}
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            isDarkMode = savedInstanceState.getBoolean(SAVED_IS_DARK_MODE);
             selectedColor = savedInstanceState.getInt(SAVED_SELECTED_COLOR);
             defaultColor = savedInstanceState.getInt(SAVED_DEFAULT_COLOR);
             title = savedInstanceState.getInt(SAVED_TITLE);
@@ -54,12 +49,7 @@ public class ColorPickerDialog extends DialogFragment {
 
         colorChoices = context.getResources().getIntArray(colorChoicesArrayId);
 
-        AlertDialog.Builder builder;
-        if (isDarkMode) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
 
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_color_picker, null);
@@ -136,7 +126,6 @@ public class ColorPickerDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(SAVED_IS_DARK_MODE, isDarkMode);
         outState.putInt(SAVED_SELECTED_COLOR, selectedColor);
         outState.putInt(SAVED_DEFAULT_COLOR, defaultColor);
         outState.putInt(SAVED_TITLE, title);
@@ -155,11 +144,6 @@ public class ColorPickerDialog extends DialogFragment {
 
     public ColorPickerDialog setColorChoices(int arrayId) {
         colorChoicesArrayId = arrayId;
-        return this;
-    }
-
-    public ColorPickerDialog setDarkTheme(boolean darkTheme) {
-        isDarkMode = darkTheme;
         return this;
     }
 
