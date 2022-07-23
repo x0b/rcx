@@ -8,8 +8,11 @@
 
     <color name="backgroundColor">#303030</color>
     <color name="cardColor">#424242</color>
+
+
     <color name="textColorPrimary">#FFFFFFFF</color>
     <color name="textColorSecondary">#B3FFFFFF</color>
+
     <color name="dividerColor">#1FFFFFFF</color>
     <color name="iconTint">#FFFFFF</color>
     <color name="colorControlNormal">#B3FFFFFF</color>
