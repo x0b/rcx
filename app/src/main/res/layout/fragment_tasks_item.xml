@@ -73,12 +73,11 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/file_options_content_description"
                 android:paddingStart="16dp"
-                android:paddingTop="26dp"
+                android:paddingTop="16dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="26dp"
+                android:paddingBottom="16dp"
                 android:src="@drawable/ic_more_vert"
                 android:tint="@color/iconTint"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
