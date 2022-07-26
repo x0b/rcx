@@ -1213,12 +1213,46 @@ public class Rclone {
         return json.toString();
     }
 
-    public boolean copyConfigFile(Uri uri) throws IOException {
+    public boolean copyConfigFileFromZip(Uri uri) throws IOException {
         String appsFileDir = context.getFilesDir().getPath();
 
         File tempFile = new File(appsFileDir, "rclone.conf-tmp");
         File configFile = new File(appsFileDir, "rclone.conf");
         tempFile = getFileFromZip(uri, "rclone.conf", tempFile);
+
+        if (isValidConfig(tempFile.getAbsolutePath())) {
+            if (!(tempFile.renameTo(configFile) && !tempFile.delete())) {
+                throw new IOException();
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean copyConfigFile(Uri uri) throws IOException {
+        String appsFileDir = context.getFilesDir().getPath();
+        InputStream inputStream;
+        // The exact cause of the NPE is unknown, but the effect is the same
+        // - the copy process has failed, therefore bubble an IOException
+        // for handling at the appropriate layers.
+        try {
+            inputStream = context.getContentResolver().openInputStream(uri);
+        } catch(NullPointerException e) {
+            throw new IOException(e);
+        }
+        File tempFile = new File(appsFileDir, "rclone.conf-tmp");
+        File configFile = new File(appsFileDir, "rclone.conf");
+        FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+
+        byte[] buffer = new byte[4096];
+        int offset;
+        while ((offset = inputStream.read(buffer)) > 0) {
+            fileOutputStream.write(buffer, 0, offset);
+        }
+        inputStream.close();
+        fileOutputStream.flush();
+        fileOutputStream.close();
 
         if (isValidConfig(tempFile.getAbsolutePath())) {
             if (!(tempFile.renameTo(configFile) && !tempFile.delete())) {

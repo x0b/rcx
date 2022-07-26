@@ -5,6 +5,7 @@ import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResu
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -555,7 +557,9 @@ public class MainActivity extends AppCompatActivity
     public void importConfigFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/zip");
+        String [] mimeTypes = {"application/zip", "text/plain"};
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 
         tryStartActivityForResult(this, intent, READ_REQUEST_CODE);
     }
@@ -663,14 +667,22 @@ public class MainActivity extends AppCompatActivity
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");
         }
 
+        //todo: this may fail badly. Check in which order we delete and update settings and configs.
+        // We should make sure that this first checks integrity and only then replaces.
         @Override
         protected Boolean doInBackground(Uri... uris) {
+
+            ContentResolver resolver = context.getContentResolver();
+            String mime = resolver.getType(uris[0]);
             try {
+                if(mime.equals("text/plain") ) {
+                    return rclone.copyConfigFile(uris[0]);
+                }
                 String json = rclone.readDatabaseJson(uris[0]);
                 Importer.importJson(json, context);
                 json = rclone.readSharedPrefs(uris[0]);
                 SharedPreferencesBackup.importJson(json, context);
-                return rclone.copyConfigFile(uris[0]);
+                return rclone.copyConfigFileFromZip(uris[0]);
             } catch (IOException | JSONException e) {
                 return false;
             }
