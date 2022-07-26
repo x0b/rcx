@@ -84,7 +84,6 @@ public class TriggerService extends Service {
                         pi
                 );
             } else {
-
                 am.setExact(
                         AlarmManager.RTC_WAKEUP,
                         timeToTrigger,
