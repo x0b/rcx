@@ -170,7 +170,6 @@
     <string name="deleting_info">Lösche…</string>
     <string name="operation_failed">Synchronisation fehlgeschlagen</string>
     <string name="operation_failed_unknown">%1$s schlug aufgrund eines unbekannten Fehlers fehl.</string>
-    <string name="operation_failed_no_wifi">Wir konnten %1$s nicht synchronisieren da Wlan nicht verfügbar war.</string>
     <string name="operation_failed_data_change">Wir konnten %1$s nicht synchronisieren da die Internetverbindung geändert worden ist und Mobile Daten nicht erlaubt sind.</string>
     <string name="moving_service">Verschieben-Dienst</string>
     <string name="delete_service">Lösch-Dienst</string>
@@ -514,7 +513,6 @@
     <string name="task_item_label_to">Zu:</string>
     <string name="abi_not_supported_arm_downgrade">Diese extRact-Version wird nicht unterstützt. Eventuell funktioniert die armeabi-v7a-APK von github.com/x0b/rcx."</string>
     <string name="abi_not_supported">Diese extRact-Version wird auf dem Gerät nicht unterstützt.</string>
-    <string name="title_activity_main" translatable="false">extRact</string>
     <string name="sync_notification_transferred">%s von %s übertragen</string>
     <string name="sync_notification_speed">Geschwindigkeit: %14s</string>
     <string name="sync_notification_remaining">Verbleibend: %14s Sekunden</string>
@@ -539,4 +537,6 @@
     <string name="alarm_while_idle">Erlaube Aufgaben wenn das Gerät im Schlafmodus ist</string>
     <string name="alarm_while_idle_summary">Dies kann mehr Akku verbrauchen da das Gerät extra aufwachen muss. Falls verboten können Aufgaben sehr verspätet starten</string>
     <string name="old_maintainer">Alter Maintainer</string>
+    <string name="operation_failed_no_unmetered">Wir konnten %1$s nicht synchronisieren da keine unbegrenzte Verbindung verfügbar war.</string>
+    <string name="operation_failed_no_connection">Wir konnten %1$s nicht synchronisieren da keine Netzwerkverbindung verfügbar war.</string>
 </resources>

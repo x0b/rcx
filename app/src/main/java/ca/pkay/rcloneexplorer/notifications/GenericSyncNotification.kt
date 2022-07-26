@@ -49,6 +49,7 @@ class GenericSyncNotification(var mContext: Context) {
                 cancelPendingIntent
             )
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOnlyAlertOnce(true)
             .setProgress(100, percent, false)
     }
 

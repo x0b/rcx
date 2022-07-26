@@ -37,6 +37,7 @@ import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncLog;
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
+import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil.Connection;
 
 
 public class SyncService extends IntentService {
@@ -50,7 +51,8 @@ public class SyncService extends IntentService {
 
     enum FAILURE_REASON {
         NONE,
-        NO_WIFI,
+        NO_UNMETERED,
+        NO_CONNECTION,
         RCLONE_ERROR
     }
     private static final String TAG = "SyncService";
@@ -125,10 +127,14 @@ public class SyncService extends IntentService {
             title = t.remotePath;
         }
 
-        StatusObject so = new StatusObject(this);
+        StatusObject statusObject = new StatusObject(this);
+        Connection connection = WifiConnectivitiyUtil.Companion.dataConnection(this.getApplicationContext());
 
-        if (transferOnWiFiOnly && !WifiConnectivitiyUtil.Companion.checkWifiOnAndConnected(this.getApplicationContext())) {
-            failureReason = FAILURE_REASON.NO_WIFI;
+
+        if (transferOnWiFiOnly && connection == Connection.METERED) {
+            failureReason = FAILURE_REASON.NO_UNMETERED;
+        } else if (connection == Connection.DISCONNECTED || connection == Connection.NOT_AVAILABLE) {
+            failureReason = FAILURE_REASON.NO_CONNECTION;
         } else {
             currentProcess = rclone.sync(t.remoteItem, t.remotePath, t.localPath, t.syncDirection);
             if (currentProcess != null) {
@@ -136,23 +142,24 @@ public class SyncService extends IntentService {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                     String line;
                     while ((line = reader.readLine()) != null) {
+                        Log.e("test", line);
                         try {
                             JSONObject logline = new JSONObject(line);
 
                             //todo: migrate this to StatusObject, so that we can handle everything properly.
                             if(isLoggingEnable && logline.getString("level").equals("error")){
                                 log2File.log(line);
-                                so.readStuff(logline);
+                                statusObject.readStuff(logline);
                             } else if(logline.getString("level").equals("warning")){
-                                so.readStuff(logline);
+                                statusObject.readStuff(logline);
                             }
 
                             //Log.e("TAG", logline.toString());
                             notificationManager.updateSyncNotification(
                                     title,
-                                    so.getNotificationContent(),
-                                    so.getNotificationBigText(),
-                                    so.getNotificationPercent()
+                                    statusObject.getNotificationContent(),
+                                    statusObject.getNotificationBigText(),
+                                    statusObject.getNotificationPercent()
                             );
 
                         } catch (JSONException e) {
@@ -190,19 +197,26 @@ public class SyncService extends IntentService {
                             content = getString(R.string.operation_failed_data_change, title);
                         }
                         break;
-                    case NO_WIFI:
-                        content = getString(R.string.operation_failed_no_wifi, title);
+                    case NO_UNMETERED:
+                        content = getString(R.string.operation_failed_no_unmetered, title);
+                        break;
+                    case NO_CONNECTION:
+                        content = getString(R.string.operation_failed_no_connection, title);
                         break;
                 }
                 //Todo: check if we should also add errors on success
-                String errors = so.getAllErrorMessages();
+                String errors = statusObject.getAllErrorMessages();
                 if(!errors.isEmpty()) {
-                    content += "\n\n\n"+so.getAllErrorMessages();
+                    content += "\n\n\n"+statusObject.getAllErrorMessages();
                 }
                 SyncLog.error(this, getString(R.string.operation_failed), content);
                 notificationManager.showFailedNotification(content, notificationId, t.id);
             }else{
-                String message = getString(R.string.operation_success_description, title, so.getTotalSize(), so.getTotalTransfers());
+                String message = getString(R.string.operation_success_description,
+                        title,
+                        statusObject.getTotalSize(),
+                        statusObject.getTotalTransfers()
+                );
                 SyncLog.info(this, getString(R.string.operation_success, title), message);
                 notificationManager.showSuccessNotification(title, message, notificationId);
             }

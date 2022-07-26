@@ -225,7 +225,8 @@
     <string name="deleting_info">Deleting…</string>
     <string name="operation_failed">Sync failed</string>
     <string name="operation_failed_unknown">%1$s failed to be synced for an unknown reason.</string>
-    <string name="operation_failed_no_wifi">We could not sync %1$s because wifi was unavailable.</string>
+    <string name="operation_failed_no_unmetered">We could not sync %1$s because no unmetered connection was available</string>
+    <string name="operation_failed_no_connection">We could not sync %1$s because network was unavailable.</string>
     <string name="operation_failed_data_change">We could not sync %1$s because the connection changed and mobile data is not allowed.</string>
     <string name="moving_service">Moving Service</string>
     <string name="delete_service">Delete Service</string>
