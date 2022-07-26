@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:theme="@style/ToolbarTheme"
         app:elevation="0dp">
 
