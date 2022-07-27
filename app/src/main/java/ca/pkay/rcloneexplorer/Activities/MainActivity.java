@@ -19,7 +19,6 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -568,7 +567,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
         String localTime = date.format(Calendar.getInstance().getTime());
 
         intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.app_name)+"-backup-"+localTime+".zip");
