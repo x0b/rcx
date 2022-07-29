@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                   xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                   android:layout_width="match_parent"
-                                   android:layout_height="wrap_content"
-                                   xmlns:tools="http://schemas.android.com/tools"
-                                   android:layout_marginTop="16dp"
-                                   android:layout_marginStart="8dp"
-                                   android:layout_marginEnd="8dp"
-                                   card_view:cardBackgroundColor="@color/cardColor"
-                                   card_view:cardCornerRadius="4dp"
-                                   card_view:contentPadding="16dp">
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    card_view:cardBackgroundColor="@color/cardColor"
+    card_view:cardCornerRadius="@dimen/cardCornerRadius"
+    card_view:contentPadding="@dimen/cardPadding">
 
     <LinearLayout
         android:layout_width="match_parent"

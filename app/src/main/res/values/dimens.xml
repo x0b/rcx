@@ -15,4 +15,6 @@
     <dimen name="filepicker_icon_size">24dp</dimen>
     <dimen name="filepicker_more_padding">12dp</dimen>
     <dimen name="filepicker_row_padding">8dp</dimen>
+    <dimen name="cardCornerRadius">16dp</dimen>
+    <dimen name="cardPadding">16dp</dimen>
 </resources>

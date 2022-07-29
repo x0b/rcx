@@ -11,7 +11,8 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:elevation="4dp"
-        app:cardCornerRadius="16dp">
+        app:cardCornerRadius="@dimen/cardCornerRadius"
+        app:contentPadding="@dimen/cardPadding">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,7 +23,6 @@
                 android:id="@+id/triggerIcon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="8dp"
                 android:background="#00FFFFFF"
                 android:contentDescription="@string/enabled"
                 android:tint="@color/iconTint"
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
@@ -52,7 +52,7 @@
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/file_options_content_description"
-                android:padding="16dp"
+                android:padding="4dp"
                 android:src="@drawable/ic_more_vert"
                 android:tint="@color/iconTint"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +86,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="64dp"
                 android:layout_marginEnd="64dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
