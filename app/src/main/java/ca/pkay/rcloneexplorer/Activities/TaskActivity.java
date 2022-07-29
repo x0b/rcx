@@ -50,7 +50,10 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
         switch (requestCode) {
             case REQUEST_CODE_FP_LOCAL:
                 EditText tv_local = findViewById(R.id.task_local_path_textfield);
-                tv_local.setText(data.getStringExtra(FilePicker.FILE_PICKER_RESULT));
+                if(data != null) {
+                    tv_local.setText(data.getStringExtra(FilePicker.FILE_PICKER_RESULT));
+                }
+                tv_local.clearFocus();
                 break;
             case REQUEST_CODE_FP_REMOTE:
                 Uri uri = null;
