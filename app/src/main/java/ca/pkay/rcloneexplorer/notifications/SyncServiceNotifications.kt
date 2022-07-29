@@ -1,6 +1,8 @@
 package ca.pkay.rcloneexplorer.notifications
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -32,8 +34,11 @@ class SyncServiceNotifications(var mContext: Context) {
         val i = Intent(mContext, SyncService::class.java)
         i.action = SyncService.TASK_ACTION
         i.putExtra(SyncService.EXTRA_TASK_ID, taskid)
-        val retryPendingIntent =
-            PendingIntent.getService(mContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        var flags = FLAG_UPDATE_CURRENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = flags or FLAG_IMMUTABLE;
+        }
+        val retryPendingIntent = PendingIntent.getService(mContext, 0, i, flags)
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
             .setContentTitle(mContext.getString(R.string.operation_failed))
