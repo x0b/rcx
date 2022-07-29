@@ -38,9 +38,10 @@ import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
-public class FilePicker extends AppCompatActivity implements    FilePickerAdapter.OnClickListener,
-                                                                InputDialog.OnPositive,
-                                                                SortDialog.OnClickListener {
+public class FilePicker extends AppCompatActivity implements FilePickerAdapter.OnClickListener,
+        InputDialog.OnPositive,
+        BreadcrumbView.OnClickListener,
+        SortDialog.OnClickListener {
 
     public static final String FILE_PICKER_PICK_DESTINATION_TYPE = "ca.pkay.rcexplorer.FILE_PICKER_PICK_DEST_TYPE";
     public static final String FILE_PICKER_RESULT = "ca.pkay.rcexplorer.FILE_PICKER_RESULT";
@@ -59,6 +60,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
     private int sortOrder;
     private SpeedDialView speedDialView;
     private boolean destinationPickerType;
+    private BreadcrumbView breadcrumbView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,6 +132,11 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
 
             }
         });
+
+        breadcrumbView = findViewById(R.id.breadcrumb_view);
+        breadcrumbView.setOnClickListener(this);
+        breadcrumbView.setVisibility(View.VISIBLE);
+        buildCrumbsFromCurrent();
     }
 
     @Override
@@ -158,6 +165,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
                 selectedFiles.add(new File(path));
             }
             filePickerAdapter.setSelectedFiles(selectedFiles);
+            buildCrumbsFromCurrent();
         }
     }
 
@@ -252,6 +260,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
             if (destinationPickerType) {
                 speedDialView.show();
             }
+            breadcrumbView.removeLastCrumb();
         }
     }
 
@@ -270,6 +279,7 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         if (destinationPickerType) {
             speedDialView.show();
         }
+        buildCrumbsFromCurrent();
     }
 
     @Override
@@ -357,6 +367,8 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         }
         sortDirectory();
         filePickerAdapter.setNewData(fileList);
+        breadcrumbView.clearCrumbs();
+        buildCrumbsFromCurrent();
     }
 
     private void showSortMenu() {
@@ -563,5 +575,15 @@ public class FilePicker extends AppCompatActivity implements    FilePickerAdapte
         } catch (IOException e) {
             return path;
         }
+    }
+
+    private void buildCrumbsFromCurrent(){
+        breadcrumbView.buildBreadCrumbsFromPath(current.getPath());
+    }
+
+    @Override
+    public void onBreadCrumbClicked(String path) {
+        // todo: implement switching path
+        //breadcrumbView.removeCrumbsUpTo(path);
     }
 }

@@ -138,6 +138,16 @@ public class BreadcrumbView extends HorizontalScrollView {
 
         childFrame.removeView(textView);
         childFrame.removeView(imageView);
+
+        setLastCrumbSelected();
+    }
+
+    private void setLastCrumbSelected() {
+        int lastCrumbIndex = pathList.size() - 1;
+        String path = pathList.get(lastCrumbIndex);
+        previousCrumb = textViewMap.get(path);
+        previousCrumb.setTypeface(null, Typeface.BOLD);
+        previousCrumb.setTextColor(getResources().getColor(R.color.textColorPrimary));
     }
 
     public void clearCrumbs() {
