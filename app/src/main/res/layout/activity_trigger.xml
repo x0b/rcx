@@ -6,18 +6,35 @@
     android:layout_height="match_parent"
     tools:context="ca.pkay.rcloneexplorer.Activities.TriggerActivity">
 
+
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@color/backgroundColor"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:theme="@style/ToolbarTheme"
+        app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:cardBackgroundColor="?attr/colorPrimary"
+            app:cardCornerRadius="36dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
 
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_trigger" />
