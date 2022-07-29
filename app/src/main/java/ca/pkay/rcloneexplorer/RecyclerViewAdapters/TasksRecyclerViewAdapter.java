@@ -86,12 +86,23 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             holder.toPath.setText(selectedTask.getLocalPath());
         }
 
+        if(direction == SyncDirectionObject.SYNC_BIDIRECTIONAL){
+            holder.fromID.setText(String.format("%s:", selectedTask.getRemoteId()));
+            holder.fromPath.setText(selectedTask.getRemotePath());
+
+            holder.toID.setVisibility(View.GONE);
+            holder.toPath.setText(selectedTask.getLocalPath());
+        }
+
         switch (direction){
             case SyncDirectionObject.COPY_LOCAL_TO_REMOTE:
             case SyncDirectionObject.COPY_REMOTE_TO_LOCAL:
                 holder.taskSyncDirection.setText(view.getResources().getString(R.string.copy));
                 break;
             case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL:
+            case SyncDirectionObject.SYNC_BIDIRECTIONAL:
+                holder.taskSyncDirection.setText(view.getResources().getString(R.string.bisync));
+                break;
             default:
                 holder.taskSyncDirection.setText(view.getResources().getString(R.string.sync));
                 break;

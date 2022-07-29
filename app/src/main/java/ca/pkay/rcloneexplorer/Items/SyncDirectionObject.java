@@ -31,6 +31,7 @@ public class SyncDirectionObject {
     public static final int SYNC_REMOTE_TO_LOCAL = 2;
     public static final int COPY_LOCAL_TO_REMOTE = 3;
     public static final int COPY_REMOTE_TO_LOCAL = 4;
+    public static final int SYNC_BIDIRECTIONAL = 5;
 
 
     public static String[] getOptionsArray(Context context) {

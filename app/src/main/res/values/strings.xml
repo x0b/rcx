@@ -531,6 +531,7 @@
     <string name="exporter_success">The file was successfully stored at:</string>
     <string name="sync_direction_copy_local_remote">Copy local to remote</string>
     <string name="sync_direction_copy_remote_local">Copy remote to local</string>
+    <string name="sync_direction_bidirectional">Sync Bidirectional</string>
     <string name="copy">Copy</string>
     <string name="task_dialog_title_name">Name</string>
     <string name="task_dialog_title_remote">Remote</string>
@@ -623,4 +624,5 @@
     <string name="alarm_while_idle_summary">This may consume more battery since the device has to wake up for the task. If disabled, tasks can be heavily delayed.</string>
     <string name="task_data_validation_error_no_local_path">You have not selected a local path</string>
     <string name="task_data_validation_error_no_remote_path">You have not selected a remote path.</string>
+    <string name="bisync">Both Ways</string>
 </resources>
