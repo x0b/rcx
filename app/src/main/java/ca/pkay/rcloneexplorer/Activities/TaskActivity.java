@@ -173,12 +173,36 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 remotePath.setText("");
             }
+            @Override public void onNothingSelected(AdapterView<?> parentView) {}
+        });
 
+        syncDirection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String text = getString(R.string.description_sync_direction);
 
+                switch (position) {
+                    case SyncDirectionObject.SYNC_LOCAL_TO_REMOTE:
+                        text = getString(R.string.description_sync_direction_sync_tolocal);
+                        break;
+                    case SyncDirectionObject.SYNC_REMOTE_TO_LOCAL:
+                        text = getString(R.string.description_sync_direction_sync_toremote);
+                        break;
+                    case SyncDirectionObject.COPY_LOCAL_TO_REMOTE:
+                        text = getString(R.string.description_sync_direction_copy_toremote);
+                        break;
+                    case SyncDirectionObject.COPY_REMOTE_TO_LOCAL:
+                        text = getString(R.string.description_sync_direction_copy_tolocal);
+                        break;
+                    case SyncDirectionObject.SYNC_BIDIRECTIONAL:
+                        text = getString(R.string.description_sync_direction_sync_bidirectional);
+                        break;
+                }
+
+
+                //((TextView) parentView.findViewById(R.id.descriptionDirection)).setText(text);
+            }
+            @Override public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
     }

@@ -625,4 +625,10 @@
     <string name="task_data_validation_error_no_local_path">You have not selected a local path</string>
     <string name="task_data_validation_error_no_remote_path">You have not selected a remote path.</string>
     <string name="bisync">Both Ways</string>
+    <string name="description_sync_direction">This decides from where to where data is moved.</string>
+    <string name="description_sync_direction_sync_tolocal">This will copy and delete files from remote to local.</string>
+    <string name="description_sync_direction_sync_toremote">This will copy and delete files from local to remote.</string>
+    <string name="description_sync_direction_copy_toremote">This will only copy files from local to remote</string>
+    <string name="description_sync_direction_copy_tolocal">This will only copy files from remote to local</string>
+    <string name="description_sync_direction_sync_bidirectional">This will try to keep local and remote the same, uploading, downloading and deleting files as required</string>
 </resources>

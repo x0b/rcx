@@ -31,7 +31,10 @@ public class SyncDirectionObject {
     public static final int SYNC_REMOTE_TO_LOCAL = 2;
     public static final int COPY_LOCAL_TO_REMOTE = 3;
     public static final int COPY_REMOTE_TO_LOCAL = 4;
-    public static final int SYNC_BIDIRECTIONAL = 5;
+
+    // The first time a bidirectional sync is used, it hast to use --resync. https://rclone.org/bisync/
+    public static final int SYNC_BIDIRECTIONAL_INITIAL = 5;
+    public static final int SYNC_BIDIRECTIONAL = 6;
 
 
     public static String[] getOptionsArray(Context context) {
