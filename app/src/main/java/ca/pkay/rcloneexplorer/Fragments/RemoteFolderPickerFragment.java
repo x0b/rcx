@@ -260,7 +260,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         }
 
         if(mSelectedFolderCallback != null) {
-            view.findViewById(R.id.selectFloatingButton).setOnClickListener(v -> {
+            fab.setOnClickListener(v -> {
                 mSelectedFolderCallback.selectFolder("/"+directoryObject.getCurrentPath());
                 exitFragment();
             });
@@ -841,6 +841,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                 if (silentFetch) {
                     return;
                 }
+                FLog.w(TAG, "FetchDirectoryContent/onPostExecute: "+getString(R.string.error_getting_dir_content));
                 Toasty.error(context, getString(R.string.error_getting_dir_content), Toast.LENGTH_SHORT, true).show();
                 fileItems = new ArrayList<>();
             }
