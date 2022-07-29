@@ -15,96 +15,142 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/label_name"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:text="@string/task_edit_label_name" />
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/cardColor"
+                app:cardCornerRadius="@dimen/cardCornerRadius"
+                app:contentPadding="@dimen/cardPadding">
 
-            <EditText
-                android:id="@+id/task_title_textfield"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/label_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/task_edit_label_name"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textSize="24sp" />
+
+                    <EditText
+                        android:id="@+id/task_title_textfield"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:autofillHints=""
+                        android:hint="@string/task_edit_hint_title"
+                        android:inputType="text" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp"
-                android:autofillHints=""
-                android:hint="@string/task_edit_hint_title"
-                android:inputType="text"
-                android:text="@string/task_dialog_title_textfield_hint" />
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/cardColor"
+                app:cardCornerRadius="@dimen/cardCornerRadius"
+                app:contentPadding="@dimen/cardPadding">
 
-            <TextView
-                android:id="@+id/label_local"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/label_direction"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/task_edit_label_direction"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textSize="24sp" />
+
+                    <Spinner
+                        android:id="@+id/task_direction_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:text="@string/task_edit_label_local" />
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/cardColor"
+                app:cardCornerRadius="@dimen/cardCornerRadius"
+                app:contentPadding="@dimen/cardPadding">
 
-            <EditText
-                android:id="@+id/task_local_path_textfield"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/label_local"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/task_edit_label_local"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textSize="24sp" />
+
+                    <EditText
+                        android:id="@+id/task_local_path_textfield"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:autofillHints=""
+                        android:hint="@string/task_edit_hint_local"
+                        android:inputType="" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp"
-                android:autofillHints=""
-                android:hint="@string/task_edit_hint_local"
-                android:inputType="" />
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/cardColor"
+                app:cardCornerRadius="@dimen/cardCornerRadius"
+                app:contentPadding="@dimen/cardPadding">
 
-            <TextView
-                android:id="@+id/label_remote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:text="@string/task_edit_label_remote" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/task_remote_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp" />
+                    <TextView
+                        android:id="@+id/label_remote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/task_edit_label_remote"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textSize="24sp" />
 
-            <EditText
-                android:id="@+id/task_remote_path_textfield"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp"
-                android:autofillHints=""
-                android:hint="@string/task_edit_hint_remote"
-                android:inputType="" />
+                    <Spinner
+                        android:id="@+id/task_remote_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp" />
 
-            <TextView
-                android:id="@+id/label_direction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:text="@string/task_edit_label_direction" />
-
-            <Spinner
-                android:id="@+id/task_direction_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp" />
-
+                    <EditText
+                        android:id="@+id/task_remote_path_textfield"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:autofillHints=""
+                        android:hint="@string/task_edit_hint_remote"
+                        android:inputType="" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
