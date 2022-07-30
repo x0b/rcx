@@ -86,12 +86,15 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             holder.toPath.setText(selectedTask.getLocalPath());
         }
 
-        if(direction == SyncDirectionObject.SYNC_BIDIRECTIONAL){
+        if(direction == SyncDirectionObject.SYNC_BIDIRECTIONAL || direction == SyncDirectionObject.SYNC_BIDIRECTIONAL_INITIAL){
             holder.fromID.setText(String.format("%s:", selectedTask.getRemoteId()));
             holder.fromPath.setText(selectedTask.getRemotePath());
 
             holder.toID.setVisibility(View.GONE);
             holder.toPath.setText(selectedTask.getLocalPath());
+
+            holder.to.setText(this.context.getString(R.string.task_item_label_to_bisync));
+            holder.from.setText(this.context.getString(R.string.task_item_label_from_bisync));
         }
 
         switch (direction){
@@ -190,6 +193,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         final View view;
         final ImageView taskIcon;
         final TextView taskName;
+        final TextView to;
+        final TextView from;
         final TextView toID;
         final TextView fromID;
         final TextView toPath;
@@ -202,6 +207,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
             this.view = itemView;
             this.taskIcon = view.findViewById(R.id.taskIcon);
             this.taskName = view.findViewById(R.id.taskName);
+            this.to = view.findViewById(R.id.toLabel);
+            this.from = view.findViewById(R.id.fromLabel);
             this.toID = view.findViewById(R.id.toID);
             this.fromID = view.findViewById(R.id.fromID);
             this.toPath = view.findViewById(R.id.toPath);

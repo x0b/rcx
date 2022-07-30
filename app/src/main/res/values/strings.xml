@@ -606,6 +606,8 @@
     <string name="triggeractivity_trigger_not_found">Trigger not found!</string>
     <string name="task_item_label_from">From:</string>
     <string name="task_item_label_to">To:</string>
+    <string name="task_item_label_from_bisync">Path 1:</string>
+    <string name="task_item_label_to_bisync">Path 2:</string>
     <string name="no_tasks_warning">There are no tasks. Please define a task first!</string>
     <string name="no_trigger_warning">There are no triggers. Please define a trigger first!</string>
     <string name="add_trigger">Add Trigger</string>

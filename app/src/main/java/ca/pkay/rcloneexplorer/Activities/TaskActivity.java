@@ -47,6 +47,7 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
     private String[] items;
 
 
+    private TextView syncDescription;
     private EditText remotePath;
     private EditText localPath;
     private Spinner remoteDropdown;
@@ -109,6 +110,7 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
         localPath = findViewById(R.id.task_local_path_textfield);
         remoteDropdown = findViewById(R.id.task_remote_spinner);
         syncDirection = findViewById(R.id.task_direction_spinner);
+        syncDescription = findViewById(R.id.descriptionSyncDirection);
         fab = findViewById(R.id.fab);
 
         rcloneInstance = new Rclone(this);
@@ -198,9 +200,7 @@ public class TaskActivity extends AppCompatActivity implements FolderSelectorCal
                         text = getString(R.string.description_sync_direction_sync_bidirectional);
                         break;
                 }
-
-
-                //((TextView) parentView.findViewById(R.id.descriptionDirection)).setText(text);
+                syncDescription.setText(text);
             }
             @Override public void onNothingSelected(AdapterView<?> adapterView) {}
         });

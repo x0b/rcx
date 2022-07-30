@@ -13,6 +13,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
@@ -79,6 +81,14 @@
                         android:layout_margin="8dp"
                         android:minHeight="48dp" />
 
+                    <TextView
+                        android:id="@+id/descriptionSyncDirection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:minHeight="48dp"
+                        android:text="@string/description_sync_direction" />
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -144,6 +154,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
+                        android:contentDescription="@string/description_sync_direction"
                         android:minHeight="48dp" />
 
                     <EditText
