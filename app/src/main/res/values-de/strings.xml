@@ -438,7 +438,6 @@
     <string name="intro_welcome_title">Hallo</string>
     <string name="intro_welcome_description">extRact verwaltet deine Dateien, egal ob sie auf deinem Smartphone in der Cloud gespeichert sind. Bei Fragen gibt es eine Dokumentation unter x0b.github.io/docs.</string>
     <string name="intro_storage_title">Speicherzugriff</string>
-    <string name="intro_storage_description">extRact baut auf rclone auf und benötigt deine Zustimmung zum Dateizugriff. Stimme also im nächsten Schritt zu, damit wir deine Daten verwalten können.</string>
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">extRact wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf x0b.github.io/rcx-privacy erfährst du mehr.</string>
     <string name="intro_community_switch">Fehlerberichte senden</string>

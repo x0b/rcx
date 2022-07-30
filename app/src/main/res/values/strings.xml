@@ -151,7 +151,7 @@
     <string name="intro_welcome_title">Welcome</string>
     <string name="intro_welcome_description">extRact manages your files, whether they are stored on your device or online in the cloud. Check out the documentation at x0b.github.io/docs for more information.</string>
     <string name="intro_storage_title">Storage access required</string>
-    <string name="intro_storage_description">extRact uses rclone, and we need your permission to access files. First, please allow storage access.</string>
+    <string name="intro_storage_description">extRact uses rclone, and we need your permission to access all files. Please allow storage access when asked, otherwise this app may not work as intended.</string>
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">extRact is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
     <string name="intro_community_switch">Contribute error reports</string>
@@ -633,4 +633,6 @@
     <string name="description_sync_direction_copy_toremote">This will only copy files from local to remote</string>
     <string name="description_sync_direction_copy_tolocal">This will only copy files from remote to local</string>
     <string name="description_sync_direction_sync_bidirectional">This will try to keep local and remote the same, uploading, downloading and deleting files as required</string>
+    <string name="intro_successful_setup">You are now ready to start!</string>
+    <string name="intro_unsuccessful_setup">Manage files not granted</string>
 </resources>
