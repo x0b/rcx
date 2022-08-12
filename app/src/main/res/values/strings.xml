@@ -539,7 +539,8 @@
     <string name="task_dialog_title_local_path">Local Path</string>
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
     <string name="operation_success">%s was successful</string>
-    <string name="operation_success_description">We successfully synced %2$s in %3$d files</string>
+    <string name="operation_success_description">We successfully synced %2$s in %3$d files.</string>
+    <string name="operation_success_description_deletions_prefix">We also deleted %d files and folders.</string>
     <string name="notification_sync_failed">Sync operation failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
     <string name="title_activity_task">Create a new Task</string>
@@ -570,6 +571,7 @@
     <string name="sync_notification_speed">Speed: %14s</string>
     <string name="sync_notification_remaining">Remaining: %14s seconds</string>
     <string name="sync_notification_errors">Errors: %14s</string>
+    <string name="sync_notification_deletions">Deletions: %14s</string>
     <string name="sync_notification_elapsed">Elapsed: %14s seconds</string>
     <string name="sync_notification_short">%s of %s, %s seconds remaining</string>
     <string name="abi_not_supported_arm_downgrade">Unfortunately, your device does not support this version of extRact. Try the armeabi-v7a APK from github.com/x0b/rcx instead.</string>

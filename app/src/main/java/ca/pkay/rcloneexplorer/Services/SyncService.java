@@ -217,6 +217,9 @@ public class SyncService extends IntentService {
                         statusObject.getTotalSize(),
                         statusObject.getTotalTransfers()
                 );
+                if(statusObject.getDeletions()>0){
+                    message += "\n" + getString(R.string.operation_success_description_deletions_prefix, statusObject.getDeletions());
+                }
                 SyncLog.info(this, getString(R.string.operation_success, title), message);
                 notificationManager.showSuccessNotification(title, message, notificationId);
             }

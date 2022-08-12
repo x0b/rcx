@@ -40,6 +40,10 @@ class StatusObject(var mContext: Context){
         return mStats.optInt("totalTransfers", 0)
     }
 
+    fun getDeletions(): Int {
+        return mStats.optInt("deletes", 0) + mStats.optInt("deletedDirs", 0)
+    }
+
     fun getErrorMessage(): String {
         if(mLogline.has("msg") && mLogline.getString("level") == "error") {
             return mLogline.getString("msg")
@@ -87,6 +91,16 @@ class StatusObject(var mContext: Context){
                     allsize
                 )
             )
+
+            if (getDeletions() > 0) {
+                notificationBigText.add(
+                        String.format(
+                                mContext.getString(R.string.sync_notification_deletions),
+                                getDeletions()
+                        )
+                )
+            }
+
             notificationBigText.add(
                 String.format(
                     mContext.getString(R.string.sync_notification_speed),
@@ -128,7 +142,6 @@ class StatusObject(var mContext: Context){
         mLogline = JSONObject()
     }
 
-
     fun printErrors(){
         mErrorList.forEach {
             Log.e("TAG", it)
@@ -142,9 +155,8 @@ class StatusObject(var mContext: Context){
         }
         return all
     }
+
     override fun toString(): String {
-        return "StatusObject(getSpeed=${getSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()}, getErrorMessage=${getErrorMessage()})"
+        return "StatusObject(getSpeed=${getSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()}, getErrorMessage=${getErrorMessage()}, getDeletions=${getDeletions()})"
     }
-
-
 }
