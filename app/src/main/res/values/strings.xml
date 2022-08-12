@@ -478,7 +478,10 @@
     <string name="saf_uri_permission_error">Invalid permission - can not access storage</string>
     <string name="saf_uri_permission_already_added">Storage or a subfolder is already added</string>
     <string name="saf_uri_permission_no_support">Third party not yet supported. Open an issue with the affected app name.</string>
-    <string name="virtual_content_provider_summary">%1$d Remotes available</string>
+    <plurals name="virtual_content_provider_summary">
+        <item quantity="one">One Remote available</item>
+        <item quantity="other">%1$d Remotes available</item>
+    </plurals>
     <string name="virtual_content_provider_exception_advice">Check your network connection</string>
     <string name="virtual_content_provider_exception_error">Support info: \n%1$s</string>
     <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>

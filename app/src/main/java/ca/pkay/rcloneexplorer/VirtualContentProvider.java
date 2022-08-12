@@ -1,5 +1,10 @@
 package ca.pkay.rcloneexplorer;
 
+import static android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME;
+import static android.provider.DocumentsContract.Document.COLUMN_LAST_MODIFIED;
+import static android.provider.DocumentsContract.Document.COLUMN_SIZE;
+import static android.provider.DocumentsContract.Document.MIME_TYPE_DIR;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -25,19 +30,13 @@ import android.provider.DocumentsContract.Root;
 import android.system.ErrnoException;
 import android.system.OsConstants;
 import android.util.LruCache;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.preference.PreferenceManager;
-import ca.pkay.rcloneexplorer.Items.FileItem;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.RcloneRcd.ListItem;
-import ca.pkay.rcloneexplorer.Services.RcdService;
-import ca.pkay.rcloneexplorer.util.FLog;
-import io.github.x0b.safdav.provider.SingleRootProvider;
-import java9.util.concurrent.CompletableFuture;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,10 +57,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME;
-import static android.provider.DocumentsContract.Document.COLUMN_LAST_MODIFIED;
-import static android.provider.DocumentsContract.Document.COLUMN_SIZE;
-import static android.provider.DocumentsContract.Document.MIME_TYPE_DIR;
+import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.RcloneRcd.ListItem;
+import ca.pkay.rcloneexplorer.Services.RcdService;
+import ca.pkay.rcloneexplorer.util.FLog;
+import io.github.x0b.safdav.provider.SingleRootProvider;
+import java9.util.concurrent.CompletableFuture;
 
 // Beta quality notes
 //
@@ -276,7 +278,7 @@ public class VirtualContentProvider extends SingleRootProvider {
                     FLog.v(TAG, "queryRoots: no remote data change");
                 }
             }, asyncExc);
-            String summary = context.getString(R.string.virtual_content_provider_summary, remotes.size());
+            String summary = context.getResources().getQuantityString(R.plurals.virtual_content_provider_summary, remotes.size());
             return buildRoot(R.mipmap.ic_launcher, R.string.app_name, summary, flags);
         } else {
             FLog.v(TAG, "queryRoots: VCP loading");
@@ -1234,9 +1236,6 @@ public class VirtualContentProvider extends SingleRootProvider {
             }
             for (RemoteItem item : remotes.values()) {
                 // Exclude from results - no need to loop back
-                if (RemoteItem.SAFW == item.getType()) {
-                    continue;
-                }
                 if (null != remoteName && remoteName.equals(item.getName())) {
                     if (remoteName.equals(item.getName())) {
                         cursor.addRow(getForProjection(item, projection));
@@ -1388,16 +1387,21 @@ public class VirtualContentProvider extends SingleRootProvider {
             if (lastModified > configModifiedTimestamp) {
                 configModifiedTimestamp = lastModified;
                 FLog.d(TAG, "reloadRemotesIfRequired(): requesting new remote config data");
-                Set<String> oldRemotes = remotes.keySet();
+                ArrayList<String> newRemotes = new ArrayList<String>();
                 for (RemoteItem remoteItem : rclone.getRemotes()) {
+                    if (RemoteItem.SAFW == remoteItem.getType() || RemoteItem.LOCAL == remoteItem.getType()) {
+                        continue;
+                    }
                     remotes.put(remoteItem.getName(), remoteItem);
+                    newRemotes.add(remoteItem.getName());
                 }
                 // Remove remotes that no longer exist. If instead
                 // remotes.clear() were to be used, 'remotes' would need to be
                 // locked for all access while it is being updated.
-                oldRemotes.removeAll(remotes.keySet());
-                for (String oldRemote : oldRemotes) {
-                    remotes.remove(oldRemote);
+                for (String remote : remotes.keySet()) {
+                    if(!newRemotes.contains(remote)){
+                        remotes.remove(remote);
+                    }
                 }
                 FLog.v(TAG, "reloadRemotesIfRequired(): remote config data updated");
             }
