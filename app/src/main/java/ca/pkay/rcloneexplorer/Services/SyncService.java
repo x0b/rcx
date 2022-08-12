@@ -142,29 +142,38 @@ public class SyncService extends IntentService {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        Log.e("test", line);
+                        boolean isJson = false;
                         try {
                             JSONObject logline = new JSONObject(line);
+                            isJson = true;
+                        } catch (JSONException e) {}
 
-                            //todo: migrate this to StatusObject, so that we can handle everything properly.
-                            if(isLoggingEnable && logline.getString("level").equals("error")){
-                                log2File.log(line);
-                                statusObject.readStuff(logline);
-                            } else if(logline.getString("level").equals("warning")){
-                                statusObject.readStuff(logline);
+                        if(isJson) {
+                            try {
+                                JSONObject logline = new JSONObject(line);
+
+                                //todo: migrate this to StatusObject, so that we can handle everything properly.
+                                if(logline.getString("level").equals("error")){
+                                    if(isLoggingEnable) {
+                                        log2File.log(line);
+                                    }
+                                    statusObject.readStuff(logline);
+                                } else if(logline.getString("level").equals("warning")){
+                                    statusObject.readStuff(logline);
+                                }
+
+                                //Log.e("TAG", logline.toString());
+                                notificationManager.updateSyncNotification(
+                                        title,
+                                        statusObject.getNotificationContent(),
+                                        statusObject.getNotificationBigText(),
+                                        statusObject.getNotificationPercent()
+                                );
+
+                            } catch (JSONException e) {
+                                FLog.e(TAG, "onHandleIntent: the offending line:", line);
+                                FLog.e(TAG, "onHandleIntent: error reading json", e);
                             }
-
-                            //Log.e("TAG", logline.toString());
-                            notificationManager.updateSyncNotification(
-                                    title,
-                                    statusObject.getNotificationContent(),
-                                    statusObject.getNotificationBigText(),
-                                    statusObject.getNotificationPercent()
-                            );
-
-                        } catch (JSONException e) {
-                            FLog.e(TAG, "onHandleIntent: error reading json", e);
-                            FLog.e(TAG, "onHandleIntent: the offending line:", line);
                         }
                     }
                 } catch (InterruptedIOException e) {
@@ -205,6 +214,7 @@ public class SyncService extends IntentService {
                         break;
                 }
                 //Todo: check if we should also add errors on success
+                statusObject.printErrors();
                 String errors = statusObject.getAllErrorMessages();
                 if(!errors.isEmpty()) {
                     content += "\n\n\n"+statusObject.getAllErrorMessages();

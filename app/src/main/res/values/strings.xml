@@ -637,4 +637,5 @@
     <string name="description_sync_direction_sync_bidirectional">This will try to keep local and remote the same, uploading, downloading and deleting files as required</string>
     <string name="intro_successful_setup">You are now ready to start!</string>
     <string name="intro_unsuccessful_setup">Manage files not granted</string>
+    <string name="status_offendingfile">"The offending File: "</string>
 </resources>

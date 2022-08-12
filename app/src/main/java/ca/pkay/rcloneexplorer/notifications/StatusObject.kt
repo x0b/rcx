@@ -11,7 +11,7 @@ class StatusObject(var mContext: Context){
     var notificationPercent: Int = 0
     var notificationContent: String = ""
     var notificationBigText = ArrayList<String>()
-    var mErrorList = ArrayList<String>()
+    var mErrorList = ArrayList<ErrorObject>()
     var mStats = JSONObject()
     var mLogline = JSONObject()
 
@@ -51,13 +51,23 @@ class StatusObject(var mContext: Context){
         return ""
     }
 
+    fun getErrorObject(): String {
+        if(mLogline.has("msg") && mLogline.getString("level") == "error") {
+            return mLogline.optString("object", "")
+        }
+        return ""
+    }
+
     //Todo: rename this. It's bad style
     fun readStuff(logline: JSONObject) {
         clearObject()
         mLogline = logline
 
+        Log.e("Tast", logline.toString())
         if(mLogline.getString("level") == "error") {
-            mErrorList.add(getErrorMessage())
+            var e = ErrorObject(getErrorObject(), getErrorMessage())
+            Log.e("TAG", e.mErrorObject + " - " + e.mErrorMessage)
+            mErrorList.add(e)
         }
 
         if(mLogline.has("stats")) {
@@ -144,14 +154,15 @@ class StatusObject(var mContext: Context){
 
     fun printErrors(){
         mErrorList.forEach {
-            Log.e("TAG", it)
+            Log.e("TAG", it.mErrorObject + " - " + it.mErrorMessage)
         }
     }
 
     fun getAllErrorMessages(): String{
         var all = ""
         mErrorList.forEach {
-            all+=it+"\n"
+            all += it.mErrorMessage + "\n"
+            all += mContext.getString(R.string.status_offendingfile) + it.mErrorObject + "\n"
         }
         return all
     }
