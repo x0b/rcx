@@ -220,10 +220,6 @@ public class MainActivity extends AppCompatActivity
         if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
             startLogFragment();
             navigationView.setCheckedItem(R.id.nav_logs);
-        } else {
-            int id = SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes);
-            navigationView.setCheckedItem(id);
-            startFragmentById(id);
         }
     }
 
