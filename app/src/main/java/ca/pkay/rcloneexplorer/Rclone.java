@@ -110,6 +110,15 @@ public class Rclone {
         command.add(cachePath);
         command.add("--cache-db-path");
         command.add(cachePath);
+
+        command.add("--low-level-retries 2");
+        command.add("2");
+
+        command.add("--timeout");
+        command.add("5s");
+        command.add("--contimeout");
+        command.add("5s");
+
         command.add("--config");
         command.add(rcloneConf);
 
