@@ -111,7 +111,7 @@ public class Rclone {
         command.add("--cache-db-path");
         command.add(cachePath);
 
-        command.add("--low-level-retries 2");
+        command.add("--low-level-retries");
         command.add("2");
 
         command.add("--timeout");
