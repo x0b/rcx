@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import es.dmoral.toasty.Toasty;
 
 public class S3Config extends Fragment {
 
@@ -187,6 +188,12 @@ public class S3Config extends Fragment {
         options.add(keyString);
         options.add("provider");
         options.add(vendor.getSelectedItem().toString());
+
+        if(vendor.getSelectedItem().toString().equals(getString(R.string.s3_spinner_prompt))) {
+            Toasty.error(context, getString(R.string.s3_spinner_wrong_selection)).show();
+            return;
+        }
+
 
         if (!endpointString.trim().isEmpty()) {
             options.add("endpoint");

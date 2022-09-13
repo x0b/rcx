@@ -642,4 +642,5 @@
     <string name="intro_unsuccessful_setup">Manage files not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
     <string name="s3_spinner_prompt">S3 service provider</string>
+    <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>
 </resources>
