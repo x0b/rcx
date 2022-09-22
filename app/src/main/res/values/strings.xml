@@ -642,4 +642,6 @@
     <string name="intro_unsuccessful_setup">Manage files not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
     <string name="use_md5checksum">Use md5checksum</string>
+    <string name="task_hint_wifi_ignore_defaults">Tasks will not follow the wifi-setting set globally in the app\'s settings. This Setting will override it.</string>
+    <string name="task_hint_md5checksum">This will use the checksum instead of filesize. May take longer or use more battery.</string>
 </resources>
