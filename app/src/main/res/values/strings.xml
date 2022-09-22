@@ -550,11 +550,11 @@
     <!-- Strings used for fragments for navigation -->
     <string name="previous">Previous</string>
 
-    <string name="task_edit_label_name">Name:</string>
+    <string name="task_edit_label_name">General Information</string>
     <string name="task_edit_label_local">local:</string>
     <string name="task_edit_label_remote">Remote:</string>
     <string name="task_edit_label_direction">Direction:</string>
-    <string name="task_edit_hint_title">Title of Task</string>
+    <string name="task_edit_hint_title">Title</string>
     <string name="task_edit_hint_local">Local Path</string>
     <string name="task_edit_hint_remote">Remote Path</string>
     <string name="rcd_service_notification_running_in_background">Rclone is running in background</string>
@@ -641,4 +641,5 @@
     <string name="intro_successful_setup">You are now ready to start!</string>
     <string name="intro_unsuccessful_setup">Manage files not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
+    <string name="use_md5checksum">Use md5checksum</string>
 </resources>

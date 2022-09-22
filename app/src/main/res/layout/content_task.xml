@@ -48,6 +48,26 @@
                         android:hint="@string/task_edit_hint_title"
                         android:inputType="text"
                         android:minHeight="48dp" />
+
+                    <Switch
+                        android:id="@+id/task_md5sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/use_md5checksum" />
+
+                    <Switch
+                        android:id="@+id/task_wifionly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/transfer_only_on_wifi" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/transfer_only_on_wifi_summary" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

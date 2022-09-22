@@ -37,6 +37,9 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
     private lateinit var syncDirection: Spinner
     private lateinit var fab: FloatingActionButton
 
+    private lateinit var switchWifi: Switch
+    private lateinit var switchMD5sum: Switch
+
 
     private var existingTask: Task? = null
     private var remotePathHolder = ""
@@ -94,6 +97,8 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
         syncDirection = findViewById(R.id.task_direction_spinner)
         syncDescription = findViewById(R.id.descriptionSyncDirection)
         fab = findViewById(R.id.fab)
+        switchWifi = findViewById(R.id.task_wifionly)
+        switchMD5sum = findViewById(R.id.task_md5sum)
 
         rcloneInstance = Rclone(this)
         dbHandler = DatabaseHandler(this)
@@ -123,6 +128,8 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
         }
 
         findViewById<TextView>(R.id.task_title_textfield).text = existingTask?.title
+        switchWifi.isChecked = existingTask?.wifionly ?: false
+        switchMD5sum.isChecked = existingTask?.md5sum ?: false
         prepareSyncDirectionDropdown()
         prepareLocal()
         prepareRemote()
@@ -175,6 +182,8 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
         taskToPopulate.localPath = localPath.text.toString()
         taskToPopulate.direction = direction
 
+        taskToPopulate.wifionly = switchWifi.isChecked
+        taskToPopulate.md5sum = switchMD5sum.isChecked
 
         // Verify if data is completed
         if (localPath.text.toString() == "") {
