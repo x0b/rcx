@@ -1,14 +1,14 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
-import android.app.PendingIntent;
+import static ca.pkay.rcloneexplorer.Services.SyncService.EXTRA_TASK_ID;
+import static ca.pkay.rcloneexplorer.Services.SyncService.TASK_ACTION;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
-import android.graphics.drawable.Icon;
+import android.net.Uri;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +21,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Activities.ShortcutServiceActivity;
+import ca.pkay.rcloneexplorer.Activities.TaskActivity;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Services.SyncService;
-import ca.pkay.rcloneexplorer.Activities.TaskActivity;
 import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
@@ -178,7 +181,9 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     Toasty.info(context, context.getResources().getString(R.string.task_copied_id_to_clipboard), Toast.LENGTH_SHORT, true).show();
                     break;
                 case R.id.action_add_to_home_screen:
-                    createShortcut(context, task);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        createShortcut(context, task);
+                    }
                     break;
                 default:
                     return false;
@@ -219,40 +224,21 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private static void createShortcut(Context c, Task task) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ShortcutManager shortcutManager = c.getSystemService(ShortcutManager.class);
+        Intent intent = new Intent(TASK_ACTION, Uri.EMPTY, c, ShortcutServiceActivity.class);
+        intent.setAction(TASK_ACTION);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(EXTRA_TASK_ID, task.getId());
 
-            Intent i = SyncService.createInternalStartIntent(c, task.getId());
+        String id = String.valueOf(task.getTitle()+task.getLocalPath()+task.getRemotePath()+task.getDirection());
+        ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(c, id)
+                .setShortLabel(task.getTitle())
+                .setLongLabel(task.getRemotePath())
+                .setIcon(IconCompat.createWithResource(c, R.drawable.ic_settings))
+                .setIntent(intent)
+                .build();
 
-            ShortcutInfo shortcut = new ShortcutInfo.Builder(c, String.valueOf(task.getId()))
-                    .setShortLabel(task.getTitle())
-                    .setLongLabel(task.getRemotePath())
-                    .setIcon(Icon.createWithResource(c, R.mipmap.ic_launcher))
-                    .setIntent(i)
-                    .build();
+        ShortcutManagerCompat.requestPinShortcut(c, shortcut, null);
 
-            //https://developer.android.com/guide/topics/ui/shortcuts/creating-shortcuts
-            shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
-
-            if (shortcutManager.isRequestPinShortcutSupported()) {
-                // Assumes there's already a shortcut with the ID "my-shortcut".
-                // The shortcut must be enabled.
-
-                // Create the PendingIntent object only if your app needs to be notified
-                // that the user allowed the shortcut to be pinned. Note that, if the
-                // pinning operation fails, your app isn't notified. We assume here that the
-                // app has implemented a method called createShortcutResultIntent() that
-                // returns a broadcast intent.
-                Intent pinnedShortcutCallbackIntent = shortcutManager.createShortcutResultIntent(shortcut);
-
-                // Configure the intent so that your app's broadcast receiver gets
-                // the callback successfully.For details, see PendingIntent.getBroadcast().
-                PendingIntent successCallback = PendingIntent.getBroadcast(c, 0, pinnedShortcutCallbackIntent, PendingIntent.FLAG_IMMUTABLE);
-
-                shortcutManager.requestPinShortcut(shortcut, successCallback.getIntentSender());
-            }
-
-        }
     }
 
 }
