@@ -100,7 +100,8 @@ public class Rclone {
     }
 
     private String[] createCommandWithOptions(String ...args) {
-        return createCommandWithOptions((ArrayList<String>) Arrays.asList(args));
+        ArrayList<String> arguments = new ArrayList<String>(Arrays.asList(args));
+        return createCommandWithOptions(arguments);
     }
 
     private String[] createCommandWithOptions(ArrayList<String> args) {
