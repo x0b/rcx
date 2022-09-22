@@ -7,8 +7,8 @@ class Task(var id: Long) {
     var remotePath = ""
     var localPath = ""
     var direction = 0
-    var md5sum = false
-    var wifionly = false
+    var md5sum = TASK_MD5SUM_DEFAULT
+    var wifionly = TASK_WIFIONLY_DEFAULT
 
     override fun toString(): String {
         return "$title: $remoteId: $remoteType: $remotePath: $localPath: $direction"
@@ -25,5 +25,8 @@ class Task(var id: Long) {
         var COLUMN_NAME_SYNC_DIRECTION = "task_direction"
         var COLUMN_NAME_MD5SUM = "task_use_md5sum"
         var COLUMN_NAME_WIFI_ONLY = "task_use_only_wifi"
+
+        const val TASK_MD5SUM_DEFAULT = false
+        const val TASK_WIFIONLY_DEFAULT = false
     }
 }

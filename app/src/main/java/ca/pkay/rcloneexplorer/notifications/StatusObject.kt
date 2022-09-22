@@ -60,6 +60,7 @@ class StatusObject(var mContext: Context){
 
     //Todo: rename this. It's bad style
     fun readStuff(logline: JSONObject) {
+        // Todo: dont clear object before we can parse the content. This will "blink" the notification.
         clearObject()
         mLogline = logline
 
