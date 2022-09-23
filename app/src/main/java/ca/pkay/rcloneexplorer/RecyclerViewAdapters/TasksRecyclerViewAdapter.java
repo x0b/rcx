@@ -233,7 +233,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(c, id)
                 .setShortLabel(task.getTitle())
                 .setLongLabel(task.getRemotePath())
-                .setIcon(IconCompat.createWithResource(c, R.drawable.ic_settings))
+                .setIcon(IconCompat.createWithResource(c, R.drawable.ic_twotone_rounded_cloud_sync_24))
                 .setIntent(intent)
                 .build();
 
