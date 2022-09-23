@@ -118,6 +118,12 @@ public class Rclone {
         command.add("--cache-db-path");
         command.add(cachePath);
 
+        /*
+
+        This fixed some bug. I dont know which one, but it breaks transfer of big files where
+        the checksum needs to be calculated.
+        This was probably due to some timeout for connecting misconfigured remotes.
+
         command.add("--low-level-retries");
         command.add("2");
 
@@ -125,6 +131,7 @@ public class Rclone {
         command.add("5s");
         command.add("--contimeout");
         command.add("5s");
+        */
 
         command.add("--config");
         command.add(rcloneConf);
