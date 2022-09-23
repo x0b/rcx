@@ -542,7 +542,10 @@
     <string name="task_dialog_title_local_path">Local Path</string>
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
     <string name="operation_success">%s was successful</string>
-    <string name="operation_success_description">We successfully synced %2$s in %3$d files.</string>
+    <plurals name="operation_success_description">
+        <item quantity="zero">There was nothing to do.</item>
+        <item quantity="other">We successfully synced %2$s in %3$d files.</item>
+    </plurals>
     <string name="operation_success_description_deletions_prefix">We also deleted %d files and folders.</string>
     <string name="notification_sync_failed">Sync operation failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
@@ -571,12 +574,31 @@
     <string name="pref_send_sigquit_title">Debug: Stop with SIGQUIT</string>
     <string name="pref_send_sigquit_summary">Stops all rclone processes with kill -SIGQUIT. Requires logging enabled.</string>
     <string name="sync_notification_transferred">Transferred %s of %s</string>
-    <string name="sync_notification_speed">Speed: %14s</string>
-    <string name="sync_notification_remaining">Remaining: %14s seconds</string>
-    <string name="sync_notification_errors">Errors: %14s</string>
-    <string name="sync_notification_deletions">Deletions: %14s</string>
-    <string name="sync_notification_elapsed">Elapsed: %14s seconds</string>
-    <string name="sync_notification_short">%s of %s, %s seconds remaining</string>
+    <string name="sync_notification_speed">"Speed:     %s"</string>
+    <string name="sync_notification_remaining">"Remaining: %s"</string>
+    <string name="sync_notification_errors">"Errors:    %s"</string>
+    <string name="sync_notification_deletions">"Deletions: %s"</string>
+    <string name="sync_notification_file_syncing">File: %14s</string>
+    <string name="sync_notification_file_checking">Checking: %14s</string>
+    <string name="sync_notification_elapsed">Elapsed: %14s</string>
+    <string name="sync_notification_short">%s of %s, %s remaining</string>
+    <plurals name="modern_prettyprint_duration_d">
+        <item quantity="one">%s Day</item>
+        <item quantity="other">%s Days</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_h">
+        <item quantity="one">%s Hour</item>
+        <item quantity="other">%s Hours</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_m">
+        <item quantity="one">%s Minute</item>
+        <item quantity="other">%s Minutes</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_s">
+        <item quantity="one">%s Second</item>
+        <item quantity="other">%s Seconds</item>
+    </plurals>
+
     <string name="abi_not_supported_arm_downgrade">Unfortunately, your device does not support this version of extRact. Try the armeabi-v7a APK from github.com/x0b/rcx instead.</string>
     <string name="abi_not_supported">Unfortunately, your device does not support this version of extRact.</string>
     <string name="trigger">Trigger</string>

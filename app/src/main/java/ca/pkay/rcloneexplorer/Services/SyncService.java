@@ -153,9 +153,9 @@ public class SyncService extends IntentService {
                                     if(isLoggingEnable) {
                                         log2File.log(line);
                                     }
-                                    statusObject.readStuff(logline);
+                                    statusObject.parseLoglineToStatusObject(logline);
                                 } else if(logline.getString("level").equals("warning")){
-                                    statusObject.readStuff(logline);
+                                    statusObject.parseLoglineToStatusObject(logline);
                                 }
 
                                 //Log.e("TAG", logline.toString());
@@ -218,7 +218,8 @@ public class SyncService extends IntentService {
                 SyncLog.error(this, getString(R.string.operation_failed), content);
                 notificationManager.showFailedNotification(content, notificationId, internalTask.id);
             }else{
-                String message = getString(R.string.operation_success_description,
+                String message = getResources().getQuantityString(R.plurals.operation_success_description,
+                        statusObject.getTotalTransfers(),
                         title,
                         statusObject.getTotalSize(),
                         statusObject.getTotalTransfers()

@@ -513,11 +513,27 @@
     <string name="abi_not_supported_arm_downgrade">Diese extRact-Version wird nicht unterstützt. Eventuell funktioniert die armeabi-v7a-APK von github.com/x0b/rcx."</string>
     <string name="abi_not_supported">Diese extRact-Version wird auf dem Gerät nicht unterstützt.</string>
     <string name="sync_notification_transferred">%s von %s übertragen</string>
-    <string name="sync_notification_speed">Geschwindigkeit: %14s</string>
-    <string name="sync_notification_remaining">Verbleibend: %14s Sekunden</string>
-    <string name="sync_notification_errors">Fehler: %14d</string>
-    <string name="sync_notification_elapsed">Vergangen: %15d Sekunden</string>
-    <string name="sync_notification_short">%s von %s, %s Sekunden verbleibend</string>
+    <string name="sync_notification_speed">"Geschwindigkeit:   %s"</string>
+    <string name="sync_notification_remaining">"Verbleibend:         %s"</string>
+    <string name="sync_notification_errors">"Fehler:              %d"</string>
+    <string name="sync_notification_elapsed">"Vergangen:           %s"</string>
+    <string name="sync_notification_short">%s von %s, %s verbleibend</string>
+    <plurals name="modern_prettyprint_duration_d">
+        <item quantity="one">%s Tag</item>
+        <item quantity="other">%s Tage</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_h">
+        <item quantity="one">%s Stunde</item>
+        <item quantity="other">%s Stunden</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_m">
+        <item quantity="one">%s Minute</item>
+        <item quantity="other">%s Minuten</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_s">
+        <item quantity="one">%s Sekunde</item>
+        <item quantity="other">%s Sekunden</item>
+    </plurals>
     <string name="no_tasks_warning">Noch keine Aufgaben. Lege doch eine an!</string>
     <string name="no_trigger_warning">Noch keine Auslöser. Lege bitte zuerst einen an!</string>
     <string name="add_trigger">Neuen Auslöser</string>

@@ -125,7 +125,7 @@ public class DownloadService extends IntentService {
                         if (isLoggingEnable && logline.getString("level").equals("error")) {
                             log2File.log(line);
                         } else if (logline.getString("level").equals("warning")) {
-                            so.readStuff(logline);
+                            so.parseLoglineToStatusObject(logline);
                         }
 
                         mNotifications.updateDownloadNotification(
