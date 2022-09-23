@@ -98,7 +98,7 @@ class StatusObject(var mContext: Context){
 
                     notificationBigText.add(
                         String.format(
-                            mContext.getString(R.string.sync_notification_elapsed),
+                            mContext.getString(R.string.sync_notification_file_checking),
                             filename
                         )
                     )
