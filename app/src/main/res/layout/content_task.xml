@@ -122,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:minHeight="48dp"
-                        android:text="@string/description_sync_direction" />
+                        android:text="@string/description_sync_direction_sync_toremote" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

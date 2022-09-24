@@ -555,9 +555,9 @@
     <string name="previous">Previous</string>
 
     <string name="task_edit_label_name">General Information</string>
-    <string name="task_edit_label_local">local:</string>
-    <string name="task_edit_label_remote">Remote:</string>
-    <string name="task_edit_label_direction">Direction:</string>
+    <string name="task_edit_label_local">Local Storage Path</string>
+    <string name="task_edit_label_remote">Remote Storage Path</string>
+    <string name="task_edit_label_direction">Direction</string>
     <string name="task_edit_hint_title">Title</string>
     <string name="task_edit_hint_local">Local Path</string>
     <string name="task_edit_hint_remote">Remote Path</string>
@@ -656,10 +656,10 @@
     <string name="task_data_validation_error_no_remote_path">You have not selected a remote path.</string>
     <string name="bisync">Both Ways</string>
     <string name="description_sync_direction">This decides from where to where data is moved.</string>
-    <string name="description_sync_direction_sync_tolocal">This will copy and delete files from remote to local.</string>
-    <string name="description_sync_direction_sync_toremote">This will copy and delete files from local to remote.</string>
-    <string name="description_sync_direction_copy_toremote">This will only copy files from local to remote</string>
-    <string name="description_sync_direction_copy_tolocal">This will only copy files from remote to local</string>
+    <string name="description_sync_direction_sync_tolocal">This will sync files from remote storage to local storage. It will also delete files on local storage if they are not present on the remote. Only changes local storage.</string>
+    <string name="description_sync_direction_sync_toremote">This will sync files from local storage to remote storage. It will also delete files on the remote storage if they are not present locally. Only changes destination.</string>
+    <string name="description_sync_direction_copy_toremote">This will only copy files from local storage to remote storage. No files are beeing deleted, but updated.</string>
+    <string name="description_sync_direction_copy_tolocal">This will only copy files from remote storage to local storage.  No files are beeing deleted, but updated.</string>
     <string name="description_sync_direction_sync_bidirectional">This will try to keep local and remote the same, uploading, downloading and deleting files as required</string>
     <string name="intro_successful_setup">You are now ready to start!</string>
     <string name="intro_unsuccessful_setup">Manage files not granted</string>

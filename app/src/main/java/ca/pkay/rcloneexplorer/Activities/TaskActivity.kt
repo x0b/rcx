@@ -283,25 +283,29 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
                 position: Int,
                 id: Long
             ) {
-                var text = getString(R.string.description_sync_direction)
-                when (position) {
-                    SyncDirectionObject.SYNC_LOCAL_TO_REMOTE -> text =
-                        getString(R.string.description_sync_direction_sync_tolocal)
-                    SyncDirectionObject.SYNC_REMOTE_TO_LOCAL -> text =
-                        getString(R.string.description_sync_direction_sync_toremote)
-                    SyncDirectionObject.COPY_LOCAL_TO_REMOTE -> text =
-                        getString(R.string.description_sync_direction_copy_toremote)
-                    SyncDirectionObject.COPY_REMOTE_TO_LOCAL -> text =
-                        getString(R.string.description_sync_direction_copy_tolocal)
-                    SyncDirectionObject.SYNC_BIDIRECTIONAL -> text =
-                        getString(R.string.description_sync_direction_sync_bidirectional)
-                }
-                syncDescription.text = text
+                updateSpinnerDescription(position)
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>?) {}
         }
         syncDirection.setSelection((((existingTask?.direction?.minus(1)) ?: 0)) )
+    }
+
+    private fun updateSpinnerDescription(value: Int) {
+        var text = getString(R.string.description_sync_direction_sync_toremote)
+        when (value) {
+            SyncDirectionObject.SYNC_LOCAL_TO_REMOTE -> text =
+                getString(R.string.description_sync_direction_sync_toremote)
+            SyncDirectionObject.SYNC_REMOTE_TO_LOCAL -> text =
+                getString(R.string.description_sync_direction_sync_tolocal)
+            SyncDirectionObject.COPY_LOCAL_TO_REMOTE -> text =
+                getString(R.string.description_sync_direction_copy_toremote)
+            SyncDirectionObject.COPY_REMOTE_TO_LOCAL -> text =
+                getString(R.string.description_sync_direction_copy_tolocal)
+            SyncDirectionObject.SYNC_BIDIRECTIONAL -> text =
+                getString(R.string.description_sync_direction_sync_bidirectional)
+        }
+        syncDescription.text = text
     }
 
     companion object {
