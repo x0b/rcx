@@ -50,7 +50,7 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Trigger selectedTrigger = triggers.get(position);
         holder.triggerName.setText(selectedTrigger.getTitle());
-        Task task = (new DatabaseHandler(context)).getTask(selectedTrigger.getId());
+        Task task = (new DatabaseHandler(context)).getTask(selectedTrigger.getWhatToTrigger());
         String taskTitle = "ERR: NOTFOUND";
         if(task != null){
             taskTitle = task.getTitle();
@@ -117,8 +117,15 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
         context.startActivity(intent);
     }
 
+    private void copyTrigger(Trigger trigger){
+        trigger.setTitle(trigger.getTitle() + context.getString(R.string.trigger_copy_suffix));
+        Trigger newTrigger = (new DatabaseHandler(context)).createTrigger(trigger);
+        triggers.add(newTrigger);
+        notifyItemInserted(triggers.size() - 1);
+    }
 
-    public void removeItem(Trigger trigger) {
+    public void deleteTrigger(Trigger trigger) {
+        new DatabaseHandler(context).deleteTrigger(trigger.getId());
         int index = triggers.indexOf(trigger);
         if (index >= 0) {
             triggers.remove(index);
@@ -139,13 +146,14 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
         popupMenu.getMenuInflater().inflate(R.menu.trigger_item_menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
-                case R.id.action_edit_task:
+                case R.id.action_edit_trigger:
                     editTrigger(trigger);
                     break;
-                case R.id.action_delete_task:
-                    new DatabaseHandler(context).deleteTrigger(trigger.getId());
-                    notifyDataSetChanged();
-                    removeItem(trigger);
+                case R.id.action_copy_trigger:
+                    copyTrigger(trigger);
+                    break;
+                case R.id.action_delete_trigger:
+                    deleteTrigger(trigger);
                     break;
                 default:
                     return false;

@@ -141,6 +141,12 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
         context.startActivity(intent);
     }
 
+    private void copyTask(Task task) {
+        task.setTitle(task.getTitle() + context.getString(R.string.task_copy_suffix));
+        Task newTask = (new DatabaseHandler(context)).createTask(task);
+        tasks.add(newTask);
+        notifyItemInserted(tasks.size() - 1);
+    }
 
     public void removeItem(Task task) {
         int index = tasks.indexOf(task);
@@ -168,6 +174,9 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
                     break;
                 case R.id.action_edit_task:
                     editTask(task);
+                    break;
+                case R.id.action_copy_task:
+                    copyTask(task);
                     break;
                 case R.id.action_delete_task:
                     new DatabaseHandler(context).deleteTask(task.getId());
