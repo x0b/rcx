@@ -605,7 +605,7 @@
     <string name="trigger">Trigger</string>
     <string name="title_activity_trigger">Trigger</string>
     <string name="enabled">Enabled</string>
-    <string name="trigger_name">Trigger-Name</string>
+    <string name="trigger_name">Description</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
@@ -670,4 +670,5 @@
     <string name="shortcut_start_service">Started Sync!</string>
     <string name="task_copy_suffix">(Copy)</string>
     <string name="trigger_copy_suffix">(Copy)</string>
+    <string name="trigger_label_weekdays">Weekdays</string>
 </resources>

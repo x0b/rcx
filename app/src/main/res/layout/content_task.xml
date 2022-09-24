@@ -104,8 +104,8 @@
                         android:id="@+id/label_direction"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
                         android:text="@string/task_edit_label_direction"
+                        android:layout_margin="8dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                         android:textSize="24sp" />
 
