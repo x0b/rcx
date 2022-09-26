@@ -664,6 +664,8 @@
     <string name="intro_successful_setup">You are now ready to start!</string>
     <string name="intro_unsuccessful_setup">Manage files not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
+    <string name="s3_spinner_prompt">S3 service provider</string>
+    <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>
     <string name="use_md5checksum">Use md5checksum</string>
     <string name="task_hint_wifi_ignore_defaults">Tasks will not follow the wifi-setting set globally in the app\'s settings. This Setting will override it.</string>
     <string name="task_hint_md5checksum">This will use the checksum instead of filesize. May take longer or use more battery.</string>
