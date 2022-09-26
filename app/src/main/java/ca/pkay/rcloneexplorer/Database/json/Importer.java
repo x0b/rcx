@@ -56,6 +56,8 @@ public class Importer {
             task.setRemoteType(taskObject.getInt("remoteType"));
             task.setLocalPath(taskObject.getString("localPath"));
             task.setDirection(taskObject.getInt("syncDirection"));
+            task.setMd5sum(taskObject.optBoolean("md5sum", Task.TASK_MD5SUM_DEFAULT));
+            task.setMd5sum(taskObject.optBoolean("wifionly", Task.TASK_WIFIONLY_DEFAULT));
             result.add(task);
         }
         return result;

@@ -28,13 +28,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:padding="8dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/label_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
+                        android:layout_marginBottom="8dp"
                         android:text="@string/task_edit_label_name"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                         android:textSize="24sp" />
@@ -43,11 +44,45 @@
                         android:id="@+id/task_title_textfield"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
+                        android:layout_marginBottom="8dp"
                         android:autofillHints=""
                         android:hint="@string/task_edit_hint_title"
                         android:inputType="text"
                         android:minHeight="48dp" />
+
+                    <Switch
+                        android:id="@+id/task_md5sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/use_md5checksum" />
+
+                    <TextView
+                        android:id="@+id/task_md5_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/task_hint_md5checksum" />
+
+                    <Switch
+                        android:id="@+id/task_wifionly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/transfer_only_on_wifi" />
+
+                    <TextView
+                        android:id="@+id/task_wifi_hint_cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/transfer_only_on_wifi_summary" />
+
+                    <TextView
+                        android:id="@+id/task_wifi_hint_ignore_defaults"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/task_hint_wifi_ignore_defaults" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -69,8 +104,8 @@
                         android:id="@+id/label_direction"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
                         android:text="@string/task_edit_label_direction"
+                        android:layout_margin="8dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                         android:textSize="24sp" />
 
@@ -87,7 +122,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:minHeight="48dp"
-                        android:text="@string/description_sync_direction" />
+                        android:text="@string/description_sync_direction_sync_toremote" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

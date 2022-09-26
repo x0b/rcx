@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
@@ -129,7 +128,7 @@ public class UploadService extends IntentService {
                         if(isLoggingEnable && logline.getString("level").equals("error")){
                             log2File.log(line);
                         } else if(logline.getString("level").equals("warning")){
-                            so.readStuff(logline);
+                            so.parseLoglineToStatusObject(logline);
                         }
 
                         mNotifications.updateUploadNotification(

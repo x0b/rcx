@@ -1,6 +1,8 @@
 package ca.pkay.rcloneexplorer.Services;
 
 
+import static ca.pkay.rcloneexplorer.Items.SyncDirectionObject.SYNC_LOCAL_TO_REMOTE;
+
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -64,11 +66,12 @@ public class SyncService extends IntentService {
     public static final String SHOW_RESULT_NOTIFICATION = "ca.pkay.rcexplorer.SHOW_RESULT_NOTIFICATION";
     public static final String TASK_NAME = "ca.pkay.rcexplorer.TASK_NAME";
     public static final String TASK_ID = "ca.pkay.rcexplorer.TASK_ID";
+    public static final String TASK_WIFI_ONLY = "ca.pkay.rcexplorer.TASK_WIFI_ONLY";
+    public static final String TASK_MD5SUM = "ca.pkay.rcexplorer.TASK_MD5SUM";
 
     private Rclone rclone;
     private Log2File log2File;
     private boolean connectivityChanged;
-    private boolean transferOnWiFiOnly;
     Process currentProcess;
     SyncServiceNotifications notificationManager = new SyncServiceNotifications(this);
 
@@ -89,13 +92,7 @@ public class SyncService extends IntentService {
         );
         rclone = new Rclone(this);
         log2File = new Log2File(this);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
-
-        if (transferOnWiFiOnly) {
-            registerBroadcastReceivers();
-        }
+        registerBroadcastReceivers();
     }
 
     @Override
@@ -104,12 +101,11 @@ public class SyncService extends IntentService {
             return;
         }
 
-        InternalTaskItem t = handleTaskStartIntent(intent);
         Log.e(TAG, "onHandleIntent "+intent.getStringExtra(TASK_NAME));
 
         startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification("SyncService").build());
 
-        handleTask(t);
+        handleTask(handleTaskStartIntent(intent));
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
@@ -117,26 +113,26 @@ public class SyncService extends IntentService {
 
     }
 
-    private void handleTask(InternalTaskItem t) {
+    private void handleTask(InternalTaskItem internalTask) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
+        boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
-        String title = t.title;
+        String title = internalTask.title;
         FAILURE_REASON failureReason = FAILURE_REASON.NONE;
-        if(t.title.equals("")){
-            title = t.remotePath;
+        if(internalTask.title.equals("")){
+            title = internalTask.remotePath;
         }
 
         StatusObject statusObject = new StatusObject(this);
         Connection connection = WifiConnectivitiyUtil.Companion.dataConnection(this.getApplicationContext());
 
 
-        if (transferOnWiFiOnly && connection == Connection.METERED) {
+        if (internalTask.transferOnWiFiOnly && connection == Connection.METERED) {
             failureReason = FAILURE_REASON.NO_UNMETERED;
         } else if (connection == Connection.DISCONNECTED || connection == Connection.NOT_AVAILABLE) {
             failureReason = FAILURE_REASON.NO_CONNECTION;
         } else {
-            currentProcess = rclone.sync(t.remoteItem, t.remotePath, t.localPath, t.syncDirection);
+            currentProcess = rclone.sync(internalTask.remoteItem, internalTask.remotePath, internalTask.localPath, internalTask.syncDirection, internalTask.md5sum);
             if (currentProcess != null) {
                 try {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
@@ -157,9 +153,9 @@ public class SyncService extends IntentService {
                                     if(isLoggingEnable) {
                                         log2File.log(line);
                                     }
-                                    statusObject.readStuff(logline);
+                                    statusObject.parseLoglineToStatusObject(logline);
                                 } else if(logline.getString("level").equals("warning")){
-                                    statusObject.readStuff(logline);
+                                    statusObject.parseLoglineToStatusObject(logline);
                                 }
 
                                 //Log.e("TAG", logline.toString());
@@ -191,13 +187,13 @@ public class SyncService extends IntentService {
                     FLog.e(TAG, "onHandleIntent: error waiting for process", e);
                 }
             }
-            sendUploadFinishedBroadcast(t.remoteItem.getName(), t.remotePath);
+            sendUploadFinishedBroadcast(internalTask.remoteItem.getName(), internalTask.remotePath);
         }
 
         int notificationId = (int)System.currentTimeMillis();
 
-        if(t.silentRun){
-            if (transferOnWiFiOnly && connectivityChanged || (currentProcess == null || currentProcess.exitValue() != 0)) {
+        if(internalTask.silentRun){
+            if (internalTask.transferOnWiFiOnly && connectivityChanged || (currentProcess == null || currentProcess.exitValue() != 0)) {
                 String content = getString(R.string.operation_failed_unknown, title);
 
                 switch (failureReason) {
@@ -220,9 +216,10 @@ public class SyncService extends IntentService {
                     content += "\n\n\n"+statusObject.getAllErrorMessages();
                 }
                 SyncLog.error(this, getString(R.string.operation_failed), content);
-                notificationManager.showFailedNotification(content, notificationId, t.id);
+                notificationManager.showFailedNotification(content, notificationId, internalTask.id);
             }else{
-                String message = getString(R.string.operation_success_description,
+                String message = getResources().getQuantityString(R.plurals.operation_success_description,
+                        statusObject.getTotalTransfers(),
                         title,
                         statusObject.getTotalSize(),
                         statusObject.getTotalTransfers()
@@ -257,14 +254,19 @@ public class SyncService extends IntentService {
                     taskIntent.putExtra(SyncService.TASK_NAME, task.getTitle());
                     taskIntent.putExtra(SyncService.TASK_ID, task.getId());
                     taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
-                    return InternalTaskItem.newInstance(taskIntent);
+                    taskIntent.putExtra(SyncService.TASK_WIFI_ONLY, task.getWifionly());
+                    taskIntent.putExtra(SyncService.TASK_MD5SUM, task.getMd5sum());
+
+                    return InternalTaskItem.newInstance(taskIntent, this);
                 }
             }
             return null;
         } else {
-            return InternalTaskItem.newInstance(intent);
+            return InternalTaskItem.newInstance(intent, this);
         }
     }
+
+
     public static Intent createInternalStartIntent(Context context, long id) {
         Intent i = new Intent(context, SyncService.class);
         i.setAction(TASK_ACTION);
@@ -293,9 +295,7 @@ public class SyncService extends IntentService {
             currentProcess.destroy();
         }
 
-        if (transferOnWiFiOnly) {
-            unregisterReceiver(connectivityChangeBroadcastReceiver);
-        }
+        unregisterReceiver(connectivityChangeBroadcastReceiver);
     }
 
     private void sendUploadFinishedBroadcast(String remote, String path) {
@@ -307,18 +307,32 @@ public class SyncService extends IntentService {
     }
 
 
+    /**
+     * Okay this is a bit embarrasing. I did not write down WHY i needed this internal class.
+     * I assume it was because we have multiple vectors on how this service can be started,
+     * and because they use different methods to do stuff, we need to unify it here.
+     */
     private static class InternalTaskItem {
         public long id;
         public RemoteItem remoteItem;
         public String remotePath;
         public String localPath;
         public String title;
-        public int syncDirection = 1;
+        public int syncDirection = SYNC_LOCAL_TO_REMOTE;
         public boolean silentRun = true;
+        public boolean md5sum = Task.TASK_MD5SUM_DEFAULT;
 
+        // this should not use the task default. It should fallback to the settings.
+        // reason: tasks should not use the settings-setting, but everything else should.
+        public boolean transferOnWiFiOnly = Task.TASK_WIFIONLY_DEFAULT;
 
-        public static InternalTaskItem newInstance(Intent intent)
+        public static InternalTaskItem newInstance(Intent intent, Context context)
         {
+
+            // todo: define this default value somewhere central. Dont hardcode it.
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean transferOnWiFiOnly = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wifi_only_transfers), false);
+
             InternalTaskItem itt = new InternalTaskItem();
             itt.id = intent.getLongExtra(TASK_ID, -1);
             itt.remoteItem = intent.getParcelableExtra(REMOTE_ARG);
@@ -327,6 +341,8 @@ public class SyncService extends IntentService {
             itt.title = intent.getStringExtra(TASK_NAME);
             itt.syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
             itt.silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
+            itt.md5sum = intent.getBooleanExtra(TASK_MD5SUM, Task.TASK_MD5SUM_DEFAULT);
+            itt.transferOnWiFiOnly = intent.getBooleanExtra(TASK_WIFI_ONLY, transferOnWiFiOnly);
             return itt;
         }
 

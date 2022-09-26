@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import ca.pkay.rcloneexplorer.BroadcastReceivers.DownloadCancelAction
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
@@ -60,7 +61,7 @@ class DownloadNotifications(var mContext: Context) {
             bigTextArray!!,
             percent,
             SyncService::class.java,
-            SyncCancelAction::class.java,
+            DownloadCancelAction::class.java,
             CHANNEL_ID
         )
         builder?.let { notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID, it.build()) }
