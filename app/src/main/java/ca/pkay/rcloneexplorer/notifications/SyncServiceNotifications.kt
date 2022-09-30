@@ -34,11 +34,11 @@ class SyncServiceNotifications(var mContext: Context) {
         val i = Intent(mContext, SyncService::class.java)
         i.action = SyncService.TASK_ACTION
         i.putExtra(SyncService.EXTRA_TASK_ID, taskid)
-        var flags = FLAG_UPDATE_CURRENT
+        var flags = 0
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             flags = flags or FLAG_IMMUTABLE;
         }
-        val retryPendingIntent = PendingIntent.getService(mContext, 0, i, flags)
+        val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, flags)
         val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
             .setContentTitle(mContext.getString(R.string.operation_failed))

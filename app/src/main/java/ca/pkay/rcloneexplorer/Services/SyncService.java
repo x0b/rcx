@@ -65,7 +65,6 @@ public class SyncService extends IntentService {
     public static final String SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG";
     public static final String SHOW_RESULT_NOTIFICATION = "ca.pkay.rcexplorer.SHOW_RESULT_NOTIFICATION";
     public static final String TASK_NAME = "ca.pkay.rcexplorer.TASK_NAME";
-    public static final String TASK_ID = "ca.pkay.rcexplorer.TASK_ID";
     public static final String TASK_WIFI_ONLY = "ca.pkay.rcexplorer.TASK_WIFI_ONLY";
     public static final String TASK_MD5SUM = "ca.pkay.rcexplorer.TASK_MD5SUM";
 
@@ -97,11 +96,12 @@ public class SyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        Log.e(TAG, "onHandleIntent");
         if (intent == null) {
             return;
         }
 
-        Log.e(TAG, "onHandleIntent "+intent.getStringExtra(TASK_NAME));
+        Log.e(TAG, "onHandleIntent "+intent.getLongExtra(EXTRA_TASK_ID, -1));
 
         startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification("SyncService").build());
 
@@ -252,7 +252,7 @@ public class SyncService extends IntentService {
                     taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
                     taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
                     taskIntent.putExtra(SyncService.TASK_NAME, task.getTitle());
-                    taskIntent.putExtra(SyncService.TASK_ID, task.getId());
+                    taskIntent.putExtra(EXTRA_TASK_ID, task.getId());
                     taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
                     taskIntent.putExtra(SyncService.TASK_WIFI_ONLY, task.getWifionly());
                     taskIntent.putExtra(SyncService.TASK_MD5SUM, task.getMd5sum());
@@ -334,7 +334,7 @@ public class SyncService extends IntentService {
             boolean transferOnWiFiOnly = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wifi_only_transfers), false);
 
             InternalTaskItem itt = new InternalTaskItem();
-            itt.id = intent.getLongExtra(TASK_ID, -1);
+            itt.id = intent.getLongExtra(EXTRA_TASK_ID, -1);
             itt.remoteItem = intent.getParcelableExtra(REMOTE_ARG);
             itt.remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
             itt.localPath = intent.getStringExtra(LOCAL_PATH_ARG);
