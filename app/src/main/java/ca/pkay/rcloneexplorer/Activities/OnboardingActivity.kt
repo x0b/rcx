@@ -105,6 +105,8 @@ class OnboardingActivity : AppIntro2() {
             } else {
                 finish()
             }
+        } else {
+            finish()
         }
     }
 }
