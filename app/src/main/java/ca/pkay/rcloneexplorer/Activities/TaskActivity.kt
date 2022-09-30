@@ -223,7 +223,9 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
     }
 
     private fun prepareLocal() {
-        localPath.setText(existingTask!!.localPath)
+        existingTask.let {
+            localPath.setText(it?.localPath ?: "")
+        }
         localPath.onFocusChangeListener =
             View.OnFocusChangeListener { v: View?, hasFocus: Boolean ->
                 if (hasFocus) {
