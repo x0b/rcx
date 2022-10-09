@@ -542,8 +542,8 @@
     <string name="task_dialog_title_local_path">Local Path</string>
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
     <string name="operation_success">%s was successful</string>
+    <string name="operation_success_description_zero">There was nothing to do.</string>
     <plurals name="operation_success_description">
-        <item quantity="zero">There was nothing to do.</item>
         <item quantity="one">We successfully synced %2$s in %3$d file.</item>
         <item quantity="other">We successfully synced %2$s in %3$d files.</item>
     </plurals>

@@ -224,6 +224,9 @@ public class SyncService extends IntentService {
                         statusObject.getTotalSize(),
                         statusObject.getTotalTransfers()
                 );
+                if(statusObject.getTotalTransfers() == 0) {
+                    message = getResources().getString(R.string.operation_success_description_zero);
+                }
                 if(statusObject.getDeletions()>0){
                     message += "\n" + getString(R.string.operation_success_description_deletions_prefix, statusObject.getDeletions());
                 }
