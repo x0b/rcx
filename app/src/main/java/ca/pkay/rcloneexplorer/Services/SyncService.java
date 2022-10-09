@@ -86,8 +86,18 @@ public class SyncService extends IntentService {
         super.onCreate();
         (new GenericSyncNotification(this)).setNotificationChannel(
                 SyncServiceNotifications.CHANNEL_ID,
-                SyncServiceNotifications.CHANNEL_NAME,
+                getString(R.string.sync_service_notification_channel_title),
                 R.string.sync_service_notification_channel_description
+        );
+        (new GenericSyncNotification(this)).setNotificationChannel(
+                SyncServiceNotifications.CHANNEL_SUCCESS_ID,
+                getString(R.string.sync_service_notification_channel_success_title),
+                R.string.sync_service_notification_channel_success_description
+        );
+        (new GenericSyncNotification(this)).setNotificationChannel(
+                SyncServiceNotifications.CHANNEL_FAIL_ID,
+                getString(R.string.sync_service_notification_channel_fail_title),
+                R.string.sync_service_notification_channel_fail_description
         );
         rclone = new Rclone(this);
         log2File = new Log2File(this);

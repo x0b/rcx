@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.notifications
 
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -17,7 +16,9 @@ class SyncServiceNotifications(var mContext: Context) {
 
     companion object {
         const val CHANNEL_ID = "ca.pkay.rcexplorer.sync_service"
-        const val CHANNEL_NAME = "Sync service"
+        const val CHANNEL_SUCCESS_ID = "ca.pkay.rcexplorer.sync_service_success"
+        const val CHANNEL_FAIL_ID = "ca.pkay.rcexplorer.sync_service_fail"
+
         const val PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162
         private const val OPERATION_FAILED_NOTIFICATION_ID = 89
         private const val OPERATION_SUCCESS_NOTIFICATION_ID = 698
@@ -39,7 +40,7 @@ class SyncServiceNotifications(var mContext: Context) {
             flags = flags or FLAG_IMMUTABLE;
         }
         val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, flags)
-        val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(mContext, CHANNEL_FAIL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
             .setContentTitle(mContext.getString(R.string.operation_failed))
             .setContentText(content)
@@ -59,7 +60,7 @@ class SyncServiceNotifications(var mContext: Context) {
     }
 
     fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
-        val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(mContext, CHANNEL_SUCCESS_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setContentTitle(mContext.getString(R.string.operation_success, title))
             .setContentText(content)
