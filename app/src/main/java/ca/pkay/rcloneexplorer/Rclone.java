@@ -7,20 +7,11 @@ import android.os.Build;
 import android.os.Environment;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import ca.pkay.rcloneexplorer.Database.json.Exporter;
-import ca.pkay.rcloneexplorer.Database.json.SharedPreferencesBackup;
-import ca.pkay.rcloneexplorer.Items.FileItem;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
-import ca.pkay.rcloneexplorer.util.FLog;
-import es.dmoral.toasty.Toasty;
-import io.github.x0b.safdav.SafAccessProvider;
-import io.github.x0b.safdav.SafDAVServer;
-import io.github.x0b.safdav.file.SafConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +39,17 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import ca.pkay.rcloneexplorer.Database.json.Exporter;
+import ca.pkay.rcloneexplorer.Database.json.SharedPreferencesBackup;
+import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.util.FLog;
+import es.dmoral.toasty.Toasty;
+import io.github.x0b.safdav.SafAccessProvider;
+import io.github.x0b.safdav.SafDAVServer;
+import io.github.x0b.safdav.file.SafConstants;
 
 public class Rclone {
 
@@ -98,6 +100,11 @@ public class Rclone {
     }
 
     private String[] createCommandWithOptions(String ...args) {
+        ArrayList<String> arguments = new ArrayList<String>(Arrays.asList(args));
+        return createCommandWithOptions(arguments);
+    }
+
+    private String[] createCommandWithOptions(ArrayList<String> args) {
         boolean loggingEnabled = PreferenceManager
                 .getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_key_logs), false);
@@ -110,6 +117,22 @@ public class Rclone {
         command.add(cachePath);
         command.add("--cache-db-path");
         command.add(cachePath);
+
+        /*
+
+        This fixed some bug. I dont know which one, but it breaks transfer of big files where
+        the checksum needs to be calculated.
+        This was probably due to some timeout for connecting misconfigured remotes.
+
+        command.add("--low-level-retries");
+        command.add("2");
+
+        command.add("--timeout");
+        command.add("5s");
+        command.add("--contimeout");
+        command.add("5s");
+        */
+
         command.add("--config");
         command.add(rcloneConf);
 
@@ -117,7 +140,7 @@ public class Rclone {
             command.add("-vvv");
         }
 
-        Collections.addAll(command, args);
+        command.addAll(args);
         return createCommand(command);
     }
 
@@ -572,20 +595,48 @@ public class Rclone {
         return serve(protocol, port, allowRemoteAccess, user, password, remote, servePath, null);
     }
 
+    /**
+     * This is only kept for legacy purposes. It was used before md5-checksum was introduced.
+     * @param remoteItem
+     * @param remote
+     * @param localPath
+     * @param syncDirection
+     * @return
+     */
+    @Deprecated
     public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection) {
+        return sync(remoteItem, remote, localPath, syncDirection, false);
+    }
+
+    public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection, boolean useMD5Sum) {
         String[] command;
         String remoteName = remoteItem.getName();
         String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remoteItem, context)  + "/" : "";
         String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
 
+        ArrayList<String> defaultParameter = new ArrayList<>(Arrays.asList("--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log"));
+        ArrayList<String> directionParameter = new ArrayList<>();
+
+        if(useMD5Sum){
+            defaultParameter.add("--checksum");
+        }
+
         if (syncDirection == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE) {
-            command = createCommandWithOptions("sync", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
+            Collections.addAll(directionParameter, "sync", localPath, remotePath);
+            directionParameter.addAll(defaultParameter);
+            command = createCommandWithOptions(directionParameter);
         } else if (syncDirection == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL) {
-            command = createCommandWithOptions("sync", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
+            Collections.addAll(directionParameter, "sync", remotePath, localPath);
+            directionParameter.addAll(defaultParameter);
+            command = createCommandWithOptions(directionParameter);
         } else if (syncDirection == SyncDirectionObject.COPY_LOCAL_TO_REMOTE) {
-            command = createCommandWithOptions("copy", localPath, remotePath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
+            Collections.addAll(directionParameter, "copy", localPath, remotePath);
+            directionParameter.addAll(defaultParameter);
+            command = createCommandWithOptions(directionParameter);
         }else if (syncDirection == SyncDirectionObject.COPY_REMOTE_TO_LOCAL) {
-            command = createCommandWithOptions("copy", remotePath, localPath, "--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log");
+            Collections.addAll(directionParameter, "copy", remotePath, localPath);
+            directionParameter.addAll(defaultParameter);
+            command = createCommandWithOptions(directionParameter);
         }else {
             return null;
         }

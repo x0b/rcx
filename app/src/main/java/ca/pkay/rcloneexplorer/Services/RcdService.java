@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RcloneRcd;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.FlagsUtil;
 
 
 public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
@@ -176,7 +177,7 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
     private void showNotification() {
         Intent foregroundIntent = new Intent(this, RcdService.class);
         foregroundIntent.setAction(ACTION_START_FOREGROUND);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, FlagsUtil.Companion.getFlagImmutable());
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_rclone_logo)

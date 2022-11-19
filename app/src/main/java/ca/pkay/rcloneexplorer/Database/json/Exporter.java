@@ -28,6 +28,8 @@ public class Exporter {
             taskObject.put("remoteType", task.getRemoteType());
             taskObject.put("localPath", task.getLocalPath());
             taskObject.put("syncDirection", task.getDirection());
+            taskObject.put("md5sum", task.getMd5sum());
+            taskObject.put("wifionly", task.getWifionly());
             tasks.put(taskObject);
         }
         main.put("tasks", tasks);

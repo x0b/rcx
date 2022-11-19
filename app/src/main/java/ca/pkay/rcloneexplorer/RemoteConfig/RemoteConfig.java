@@ -122,6 +122,9 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
             case "B2":
                 fragment = B2Config.newInstance();
                 break;
+            case "S3":
+                fragment = S3Config.newInstance();
+                break;
             case "BOX":
                 fragment = BoxConfig.newInstance();
                 break;

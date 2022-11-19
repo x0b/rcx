@@ -14,6 +14,7 @@
     <array name="provider_ids">
         <item>BOX</item>
         <item>B2</item>
+        <item>S3</item>
         <item>DROPBOX</item>
         <item>FTP</item>
         <item>HTTP</item>
@@ -38,6 +39,7 @@
     <integer-array name="provider_icons">
         <item>@drawable/ic_box</item>
         <item>@drawable/ic_backblaze_b2_black</item>
+        <item>@drawable/ic_amazon</item>
         <item>@drawable/ic_dropbox</item>
         <item>@drawable/ic_cloud</item>
         <item>@drawable/ic_cloud</item>

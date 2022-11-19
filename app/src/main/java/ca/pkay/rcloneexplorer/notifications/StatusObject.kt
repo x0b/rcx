@@ -5,13 +5,15 @@ import android.text.format.Formatter
 import android.util.Log
 import ca.pkay.rcloneexplorer.R
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
 class StatusObject(var mContext: Context){
 
+    private val TAG = "StatusObject"
     var notificationPercent: Int = 0
     var notificationContent: String = ""
     var notificationBigText = ArrayList<String>()
-    var mErrorList = ArrayList<String>()
+    var mErrorList = ArrayList<ErrorObject>()
     var mStats = JSONObject()
     var mLogline = JSONObject()
 
@@ -40,6 +42,10 @@ class StatusObject(var mContext: Context){
         return mStats.optInt("totalTransfers", 0)
     }
 
+    fun getDeletions(): Int {
+        return mStats.optInt("deletes", 0) + mStats.optInt("deletedDirs", 0)
+    }
+
     fun getErrorMessage(): String {
         if(mLogline.has("msg") && mLogline.getString("level") == "error") {
             return mLogline.getString("msg")
@@ -47,16 +53,26 @@ class StatusObject(var mContext: Context){
         return ""
     }
 
-    //Todo: rename this. It's bad style
-    fun readStuff(logline: JSONObject) {
-        clearObject()
-        mLogline = logline
+    fun getErrorObject(): String {
+        if(mLogline.has("msg") && mLogline.getString("level") == "error") {
+            return mLogline.optString("object", "")
+        }
+        return ""
+    }
 
-        if(mLogline.getString("level") == "error") {
-            mErrorList.add(getErrorMessage())
+    fun parseLoglineToStatusObject(logLine: JSONObject) {
+        if(logLine.getString("level") == "error") {
+            clearObject()
+            mLogline = logLine
+
+            var error = ErrorObject(getErrorObject(), getErrorMessage())
+            Log.e(TAG, error.mErrorObject + " - " + error.mErrorMessage)
+            mErrorList.add(error)
         }
 
-        if(mLogline.has("stats")) {
+        if(logLine.has("stats")) {
+            clearObject()
+            mLogline = logLine
             mStats = mLogline.getJSONObject("stats")
 
             //available stats:
@@ -68,6 +84,29 @@ class StatusObject(var mContext: Context){
             //speed,totalBytes,totalChecks,totalTransfers,transferTime,transfers
 
 
+            // when we check stuff, dont show the other messages.
+            val checks = mStats.optJSONArray("checking")
+            if(checks != null) {
+                var filename = checks.getString(0)
+                if(!filename.equals("")) {
+                    notificationBigText.add(
+                        String.format(
+                            mContext.getString(R.string.sync_notification_elapsed),
+                            prettyPrintDuration(mStats.getInt("elapsedTime"))
+                        )
+                    )
+
+                    notificationBigText.add(
+                        String.format(
+                            mContext.getString(R.string.sync_notification_file_checking),
+                            filename
+                        )
+                    )
+                }
+                return
+            }
+
+
             val speed = getSpeed()
             val size = getSize()
             val allsize = getTotalSize()
@@ -77,7 +116,7 @@ class StatusObject(var mContext: Context){
                 mContext.getString(R.string.sync_notification_short),
                 size,
                 allsize,
-                mStats.get("eta")
+                prettyPrintDuration(mStats.optInt("eta", 0))
             )
             notificationBigText.clear()
             notificationBigText.add(
@@ -87,16 +126,32 @@ class StatusObject(var mContext: Context){
                     allsize
                 )
             )
+
+            if (getDeletions() > 0) {
+                notificationBigText.add(
+                        String.format(
+                                mContext.getString(R.string.sync_notification_deletions),
+                                getDeletions()
+                        )
+                )
+            }
+
             notificationBigText.add(
                 String.format(
                     mContext.getString(R.string.sync_notification_speed),
                     speed
                 )
             )
+
+            var eta = mStats.get("eta")
+            if(eta == null) {
+                eta = "0";
+            }
+
             notificationBigText.add(
                 String.format(
                     mContext.getString(R.string.sync_notification_remaining),
-                    mStats.get("eta")
+                    prettyPrintDuration(mStats.optInt("eta", 0))
                 )
             )
             if (mStats.getInt("errors") > 0) {
@@ -107,16 +162,26 @@ class StatusObject(var mContext: Context){
                     )
                 )
             }
-            //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
-            //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
-            //notificationBigText.add(String.format("Checks:      %d / %d", stats.getInt("checks"),  stats.getInt("totalChecks")));
-            //notificationBigText.add(String.format("Transferred: %s / %s", size, allsize));
+
             notificationBigText.add(
                 String.format(
                     mContext.getString(R.string.sync_notification_elapsed),
-                    mStats.getInt("elapsedTime")
+                    prettyPrintDuration(mStats.getInt("elapsedTime"))
                 )
             )
+
+            val transfers = mStats.optJSONArray("transferring")
+            if(transfers != null) {
+                val transferObject = transfers.getJSONObject(0)
+                var filename = transferObject.optString("name", "")
+                if(!filename.equals("")) {
+                    notificationBigText.add(String.format(
+                        mContext.getString(R.string.sync_notification_file_syncing),
+                        filename
+                    ))
+                }
+            }
+
             notificationPercent = percent.toInt()
         }
     }
@@ -128,23 +193,83 @@ class StatusObject(var mContext: Context){
         mLogline = JSONObject()
     }
 
-
     fun printErrors(){
         mErrorList.forEach {
-            Log.e("TAG", it)
+            Log.e(TAG, it.mErrorObject + " - " + it.mErrorMessage)
         }
     }
 
     fun getAllErrorMessages(): String{
         var all = ""
         mErrorList.forEach {
-            all+=it+"\n"
+            all += it.mErrorMessage + "\n"
+            all += mContext.getString(R.string.status_offendingfile) + it.mErrorObject + "\n"
         }
         return all
     }
+
     override fun toString(): String {
-        return "StatusObject(getSpeed=${getSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()}, getErrorMessage=${getErrorMessage()})"
+        return "StatusObject(getSpeed=${getSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()}, getErrorMessage=${getErrorMessage()}, getDeletions=${getDeletions()})"
     }
 
 
+    private fun prettyPrintDuration(secondDuration: Int) : String {
+
+        var duration = secondDuration.toLong()
+        val days = TimeUnit.SECONDS.toDays(duration).toInt()
+        duration -= (days * 60 * 60 * 24)
+        val hours = TimeUnit.SECONDS.toHours(duration).toInt()
+        duration -= (hours * 60 * 60)
+        val minutes = TimeUnit.SECONDS.toMinutes(duration).toInt()
+        duration -= (minutes * 60)
+        val seconds = TimeUnit.SECONDS.toSeconds(duration).toInt()
+
+        var daysText = String.format(
+            mContext.resources.getQuantityString(R.plurals.modern_prettyprint_duration_d,
+                days,
+                days
+            )
+        )
+
+        var hoursText = String.format(
+            mContext.resources.getQuantityString(R.plurals.modern_prettyprint_duration_h,
+                hours,
+                hours
+            )
+        )
+
+        var minutesText = String.format(
+            mContext.resources.getQuantityString(R.plurals.modern_prettyprint_duration_m,
+                minutes,
+                minutes
+            )
+        )
+
+        val secondsText = String.format(
+            mContext.resources.getQuantityString(R.plurals.modern_prettyprint_duration_s,
+                seconds,
+                seconds
+            )
+        )
+
+        if (days > 0) {
+            daysText = "$daysText, "
+        } else {
+            daysText = ""
+        }
+
+        if (hours > 0) {
+            hoursText = "$hoursText, "
+        } else {
+            hoursText = ""
+        }
+
+        if (minutes > 0) {
+            minutesText = "$minutesText, "
+        } else {
+            minutesText = ""
+        }
+
+        return "$daysText$hoursText$minutesText$secondsText"
+    }
 }

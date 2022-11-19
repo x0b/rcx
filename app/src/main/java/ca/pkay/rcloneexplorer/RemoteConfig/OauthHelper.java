@@ -120,7 +120,7 @@ public class OauthHelper {
         }
 
         public void run() {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
                 String line;
                 while (null != (line = br.readLine())) {
                     Matcher matcher = pattern.matcher(line);

@@ -11,8 +11,7 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:elevation="4dp"
-        app:cardCornerRadius="@dimen/cardCornerRadius"
-        app:contentPadding="@dimen/cardPadding">>
+        app:cardCornerRadius="@dimen/cardCornerRadius">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,7 +22,7 @@
                 android:id="@+id/taskIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="24dp"
                 android:contentDescription="@string/remote_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
@@ -58,7 +57,7 @@
                 android:id="@+id/toLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="24dp"
                 android:text="@string/task_item_label_to"
                 android:textColor="@color/textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -73,6 +72,8 @@
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/file_options_content_description"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:padding="4dp"
                 android:src="@drawable/ic_more_vert"
                 android:tint="@color/iconTint"
@@ -83,19 +84,19 @@
                 android:id="@+id/task_sync_direction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginEnd="32dp"
                 android:text="@string/sync"
                 android:textColor="@color/textColorSecondary"
                 android:textSize="12sp"
                 android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="@+id/taskName"
-                app:layout_constraintStart_toEndOf="@+id/taskName"
+                app:layout_constraintEnd_toStartOf="@+id/file_options"
                 app:layout_constraintTop_toTopOf="@+id/taskName" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="@+id/toLabel"
                 app:layout_constraintEnd_toStartOf="@+id/file_options"
@@ -114,7 +115,8 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="fromid"
-                        android:textColor="@color/textColorSecondary"
+                        android:textColor="@color/textColorTertiary"
+                        android:textStyle="italic"
                         tools:ignore="HardcodedText" />
 
                     <TextView
@@ -140,7 +142,9 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="toid"
-                        android:textColor="@color/textColorSecondary"
+                        android:textAllCaps="false"
+                        android:textColor="@color/textColorTertiary"
+                        android:textStyle="italic"
                         tools:ignore="HardcodedText" />
 
                     <TextView

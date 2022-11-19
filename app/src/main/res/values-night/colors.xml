@@ -12,6 +12,7 @@
 
     <color name="textColorPrimary">#FFFFFFFF</color>
     <color name="textColorSecondary">#B3FFFFFF</color>
+    <color name="textColorTertiary">#B3C5C5C5</color>
 
     <color name="dividerColor">#1FFFFFFF</color>
     <color name="iconTint">#FFFFFF</color>

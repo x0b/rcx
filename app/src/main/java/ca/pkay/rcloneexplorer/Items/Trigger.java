@@ -88,6 +88,8 @@ public class Trigger {
         this.time = time;
     }
 
+
+    // todo: rename this.
     public Long getWhatToTrigger() {
         return whatToTrigger;
     }

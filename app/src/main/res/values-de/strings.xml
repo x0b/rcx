@@ -438,7 +438,6 @@
     <string name="intro_welcome_title">Hallo</string>
     <string name="intro_welcome_description">extRact verwaltet deine Dateien, egal ob sie auf deinem Smartphone in der Cloud gespeichert sind. Bei Fragen gibt es eine Dokumentation unter x0b.github.io/docs.</string>
     <string name="intro_storage_title">Speicherzugriff</string>
-    <string name="intro_storage_description">extRact baut auf rclone auf und benötigt deine Zustimmung zum Dateizugriff. Stimme also im nächsten Schritt zu, damit wir deine Daten verwalten können.</string>
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">extRact wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf x0b.github.io/rcx-privacy erfährst du mehr.</string>
     <string name="intro_community_switch">Fehlerberichte senden</string>
@@ -468,7 +467,11 @@
     <string name="task_dialog_title_local_path">Lokaler Dateipfad</string>
     <string name="task_dialog_title_sync_direction">Synchronisationsrichtung</string>
     <string name="operation_success">%s war erfolgreich</string>
-    <string name="operation_success_description">Es wurden %2$s in %3$d Dateien erfolgreich synchronisiert.</string>
+    <plurals name="operation_success_description">
+        <item quantity="zero">Es gab nichts zu tun.</item>
+        <item quantity="one">Es wurden %2$s in %3$d Datei erfolgreich synchronisiert.</item>
+        <item quantity="other">Es wurden %2$s in %3$d Dateien erfolgreich synchronisiert.</item>
+    </plurals>
     <string name="notification_sync_failed">Synchronisation war fehlerhaft</string>
     <string name="pin_to_dektop">Auf Startbildschirm anpinnen</string>
     <string name="title_activity_task">Neue Aufgabe anlegen</string>
@@ -514,11 +517,29 @@
     <string name="abi_not_supported_arm_downgrade">Diese extRact-Version wird nicht unterstützt. Eventuell funktioniert die armeabi-v7a-APK von github.com/x0b/rcx."</string>
     <string name="abi_not_supported">Diese extRact-Version wird auf dem Gerät nicht unterstützt.</string>
     <string name="sync_notification_transferred">%s von %s übertragen</string>
-    <string name="sync_notification_speed">Geschwindigkeit: %14s</string>
-    <string name="sync_notification_remaining">Verbleibend: %14s Sekunden</string>
-    <string name="sync_notification_errors">Fehler: %14d</string>
-    <string name="sync_notification_elapsed">Vergangen: %15d Sekunden</string>
-    <string name="sync_notification_short">%s von %s, %s Sekunden verbleibend</string>
+    <string name="sync_notification_speed">"Geschwindigkeit:   %s"</string>
+    <string name="sync_notification_remaining">"Verbleibend:         %s"</string>
+    <string name="sync_notification_errors">"Fehler:              %d"</string>
+    <string name="sync_notification_elapsed">"Vergangen:           %s"</string>
+    <string name="sync_notification_file_syncing">"Datei:               %s"</string>
+    <string name="sync_notification_file_checking">"Checking:            %s"</string>
+    <string name="sync_notification_short">%s von %s, %s verbleibend</string>
+    <plurals name="modern_prettyprint_duration_d">
+        <item quantity="one">%s Tag</item>
+        <item quantity="other">%s Tage</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_h">
+        <item quantity="one">%s Stunde</item>
+        <item quantity="other">%s Stunden</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_m">
+        <item quantity="one">%s Minute</item>
+        <item quantity="other">%s Minuten</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_s">
+        <item quantity="one">%s Sekunde</item>
+        <item quantity="other">%s Sekunden</item>
+    </plurals>
     <string name="no_tasks_warning">Noch keine Aufgaben. Lege doch eine an!</string>
     <string name="no_trigger_warning">Noch keine Auslöser. Lege bitte zuerst einen an!</string>
     <string name="add_trigger">Neuen Auslöser</string>

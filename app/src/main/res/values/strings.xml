@@ -151,7 +151,7 @@
     <string name="intro_welcome_title">Welcome</string>
     <string name="intro_welcome_description">extRact manages your files, whether they are stored on your device or online in the cloud. Check out the documentation at x0b.github.io/docs for more information.</string>
     <string name="intro_storage_title">Storage access required</string>
-    <string name="intro_storage_description">extRact uses rclone, and we need your permission to access files. First, please allow storage access.</string>
+    <string name="intro_storage_description">extRact uses rclone, and we need your permission to access all files. Please allow storage access when asked, otherwise this app may not work as intended.</string>
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">extRact is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
     <string name="intro_community_switch">Contribute error reports</string>
@@ -478,7 +478,10 @@
     <string name="saf_uri_permission_error">Invalid permission - can not access storage</string>
     <string name="saf_uri_permission_already_added">Storage or a subfolder is already added</string>
     <string name="saf_uri_permission_no_support">Third party not yet supported. Open an issue with the affected app name.</string>
-    <string name="virtual_content_provider_summary">%1$d Remotes available</string>
+    <plurals name="virtual_content_provider_summary">
+        <item quantity="one">One Remote available</item>
+        <item quantity="other">%1$d Remotes available</item>
+    </plurals>
     <string name="virtual_content_provider_exception_advice">Check your network connection</string>
     <string name="virtual_content_provider_exception_error">Support info: \n%1$s</string>
     <string name="virtual_content_provider_null_content">Could not get remote or directory content. You may find more information in the log file.</string>
@@ -531,6 +534,7 @@
     <string name="exporter_success">The file was successfully stored at:</string>
     <string name="sync_direction_copy_local_remote">Copy local to remote</string>
     <string name="sync_direction_copy_remote_local">Copy remote to local</string>
+    <string name="sync_direction_bidirectional">Sync Bidirectional</string>
     <string name="copy">Copy</string>
     <string name="task_dialog_title_name">Name</string>
     <string name="task_dialog_title_remote">Remote</string>
@@ -538,18 +542,23 @@
     <string name="task_dialog_title_local_path">Local Path</string>
     <string name="task_dialog_title_sync_direction">Sync Direction</string>
     <string name="operation_success">%s was successful</string>
-    <string name="operation_success_description">We successfully synced %2$s in %3$d files</string>
+    <string name="operation_success_description_zero">There was nothing to do.</string>
+    <plurals name="operation_success_description">
+        <item quantity="one">We successfully synced %2$s in %3$d file.</item>
+        <item quantity="other">We successfully synced %2$s in %3$d files.</item>
+    </plurals>
+    <string name="operation_success_description_deletions_prefix">We also deleted %d files and folders.</string>
     <string name="notification_sync_failed">Sync operation failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
     <string name="title_activity_task">Create a new Task</string>
     <!-- Strings used for fragments for navigation -->
     <string name="previous">Previous</string>
 
-    <string name="task_edit_label_name">Name:</string>
-    <string name="task_edit_label_local">local:</string>
-    <string name="task_edit_label_remote">Remote:</string>
-    <string name="task_edit_label_direction">Direction:</string>
-    <string name="task_edit_hint_title">Title of Task</string>
+    <string name="task_edit_label_name">General Information</string>
+    <string name="task_edit_label_local">Local Storage Path</string>
+    <string name="task_edit_label_remote">Remote Storage Path</string>
+    <string name="task_edit_label_direction">Direction</string>
+    <string name="task_edit_hint_title">Title</string>
     <string name="task_edit_hint_local">Local Path</string>
     <string name="task_edit_hint_remote">Remote Path</string>
     <string name="rcd_service_notification_running_in_background">Rclone is running in background</string>
@@ -566,17 +575,37 @@
     <string name="pref_send_sigquit_title">Debug: Stop with SIGQUIT</string>
     <string name="pref_send_sigquit_summary">Stops all rclone processes with kill -SIGQUIT. Requires logging enabled.</string>
     <string name="sync_notification_transferred">Transferred %s of %s</string>
-    <string name="sync_notification_speed">Speed: %14s</string>
-    <string name="sync_notification_remaining">Remaining: %14s seconds</string>
-    <string name="sync_notification_errors">Errors: %14s</string>
-    <string name="sync_notification_elapsed">Elapsed: %14s seconds</string>
-    <string name="sync_notification_short">%s of %s, %s seconds remaining</string>
+    <string name="sync_notification_speed">"Speed:     %s"</string>
+    <string name="sync_notification_remaining">"Remaining: %s"</string>
+    <string name="sync_notification_errors">"Errors:    %s"</string>
+    <string name="sync_notification_deletions">"Deletions: %s"</string>
+    <string name="sync_notification_file_syncing">File: %14s</string>
+    <string name="sync_notification_file_checking">Checking: %14s</string>
+    <string name="sync_notification_elapsed">Elapsed: %14s</string>
+    <string name="sync_notification_short">%s of %s, %s remaining</string>
+    <plurals name="modern_prettyprint_duration_d">
+        <item quantity="one">%s Day</item>
+        <item quantity="other">%s Days</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_h">
+        <item quantity="one">%s Hour</item>
+        <item quantity="other">%s Hours</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_m">
+        <item quantity="one">%s Minute</item>
+        <item quantity="other">%s Minutes</item>
+    </plurals>
+    <plurals name="modern_prettyprint_duration_s">
+        <item quantity="one">%s Second</item>
+        <item quantity="other">%s Seconds</item>
+    </plurals>
+
     <string name="abi_not_supported_arm_downgrade">Unfortunately, your device does not support this version of extRact. Try the armeabi-v7a APK from github.com/x0b/rcx instead.</string>
     <string name="abi_not_supported">Unfortunately, your device does not support this version of extRact.</string>
     <string name="trigger">Trigger</string>
     <string name="title_activity_trigger">Trigger</string>
     <string name="enabled">Enabled</string>
-    <string name="trigger_name">Trigger-Name</string>
+    <string name="trigger_name">Description</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
@@ -605,6 +634,8 @@
     <string name="triggeractivity_trigger_not_found">Trigger not found!</string>
     <string name="task_item_label_from">From:</string>
     <string name="task_item_label_to">To:</string>
+    <string name="task_item_label_from_bisync">Path 1:</string>
+    <string name="task_item_label_to_bisync">Path 2:</string>
     <string name="no_tasks_warning">There are no tasks. Please define a task first!</string>
     <string name="no_trigger_warning">There are no triggers. Please define a trigger first!</string>
     <string name="add_trigger">Add Trigger</string>
@@ -623,4 +654,28 @@
     <string name="alarm_while_idle_summary">This may consume more battery since the device has to wake up for the task. If disabled, tasks can be heavily delayed.</string>
     <string name="task_data_validation_error_no_local_path">You have not selected a local path</string>
     <string name="task_data_validation_error_no_remote_path">You have not selected a remote path.</string>
+    <string name="bisync">Both Ways</string>
+    <string name="description_sync_direction">This decides from where to where data is moved.</string>
+    <string name="description_sync_direction_sync_tolocal">This will sync files from remote storage to local storage. It will also delete files on local storage if they are not present on the remote. Only changes local storage.</string>
+    <string name="description_sync_direction_sync_toremote">This will sync files from local storage to remote storage. It will also delete files on the remote storage if they are not present locally. Only changes destination.</string>
+    <string name="description_sync_direction_copy_toremote">This will only copy files from local storage to remote storage. No files are beeing deleted, but updated.</string>
+    <string name="description_sync_direction_copy_tolocal">This will only copy files from remote storage to local storage.  No files are beeing deleted, but updated.</string>
+    <string name="description_sync_direction_sync_bidirectional">This will try to keep local and remote the same, uploading, downloading and deleting files as required</string>
+    <string name="intro_successful_setup">You are now ready to start!</string>
+    <string name="intro_unsuccessful_setup">Manage files not granted</string>
+    <string name="status_offendingfile">"The offending File: "</string>
+    <string name="s3_spinner_prompt">S3 service provider</string>
+    <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>
+    <string name="use_md5checksum">Use md5checksum</string>
+    <string name="task_hint_wifi_ignore_defaults">Tasks will not follow the wifi-setting set globally in the app\'s settings. This Setting will override it.</string>
+    <string name="task_hint_md5checksum">This will use the checksum instead of filesize. May take longer or use more battery.</string>
+    <string name="shortcut_start_service">Started Sync!</string>
+    <string name="task_copy_suffix">(Copy)</string>
+    <string name="trigger_copy_suffix">(Copy)</string>
+    <string name="trigger_label_weekdays">Weekdays</string>
+    <string name="sync_service_notification_channel_title">Sync service</string>
+    <string name="sync_service_notification_channel_success_title">Sync service success</string>
+    <string name="sync_service_notification_channel_fail_title">Sync service fail</string>
+    <string name="sync_service_notification_channel_success_description">Notification for successful syncs</string>
+    <string name="sync_service_notification_channel_fail_description">Notification for failed syncs</string>
 </resources>

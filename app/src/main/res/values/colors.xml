@@ -9,6 +9,7 @@
     <color name="cardColor">#FFFFFF</color>
     <color name="textColorPrimary">#5E5E5E</color>
     <color name="textColorSecondary">#717070</color>
+    <color name="textColorTertiary">#A5A5A5</color>
     <color name="dividerColor">#E4E4E4</color>
     <color name="iconTint">#4A4A4A</color>
     <color name="colorControlNormal">#757575</color>

@@ -204,10 +204,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             startRemotesFragment();
         }
+
         if(intent.getAction().equals(MAIN_ACTIVITY_START_LOG)){
             startLogFragment();
         }
 
+        pinRemotesToDrawer();
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();
     }
@@ -218,10 +220,6 @@ public class MainActivity extends AppCompatActivity
         if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
             startLogFragment();
             navigationView.setCheckedItem(R.id.nav_logs);
-        } else {
-            int id = SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes);
-            navigationView.setCheckedItem(id);
-            startFragmentById(id);
         }
     }
 
@@ -234,13 +232,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(RuntimeConfiguration.attach(this, newBase));
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        pinRemotesToDrawer();
-        startFragmentById(SharedPreferencesUtil.Companion.getLastOpenFragment(this, R.id.nav_remotes));
     }
 
     @Override

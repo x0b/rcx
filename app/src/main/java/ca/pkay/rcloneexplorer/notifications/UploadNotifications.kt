@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
+import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
 
@@ -38,7 +39,7 @@ class UploadNotifications(var mContext: Context) {
             bigTextArray!!,
             0,
             SyncService::class.java,
-            SyncCancelAction::class.java,
+            UploadCancelAction::class.java,
             CHANNEL_ID
         )
     }

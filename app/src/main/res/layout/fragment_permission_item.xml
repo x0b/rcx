@@ -35,7 +35,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:src="@drawable/ic_delete_black"
-                android:tint="?attr/iconTint"
+                android:tint="@color/iconTint"
                 android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

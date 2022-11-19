@@ -261,7 +261,11 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
 
         if(mSelectedFolderCallback != null) {
             fab.setOnClickListener(v -> {
-                mSelectedFolderCallback.selectFolder("/"+directoryObject.getCurrentPath());
+                String target = "/"+directoryObject.getCurrentPath();
+                if(target.startsWith("///")){
+                    target = target.replace("//", "");
+                }
+                mSelectedFolderCallback.selectFolder(target);
                 exitFragment();
             });
         }

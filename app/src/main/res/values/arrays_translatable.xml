@@ -3,6 +3,7 @@
     <array name="provider_names">
         <item>Box</item>
         <item>Backblaze B2</item>
+        <item>S3 Bucket</item>
         <item>Dropbox</item>
         <item>FTP</item>
         <item>HTTP</item>
@@ -25,6 +26,7 @@
     </array>
 
     <array name="provider_summaries">
+        <item>Cloud file storage</item>
         <item>Cloud file storage</item>
         <item>Cloud file storage</item>
         <item>Cloud file storage</item>
