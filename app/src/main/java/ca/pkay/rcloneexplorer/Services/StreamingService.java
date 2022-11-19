@@ -88,7 +88,7 @@ public class StreamingService extends IntentService {
             Uri uri = Uri.parse("http://127.0.0.1:" + port);
             Intent webPageIntent = new Intent(Intent.ACTION_VIEW, uri);
             webPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent webPagePendingIntent = PendingIntent.getActivity(this, 0, webPageIntent, 0);
+            PendingIntent webPagePendingIntent = PendingIntent.getActivity(this, 0, webPageIntent, flags);
             builder.setContentIntent(webPagePendingIntent);
             builder.setContentText(getString(R.string.streaming_service_notification_content, port));
         }
