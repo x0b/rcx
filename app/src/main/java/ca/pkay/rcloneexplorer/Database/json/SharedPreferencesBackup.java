@@ -1,8 +1,8 @@
 package ca.pkay.rcloneexplorer.Database.json;
 
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.DARK;
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.FOLLOW_SYSTEM;
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.LIGHT;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.DARK;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.FOLLOW_SYSTEM;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.LIGHT;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -67,8 +67,6 @@ public class SharedPreferencesBackup {
         main.put("vcpGrantAll", vcpGrantAll);
         main.put("isDarkTheme", darkTheme);
         main.put("isWrapFilenames", isWrapFilenames);
-        main.put("defaultColorPrimary", defaultColorPrimary);
-        main.put("defaultColorAccent", defaultColorAccent);
         main.put("appUpdates", appUpdates);
         main.put("betaUpdates", betaUpdates);
         main.put("useLogs", useLogs);
@@ -117,11 +115,6 @@ public class SharedPreferencesBackup {
         editor.putInt(context.getString(R.string.pref_key_dark_theme), valueForTheme);
 
         editor.putBoolean(context.getString(R.string.pref_key_wrap_filenames), jsonObject.getBoolean("isWrapFilenames"));
-
-        //Todo: migrate those keys to identifiers, to make it more robust.
-        // This is bound to break since resource id's are ephemeral. Therefore they are disabled for now.
-        // editor.putInt(context.getString(R.string.pref_key_color_primary), jsonObject.getInt("defaultColorPrimary"));
-        // editor.putInt(context.getString(R.string.pref_key_color_accent), jsonObject.getInt("defaultColorAccent"));
 
         // Notifications
         editor.putBoolean(context.getString(R.string.pref_key_app_updates), jsonObject.getBoolean("appUpdates"));

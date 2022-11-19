@@ -36,7 +36,7 @@ import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
 
 public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.Callbacks,
@@ -76,8 +76,7 @@ public class CryptConfig extends Fragment implements    PasswordGeneratorDialog.
         }
         context = getContext();
         rclone = new Rclone(context);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
+        isDarkTheme = ActivityHelper.isDarkTheme(this.getActivity());
     }
 
     @Nullable

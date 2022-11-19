@@ -23,7 +23,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import com.google.android.material.textfield.TextInputLayout;
 
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class DriveConfig extends Fragment {
             return;
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
+        isDarkTheme = ActivityHelper.isDarkTheme(this.getActivity());
 
         rclone = new Rclone(getContext());
     }

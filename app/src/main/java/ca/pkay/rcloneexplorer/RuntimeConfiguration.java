@@ -1,7 +1,5 @@
 package ca.pkay.rcloneexplorer;
 
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.FOLLOW_SYSTEM;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,9 +16,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
-
-import ca.pkay.rcloneexplorer.util.FLog;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
 
 /**
  * Design goal: Manage runtime resource configuration (locale, theme)

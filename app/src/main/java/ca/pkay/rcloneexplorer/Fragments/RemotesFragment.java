@@ -39,7 +39,7 @@ import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
 
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 import java.util.ArrayList;
@@ -351,7 +351,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     private void showRemotePropertiesDialog(RemoteItem remoteItem) {
-        RemotePropertiesDialog dialog = RemotePropertiesDialog.newInstance(remoteItem, ThemeHelper.isDarkTheme(this.getActivity()));
+        RemotePropertiesDialog dialog = RemotePropertiesDialog.newInstance(remoteItem, ActivityHelper.isDarkTheme(this.getActivity()));
         if (getFragmentManager() != null) {
             dialog.show(getChildFragmentManager(), "remote properties");
         }
@@ -362,7 +362,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
 
         AlertDialog.Builder builder;
-        if (ThemeHelper.isDarkTheme(this.getActivity())) {
+        if (ActivityHelper.isDarkTheme(this.getActivity())) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(context);
@@ -491,7 +491,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
     private void renameRemote(final RemoteItem remoteItem) {
         AlertDialog.Builder builder;
-        if (ThemeHelper.isDarkTheme(this.getActivity())) {
+        if (ActivityHelper.isDarkTheme(this.getActivity())) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(context);
@@ -520,7 +520,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
     private void deleteRemote(final RemoteItem remoteItem) {
         AlertDialog.Builder builder;
-        if (ThemeHelper.isDarkTheme(this.getActivity())) {
+        if (ActivityHelper.isDarkTheme(this.getActivity())) {
             builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(context);

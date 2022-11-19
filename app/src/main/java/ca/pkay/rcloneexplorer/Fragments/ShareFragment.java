@@ -41,7 +41,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -142,7 +142,7 @@ public class ShareFragment extends Fragment implements  SwipeRefreshLayout.OnRef
             }
         }
 
-        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
+        isDarkTheme = ActivityHelper.isDarkTheme(this.getActivity());
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new LandingAnimator());

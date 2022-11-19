@@ -29,7 +29,7 @@ import ca.pkay.rcloneexplorer.Dialogs.RemoteDestinationDialog;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
 
 public class CacheConfig extends Fragment implements    NumberPickerDialog.OnValueSelected,
@@ -78,8 +78,7 @@ public class CacheConfig extends Fragment implements    NumberPickerDialog.OnVal
         }
         context = getContext();
         rclone = new Rclone(context);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
+        isDarkTheme = ActivityHelper.isDarkTheme(this.getActivity());
     }
 
     @Nullable

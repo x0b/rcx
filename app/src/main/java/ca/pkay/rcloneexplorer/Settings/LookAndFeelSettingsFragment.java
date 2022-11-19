@@ -1,8 +1,9 @@
 package ca.pkay.rcloneexplorer.Settings;
 
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.DARK;
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.FOLLOW_SYSTEM;
-import static ca.pkay.rcloneexplorer.util.ThemeHelper.LIGHT;
+
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.DARK;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.FOLLOW_SYSTEM;
+import static ca.pkay.rcloneexplorer.util.ActivityHelper.LIGHT;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
-import ca.pkay.rcloneexplorer.Dialogs.ColorPickerDialog;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 
@@ -88,10 +88,6 @@ public class LookAndFeelSettingsFragment extends Fragment {
     }
 
     private void getViews(View view) {
-        primaryColorElement = view.findViewById(R.id.primary_color);
-        primaryColorPreview = view.findViewById(R.id.primary_color_preview);
-        accentColorElement = view.findViewById(R.id.accent_color);
-        accentColorPreview = view.findViewById(R.id.accent_color_preview);
         autoThemeSwitch = view.findViewById(R.id.auto_theme_switch);
         darkThemeSwitch = view.findViewById(R.id.dark_theme_switch);
         lightThemeSwitch = view.findViewById(R.id.light_theme_switch);
@@ -109,61 +105,11 @@ public class LookAndFeelSettingsFragment extends Fragment {
     }
 
     private void setClickListeners() {
-        primaryColorElement.setOnClickListener(v -> showPrimaryColorPicker());
-        accentColorElement.setOnClickListener(v -> showAccentColorPicker());
         autoThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> selectTheme(FOLLOW_SYSTEM, isChecked));
         darkThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> selectTheme(DARK, isChecked));
         lightThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> selectTheme(LIGHT, isChecked));
         wrapFilenamesElement.setOnClickListener(v -> wrapFilenamesSwitch.setChecked(!wrapFilenamesSwitch.isChecked()));
         wrapFilenamesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onWrapFilenamesClicked(isChecked));
-    }
-
-    private void showPrimaryColorPicker() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int defaultColor = sharedPreferences.getInt(getString(R.string.pref_key_color_primary), R.color.colorPrimary);
-
-        ColorPickerDialog colorPickerDialog = new ColorPickerDialog()
-                .setTitle(R.string.primary_color_picker_title)
-                .setColorChoices(R.array.primary_color_choices)
-                .setDefaultColor(defaultColor)
-                .setListener(this::onPrimaryColorSelected);
-
-        colorPickerDialog.show(getChildFragmentManager(), "primary color picker");
-    }
-
-    private void showAccentColorPicker() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int defaultColor = sharedPreferences.getInt(getString(R.string.pref_key_color_accent), R.color.colorAccent);
-
-        ColorPickerDialog colorPickerDialog = new ColorPickerDialog()
-                .setTitle(R.string.accent_color_picker_title)
-                .setColorChoices(R.array.accent_color_choices)
-                .setDefaultColor(defaultColor)
-                .setListener(this::onAccentColorSelected);
-
-        colorPickerDialog.show(getChildFragmentManager(), "accent color picker");
-    }
-
-    private void onPrimaryColorSelected(int color) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(getString(R.string.pref_key_color_primary), color);
-        editor.apply();
-
-        primaryColorPreview.setColorFilter(color);
-
-        listener.onThemeChanged();
-    }
-
-    private void onAccentColorSelected(int color) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(getString(R.string.pref_key_color_accent), color);
-        editor.apply();
-
-        accentColorPreview.setColorFilter(color);
-
-        listener.onThemeChanged();
     }
 
     //Todo: Update this to radiobuttons

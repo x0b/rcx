@@ -5,26 +5,33 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
-import ca.pkay.rcloneexplorer.CustomColorHelper;
 import ca.pkay.rcloneexplorer.R;
 import es.dmoral.toasty.Toasty;
 
 public class ActivityHelper {
 
     private static final String TAG = "ActivityHelper";
+
+    public static final int FOLLOW_SYSTEM = 0;
+    public static final int DARK = 1;
+    public static final int LIGHT = 2;
+
+
 
     @SuppressLint("CheckResult")
     public static void tryStartActivity(Context context, Intent intent) {
@@ -93,25 +100,43 @@ public class ActivityHelper {
     }
 
     public static void applyTheme(Activity activity) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        int customPrimaryColor = sharedPreferences.getInt(activity.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
-        int customAccentColor = sharedPreferences.getInt(activity.getString(R.string.pref_key_color_accent), R.color.colorAccent);
-        activity.getTheme().applyStyle(CustomColorHelper.getPrimaryColorTheme(activity, customPrimaryColor), true);
-        activity.getTheme().applyStyle(CustomColorHelper.getAccentColorTheme(activity, customAccentColor), true);
+        applyDarkMode(activity);
+    }
 
-        Window window = activity.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(activity, R.color.backgroundColor));
-
-        int newUiVisibility = (int) window.getDecorView().getSystemUiVisibility();
-        if(ThemeHelper.isDarkTheme(activity)) {
-            newUiVisibility &= ~(int) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-        } else {
-            newUiVisibility |= (int) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+    public static boolean isDarkTheme(Context context) {
+        int mode = PreferenceManager.getDefaultSharedPreferences(context).getInt(context.getString(R.string.pref_key_dark_theme), FOLLOW_SYSTEM);
+        switch(mode) {
+            case LIGHT:
+                return false;
+            case DARK:
+                return true;
+            case FOLLOW_SYSTEM:
+            default:
+                Configuration config = context.getApplicationContext().getResources().getConfiguration();
+                int currentNightMode = config.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                switch (currentNightMode) {
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        return false;
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        return true;
+                }
         }
-        window.getDecorView().setSystemUiVisibility(newUiVisibility);
+        return true;
+    }
 
-        ThemeHelper.applyDarkMode(activity);
+    public static void applyDarkMode(Activity activity) {
+        int mode = PreferenceManager.getDefaultSharedPreferences(activity).getInt(activity.getString(R.string.pref_key_dark_theme), FOLLOW_SYSTEM);
+        switch(mode) {
+            case LIGHT:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case DARK:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case FOLLOW_SYSTEM:
+            default:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+        }
     }
 }

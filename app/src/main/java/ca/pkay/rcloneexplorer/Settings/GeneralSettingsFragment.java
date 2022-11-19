@@ -30,8 +30,8 @@ import ca.pkay.rcloneexplorer.AppShortcutsHelper;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 
 public class GeneralSettingsFragment extends Fragment {
@@ -130,7 +130,7 @@ public class GeneralSettingsFragment extends Fragment {
         boolean showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
         boolean isWifiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
         boolean allowSyncWhileIdle = sharedPreferences.getBoolean(getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
-        isDarkTheme = ThemeHelper.isDarkTheme(this.getActivity());
+        isDarkTheme = ActivityHelper.isDarkTheme(this.getActivity());
         boolean useProxy = sharedPreferences.getBoolean(getString(R.string.pref_key_use_proxy), false);
         String proxyProtocol = sharedPreferences.getString(getString(R.string.pref_key_proxy_protocol), "http");
         String proxyHost = sharedPreferences.getString(getString(R.string.pref_key_proxy_host), "localhost");

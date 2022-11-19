@@ -79,7 +79,6 @@ import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SharedPreferencesUtil;
-import ca.pkay.rcloneexplorer.util.ThemeHelper;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Stream;
 
@@ -485,7 +484,7 @@ public class MainActivity extends AppCompatActivity
 
     private void warnUserAboutOverwritingConfiguration() {
         AlertDialog.Builder builder;
-        if (ThemeHelper.isDarkTheme(this)) {
+        if (ActivityHelper.isDarkTheme(this)) {
             builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(this);
@@ -507,7 +506,7 @@ public class MainActivity extends AppCompatActivity
 
     public void askUseExternalConfig(final Uri uri) {
         AlertDialog.Builder builder;
-        if (ThemeHelper.isDarkTheme(this)) {
+        if (ActivityHelper.isDarkTheme(this)) {
             builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
         } else {
             builder = new AlertDialog.Builder(this);
