@@ -11,6 +11,8 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:elevation="4dp"
+        android:theme="@style/SecondaryCardStyle"
+        style="@style/SecondaryCardStyle"
         app:cardCornerRadius="@dimen/cardCornerRadius"
         app:contentPadding="@dimen/cardPadding">
 

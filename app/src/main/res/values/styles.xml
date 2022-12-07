@@ -6,8 +6,7 @@
     </style>
 
 
-    <style name="OnboardingTheme" parent="AppTheme.NoActionBar">
-    </style>
+    <style name="OnboardingTheme" parent="AppTheme.NoActionBar" />
 
     <style name="HiddenWindowShortcutSyncStartTheme" parent="android:Theme">
         <item name="android:windowContentOverlay">@null</item>
@@ -20,11 +19,48 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
     <style name="DialogThemeFullScreen">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
+    </style>
+
+
+
+    <!-- Layot Styles _____ Begin -->
+    <!-- Card Styles need to be applied to the card directly.-->
+    <style name="MainViewToolbar">
+        <item name="cardBackgroundColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:tint">?attr/colorOnPrimary</item>
+        <item name="tint">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="FloatingActionButtonMulti">
+        <item name="colorAccent">?attr/colorPrimaryContainer</item>
+
+    </style>
+
+    <style name="FileListItem">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:tint">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="FileListItemDescription">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:tint">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Card Styles need to be applied to the card directly.-->
+    <style name="PrimaryCardStyle">
+        <item name="cardBackgroundColor">?attr/colorPrimaryContainer</item>
+        <item name="android:textColor">?attr/colorOnPrimaryContainer</item>
+        <item name="android:tint">?attr/colorOnPrimaryContainer</item>
+    </style>
+
+    <style name="SecondaryCardStyle">
+        <item name="cardBackgroundColor">?attr/colorSecondaryContainer</item>
+        <item name="android:textColor">?attr/colorOnSecondaryContainer</item>
+        <item name="android:tint">?attr/colorOnSecondaryContainer</item>
     </style>
 
 </resources>

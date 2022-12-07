@@ -46,6 +46,7 @@
         android:layout_margin="2dp"
         app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
         app:sdExpansionMode="top"
+        android:theme="@style/FloatingActionButtonMulti"
         app:sdMainFabOpenedSrc="@drawable/ic_close"
         app:sdMainFabClosedSrc="@drawable/ic_add" />
 

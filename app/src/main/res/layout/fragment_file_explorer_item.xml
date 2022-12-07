@@ -7,6 +7,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/filepicker_row_padding"
     android:paddingBottom="@dimen/filepicker_row_padding"
+    android:theme="@style/FileListItem"
+    style="@style/FileListItem"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -35,8 +37,7 @@
                 android:layout_height="@dimen/filepicker_icon_size"
                 android:src="@drawable/ic_folder"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="@string/file_icon"
-                app:tint="@color/iconTint" />
+                android:contentDescription="@string/file_icon" />
         </FrameLayout>
 
         <LinearLayout
@@ -61,6 +62,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:theme="@style/FileListItemDescription"
+                style="@style/FileListItemDescription"
                 android:orientation="horizontal">
 
                 <TextView
@@ -97,8 +100,7 @@
             android:paddingEnd="@dimen/filepicker_more_padding"
             android:paddingTop="@dimen/filepicker_more_padding"
             android:paddingBottom="@dimen/filepicker_more_padding"
-            android:src="@drawable/ic_more_vert"
-            android:tint="@color/iconTint" />
+            android:src="@drawable/ic_more_vert" />
     </RelativeLayout>
 
 </LinearLayout>
