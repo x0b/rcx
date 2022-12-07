@@ -13,7 +13,7 @@ android {
     ndkVersion '25.0.8775105'
     defaultConfig {
         applicationId 'de.felixnuesse.extract'
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode 200 // last digit is reserved for ABI, only ever end on 0!
         versionName '2.0.6-dev'
