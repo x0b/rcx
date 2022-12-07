@@ -3,11 +3,12 @@
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="background">@color/md_theme_light_onBackground</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="iconTint">@color/white</item>
-        <item name="background">@color/white</item>
+        <item name="background">@color/md_theme_light_onBackground</item>
     </style>
 
     <style name="ToolbarTheme" parent="Theme.MaterialComponents.DayNight">
@@ -16,6 +17,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
+        <item name="background">@color/md_theme_light_onBackground</item>
     </style>
 
     <style name="OnboardingTheme" parent="AppTheme.NoActionBar">
