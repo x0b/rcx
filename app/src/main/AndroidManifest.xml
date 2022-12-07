@@ -29,11 +29,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="29">
-        <activity
-            android:name=".Activities.OnboardingActivity"
-            android:theme="@style/OnboardingTheme"></activity>
+        tools:ignore="GoogleAppIndexingWarning,MissingTvBanner"
+        tools:targetApi="33">
+        <activity android:name=".Activities.OnboardingActivity"
+            android:theme="@style/OnboardingTheme" />
         <activity
             android:name=".Activities.MainActivity"
             android:exported="true"

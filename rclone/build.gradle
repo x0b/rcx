@@ -197,9 +197,5 @@ task buildAll {
     dependsOn buildx64
 }
 
-task prepareKotlinBuildScriptModel {
-    // ignore, does not build from kotlin sources
-}
-
 buildAll.mustRunAfter(buildArm, buildArm64, buildx86, buildx64)
 defaultTasks 'buildAll'
