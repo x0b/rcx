@@ -54,13 +54,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/app_version"
-                            android:textColor="@color/textColorPrimary"
                             android:textStyle="bold"/>
                         <TextView
                             android:id="@+id/version_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/textColorSecondary" />
+                            android:textColor="?attr/colorSecondary" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -90,13 +89,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/rclone_version"
-                            android:textColor="@color/textColorPrimary"
                             android:textStyle="bold"/>
                         <TextView
                             android:id="@+id/rclone_version"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/textColorSecondary" />
+                            android:textColor="?attr/colorSecondary" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -122,7 +120,6 @@
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:background="?selectableItemBackground"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true">
@@ -140,7 +137,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/changelog"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -150,7 +146,6 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:background="?selectableItemBackground"
                         android:gravity="center_vertical"
                         android:clickable="true"
                         android:focusable="true">
@@ -168,7 +163,6 @@
                             android:paddingStart="32dp"
                             android:paddingEnd="0dp"
                             android:text="@string/license_and_contributors"
-                            android:textColor="@color/textColorPrimary"
                             android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -178,7 +172,6 @@
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:background="?selectableItemBackground"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true">
@@ -196,7 +189,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/credits_libraries"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -206,7 +198,6 @@
                     android:layout_height="48dp"
                     android:orientation="horizontal"
                     android:layout_gravity="center_vertical"
-                    android:background="?selectableItemBackground"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true" >
@@ -223,7 +214,6 @@
                         android:layout_height="wrap_content"
                         android:text="@string/star_on_github"
                         android:textStyle="bold"
-                        android:textColor="@color/textColorPrimary"
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"/>
                 </LinearLayout>
@@ -234,7 +224,6 @@
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:background="?selectableItemBackground"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true">
@@ -252,7 +241,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/report_a_bug"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"/>
                 </LinearLayout>
             </LinearLayout>
@@ -276,7 +264,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/maintainer"
-                        android:textColor="@color/textColorSecondary"
+                        android:textColor="?attr/colorSecondary"
                         android:paddingBottom="16dp" />
 
                 <LinearLayout
@@ -297,7 +285,6 @@
                             android:layout_height="wrap_content"
                             android:text="@string/maintainer_name"
                             android:textStyle="bold"
-                            android:textColor="@color/textColorPrimary"
                             android:paddingStart="32dp"
                             android:paddingEnd="0dp"/>
                 </LinearLayout>
@@ -308,7 +295,6 @@
                         android:layout_height="48dp"
                         android:orientation="horizontal"
                         android:layout_gravity="center_vertical"
-                        android:background="?selectableItemBackground"
                         android:gravity="center_vertical"
                         android:clickable="true"
                         android:focusable="true" >
@@ -324,7 +310,6 @@
                             android:layout_height="wrap_content"
                             android:text="@string/follow_on_github"
                             android:textStyle="bold"
-                            android:textColor="@color/textColorPrimary"
                             android:paddingStart="32dp"
                             android:paddingEnd="0dp"/>
                 </LinearLayout>
@@ -351,7 +336,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
                     android:text="@string/old_maintainer"
-                    android:textColor="@color/textColorSecondary" />
+                    android:textColor="?attr/colorSecondary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -373,7 +358,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/old_maintainer_name"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -382,7 +366,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
-                    android:background="?selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -401,7 +384,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/follow_on_github"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -427,7 +409,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
                     android:text="@string/author"
-                    android:textColor="@color/textColorSecondary" />
+                    android:textColor="?attr/colorSecondary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -449,7 +431,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/author_name"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -458,7 +439,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
-                    android:background="?selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -477,7 +457,6 @@
                         android:paddingStart="32dp"
                         android:paddingEnd="0dp"
                         android:text="@string/follow_on_github"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>

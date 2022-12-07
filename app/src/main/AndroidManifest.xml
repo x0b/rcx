@@ -31,8 +31,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,MissingTvBanner"
         tools:targetApi="33">
-        <activity android:name=".Activities.OnboardingActivity"
-            android:theme="@style/OnboardingTheme" />
+        <activity android:name=".Activities.OnboardingActivity" />
         <activity
             android:name=".Activities.MainActivity"
             android:exported="true"

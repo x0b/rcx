@@ -49,7 +49,6 @@
             android:id="@+id/file_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
             android:fontFamily="sans-serif"
             android:textSize="16sp"
             tools:text="File" />
@@ -64,7 +63,6 @@
                 android:id="@+id/file_modtime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textColorSecondary"
                 tools:text="2018-01-01"/>
 
             <TextView
@@ -73,14 +71,12 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:textColor="@color/textColorSecondary"
                 android:text="@string/interpunct"/>
 
             <TextView
                 android:id="@+id/file_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textColorSecondary"
                 tools:text="2 MB"/>
         </LinearLayout>
 

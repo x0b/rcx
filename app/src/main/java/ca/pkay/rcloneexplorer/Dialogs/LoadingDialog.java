@@ -47,7 +47,7 @@ public class LoadingDialog extends DialogFragment {
             negativeTextId = savedInstanceState.getInt(SAVED_NEGATIVE_TEXT_ID);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_loading_indicator, null);
         builder.setCancelable(cancelable);

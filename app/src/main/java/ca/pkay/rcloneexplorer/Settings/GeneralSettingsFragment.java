@@ -232,13 +232,7 @@ public class GeneralSettingsFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> appShortcuts = sharedPreferences.getStringSet(getString(R.string.shared_preferences_app_shortcuts), new HashSet<>());
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.app_shortcuts_settings_dialog_title);
 
         Rclone rclone = new Rclone(context);
@@ -366,12 +360,7 @@ public class GeneralSettingsFragment extends Fragment {
     }
 
     private void showProxyProtocolMenu() {
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final List<String> proxyProtocols = Arrays.asList(context.getResources().getStringArray(R.array.proxy_protocols));
@@ -395,12 +384,7 @@ public class GeneralSettingsFragment extends Fragment {
     }
 
     private void showProxyHostMenu() {
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final EditText proxyHostEdit = new EditText(context);
@@ -423,12 +407,7 @@ public class GeneralSettingsFragment extends Fragment {
     }
 
     private void showProxyPortMenu() {
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final EditText proxyPortEdit = new EditText(context);
@@ -459,12 +438,7 @@ public class GeneralSettingsFragment extends Fragment {
     }
 
     private void showThumbnailSizeDialog() {
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final EditText thumbnailSizeEdit = new EditText(context);
@@ -498,12 +472,7 @@ public class GeneralSettingsFragment extends Fragment {
     }
 
     private void showLocaleDialog() {
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final List<String> locales = Arrays.asList(context.getResources().getStringArray(R.array.locales));

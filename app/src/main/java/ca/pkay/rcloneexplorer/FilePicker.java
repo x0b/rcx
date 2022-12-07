@@ -328,16 +328,10 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
     }
 
     private void showStorageMenu() {
-        AlertDialog.Builder builder;
-        final int[] userSelected = new int[1];
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_storage);
 
+        final int[] userSelected = new int[1];
         int selected = availableStorage.indexOf(root.getAbsolutePath());
         final CharSequence[] options = availableStorage.toArray(new CharSequence[availableStorage.size()]);
         builder.setSingleChoiceItems(options, selected, (dialog, which) -> userSelected[0] = which);

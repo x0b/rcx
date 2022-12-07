@@ -18,7 +18,6 @@
         android:id="@+id/filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="Test file"/>
 
@@ -34,7 +33,6 @@
         android:id="@+id/file_modtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="May 30, 2018 1:23:45 PM"/>
 
@@ -50,7 +48,6 @@
         android:id="@+id/file_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textColorSecondary"
         android:textIsSelectable="true"
         tools:text="12 MB"/>
 
@@ -61,7 +58,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@color/dividerColor"/>
 
 
     <LinearLayout
@@ -79,7 +76,6 @@
             android:id="@+id/file_md5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorSecondary"
             android:text="@string/tap_to_calculate"/>
     </LinearLayout>
 
@@ -91,7 +87,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/colorAccent"
+            android:textColor="?attr/colorSecondary"
             android:paddingTop="16dp"
             android:textStyle="bold"
             android:text="@string/sha1"/>
@@ -99,7 +95,6 @@
             android:id="@+id/file_sha1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorSecondary"
             android:text="@string/tap_to_calculate"/>
     </LinearLayout>
 </LinearLayout>

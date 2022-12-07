@@ -81,12 +81,7 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
         }
 
         if (rclone.isConfigEncrypted() || !rclone.isConfigFileCreated() || rclone.getRemotes().isEmpty()) {
-            AlertDialog.Builder builder;
-            if (isDarkTheme) {
-                builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
-            } else {
-                builder = new AlertDialog.Builder(this);
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder
                     .setTitle(R.string.app_not_configured)
                     .setMessage(R.string.open_app_to_configure)

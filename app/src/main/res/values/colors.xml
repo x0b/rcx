@@ -62,19 +62,16 @@
     <color name="md_theme_dark_outlineVariant">#424940</color>
     <color name="md_theme_dark_scrim">#000000</color>
 
-    <color name="grey300">@android:color/darker_gray</color>
-    <color name="grey">@android:color/darker_gray</color>
     <color name="white">@android:color/white</color>
-    <color name="colorPrimary">@color/seed</color>
     <color name="colorAccent">@color/md_theme_light_secondary</color>
-    <color name="colorPrimaryDark">@color/md_theme_light_tertiary</color>
     <color name="textColorTertiary">@color/md_theme_light_tertiary</color>
     <color name="textColorPrimary">@color/md_theme_light_onPrimary</color>
     <color name="textColorSecondary">@color/md_theme_light_onSecondary</color>
     <color name="cardColor">@color/md_theme_light_primaryContainer</color>
-    <color name="backgroundColor">@color/md_theme_light_primaryContainer</color>
     <color name="iconTint">@color/white</color>
-    <color name="dividerColor">@color/grey</color>
-    <color name="fabOverlayColor">@color/grey</color>
+
+
+    <color name="dividerColor">@color/md_theme_light_secondary</color>
+    <color name="fabOverlayColor">@color/md_theme_light_secondary</color>
 
 </resources>

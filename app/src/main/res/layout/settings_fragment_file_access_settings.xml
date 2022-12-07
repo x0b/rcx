@@ -63,7 +63,6 @@
             android:name="ca.pkay.rcloneexplorer.RemotesFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/backgroundColor"
             android:clipToPadding="false"
             app:layoutManager="LinearLayoutManager"
             tools:itemCount="2"

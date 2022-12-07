@@ -700,14 +700,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     }
 
     private void emptyTrash() {
-        AlertDialog.Builder builder;
-
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(R.string.empty_trash_confirmation)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.ok, (dialog, which) -> new EmptyTrashTask().execute())
@@ -1422,12 +1415,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void showSyncDialog(String path) {
         syncRemotePath = path;
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
         String[] options = getResources().getStringArray(R.array.sync_direction_options);
         builder.setTitle(R.string.select_sync_direction);
         builder.setItems(options, (dialog, which) -> {
@@ -1475,12 +1464,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
 
     private void deleteFiles(final List<FileItem> deleteList) {
         String title = getResources().getQuantityString(R.plurals.delete_x_items, deleteList.size(), deleteList.size());
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
                 .setTitle(title)
                 .setNegativeButton(getResources().getString(R.string.cancel), null)

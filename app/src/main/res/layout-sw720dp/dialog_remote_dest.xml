@@ -5,22 +5,19 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@color/backgroundColor" >
+    android:orientation="vertical">
 
     <include
         android:id="@+id/empty_folder_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/backgroundColor"
         android:visibility="invisible"
         android:layout_gravity="center"
         layout="@layout/empty_directory_state" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/actionBarSize"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="@dimen/actionBarSize">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -110,7 +107,6 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal|bottom"
-        android:background="@color/colorPrimary"
         android:elevation="8dp"
         android:visibility="gone"
         android:clickable="true"

@@ -11,7 +11,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textColorPrimary"
         android:text="@string/app_icon_made_by"/>
 
     <TextView
@@ -20,20 +19,19 @@
         android:layout_height="wrap_content"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:textColor="?attr/colorAccent"
+        android:textColor="?attr/colorSecondary"
         android:text="@string/smashicons"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textColorPrimary"
         android:text="@string/from"/>
 
     <TextView
         android:id="@+id/flaticon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/colorAccent"
+        android:textColor="?attr/colorSecondary"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:text="@string/flaticon"/>

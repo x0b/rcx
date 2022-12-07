@@ -13,7 +13,6 @@
             android:id="@+id/edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
             android:inputType="text"
             tools:text="Client ID"/>
         <TextView
@@ -23,7 +22,6 @@
             android:paddingStart="8dp"
             android:paddingEnd="0dp"
             android:textSize="12sp"
-            android:textColor="@color/textColorSecondary"
             android:visibility="gone"
             android:text="@string/leave_blank_normally"/>
     </com.google.android.material.textfield.TextInputLayout>

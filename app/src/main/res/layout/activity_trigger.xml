@@ -11,10 +11,8 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/backgroundColor"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        android:theme="@style/ToolbarTheme"
         app:elevation="0dp">
 
         <com.google.android.material.card.MaterialCardView
