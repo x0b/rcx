@@ -77,4 +77,10 @@
         <item name="android:tint">?attr/colorOnSecondaryContainer</item>
     </style>
 
+    <style name="TertiaryCardStyle">
+        <item name="cardBackgroundColor">?attr/colorTertiaryContainer</item>
+        <item name="android:textColor">?attr/colorOnTertiaryContainer</item>
+        <item name="android:tint">?attr/colorOnTertiaryContainer</item>
+    </style>
+
 </resources>

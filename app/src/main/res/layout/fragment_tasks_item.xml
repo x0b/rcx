@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:elevation="4dp"
+        style="@style/SecondaryCardStyle"
         app:cardCornerRadius="@dimen/cardCornerRadius">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +28,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/iconTint"
                 tools:src="@drawable/ic_cloud" />
 
             <TextView
@@ -37,7 +37,6 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif"
-                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/taskIcon"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/task_item_label_from"
-                android:textColor="@color/textColorSecondary"
                 app:layout_constraintStart_toStartOf="@+id/taskName"
                 app:layout_constraintTop_toBottomOf="@+id/taskName" />
 
@@ -59,7 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:text="@string/task_item_label_to"
-                android:textColor="@color/textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/fromLabel"
                 app:layout_constraintTop_toBottomOf="@+id/fromLabel" />
@@ -76,7 +73,6 @@
                 android:minHeight="48dp"
                 android:padding="4dp"
                 android:src="@drawable/ic_more_vert"
-                android:tint="@color/iconTint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,7 +82,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
                 android:text="@string/sync"
-                android:textColor="@color/textColorSecondary"
                 android:textSize="12sp"
                 android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="@+id/taskName"
@@ -125,7 +120,6 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="fromPath"
-                        android:textColor="@color/textColorSecondary"
                         tools:ignore="HardcodedText" />
 
                 </LinearLayout>
@@ -153,7 +147,6 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="toPath"
-                        android:textColor="@color/textColorSecondary"
                         tools:ignore="HardcodedText" />
 
                 </LinearLayout>

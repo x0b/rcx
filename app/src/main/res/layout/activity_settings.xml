@@ -21,8 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            style="@style/MainViewToolbar"
             app:cardCornerRadius="@dimen/cardCornerRadius"
+            style="@style/MainViewToolbar"
             app:cardElevation="2dp"
             app:strokeWidth="0dp">
 
@@ -30,6 +30,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:theme="@style/MainViewToolbar"
                 android:orientation="horizontal" />
 
         </com.google.android.material.card.MaterialCardView>
