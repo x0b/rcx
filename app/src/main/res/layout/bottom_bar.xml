@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:layout_margin="16dp"
+    android:layout_margin="8dp"
     tools:showIn="@layout/fragment_file_explorer_list"
     android:background="@android:color/transparent"
     android:visibility="gone"

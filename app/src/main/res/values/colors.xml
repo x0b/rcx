@@ -1,18 +1,22 @@
 
 <resources>
     <color name="seed">#4CAF50</color>
+
     <color name="md_theme_light_primary">#4CAF50</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <color name="md_theme_light_primaryContainer">#42C13C</color>
     <color name="md_theme_light_onPrimaryContainer">#002204</color>
+
     <color name="md_theme_light_secondary">#52634F</color>
     <color name="md_theme_light_onSecondary">#FFFFFF</color>
     <color name="md_theme_light_secondaryContainer">#D5E8CF</color>
     <color name="md_theme_light_onSecondaryContainer">#111F0F</color>
-    <color name="md_theme_light_tertiary">#38656A</color>
+
+    <color name="md_theme_light_tertiary">#C37400</color>
     <color name="md_theme_light_onTertiary">#FFFFFF</color>
-    <color name="md_theme_light_tertiaryContainer">#BCEBF0</color>
-    <color name="md_theme_light_onTertiaryContainer">#002023</color>
+    <color name="md_theme_light_tertiaryContainer">#EFA02E</color>
+    <color name="md_theme_light_onTertiaryContainer">#493312</color>
+
     <color name="md_theme_light_error">#BA1A1A</color>
     <color name="md_theme_light_errorContainer">#FFDAD6</color>
     <color name="md_theme_light_onError">#FFFFFF</color>
@@ -33,22 +37,26 @@
     <color name="md_theme_light_scrim">#000000</color>
 
 
-    <color name="md_theme_dark_primary">#78DC77</color>
+    <color name="md_theme_dark_primary">#4CAF50</color>
     <color name="md_theme_dark_onPrimary">#00390A</color>
-    <color name="md_theme_dark_primaryContainer">#005313</color>
+    <color name="md_theme_dark_primaryContainer">#2A6A2D</color>
     <color name="md_theme_dark_onPrimaryContainer">#94F990</color>
+
     <color name="md_theme_dark_secondary">#BACCB3</color>
     <color name="md_theme_dark_onSecondary">#253423</color>
-    <color name="md_theme_dark_secondaryContainer">#3B4B38</color>
-    <color name="md_theme_dark_onSecondaryContainer">#D5E8CF</color>
-    <color name="md_theme_dark_tertiary">#A0CFD4</color>
-    <color name="md_theme_dark_onTertiary">#00363B</color>
-    <color name="md_theme_dark_tertiaryContainer">#1F4D52</color>
-    <color name="md_theme_dark_onTertiaryContainer">#BCEBF0</color>
+    <color name="md_theme_dark_secondaryContainer">#424242</color>
+    <color name="md_theme_dark_onSecondaryContainer">#B3FFFFFF</color>
+
+    <color name="md_theme_dark_tertiary">#C37400</color>
+    <color name="md_theme_dark_onTertiary">#4C2D00</color>
+    <color name="md_theme_dark_tertiaryContainer">#D88C1E</color>
+    <color name="md_theme_dark_onTertiaryContainer">#493312</color>
+
     <color name="md_theme_dark_error">#FFB4AB</color>
     <color name="md_theme_dark_errorContainer">#93000A</color>
     <color name="md_theme_dark_onError">#690005</color>
     <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
+
     <color name="md_theme_dark_background">#1A1C19</color>
     <color name="md_theme_dark_onBackground">#E2E3DD</color>
     <color name="md_theme_dark_surface">#1A1C19</color>
@@ -63,6 +71,9 @@
     <color name="md_theme_dark_surfaceTint">#78DC77</color>
     <color name="md_theme_dark_outlineVariant">#424940</color>
     <color name="md_theme_dark_scrim">#000000</color>
+
+
+
 
     <color name="white">@android:color/white</color>
     <color name="colorAccent">@color/md_theme_light_secondary</color>
