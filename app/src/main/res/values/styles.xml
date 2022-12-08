@@ -33,11 +33,18 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
         <item name="tint">?attr/colorOnPrimary</item>
+        <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
+        <item name="android:actionMenuTextColor">?attr/colorOnPrimary</item>
+        <item name="popupTheme">@style/MainViewToolbarOverflowMenu</item>
+    </style>
+
+    <style name="MainViewToolbarOverflowMenu" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:colorBackground">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
     </style>
 
     <style name="FloatingActionButtonMulti">
         <item name="colorAccent">?attr/colorPrimaryContainer</item>
-
     </style>
 
     <style name="FileListItem">
