@@ -54,6 +54,7 @@
         <item name="android:textColor">?attr/colorOnTertiary</item>
         <item name="android:tint">?attr/colorOnTertiary</item>
         <item name="android:background">?attr/colorTertiary</item>
+        <item name="cardBackgroundColor">?attr/colorTertiary</item>
     </style>
 
     <!-- Card Styles need to be applied to the card directly.-->

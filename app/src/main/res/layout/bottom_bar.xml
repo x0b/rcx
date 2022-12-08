@@ -1,154 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_bar"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:orientation="horizontal"
+    android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:elevation="8dp"
-    android:visibility="gone"
-    android:clickable="true"
+    android:layout_margin="16dp"
     tools:showIn="@layout/fragment_file_explorer_list"
-    tools:visibility="visible"
-    android:theme="@style/FileListBottomBars"
-    style="@style/FileListBottomBars"
-    android:focusable="true">
+    android:background="@android:color/transparent"
+    android:visibility="gone"
+    tools:visibility="visible">
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" >
-    </Space>
+    <com.google.android.material.card.MaterialCardView
+        style="@style/FileListBottomBars"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:theme="@style/FileListBottomBars"
+        app:cardCornerRadius="@dimen/cardCornerRadius"
+        app:cardElevation="2dp"
+        app:strokeWidth="0dp">
 
-    <LinearLayout
-        android:id="@+id/file_download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="6dp"
-            android:src="@drawable/ic_file_download"
-            android:contentDescription="@string/download" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            android:text="@string/download"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/file_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" >
-    </Space>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/download"
+                    android:paddingTop="6dp"
+                    android:src="@drawable/ic_file_download" />
 
-    <LinearLayout
-        android:id="@+id/file_move"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/download"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="6dp"
-            android:src="@drawable/ic_folder_move"
-            android:contentDescription="@string/move" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            android:text="@string/move"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/file_move"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" >
-    </Space>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/move"
+                    android:paddingTop="6dp"
+                    android:src="@drawable/ic_folder_move" />
 
-    <LinearLayout
-        android:id="@+id/file_rename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/move"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="6dp"
-            android:src="@drawable/ic_edit"
-            android:contentDescription="@string/rename" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            android:text="@string/rename"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/file_rename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" >
-    </Space>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/rename"
+                    android:paddingTop="6dp"
+                    android:src="@drawable/ic_edit" />
 
-    <LinearLayout
-        android:id="@+id/file_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/rename"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="6dp"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="@string/delete" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            android:text="@string/delete"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/file_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1" >
-    </Space>
-</LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/delete"
+                    android:paddingTop="6dp"
+                    android:src="@drawable/ic_delete" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/delete"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

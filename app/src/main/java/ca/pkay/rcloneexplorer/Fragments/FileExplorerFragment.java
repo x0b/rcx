@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -328,11 +327,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         searchBar = ((FragmentActivity) context).findViewById(R.id.search_bar);
-
-        final TypedValue accentColorValue = new TypedValue ();
-        context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
-        view.findViewById(R.id.bottom_bar).setBackgroundColor(accentColorValue.data);
-        view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
         if (view.findViewById(R.id.background) != null) {
             view.findViewById(R.id.background).setOnClickListener(v -> onClickOutsideOfView());
         }
