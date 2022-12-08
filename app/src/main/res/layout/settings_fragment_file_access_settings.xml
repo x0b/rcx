@@ -20,7 +20,6 @@
             android:id="@+id/enable_saf_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -40,14 +39,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_saf_enable"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_saf_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_saf_summary" />
 
             </LinearLayout>
 
@@ -72,7 +69,6 @@
             android:id="@+id/permission_add_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -97,7 +93,6 @@
             android:id="@+id/enable_refresh_la_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -117,14 +112,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_enable_local_alias_title"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_enable_local_alias_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_enable_local_alias_summary" />
 
             </LinearLayout>
 
@@ -150,7 +143,6 @@
             android:id="@+id/open_all_files_setting_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -169,14 +161,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_open_all_files_setting_label"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_open_all_files_setting_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_open_all_files_setting_summary" />
 
             </LinearLayout>
         </RelativeLayout>
@@ -191,7 +181,6 @@
             android:id="@+id/enable_saf_vcp_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -212,14 +201,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_saf_virtual_content_provider_enable"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_saf_virtual_content_provider_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_saf_virtual_content_provider_summary" />
 
             </LinearLayout>
 
@@ -239,7 +226,6 @@
             android:id="@+id/vcp_declare_local_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -260,14 +246,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_saf_vcp_local_pretend_enable"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_saf_vcp_local_pretend_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_saf_vcp_local_pretend_summary" />
 
             </LinearLayout>
 
@@ -287,7 +271,6 @@
             android:id="@+id/vcp_grant_all_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -308,14 +291,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_saf_vcp_grant_all_enable"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_saf_vcp_grant_all_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_saf_vcp_grant_all_summary" />
 
             </LinearLayout>
 

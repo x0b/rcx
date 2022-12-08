@@ -28,7 +28,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_shortcuts_settings"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -42,7 +41,6 @@
             android:id="@+id/locale_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -59,14 +57,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_locale"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/locale_summary"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary" />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
         </RelativeLayout>
@@ -80,7 +76,6 @@
             android:id="@+id/show_thumbnails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -91,7 +86,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="@string/show_thumbnails"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold" />
 
             <Switch
@@ -108,7 +102,6 @@
             android:id="@+id/thumbnail_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingStart="16dp"
@@ -130,14 +123,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_thumbnails_size_title"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/thumbnail_size_summary"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary" />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -152,7 +143,6 @@
             android:id="@+id/wifi_only"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -172,14 +162,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/transfer_only_on_wifi"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/transfer_only_on_wifi_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/transfer_only_on_wifi_summary" />
 
             </LinearLayout>
 
@@ -201,7 +189,6 @@
             android:id="@+id/alarm_while_idle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -221,14 +208,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/alarm_while_idle"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/alarm_while_idle_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/alarm_while_idle_summary" />
 
             </LinearLayout>
 
@@ -250,7 +235,6 @@
             android:id="@+id/use_proxy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom">
@@ -268,14 +252,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_use_proxy_title"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_use_proxy_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_use_proxy_summary" />
 
             </LinearLayout>
 
@@ -300,7 +282,6 @@
             android:id="@+id/proxy_protocol"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom">
@@ -316,13 +297,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_proxy_protocol"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/proxy_protocol_summary"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
             
             <View
@@ -338,7 +317,6 @@
             android:id="@+id/proxy_host"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom">
@@ -355,13 +333,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_proxy_host"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
                 <TextView
                     android:id="@+id/proxy_host_summary"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             
@@ -378,7 +354,6 @@
             android:id="@+id/proxy_port"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom">
@@ -395,14 +370,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_proxy_port"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/proxy_port_summary"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary" />
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
             <View

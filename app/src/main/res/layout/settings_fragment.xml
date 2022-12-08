@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:orientation="vertical">
 
@@ -23,15 +22,13 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/general_Settings_icon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:layout_centerVertical="true"
-                app:tint="@color/iconTint"
                 android:src="@drawable/ic_settings"
                 android:contentDescription="@string/general_settings_icon_content_description" />
 
@@ -41,7 +38,6 @@
                 android:layout_toEndOf="@id/general_Settings_icon"
                 android:paddingStart="32dp"
                 android:paddingEnd="0dp"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/settings_header_general"/>
         </RelativeLayout>
@@ -58,15 +54,13 @@
                 android:paddingTop="@dimen/settings_padding_topbottom"
                 android:paddingBottom="@dimen/settings_padding_topbottom"
                 android:clickable="true"
-                android:focusable="true"
-                android:background="?selectableItemBackground" >
+                android:focusable="true" >
 
             <ImageView
                     android:id="@+id/file_access_settings_icon"
                     android:layout_width="@dimen/settings_icon_image_size"
                     android:layout_height="@dimen/settings_icon_image_size"
                     android:layout_centerVertical="true"
-                    app:tint="@color/iconTint"
                     android:src="@drawable/ic_file_black"
                     android:contentDescription="@string/file_access_settings_icon_content_description" />
 
@@ -76,7 +70,6 @@
                     android:layout_toEndOf="@id/file_access_settings_icon"
                     android:paddingStart="32dp"
                     android:paddingEnd="0dp"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold"
                     android:text="@string/file_access"/>
         </RelativeLayout>
@@ -93,15 +86,13 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <ImageView
                 android:id="@+id/look_and_feel_settings_icon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:layout_centerVertical="true"
-                app:tint="@color/iconTint"
                 android:src="@drawable/ic_look_and_feel"
                 android:contentDescription="@string/look_and_feel_settings_icon_content_description" />
 
@@ -111,7 +102,6 @@
                 android:layout_toEndOf="@id/look_and_feel_settings_icon"
                 android:paddingStart="32dp"
                 android:paddingEnd="0dp"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/look_and_feel"/>
         </RelativeLayout>
@@ -128,15 +118,13 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <ImageView
                 android:id="@+id/notification_settings_icon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:layout_centerVertical="true"
-                app:tint="@color/iconTint"
                 android:src="@drawable/ic_notifications"
                 android:contentDescription="@string/notification_settings_icon_content_description" />
 
@@ -146,7 +134,6 @@
                 android:layout_toEndOf="@id/notification_settings_icon"
                 android:paddingStart="32dp"
                 android:paddingEnd="0dp"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/notifications_pref_title"/>
         </RelativeLayout>
@@ -163,15 +150,13 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <ImageView
                 android:id="@+id/logging_settings_icon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:layout_centerVertical="true"
-                app:tint="@color/iconTint"
                 android:src="@drawable/ic_file_alert"
                 android:contentDescription="@string/logging_settings_icon_content_description" />
 
@@ -181,7 +166,6 @@
                 android:layout_toEndOf="@id/logging_settings_icon"
                 android:paddingStart="32dp"
                 android:paddingEnd="0dp"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/logging_settings_header"/>
         </RelativeLayout>

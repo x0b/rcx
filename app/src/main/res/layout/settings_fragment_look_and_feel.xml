@@ -24,14 +24,12 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/theme_title"/>
 
@@ -44,14 +42,12 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/textColorPrimary"
                 android:text="@string/auto_theme"/>
 
             <Switch
@@ -69,14 +65,12 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/textColorPrimary"
                 android:text="@string/dark_theme"/>
 
             <Switch
@@ -94,15 +88,13 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="@string/light_theme"
-                android:textColor="@color/textColorPrimary" />
+                android:text="@string/light_theme" />
 
             <Switch
                 android:id="@+id/light_theme_switch"
@@ -124,14 +116,12 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:text="@string/wrap_filenames"/>
 

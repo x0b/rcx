@@ -24,8 +24,7 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -39,14 +38,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/use_logs"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/use_logs_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/use_logs_summary" />
 
             </LinearLayout>
 
@@ -71,8 +68,7 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <LinearLayout
                     android:layout_width="wrap_content"
@@ -82,7 +78,6 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/send_anonymous_crash_reports"/>
 
@@ -90,7 +85,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/txt_crash_report_summary"
-                        android:textColor="@color/textColorSecondary"
                         android:autoLink="web"
                         android:textIsSelectable="false" />
 
@@ -117,8 +111,7 @@
                 android:paddingTop="@dimen/settings_padding_topbottom"
                 android:paddingBottom="@dimen/settings_padding_topbottom"
                 android:clickable="true"
-                android:focusable="true"
-                android:background="?selectableItemBackground" >
+                android:focusable="true" >
 
             <LinearLayout
                     android:layout_width="wrap_content"
@@ -128,14 +121,12 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textColorPrimary"
                         android:textStyle="bold"
                         android:text="@string/pref_send_test_report_title"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textColorSecondary"
                         android:text="@string/pref_send_test_report_summary"/>
 
             </LinearLayout>
@@ -151,7 +142,6 @@
             android:id="@+id/start_report_collection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -168,14 +158,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_bugreport_start_title"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_bugreport_start_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_bugreport_start_summary" />
 
             </LinearLayout>
         </RelativeLayout>
@@ -189,7 +177,6 @@
             android:id="@+id/send_sigquit_to_rclone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -205,14 +192,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pref_send_sigquit_title"
-                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pref_send_sigquit_summary"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/pref_send_sigquit_summary" />
 
             </LinearLayout>
         </RelativeLayout>

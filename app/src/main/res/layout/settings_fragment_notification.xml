@@ -26,14 +26,12 @@
             android:paddingTop="@dimen/settings_padding_topbottom"
             android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/open_system_settings"
-                android:textColor="@color/textColorPrimary" />
+                android:text="@string/open_system_settings" />
         </RelativeLayout>
 
         <View
@@ -46,14 +44,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:textColor="@color/textColorPrimary"
                 android:paddingTop="@dimen/settings_padding_topbottom"
                 android:paddingBottom="@dimen/settings_padding_topbottom"
                 android:text="@string/app_updates_notifications"/>
@@ -79,8 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:focusable="true"
-            android:background="?selectableItemBackground" >
+            android:focusable="true" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -88,8 +83,7 @@
                 android:layout_centerVertical="true"
                 android:paddingTop="@dimen/settings_padding_topbottom"
                 android:paddingBottom="@dimen/settings_padding_topbottom"
-                android:text="@string/beta_app_updates_notifications"
-                android:textColor="@color/textColorPrimary" />
+                android:text="@string/beta_app_updates_notifications" />
 
             <Switch
                 android:id="@+id/beta_app_updates_switch"
