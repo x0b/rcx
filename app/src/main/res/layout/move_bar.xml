@@ -6,11 +6,12 @@
     android:layout_height="56dp"
     android:orientation="horizontal"
     android:layout_gravity="bottom"
-    android:background="?attr/colorPrimaryInverse"
     android:elevation="8dp"
     android:visibility="gone"
     android:clickable="true"
     tools:showIn="@layout/fragment_file_explorer_list"
+    android:theme="@style/FileListBottomBars"
+    style="@style/FileListBottomBars"
     android:focusable="true">
 
     <ImageView

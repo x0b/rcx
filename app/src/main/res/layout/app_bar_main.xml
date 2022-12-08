@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
-                app:cardCornerRadius="36dp"
+                app:cardCornerRadius="@dimen/cardCornerRadius"
                 app:cardElevation="2dp"
                 style="@style/MainViewToolbar"
                 app:strokeWidth="0dp">
