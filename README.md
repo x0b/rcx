@@ -24,8 +24,8 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 - **File Management** (list, view, download, upload, move, rename, delete files and folders)
 - **Streaming** (Stream media files, serve files and directories over FTP, HTTP, WebDAV or DLNA)
 - **Integration** (Access local storage devices and share files with the application to store them on a remote)
-- **Many cloud storage providers** (all via rclone config import, some without)
-- **Material Design** (Dark theme, custom primary and accent colors)
+- **Many cloud storage providers** (all via rclone config import, some without ui-setup)
+- **Material 3 Design** (Dark theme)
 - **All architectures** (runs on ARM, ARM64, x86 and x64 devices, Android 7+)
 - **Storage Access Framework (SAF)** ([see docs](https://x0b.github.io/docs/#adding-local-storage-saf)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
@@ -34,9 +34,10 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 
 Screenshots
 -----------
-Manage Storage|Explore Files|Manage Files
-:-----:|:--------------:|:-----------:|
-![screenshot1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)|![screenshot2](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)|![screenshot3](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)|
+|                                Manage Storage                                 |                                Explore Files                                  |                                 Manage Files                                  |                                 Set up Tasks                                  |
+:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
+ ![screenshot1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![screenshot2](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) | ![screenshot3](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![screenshot3](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
+ ![screenshot5](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) | ![screenshot6](fastlane/metadata/android/en-US/images/phoneScreenshots/6.png) | ![screenshot7](fastlane/metadata/android/en-US/images/phoneScreenshots/7.png) | ![screenshot8](fastlane/metadata/android/en-US/images/phoneScreenshots/8.png) |
 
 
 Intentservice
