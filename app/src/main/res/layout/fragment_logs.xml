@@ -12,7 +12,6 @@
         android:id="@+id/log_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/backgroundColor"
         android:clipToPadding="false"
         android:paddingBottom="88dp"
         tools:listitem="@layout/fragment_log_item">

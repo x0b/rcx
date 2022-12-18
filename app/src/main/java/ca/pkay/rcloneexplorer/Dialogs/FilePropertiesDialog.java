@@ -58,7 +58,7 @@ public class FilePropertiesDialog extends DialogFragment {
 
         rclone = new Rclone(context);
         asyncTasks = new AsyncTask[2];
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 

@@ -81,7 +81,7 @@ public class RemotePropertiesDialog extends DialogFragment {
 
         rclone = new Rclone(context);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity) context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_remote_properties, null);
 

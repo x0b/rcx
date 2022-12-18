@@ -33,7 +33,7 @@ public class GoToDialog extends DialogFragment {
             listener = (Callbacks) getParentFragment();
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_go_to, null);
         builder.setTitle(R.string.dialog_go_to_title);

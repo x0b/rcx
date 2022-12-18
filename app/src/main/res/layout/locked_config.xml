@@ -30,7 +30,6 @@
             android:layout_below="@+id/locked_config_ic"
             android:layout_centerHorizontal="true"
             android:text="@string/configuration_is_password_protected"
-            android:textColor="@color/textColorPrimary"
             android:layout_marginTop="8dp" />
 
         <Button

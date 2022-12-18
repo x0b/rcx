@@ -7,8 +7,9 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/filepicker_row_padding"
     android:paddingBottom="@dimen/filepicker_row_padding"
-    android:orientation="vertical"
-    android:background="@color/cardColor">
+    android:theme="@style/FileListItem"
+    style="@style/FileListItem"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:orientation="vertical"
@@ -36,8 +37,7 @@
                 android:layout_height="@dimen/filepicker_icon_size"
                 android:src="@drawable/ic_folder"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="@string/file_icon"
-                app:tint="@color/iconTint" />
+                android:contentDescription="@string/file_icon" />
         </FrameLayout>
 
         <LinearLayout
@@ -55,7 +55,6 @@
                 android:ellipsize="middle"
                 android:fontFamily="sans-serif"
                 android:singleLine="true"
-                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 tools:text="Test File" />
             <!-- android:textAppearance="@color/textAppearanceListItem" -->
@@ -63,13 +62,14 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:theme="@style/FileListItemDescription"
+                style="@style/FileListItemDescription"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/file_modtime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary"
                     tools:text="2018-01-01" />
 
                 <TextView
@@ -78,14 +78,12 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:text="@string/interpunct"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/interpunct"/>
 
                 <TextView
                     android:id="@+id/file_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/textColorSecondary"
                     tools:text="2 MB" />
             </LinearLayout>
         </LinearLayout>
@@ -102,8 +100,7 @@
             android:paddingEnd="@dimen/filepicker_more_padding"
             android:paddingTop="@dimen/filepicker_more_padding"
             android:paddingBottom="@dimen/filepicker_more_padding"
-            android:src="@drawable/ic_more_vert"
-            android:tint="@color/iconTint" />
+            android:src="@drawable/ic_more_vert" />
     </RelativeLayout>
 
 </LinearLayout>

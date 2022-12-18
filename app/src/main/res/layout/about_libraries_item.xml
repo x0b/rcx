@@ -21,7 +21,6 @@
             android:id="@+id/library_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:background="?selectableItemBackground"
@@ -36,7 +35,6 @@
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:background="?selectableItemBackground"
-            android:textColor="@color/textColorSecondary"
             android:clickable="true"
             android:focusable="true"
             tools:text="Licence"/>

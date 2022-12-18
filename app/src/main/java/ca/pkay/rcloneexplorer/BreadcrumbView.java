@@ -94,7 +94,6 @@ public class BreadcrumbView extends HorizontalScrollView {
         final TextView textViewCrumb = new TextView(context);
         textViewCrumb.setText(crumbTitle);
         textViewCrumb.setTypeface(null, Typeface.BOLD);
-        textViewCrumb.setTextColor(getResources().getColor(R.color.textColorPrimary));
         TypedValue outValue = new TypedValue();
         getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
         textViewCrumb.setBackgroundResource(outValue.resourceId);
@@ -147,7 +146,6 @@ public class BreadcrumbView extends HorizontalScrollView {
         String path = pathList.get(lastCrumbIndex);
         previousCrumb = textViewMap.get(path);
         previousCrumb.setTypeface(null, Typeface.BOLD);
-        previousCrumb.setTextColor(getResources().getColor(R.color.textColorPrimary));
     }
 
     public void clearCrumbs() {

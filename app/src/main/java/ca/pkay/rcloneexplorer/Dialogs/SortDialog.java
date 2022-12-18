@@ -52,7 +52,7 @@ public class SortDialog extends DialogFragment {
             sortOrder = savedInstanceState.getInt("sortOrder");
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         view = layoutInflater.inflate(R.layout.dialog_sort, null);
 

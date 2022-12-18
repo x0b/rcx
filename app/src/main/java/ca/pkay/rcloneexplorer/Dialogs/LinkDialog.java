@@ -34,7 +34,7 @@ public class LinkDialog extends DialogFragment {
         }
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_link, null);
 

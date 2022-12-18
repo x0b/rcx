@@ -137,12 +137,7 @@ public class AliasConfig extends Fragment implements RemoteDestinationDialog.OnD
             options[i++] = remote.getDisplayName();
         }
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.select_remote)
                 .setNegativeButton(R.string.cancel, (dialog, which) -> selectedRemote = null)
                 .setPositiveButton(R.string.select, (dialog, which) -> {

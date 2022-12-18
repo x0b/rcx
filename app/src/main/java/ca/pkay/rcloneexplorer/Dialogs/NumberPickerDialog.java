@@ -51,7 +51,7 @@ public class NumberPickerDialog extends DialogFragment {
 
         listener = (OnValueSelected) getParentFragment();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_number_picker, null);
 

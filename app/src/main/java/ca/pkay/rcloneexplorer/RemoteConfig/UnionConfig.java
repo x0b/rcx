@@ -1,7 +1,6 @@
 package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -134,12 +132,7 @@ public class UnionConfig extends Fragment implements RemoteDestinationDialog.OnD
             options[i++] = remote.getDisplayName();
         }
 
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.select_remote)
                 .setNegativeButton(R.string.cancel, (dialog, which) -> selectedRemote = null)
                 .setPositiveButton(R.string.select, (dialog, which) -> {

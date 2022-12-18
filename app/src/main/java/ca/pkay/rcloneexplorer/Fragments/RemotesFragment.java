@@ -29,24 +29,24 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import ca.pkay.rcloneexplorer.AppShortcutsHelper;
-import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Activities.MainActivity;
-import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
-import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
 import com.leinardi.android.speeddial.SpeedDialView;
-
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import ca.pkay.rcloneexplorer.Activities.MainActivity;
+import ca.pkay.rcloneexplorer.AppShortcutsHelper;
+import ca.pkay.rcloneexplorer.Dialogs.RemotePropertiesDialog;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemotesRecyclerViewAdapter;
+import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdapter.OnRemoteOptionsClick {
 
@@ -361,12 +361,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Set<String> hiddenRemotes = sharedPreferences.getStringSet(getString(R.string.shared_preferences_hidden_remotes), new HashSet<>());
 
-        AlertDialog.Builder builder;
-        if (ActivityHelper.isDarkTheme(this.getActivity())) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         builder.setTitle(R.string.select_remotes_to_hide);
         final ArrayList<RemoteItem> remotes = new ArrayList<>(rclone.getRemotes());
@@ -490,12 +485,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     private void renameRemote(final RemoteItem remoteItem) {
-        AlertDialog.Builder builder;
-        if (ActivityHelper.isDarkTheme(this.getActivity())) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         final EditText remoteNameEdit = new EditText(context);
@@ -519,12 +509,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
     }
 
     private void deleteRemote(final RemoteItem remoteItem) {
-        AlertDialog.Builder builder;
-        if (ActivityHelper.isDarkTheme(this.getActivity())) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_remote_title);
         builder.setMessage(remoteItem.getDisplayName());
         builder.setNegativeButton(R.string.cancel, null);

@@ -44,7 +44,7 @@ public class ServeDialog extends DialogFragment {
         }
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_serve, null);
 

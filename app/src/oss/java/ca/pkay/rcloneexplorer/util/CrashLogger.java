@@ -8,11 +8,6 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import ca.pkay.rcloneexplorer.BuildConfig;
 
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.analytics.Analytics;
-import com.microsoft.appcenter.crashes.Crashes;
-import com.microsoft.appcenter.crashes.ingestion.models.ErrorAttachmentLog;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,20 +42,15 @@ public class CrashLogger {
     public static void initCrashLogging(@NonNull Context context) {
         Context appCtx = context.getApplicationContext();
         if (appCtx instanceof Application) {
-            AppCenter.start((Application) appCtx, generateReportId(s),
-                    Analytics.class, Crashes.class);
             nativeLibraryDir = appCtx.getApplicationInfo().nativeLibraryDir;
         }
     }
 
     public static void logNonFatal(@NonNull String tag, @NonNull String message, @NonNull Throwable e) {
         HashMap<String, String> properties = new HashMap<>();
-        ArrayList<ErrorAttachmentLog> attachments = new ArrayList<>();
         properties.put("tag", tag);
         if (message.length() >= PROP_PACK_LENGTH) {
             properties.put("message", "see attachment message.txt");
-            ErrorAttachmentLog attachmentLog = ErrorAttachmentLog.attachmentWithText(message, "message.txt");
-            attachments.add(attachmentLog);
         } else {
             properties.put("message", message);
         }
@@ -68,7 +58,6 @@ public class CrashLogger {
         if (e instanceof IOException && e.getMessage() != null && e.getMessage().contains("librclone.so")) {
             attachHwStats(properties);
         }
-        Crashes.trackError(e, properties, attachments);
     }
 
     // Occasionally, bug reports from devices with really weird device

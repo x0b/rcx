@@ -483,12 +483,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void warnUserAboutOverwritingConfiguration() {
-        AlertDialog.Builder builder;
-        if (ActivityHelper.isDarkTheme(this)) {
-            builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.replace_config_file_question);
         builder.setMessage(R.string.config_file_lost_statement);
         builder.setPositiveButton(R.string.continue_statement, (dialogInterface, i) -> {
@@ -505,12 +500,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void askUseExternalConfig(final Uri uri) {
-        AlertDialog.Builder builder;
-        if (ActivityHelper.isDarkTheme(this)) {
-            builder = new AlertDialog.Builder(this, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.config_use_external_question);
         builder.setMessage(context.getString(R.string.config_import_external_explain, uri.toString()));
         builder.setPositiveButton(R.string.continue_statement, (dialogInterface, i) -> {

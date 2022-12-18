@@ -16,8 +16,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.microsoft.appcenter.AppCenter;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -100,17 +98,7 @@ public class LoggingSettingsFragment extends Fragment {
         useLogsSwitch.setChecked(useLogs);
         crashReportsSwitch.setChecked(crashReports);
         if (crashReports) {
-            AppCenter.getInstallId().thenAccept(uuid -> {
-                if (null == crashReportSummary || null == getContext()) {
-                    return;
-                }
-                if (null == uuid) {
-                    crashReportSummary.setText(getString(R.string.pref_crash_report_summary, getString(R.string.restart_required)));
-                } else {
-                    String userId = uuid.toString();
-                    crashReportSummary.setText(getString(R.string.pref_crash_report_summary, userId));
-                }
-            });
+
         } else {
             crashReportSummary.setText(getString(R.string.pref_crash_report_summary, "N/A"));
         }

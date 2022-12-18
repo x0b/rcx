@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -11,31 +12,32 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
-import ca.pkay.rcloneexplorer.Items.FileItem;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.R;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
-
-import ca.pkay.rcloneexplorer.util.FLog;
-import io.github.x0b.safdav.SafAccessProvider;
-import io.github.x0b.safdav.file.FileAccessError;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Items.FileItem;
+import ca.pkay.rcloneexplorer.Items.RemoteItem;
+import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.util.FLog;
+import io.github.x0b.safdav.SafAccessProvider;
+import io.github.x0b.safdav.file.FileAccessError;
+
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "FileExplorerRVA";
     private List<FileItem> files;
-    private int selectionColor;
     private View emptyView;
     private View noSearchResultsView;
     private OnClickListener listener;
@@ -45,7 +47,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private boolean isInSearchMode;
     private boolean canSelect;
     private boolean showThumbnails;
-    private int cardColor;
     private boolean optionsDisabled;
     private boolean wrapFileNames;
     private Context context;
@@ -72,14 +73,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         isInSearchMode = false;
         canSelect = true;
         wrapFileNames = true;
-
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        //theme.resolveAttribute(R.attr.cardColor, typedValue, true);
-        cardColor = typedValue.data;
-
-        //theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
-        selectionColor = typedValue.data;
         optionsDisabled = false;
         sizeLimit = PreferenceManager.getDefaultSharedPreferences(context)
                 .getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
@@ -152,12 +145,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
         if (isInSelectMode) {
             if (selectedItems.contains(item)) {
-                holder.view.setBackgroundColor(selectionColor);
+                holder.view.setBackgroundColor(getSelectionBackgroundColor());
             } else {
-                holder.view.setBackgroundColor(cardColor);
+                holder.view.setBackgroundColor(Color.TRANSPARENT);
             }
         } else {
-            holder.view.setBackgroundColor(cardColor);
+            holder.view.setBackgroundColor(Color.TRANSPARENT);
         }
 
         if (isInMoveMode) {
@@ -436,10 +429,17 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         this.canSelect = canSelect;
     }
 
+    private int getSelectionBackgroundColor() {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.colorSurfaceVariant, typedValue, true);
+        return typedValue.data;
+    }
+
     private void onLongClickAction(FileItem item, ViewHolder holder) {
         if (selectedItems.contains(item)) {
             selectedItems.remove(item);
-            holder.view.setBackgroundColor(cardColor);
+            holder.view.setBackgroundColor(Color.TRANSPARENT);
             if (selectedItems.size() == 0) {
                 isInSelectMode = false;
                 listener.onFileDeselected();
@@ -448,7 +448,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         } else {
             selectedItems.add(item);
             isInSelectMode = true;
-            holder.view.setBackgroundColor(selectionColor);
+            holder.view.setBackgroundColor(getSelectionBackgroundColor());
             listener.onFilesSelected();
         }
         notifyDataSetChanged();

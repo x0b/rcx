@@ -9,12 +9,12 @@ android {
             keyAlias 'github_x0b'
         }
     }
-    compileSdkVersion 32
+    compileSdkVersion 33
     ndkVersion '25.0.8775105'
     defaultConfig {
         applicationId 'de.felixnuesse.extract'
-        minSdkVersion 21
-        targetSdkVersion 32
+        minSdkVersion 23
+        targetSdkVersion 33
         versionCode 200 // last digit is reserved for ABI, only ever end on 0!
         versionName '2.0.6-dev'
         resConfigs "en", "de" // restrict to used languages
@@ -79,8 +79,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -100,35 +100,33 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0-alpha01'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.core:core:1.3.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.browser:browser:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.browser:browser:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.0'
-    implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'com.github.leinardi:FloatingActionButtonSpeedDial:3.1.1'
     implementation 'org.markdownj:markdownj-core:0.4'
     implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
     implementation 'com.github.GrenderG:Toasty:1.3.0'
-    // Appcenter (sourced from own sdk fork to ensure control)
-    def appCenterSdkVersion = '4.1.1'
-    implementation "com.github.x0b.appcenter-sdk-android:appcenter-analytics:${appCenterSdkVersion}"
-    implementation "com.github.x0b.appcenter-sdk-android:appcenter-crashes:${appCenterSdkVersion}"
+
+    implementation 'androidx.appcompat:appcompat:1.7.0-alpha01'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+
+
     // Thumbnails
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     // REST Client
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     debugImplementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     // JSON
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.3'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.3'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.1'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
     // Timestmps
     implementation 'com.github.x0b:rfc3339parser:2.0.0'
     // SAF/WebDAV
@@ -136,12 +134,12 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     // Java 8+ library support
     // TODO: replace with coreLibraryDesugar once available
-    implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.3'
-    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.3'
+    implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.4'
+    implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.4'
     // App intro
     implementation 'com.github.AppIntro:AppIntro:6.1.0'
     // TEST
-    testImplementation 'junit:junit:4.13.1'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 }

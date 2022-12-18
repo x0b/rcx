@@ -6,11 +6,12 @@
     android:layout_height="56dp"
     android:orientation="horizontal"
     android:layout_gravity="bottom"
-    android:background="@color/colorPrimary"
     android:elevation="8dp"
     android:visibility="gone"
     android:clickable="true"
     tools:showIn="@layout/fragment_file_explorer_list"
+    android:theme="@style/FileListBottomBars"
+    style="@style/FileListBottomBars"
     android:focusable="true">
 
     <ImageView
@@ -45,7 +46,6 @@
         android:text="@string/cancel"
         android:clickable="true"
         android:focusable="true"
-        android:textColor="@android:color/white"
         android:textStyle="bold"
         android:background="?selectableItemBackgroundBorderless"
         android:layout_gravity="center_vertical"/>
@@ -62,7 +62,6 @@
         android:clickable="true"
         android:focusable="true"
         android:textStyle="bold"
-        android:textColor="@android:color/white"
         android:background="?selectableItemBackgroundBorderless"
         android:layout_gravity="center_vertical"/>
 </LinearLayout>

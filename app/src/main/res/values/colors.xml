@@ -1,28 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <color name="colorPrimary">#4CAF50</color>
-    <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorPrimaryLight">#C8E6C9</color>
-    <color name="colorAccent">#FF9800</color>
+    <color name="seed">#4CAF50</color>
 
-    <color name="backgroundColor">#FAFAFA</color>
-    <color name="cardColor">#FFFFFF</color>
-    <color name="textColorPrimary">#5E5E5E</color>
-    <color name="textColorSecondary">#717070</color>
-    <color name="textColorTertiary">#A5A5A5</color>
-    <color name="dividerColor">#E4E4E4</color>
-    <color name="iconTint">#4A4A4A</color>
-    <color name="colorControlNormal">#757575</color>
-    <color name="colorControlActivated">?attr/colorAccent</color>
-    <color name="colorControlHighlight">#757575</color>
+    <color name="md_theme_light_primary">#4CAF50</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#42C13C</color>
+    <color name="md_theme_light_onPrimaryContainer">#002204</color>
 
-    <color name="white">#FFFFFF</color>
-    <color name="grey">#DDDDDD</color>
-    <color name="grey300">#E0E0E0</color>
-    <color name="darkBackground">#303030</color>
-    <color name="fabOverlayColor">#99bdbdbd</color>
-    
-    <color name="colorPrimaryText">#212121</color>
-    <color name="colorSecondaryText">#757575</color>
-    <color name="colorDivider">#BDBDBD</color>
+    <color name="md_theme_light_secondary">#52634F</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#D5E8CF</color>
+    <color name="md_theme_light_onSecondaryContainer">#111F0F</color>
+
+    <color name="md_theme_light_tertiary">#C37400</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#EFA02E</color>
+    <color name="md_theme_light_onTertiaryContainer">#493312</color>
+
+    <color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_light_errorContainer">#FFDAD6</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+    <color name="md_theme_light_background">#FCFDF6</color>
+    <color name="md_theme_light_onBackground">#1A1C19</color>
+    <color name="md_theme_light_surface">#FCFDF6</color>
+    <color name="md_theme_light_onSurface">#1A1C19</color>
+    <color name="md_theme_light_surfaceVariant">#DEE5D8</color>
+    <color name="md_theme_light_onSurfaceVariant">#424940</color>
+    <color name="md_theme_light_outline">#72796F</color>
+    <color name="md_theme_light_inverseOnSurface">#F0F1EB</color>
+    <color name="md_theme_light_inverseSurface">#2F312D</color>
+    <color name="md_theme_light_inversePrimary">#78DC77</color>
+    <color name="md_theme_light_shadow">#000000</color>
+    <color name="md_theme_light_surfaceTint">#006E1C</color>
+    <color name="md_theme_light_outlineVariant">#C2C9BD</color>
+    <color name="md_theme_light_scrim">#000000</color>
+
+
+    <color name="md_theme_dark_primary">#4CAF50</color>
+    <color name="md_theme_dark_onPrimary">#00390A</color>
+    <color name="md_theme_dark_primaryContainer">#2A6A2D</color>
+    <color name="md_theme_dark_onPrimaryContainer">#94F990</color>
+
+    <color name="md_theme_dark_secondary">#BACCB3</color>
+    <color name="md_theme_dark_onSecondary">#253423</color>
+    <color name="md_theme_dark_secondaryContainer">#424242</color>
+    <color name="md_theme_dark_onSecondaryContainer">#B3FFFFFF</color>
+
+    <color name="md_theme_dark_tertiary">#C37400</color>
+    <color name="md_theme_dark_onTertiary">#4C2D00</color>
+    <color name="md_theme_dark_tertiaryContainer">#D88C1E</color>
+    <color name="md_theme_dark_onTertiaryContainer">#493312</color>
+
+    <color name="md_theme_dark_error">#FFB4AB</color>
+    <color name="md_theme_dark_errorContainer">#93000A</color>
+    <color name="md_theme_dark_onError">#690005</color>
+    <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
+
+    <color name="md_theme_dark_background">#1A1C19</color>
+    <color name="md_theme_dark_onBackground">#E2E3DD</color>
+    <color name="md_theme_dark_surface">#1A1C19</color>
+    <color name="md_theme_dark_onSurface">#E2E3DD</color>
+    <color name="md_theme_dark_surfaceVariant">#424940</color>
+    <color name="md_theme_dark_onSurfaceVariant">#C2C9BD</color>
+    <color name="md_theme_dark_outline">#8C9388</color>
+    <color name="md_theme_dark_inverseOnSurface">#1A1C19</color>
+    <color name="md_theme_dark_inverseSurface">#E2E3DD</color>
+    <color name="md_theme_dark_inversePrimary">#006E1C</color>
+    <color name="md_theme_dark_shadow">#000000</color>
+    <color name="md_theme_dark_surfaceTint">#78DC77</color>
+    <color name="md_theme_dark_outlineVariant">#424940</color>
+    <color name="md_theme_dark_scrim">#000000</color>
+
+
+
+
+    <color name="white">@android:color/white</color>
+    <color name="colorAccent">@color/md_theme_light_secondary</color>
+    <color name="textColorTertiary">@color/md_theme_light_tertiary</color>
+    <color name="textColorPrimary">@color/md_theme_light_onPrimary</color>
+    <color name="textColorSecondary">@color/md_theme_light_onSecondary</color>
+    <color name="cardColor">@color/md_theme_light_primaryContainer</color>
+    <color name="iconTint">@color/white</color>
+
+
+    <color name="dividerColor">@color/md_theme_light_secondary</color>
+    <color name="fabOverlayColor">@color/md_theme_light_secondary</color>
+
 </resources>

@@ -58,7 +58,7 @@ public class PasswordGeneratorDialog extends DialogFragment {
         callback = (Callbacks) getParentFragment();
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         builder.setPositiveButton(R.string.set_password_button, (dialog, which) -> callback.onPasswordSelected(getTag(), generatedPassword));
         builder.setNegativeButton(R.string.cancel, null);

@@ -13,20 +13,22 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+
 import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
-import com.google.android.material.textfield.TextInputLayout;
-
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
-
-import java.util.ArrayList;
 
 public class DriveConfig extends Fragment {
 
@@ -171,12 +173,7 @@ public class DriveConfig extends Fragment {
     }
 
     private void setScope() {
-        AlertDialog.Builder builder;
-        if (isDarkTheme) {
-            builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.drive_scope_title);
         builder.setItems(R.array.drive_scopes, (dialog, which) -> scopeSet(which));
         builder.show();

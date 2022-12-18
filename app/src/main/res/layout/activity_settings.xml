@@ -12,10 +12,8 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/backgroundColor"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        android:theme="@style/ToolbarTheme"
         app:elevation="0dp">
 
         <com.google.android.material.card.MaterialCardView
@@ -23,8 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            app:cardBackgroundColor="?attr/colorPrimary"
-            app:cardCornerRadius="36dp"
+            app:cardCornerRadius="@dimen/cardCornerRadius"
+            style="@style/MainViewToolbar"
             app:cardElevation="2dp"
             app:strokeWidth="0dp">
 
@@ -32,8 +30,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                android:theme="@style/MainViewToolbar"
+                android:orientation="horizontal" />
 
         </com.google.android.material.card.MaterialCardView>
     </com.google.android.material.appbar.AppBarLayout>

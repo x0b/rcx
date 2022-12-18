@@ -11,6 +11,8 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:elevation="4dp"
+        android:theme="@style/SecondaryCardStyle"
+        style="@style/SecondaryCardStyle"
         app:cardCornerRadius="@dimen/cardCornerRadius"
         app:contentPadding="@dimen/cardPadding">
 
@@ -25,7 +27,6 @@
                 android:layout_height="48dp"
                 android:background="#00FFFFFF"
                 android:contentDescription="@string/enabled"
-                android:tint="@color/iconTint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -38,7 +39,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="sans-serif"
-                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/triggerIcon"
                 app:layout_constraintTop_toTopOf="parent"
@@ -54,7 +54,6 @@
                 android:contentDescription="@string/file_options_content_description"
                 android:padding="4dp"
                 android:src="@drawable/ic_more_vert"
-                android:tint="@color/iconTint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,7 +64,6 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/trigger_time_label"
-                android:textColor="@color/textColorSecondary"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                 app:layout_constraintStart_toStartOf="@+id/triggerName"
                 app:layout_constraintTop_toBottomOf="@+id/triggerName" />
@@ -76,7 +74,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="00:00"
-                android:textColor="@color/textColorSecondary"
                 app:layout_constraintStart_toEndOf="@+id/text_label_time"
                 app:layout_constraintTop_toTopOf="@+id/text_label_time" />
 
@@ -97,56 +94,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_mon"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_mon" />
 
                 <TextView
                     android:id="@+id/trigger_enabled_tue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_tue"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_tue"/>
 
                 <TextView
                     android:id="@+id/trigger_enabled_wed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_wed"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_wed" />
 
                 <TextView
                     android:id="@+id/trigger_enabled_thu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_thur"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_thur" />
 
                 <TextView
                     android:id="@+id/trigger_enabled_fri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_fri"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_fri" />
 
                 <TextView
                     android:id="@+id/trigger_enabled_sat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_sat"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_sat" />
 
                 <TextView
                     android:id="@+id/trigger_enabled_sun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/weekday_shorthand_sun"
-                    android:textColor="@color/textColorSecondary" />
+                    android:text="@string/weekday_shorthand_sun" />
             </LinearLayout>
 
             <TextView
@@ -155,7 +145,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:text="@string/trigger_task_label"
-                android:textColor="@color/textColorSecondary"
                 app:layout_constraintStart_toEndOf="@+id/time_starttime"
                 app:layout_constraintTop_toTopOf="@+id/time_starttime" />
 
@@ -165,7 +154,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="TextView"
-                android:textColor="@color/textColorSecondary"
                 app:layout_constraintStart_toEndOf="@+id/trigger_target_label"
                 app:layout_constraintTop_toTopOf="@+id/trigger_target_label" />
 

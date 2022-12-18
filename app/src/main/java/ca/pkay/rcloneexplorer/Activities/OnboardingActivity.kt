@@ -42,7 +42,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_welcome_title),
                 description = getString(R.string.intro_welcome_description),
                 imageDrawable = R.drawable.ic_dino2,
-                backgroundColor = resources.getColor(R.color.colorPrimary),
+                backgroundColor = resources.getColor(R.color.seed),
         ))
 
         addSlide(
@@ -50,7 +50,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_community_title),
                 description = getString(R.string.intro_community_description),
                 imageDrawable = R.drawable.ic_heart_red_24dp,
-                backgroundColor = resources.getColor(R.color.colorPrimaryDark),
+                backgroundColor = resources.getColor(R.color.md_theme_light_tertiary),
 
             ))
 
@@ -59,7 +59,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_storage_title),
                 description = getString(R.string.intro_storage_description),
                 imageDrawable = R.drawable.ic_intro_storage,
-                backgroundColor = resources.getColor(R.color.colorPrimary),
+                backgroundColor = resources.getColor(R.color.seed),
             ))
     }
 

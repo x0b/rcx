@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@color/backgroundColor" >
+    android:orientation="vertical" >
 
     <include
         layout="@layout/empty_directory_state" />
@@ -34,7 +33,6 @@
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:layout_gravity="bottom|center"
-        android:background="@color/colorPrimary"
         android:elevation="8dp"
         android:visibility="gone"
         android:clickable="true"

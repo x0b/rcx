@@ -36,8 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/sftp_root"
-            android:textColor="@color/textColorPrimary" />
+            android:text="@string/sftp_root" />
     </LinearLayout>
 
     <LinearLayout
@@ -70,8 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/sftp_home"
-            android:textColor="@color/textColorPrimary" />
+            android:text="@string/sftp_home"/>
     </LinearLayout>
 
     <LinearLayout
@@ -94,7 +92,6 @@
             android:id="@+id/checkbox_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/set_default_for_all_sftp_ssh_remotes"
-            android:textColor="@color/textColorPrimary" />
+            android:text="@string/set_default_for_all_sftp_ssh_remotes" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,7 +32,6 @@
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/log_icon"
             app:layout_constraintStart_toEndOf="@+id/log_icon"
@@ -46,7 +45,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:text="date"
-            android:textColor="@color/textColorSecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +56,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:text="content"
-            android:textColor="@color/textColorSecondary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/logtitle"

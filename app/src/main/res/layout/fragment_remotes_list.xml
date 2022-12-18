@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         app:sdMainFabClosedSrc="@drawable/ic_add"
+        android:theme="@style/FloatingActionButtonMulti"
         app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

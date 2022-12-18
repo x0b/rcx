@@ -5,7 +5,6 @@
     android:id="@+id/no_search_results_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
     android:visibility="invisible"
     tools:visibility="visible">
 

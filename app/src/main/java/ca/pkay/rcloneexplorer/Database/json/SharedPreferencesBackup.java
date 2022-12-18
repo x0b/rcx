@@ -38,8 +38,6 @@ public class SharedPreferencesBackup {
         // Look and Feel
         int darkTheme = sharedPreferences.getInt(context.getString(R.string.pref_key_dark_theme), FOLLOW_SYSTEM);
         boolean isWrapFilenames = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wrap_filenames), true);
-        int defaultColorPrimary = sharedPreferences.getInt(context.getString(R.string.pref_key_color_primary), R.color.colorPrimary);
-        int defaultColorAccent = sharedPreferences.getInt(context.getString(R.string.pref_key_color_accent), R.color.colorAccent);
 
         // Notifications
         boolean appUpdates = sharedPreferences.getBoolean(context.getString(R.string.pref_key_app_updates), true);

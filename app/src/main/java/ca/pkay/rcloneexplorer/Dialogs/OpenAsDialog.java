@@ -38,7 +38,7 @@ public class OpenAsDialog extends DialogFragment {
 
         listener = (OnClickListener) getParentFragment();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DarkDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_open_as, null);
         setListeners();
