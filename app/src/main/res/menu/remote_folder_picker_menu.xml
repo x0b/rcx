@@ -14,4 +14,10 @@
         android:icon="@drawable/ic_sort"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_new_folder"
+        android:title="@string/new_folder"
+        android:icon="@drawable/ic_create_new_folder"
+        app:showAsAction="ifRoom" />
+
 </menu>

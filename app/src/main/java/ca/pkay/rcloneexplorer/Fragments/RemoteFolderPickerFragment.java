@@ -46,6 +46,7 @@ import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.Dialogs.GoToDialog;
+import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.FileComparators;
 import ca.pkay.rcloneexplorer.Items.DirectoryObject;
@@ -64,6 +65,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                                                                             SwipeRefreshLayout.OnRefreshListener,
                                                                             BreadcrumbView.OnClickListener,
                                                                             SortDialog.OnClickListener,
+                                                                            InputDialog.OnPositive,
                                                                             GoToDialog.Callbacks {
 
 
@@ -412,6 +414,9 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
             case R.id.action_go_to:
                 showSFTPgoToDialog();
                 return true;
+            case R.id.action_new_folder:
+                onCreateNewDirectory();
+                return true;
             case android.R.id.home:
                 exitFragment();
                 return true;
@@ -527,6 +532,34 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                 .setSortOrder(sortOrder);
         sortDialog.show(getChildFragmentManager(), "sort dialog");
     }
+
+
+    private void onCreateNewDirectory() {
+        new InputDialog()
+                .setTitle(R.string.create_new_folder)
+                .setMessage(R.string.type_new_folder_name)
+                .setNegativeButton(R.string.cancel)
+                .setPositiveButton(R.string.okay_confirmation)
+                .show(getChildFragmentManager(), "input dialog");
+    }
+
+    /*
+     * Input Dialog callback
+     */
+    @Override
+    public void onPositive(String tag, String input) {
+        if (input.trim().length() == 0) {
+            return;
+        }
+        String newDir;
+        if (directoryObject.getCurrentPath().equals("//" + remote.getName())) {
+            newDir = input;
+        } else {
+            newDir = directoryObject.getCurrentPath() + "/" + input;
+        }
+        rclone.makeDirectory(remote, newDir);
+    }
+
 
     /*
      * Sort Dialog callback
