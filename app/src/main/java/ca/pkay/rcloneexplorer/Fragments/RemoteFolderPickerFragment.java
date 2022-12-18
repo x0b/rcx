@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.security.SecureRandom;
@@ -54,7 +55,6 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.LargeParcel;
 import es.dmoral.toasty.Toasty;
@@ -97,7 +97,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
     private String originalToolbarTitle;
     private int sortOrder;
     private FloatingActionButton fab;
-    private Boolean isDarkTheme;
     private Boolean isSearchMode;
     private String searchString;
     private boolean showThumbnails;
@@ -173,7 +172,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
         showThumbnails = sharedPreferences.getBoolean(getString(R.string.pref_key_show_thumbnails), false);
-        isDarkTheme = ActivityHelper.isDarkTheme(this.getActivity());
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
         String wrapFilenamesKey = getString(R.string.pref_key_wrap_filenames);
         prefChangeListener = (pref, key) -> {
@@ -220,6 +218,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         recyclerViewAdapter = new FileExplorerRecyclerViewAdapter(context, emptyFolderView, noSearchResultsView, this);
         recyclerViewAdapter.showThumbnails(showThumbnails);
         recyclerViewAdapter.setWrapFileNames(wrapFilenames);
+        recyclerViewAdapter.disableFileOptions();
         recyclerView.setAdapter(recyclerViewAdapter);
 
         if (remote.isRemoteType(RemoteItem.SFTP) && !goToDefaultSet & savedInstanceState == null) {
