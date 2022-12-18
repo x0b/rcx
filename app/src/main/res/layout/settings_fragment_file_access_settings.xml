@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:theme="@style/SettingsTheme"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -83,11 +84,6 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor" />
-
         <!-- local alias toggle -->
         <RelativeLayout
             android:id="@+id/enable_refresh_la_container"
@@ -133,11 +129,6 @@
                 android:gravity="center_vertical" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor" />
-
         <!-- All file access view -->
         <RelativeLayout
             android:id="@+id/open_all_files_setting_container"
@@ -170,12 +161,6 @@
 
             </LinearLayout>
         </RelativeLayout>
-
-        <View
-            android:id="@+id/open_all_files_setting_divider"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor" />
 
         <RelativeLayout
             android:id="@+id/enable_saf_vcp_view"
@@ -217,11 +202,6 @@
                 android:layout_alignParentEnd="true" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor" />
-
         <RelativeLayout
             android:id="@+id/vcp_declare_local_container"
             android:layout_width="match_parent"
@@ -262,11 +242,6 @@
                 android:layout_alignParentEnd="true" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor" />
-
         <RelativeLayout
             android:id="@+id/vcp_grant_all_container"
             android:layout_width="match_parent"
@@ -306,11 +281,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true" />
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor" />
     </LinearLayout>
 
 </ScrollView>

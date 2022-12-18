@@ -7,6 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Activities.SettingsActivity"
+    android:theme="@style/SettingsTheme"
     android:orientation="vertical">
 
     <LinearLayout
@@ -56,11 +57,6 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
-
         <RelativeLayout
             android:id="@+id/crash_reporting"
             android:layout_width="match_parent"
@@ -99,11 +95,6 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
-
         <RelativeLayout
                 android:id="@+id/send_test_report"
                 android:layout_width="match_parent"
@@ -131,12 +122,6 @@
 
             </LinearLayout>
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"
-            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/start_report_collection"
@@ -168,11 +153,6 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
-
         <RelativeLayout
             android:id="@+id/send_sigquit_to_rclone"
             android:layout_width="match_parent"
@@ -201,11 +181,6 @@
 
             </LinearLayout>
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

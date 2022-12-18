@@ -7,8 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Activities.SettingsActivity"
+    android:theme="@style/SettingsTheme"
     android:orientation="vertical">
-    <!--tools:showIn="@layout/activity_settings"-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingStart="@dimen/settings_inset_item_padding"
             android:clickable="true"
             android:focusable="true" >
 
@@ -64,6 +65,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingStart="@dimen/settings_inset_item_padding"
             android:clickable="true"
             android:focusable="true" >
 
@@ -87,6 +89,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingStart="@dimen/settings_inset_item_padding"
             android:clickable="true"
             android:focusable="true" >
 
@@ -104,10 +107,6 @@
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/wrap_filenames"
@@ -132,11 +131,6 @@
                 android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
     </LinearLayout>
 
 </ScrollView>

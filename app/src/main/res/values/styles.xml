@@ -64,6 +64,11 @@
         <item name="cardBackgroundColor">?attr/colorTertiary</item>
     </style>
 
+    <style name="SettingsTheme">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:tint">?attr/colorOnBackground</item>
+    </style>
+
     <!-- Card Styles need to be applied to the card directly.-->
     <style name="PrimaryCardStyle">
         <item name="cardBackgroundColor">?attr/colorPrimaryContainer</item>

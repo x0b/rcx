@@ -58,7 +58,6 @@ public class FileAccessSettingsFragment extends Fragment {
     private View refreshLaContainer;
     private Switch refreshLaSwitch;
     private View openAllFilesPerm;
-    private View openAllFilesDivider;
     private View vcpGrantAllContainer;
     private Switch vcpGrantAllSwitch;
     private Rclone rclone;
@@ -114,7 +113,6 @@ public class FileAccessSettingsFragment extends Fragment {
         refreshLaContainer = view.findViewById(R.id.enable_refresh_la_container);
         refreshLaSwitch = view.findViewById(R.id.enable_refresh_la_switch);
         openAllFilesPerm = view.findViewById(R.id.open_all_files_setting_container);
-        openAllFilesDivider = view.findViewById(R.id.open_all_files_setting_divider);
         vcpEnabledContainer = view.findViewById(R.id.enable_saf_vcp_view);
         vcpEnabledSwitch = view.findViewById(R.id.enable_saf_vcp_switch);
         vcpDeclareLocalContainer = view.findViewById(R.id.vcp_declare_local_container);
@@ -141,7 +139,6 @@ public class FileAccessSettingsFragment extends Fragment {
         vcpGrantAllSwitch.setChecked(vcpGrantAll);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             openAllFilesPerm.setVisibility(View.GONE);
-            openAllFilesDivider.setVisibility(View.GONE);
         }
     }
 

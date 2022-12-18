@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:theme="@style/SettingsTheme"
     android:orientation="vertical">
 
     <LinearLayout
@@ -42,11 +43,6 @@
                 android:text="@string/settings_header_general"/>
         </RelativeLayout>
 
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/settings_divider_size"
-                android:background="@color/dividerColor"/>
-
         <RelativeLayout
                 android:id="@+id/file_access_settings"
                 android:layout_width="match_parent"
@@ -73,11 +69,6 @@
                     android:textStyle="bold"
                     android:text="@string/file_access"/>
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
 
         <RelativeLayout
             android:id="@+id/look_and_feel_settings"
@@ -106,11 +97,6 @@
                 android:text="@string/look_and_feel"/>
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
-
         <RelativeLayout
             android:id="@+id/notification_settings"
             android:layout_width="match_parent"
@@ -138,11 +124,6 @@
                 android:text="@string/notifications_pref_title"/>
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
-
         <RelativeLayout
             android:id="@+id/logging_settings"
             android:layout_width="match_parent"
@@ -169,11 +150,6 @@
                 android:textStyle="bold"
                 android:text="@string/logging_settings_header"/>
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
 
     </LinearLayout>
 </ScrollView>

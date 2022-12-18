@@ -20,7 +20,6 @@
         android:animateLayoutChanges="true">
 
         <RelativeLayout
-            android:id="@+id/notifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/settings_padding_topbottom"
@@ -28,16 +27,13 @@
             android:clickable="true"
             android:focusable="true" >
 
-            <TextView
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/notifications"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/open_system_settings" />
-        </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_divider_size"
-            android:background="@color/dividerColor"/>
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/app_updates"
