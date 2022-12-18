@@ -5,7 +5,6 @@
             <solid android:color="@color/seed" />
             <corners
                 android:bottomRightRadius="52dp"
-                android:topRightRadius="52dp"
                 />
         </shape>
     </item>
