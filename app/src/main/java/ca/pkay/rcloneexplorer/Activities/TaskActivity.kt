@@ -285,7 +285,7 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
                 position: Int,
                 id: Long
             ) {
-                updateSpinnerDescription(position)
+                updateSpinnerDescription(position + 1)
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>?) {}
