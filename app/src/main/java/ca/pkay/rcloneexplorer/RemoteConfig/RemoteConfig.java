@@ -150,7 +150,7 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
                 fragment = YandexConfig.newInstance();
                 break;
             case "WEBDAV":
-                fragment = WebdavConfig.newInstance();
+                fragment = new DynamicConfig2();
                 break;
             case "ONEDRIVE":
                 fragment = OneDriveConfig.newInstance();
