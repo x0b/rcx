@@ -389,7 +389,6 @@
     <string name="saf_uri_permission_error">Ungültige Berechtigung - Zugriff auf Speicher nicht möglich</string>
     <string name="saf_uri_permission_already_added">Speicher oder Unterordner wurde bereits hinzugefügt</string>
     <string name="saf_uri_permission_no_support">Drittanbieter werden noch nicht unterstützt. Öffne ein GitHub-Issue mit dem Namen der betroffenen App.</string>
-    <string name="virtual_content_provider_summary">%1$d Remotes verfügbar</string>
     <string name="virtual_content_provider_null_content">Remote- oder Verzeichnisinhalt konnte nicht abgerufen werden. Die Protokolldatei enthält möglicherweise weitere Informationen.</string>
     <string name="remote_properties_remote_name">Remote-Name</string>
     <string name="remote_properties_storage_usage">Speicherbelegung</string>
