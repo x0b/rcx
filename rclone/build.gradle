@@ -14,12 +14,12 @@
 //  - windows x86 (with NDK 21b installed)
 //
 // Prerequisits:
-//  - go 1.14 - go 1.16
+//  - go 1.19
 //  - ndk
 
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.55.1'
-ext.ndkVersion = '22.1.7171670'
+def buildTag = 'v1.61.1'
+ext.ndkVersion = '25.2.9519653'
 
 //
 // DO NOT EDIT ANYTHING BELOW
@@ -100,13 +100,13 @@ task fetchRclone(type: Exec) {
     mkdir "gopath"
     environment 'GOPATH', goPath
     environment "GO111MODULE", "on"
-    commandLine 'go', 'get', '-d', repositoryRef
+    commandLine 'go', 'install', repositoryRef
 
     ignoreExitValue true
     errorOutput = new ByteArrayOutputStream()
     doLast {
         if (execResult.getExitValue() != 0) {
-            throw new GradleException("Error running go get: \n${errorOutput.toString()}")
+            throw new GradleException("Error running go install: \n${errorOutput.toString()}")
         }
     }
 }
