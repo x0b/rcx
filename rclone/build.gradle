@@ -18,7 +18,7 @@
 //  - ndk
 
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.58.1'
+def buildTag = 'v1.61.1'
 ext.ndkVersion = '25.0.8775105'
 
 //
