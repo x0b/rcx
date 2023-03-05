@@ -1,9 +1,10 @@
 package ca.pkay.rcloneexplorer.util;
 
 import android.util.Log;
-import ca.pkay.rcloneexplorer.BuildConfig;
 
 import java.util.IllegalFormatException;
+
+import ca.pkay.rcloneexplorer.BuildConfig;
 
 /**
  * A simple wrapper around {@link Log} to enable easier debugging without
@@ -84,7 +85,6 @@ public abstract class FLog {
     // Callers must ensure that any potentially tainted in formatting args
     // is filtered by anonymizeArgument()
     public static void e(String tag, String message, Object... args) {
-        CrashLogger.logNonFatal(tag, applyAnonimizedFormatting(message, args), new LoggedError());
         if (isLoggable(tag, Log.ERROR)) {
             Log.e(tag, applyFormatting(message, args));
         }
@@ -94,7 +94,6 @@ public abstract class FLog {
     // is filtered by anonymizeArgument()
     public static void e(String tag, String message, Throwable e, Object... args) {
         String formatted = applyFormatting(message, args);
-        CrashLogger.logNonFatal(tag, applyAnonimizedFormatting(message, args), e);
         if (isLoggable(tag, Log.ERROR)) {
             Log.e(tag, formatted, e);
         }
