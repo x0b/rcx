@@ -10,6 +10,8 @@ import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_WED;
 import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_ID_DOESNTEXIST;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -66,7 +68,6 @@ public class TriggerActivity extends AppCompatActivity {
     private TimePicker mTimepicker;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,8 +100,6 @@ public class TriggerActivity extends AppCompatActivity {
 
         mTargetDropdown = findViewById(R.id.trigger_targets);
 
-
-
         dbHandler = new DatabaseHandler(this);
         mTaskList = dbHandler.getAllTasks();
 
@@ -109,9 +108,9 @@ public class TriggerActivity extends AppCompatActivity {
 
         if (extras != null) {
             trigger_id = extras.getLong(ID_EXTRA);
-            if(trigger_id != 0){
+            if (trigger_id != 0) {
                 mTrigger = dbHandler.getTrigger(trigger_id);
-                if(mTrigger == null){
+                if (mTrigger == null) {
                     Toasty.error(this, this.getResources().getString(R.string.triggeractivity_trigger_not_found)).show();
                     finish();
                 }
@@ -126,14 +125,30 @@ public class TriggerActivity extends AppCompatActivity {
 
         setUpTargetsDropdown();
 
+        // Todo: use KTX Extensions. https://stackoverflow.com/a/60409004
+        mTitle.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mTrigger.setTitle(s.toString());
+            }
+        });
         mEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> mTrigger.setEnabled(isChecked));
 
+
+        int initialTriggerType = mTrigger.getType();
         mType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Object item = parent.getItemAtPosition(pos);
-                System.out.println(item.toString());
-                if(pos == Trigger.TRIGGER_TYPE_SCHEDULE) {
+                if (pos == Trigger.TRIGGER_TYPE_SCHEDULE) {
                     mTrigger.setType(Trigger.TRIGGER_TYPE_SCHEDULE);
                 } else {
                     mTrigger.setType(Trigger.TRIGGER_TYPE_INTERVAL);
@@ -146,6 +161,8 @@ public class TriggerActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+        //restore initial triggerstate here
+        mType.setSelection(initialTriggerType);
 
         mWeekdayMon.setOnCheckedChangeListener((buttonView, isChecked) -> mTrigger.setEnabledAtDay(TRIGGER_DAY_MON, isChecked));
         mWeekdayThu.setOnCheckedChangeListener((buttonView, isChecked) -> mTrigger.setEnabledAtDay(TRIGGER_DAY_TUE, isChecked));
@@ -156,6 +173,29 @@ public class TriggerActivity extends AppCompatActivity {
         mWeekdaySun.setOnCheckedChangeListener((buttonView, isChecked) -> mTrigger.setEnabledAtDay(TRIGGER_DAY_SUN, isChecked));
 
         mTimepicker.setOnTimeChangedListener((view, hourOfDay, minute) -> mTrigger.setTime(hourOfDay * 60 + minute));
+
+        mInterval.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                switch (pos) {
+                    case 0:
+                        mTrigger.setTime(15);
+                        break;
+                    case 1:
+                        mTrigger.setTime(30);
+                        break;
+                    case 3:
+                        mTrigger.setTime(120);
+                        break;
+                    case 2:
+                    default:
+                        mTrigger.setTime(60);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         mTargetDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -181,86 +221,82 @@ public class TriggerActivity extends AppCompatActivity {
      */
     private void setUpTargetsDropdown() {
         String[] items = new String[mTaskList.size()];
-        for (int i = 0; i< mTaskList.size(); i++) {
-            items[i]= mTaskList.get(i).getTitle();
+        for (int i = 0; i < mTaskList.size(); i++) {
+            items[i] = mTaskList.get(i).getTitle();
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         mTargetDropdown.setAdapter(adapter);
     }
 
 
-
     private void updateUiFromTrigger() {
-        if (DateFormat.is24HourFormat(this)){
+        if (DateFormat.is24HourFormat(this)) {
             mTimepicker.setIs24HourView(true);
         }
 
-        if(mTrigger != null){
-            mTitle.setText(mTrigger.getTitle());
-            mEnabled.setChecked(mTrigger.isEnabled());
+        mCardInterval.setVisibility(View.GONE);
+        mCardWeekday.setVisibility(View.GONE);
+        mCardTime.setVisibility(View.GONE);
 
-            // seconds if time is schedule, otherwise minutes (as in interval).
-            int timeValue = mTrigger.getTime();
+        mTitle.setText(mTrigger.getTitle());
+        mEnabled.setChecked(mTrigger.isEnabled());
 
-            Log.e("Prepare", "type: "+ mTrigger.getType());
+        // seconds if time is schedule, otherwise minutes (as in interval).
+        int timeValue = mTrigger.getTime();
 
+        if (mTrigger.getType() == Trigger.TRIGGER_TYPE_SCHEDULE) {
+            mCardWeekday.setVisibility(View.VISIBLE);
+            mCardTime.setVisibility(View.VISIBLE);
 
-            if(mTrigger.getType() == Trigger.TRIGGER_TYPE_SCHEDULE) {
-                mCardInterval.setVisibility(View.GONE);
-                mCardWeekday.setVisibility(View.VISIBLE);
-                mCardTime.setVisibility(View.VISIBLE);
+            mWeekdayMon.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_MON));
+            mWeekdayTue.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_TUE));
+            mWeekdayWed.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_WED));
+            mWeekdayThu.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_THU));
+            mWeekdayFri.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_FRI));
+            mWeekdaySat.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_SAT));
+            mWeekdaySun.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_SUN));
 
-                mWeekdayMon.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_MON));
-                mWeekdayTue.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_TUE));
-                mWeekdayWed.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_WED));
-                mWeekdayThu.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_THU));
-                mWeekdayFri.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_FRI));
-                mWeekdaySat.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_SAT));
-                mWeekdaySun.setChecked(mTrigger.isEnabledAtDay(TRIGGER_DAY_SUN));
+            mTimepicker.setHour(timeValue / 60);
+            mTimepicker.setMinute(timeValue % 60);
+        } else {
+            mCardInterval.setVisibility(View.VISIBLE);
 
-                mTimepicker.setHour(timeValue/60);
-                mTimepicker.setMinute(timeValue%60);
-            } else {
-                mCardInterval.setVisibility(View.VISIBLE);
-                mCardWeekday.setVisibility(View.GONE);
-                mCardTime.setVisibility(View.GONE);
-
-                switch (timeValue) {
-                    case 15:
-                        mInterval.setSelection(0);
-                        break;
-                    case 30:
-                        mInterval.setSelection(1);
-                        break;
-                    case 60:
-                        mInterval.setSelection(2);
-                        break;
-                    case 120:
-                        mInterval.setSelection(3);
-                        break;
-                }
-            }
-
-            //Todo properly populate the fields
-            for(Task task : mTaskList){
-                if(task.getId() == mTrigger.getWhatToTrigger()){
-                    mTargetDropdown.setSelection(mTaskList.indexOf(task));
-                }
+            switch (timeValue) {
+                case 15:
+                    mInterval.setSelection(0);
+                    break;
+                case 30:
+                    mInterval.setSelection(1);
+                    break;
+                case 120:
+                    mInterval.setSelection(3);
+                    break;
+                case 60:
+                default:
+                    mInterval.setSelection(2);
             }
         }
+
+        //Todo properly populate the fields
+        for (Task task : mTaskList) {
+            if (task.getId() == mTrigger.getWhatToTrigger()) {
+                mTargetDropdown.setSelection(mTaskList.indexOf(task));
+            }
+        }
+
     }
 
-    private boolean checkTaskExistence(){
-        if(mTaskList.size()==0){
+    private boolean checkTaskExistence() {
+        if (mTaskList.size() == 0) {
             Toasty.error(this, this.getResources().getString(R.string.trigger_save_notasks)).show();
             return false;
         }
         return true;
     }
 
-    private void saveTrigger(){
-        if(checkTaskExistence()) {
-            if(mTrigger.getId() == TRIGGER_ID_DOESNTEXIST){
+    private void saveTrigger() {
+        if (checkTaskExistence()) {
+            if (mTrigger.getId() == TRIGGER_ID_DOESNTEXIST) {
                 mTrigger = dbHandler.createTrigger(mTrigger);
             } else {
                 dbHandler.updateTrigger(mTrigger);

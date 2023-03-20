@@ -113,8 +113,18 @@ public class Trigger {
         this.whatToTrigger = whatToTrigger;
     }
 
-    public String toString(){
-        return title + ": " + id ;
+
+    @Override
+    public String toString() {
+        return "Trigger{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", isEnabled=" + isEnabled +
+                ", weekdays=" + weekdays +
+                ", time=" + time +
+                ", whatToTrigger=" + whatToTrigger +
+                ", type=" + type +
+                '}';
     }
 
     private String binary(byte i){
