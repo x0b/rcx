@@ -19,14 +19,14 @@
             android:orientation="vertical">
 
 
-
             <androidx.cardview.widget.CardView
+                style="@style/SecondaryCardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
-                style="@style/SecondaryCardStyle"
                 app:cardCornerRadius="@dimen/cardCornerRadius"
                 app:contentPadding="@dimen/cardPadding">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -36,8 +36,8 @@
                         android:id="@+id/trigger_name_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/trigger_name"
                         android:layout_margin="8dp"
+                        android:text="@string/trigger_name"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                         android:textSize="24sp" />
 
@@ -48,6 +48,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:hint="@string/trigger_name" />
+
                     <CheckBox
                         android:id="@+id/cb_is_enabled"
                         android:layout_width="match_parent"
@@ -55,16 +56,58 @@
                         android:layout_marginBottom="8dp"
                         android:checked="true"
                         android:text="Is this trigger enabled?" />
+
+                    <Spinner
+                        android:id="@+id/triggerType"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:entries="@array/triggerTypeItems" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
             <androidx.cardview.widget.CardView
+                android:id="@+id/intervalCard"
+                style="@style/SecondaryCardStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="@dimen/cardCornerRadius"
+                app:contentPadding="@dimen/cardPadding">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/task_interval"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textSize="24sp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerIntervals"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:entries="@array/triggerIntervals" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/weekdaysCard"
+                style="@style/SecondaryCardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:theme="@style/SecondaryCardStyle"
-                style="@style/SecondaryCardStyle"
                 app:cardCornerRadius="@dimen/cardCornerRadius"
                 app:contentPadding="@dimen/cardPadding">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,11 +117,11 @@
                         android:id="@+id/textView3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/trigger_label_weekdays"
-                        android:layout_margin="8dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                        android:textSize="24sp"/>
+                        android:textSize="24sp" />
 
                     <CheckBox
                         android:id="@+id/trigger_cb_monday"
@@ -126,32 +169,35 @@
                         android:id="@+id/trigger_cb_sunday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:checked="true"
                         android:layout_marginBottom="8dp"
+                        android:checked="true"
                         android:text="@string/sunday" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/timeCard"
+                style="@style/SecondaryCardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
-                style="@style/SecondaryCardStyle"
                 app:cardCornerRadius="@dimen/cardCornerRadius"
                 app:contentPadding="@dimen/cardPadding">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/textView5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/time"
                         android:layout_margin="8dp"
+                        android:text="@string/time"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                        android:textSize="24sp"/>
+                        android:textSize="24sp" />
 
 
                     <TimePicker
@@ -164,23 +210,26 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/targetCard"
+                style="@style/SecondaryCardStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
-                style="@style/SecondaryCardStyle"
                 app:cardCornerRadius="@dimen/cardCornerRadius"
                 app:contentPadding="@dimen/cardPadding">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/textView4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/task_to_run"
-                        android:layout_margin="8dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                         android:textSize="24sp" />
 
@@ -191,6 +240,7 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
     </ScrollView>

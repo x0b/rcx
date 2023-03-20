@@ -678,4 +678,12 @@
     <string name="sync_service_notification_channel_fail_title">Sync service fail</string>
     <string name="sync_service_notification_channel_success_description">Notification for successful syncs</string>
     <string name="sync_service_notification_channel_fail_description">Notification for failed syncs</string>
+    <string name="trigger_type_schedule">Scheduled</string>
+    <string name="trigger_type_interval">Interval</string>
+    <string name="task_interval">Interval Settings</string>
+    <string name="trigger_interval_15_min">Every 15 Minutes</string>
+    <string name="trigger_interval_30_min">Every 30 Minutes</string>
+    <string name="trigger_interval_60_min">Every 60 Minutes</string>
+    <string name="trigger_interval_120_min">Every 120 Minutes</string>
+    <string name="save_trigger_button_description">Save Trigger</string>
 </resources>

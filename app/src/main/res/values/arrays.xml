@@ -60,4 +60,16 @@
         <item>@drawable/ic_union_24dp</item>
         <item>@drawable/ic_mega_logo_black</item>
     </integer-array>
+
+    <string-array name="triggerTypeItems">
+        <item>@string/trigger_type_schedule</item>
+        <item>@string/trigger_type_interval</item>
+    </string-array>
+
+    <string-array name="triggerIntervals">
+        <item>@string/trigger_interval_15_min</item>
+        <item>@string/trigger_interval_30_min</item>
+        <item>@string/trigger_interval_60_min</item>
+        <item>@string/trigger_interval_120_min</item>
+    </string-array>
 </resources>

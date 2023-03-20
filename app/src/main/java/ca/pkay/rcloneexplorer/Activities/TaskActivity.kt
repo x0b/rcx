@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.Activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -96,7 +95,7 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
         remoteDropdown = findViewById(R.id.task_remote_spinner)
         syncDirection = findViewById(R.id.task_direction_spinner)
         syncDescription = findViewById(R.id.descriptionSyncDirection)
-        fab = findViewById(R.id.fab)
+        fab = findViewById(R.id.saveButton)
         switchWifi = findViewById(R.id.task_wifionly)
         switchMD5sum = findViewById(R.id.task_md5sum)
 
@@ -117,7 +116,7 @@ class TaskActivity : AppCompatActivity(), FolderSelectorCallback {
                 }
             }
         }
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        val fab = findViewById<FloatingActionButton>(R.id.saveButton)
         fab.setOnClickListener {
             //Todo fix error when no remotes are available
             if (existingTask == null) {
