@@ -134,7 +134,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingBottom="88dp"
-            tools:listitem="@layout/fragment_trigger_item">
+            tools:listitem="@layout/fragment_trigger_item_schedule">
 
         </androidx.recyclerview.widget.RecyclerView>
 
