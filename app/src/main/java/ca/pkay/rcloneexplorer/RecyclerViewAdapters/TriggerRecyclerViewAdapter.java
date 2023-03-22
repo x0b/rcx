@@ -30,11 +30,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Activities.TriggerActivity;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Activities.TriggerActivity;
+import ca.pkay.rcloneexplorer.Services.TriggerService;
 import es.dmoral.toasty.Toasty;
 
 public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -127,6 +128,9 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         String message = context.getResources().getString(R.string.message_trigger_disabled);
         if(trigger.isEnabled()){
             message = context.getResources().getString(R.string.message_trigger_enabled);
+            new TriggerService(context).queueTrigger();
+        } else {
+            new TriggerService(context).cancelTrigger(trigger.getId());
         }
         Toasty.info(context, message).show();
     }
