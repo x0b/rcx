@@ -49,6 +49,15 @@ public class TriggerService extends Service {
     }
 
     public void queueSingleTrigger(Trigger trigger){
+        if(trigger.getType() == Trigger.TRIGGER_TYPE_SCHEDULE) {
+            queueSingleScheduleTrigger(trigger);
+        } else {
+            queueSingleIntervalTrigger(trigger);
+        }
+
+    }
+
+    private void queueSingleScheduleTrigger(Trigger trigger){
         if(trigger.isEnabled()){
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -77,7 +86,7 @@ public class TriggerService extends Service {
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean allowWhileIdle = sharedPreferences.getBoolean(context.getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && allowWhileIdle) {
+            if (allowWhileIdle) {
                 am.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
                         timeToTrigger,
@@ -90,7 +99,24 @@ public class TriggerService extends Service {
                         pi
                 );
             }
-            return;
+        }
+    }
+
+    private void queueSingleIntervalTrigger(Trigger trigger){
+        if(trigger.isEnabled()){
+
+            int intervalMillis = trigger.getTime() * 60 * 1000;
+            long timeToTrigger = System.currentTimeMillis();
+
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pi = getIntent(trigger.getId());
+            am.cancel(pi);
+            am.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    timeToTrigger+intervalMillis,
+                    intervalMillis,
+                    pi
+            );
         }
     }
 
