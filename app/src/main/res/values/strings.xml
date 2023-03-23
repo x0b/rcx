@@ -687,4 +687,5 @@
     <string name="trigger_interval_120_min">Every 120 Minutes</string>
     <string name="save_trigger_button_description">Save Trigger</string>
     <string name="trigger_interval_label">Every</string>
+    <string name="trigger_save_notitle">You need to set a title!</string>
 </resources>

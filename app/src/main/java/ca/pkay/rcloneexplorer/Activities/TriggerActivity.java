@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -295,16 +294,26 @@ public class TriggerActivity extends AppCompatActivity {
     }
 
     private void saveTrigger() {
-        if (checkTaskExistence()) {
-            if (mTrigger.getId() == TRIGGER_ID_DOESNTEXIST) {
-                mTrigger = dbHandler.createTrigger(mTrigger);
-            } else {
-                dbHandler.updateTrigger(mTrigger);
-
-            }
-            new TriggerService(this).queueSingleTrigger(mTrigger);
-            finish();
+        // check if title is set
+        if (mTrigger.getTitle().isBlank()) {
+            Toasty.error(this, this.getResources().getString(R.string.trigger_save_notitle)).show();
+            return;
         }
+
+        // check if target task is set
+        if (!checkTaskExistence()) {
+            Toasty.error(this, this.getResources().getString(R.string.trigger_save_notasks)).show();
+            return;
+        }
+
+        if (mTrigger.getId() == TRIGGER_ID_DOESNTEXIST) {
+            mTrigger = dbHandler.createTrigger(mTrigger);
+        } else {
+            dbHandler.updateTrigger(mTrigger);
+
+        }
+        new TriggerService(this).queueSingleTrigger(mTrigger);
+        finish();
 
     }
 }
