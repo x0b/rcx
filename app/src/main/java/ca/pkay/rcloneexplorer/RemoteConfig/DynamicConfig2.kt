@@ -5,10 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
+import ca.pkay.rcloneexplorer.RemoteConfig.DynamicConfigOptions.ConfigType
+
 
 class DynamicConfig2 : Fragment() {
     private var mContext: Context? = null
@@ -17,10 +22,10 @@ class DynamicConfig2 : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (getContext() == null) {
+        if (context == null) {
             return
         }
-        mContext = getContext()
+        mContext = context
         rclone = Rclone(context)
     }
 
@@ -38,9 +43,61 @@ class DynamicConfig2 : Fragment() {
         val formContent = view.findViewById<ViewGroup>(R.id.form_content)
         val padding = resources.getDimensionPixelOffset(R.dimen.config_form_template)
 
-        val textview = TextView(mContext);
-        textview.contentDescription = "TEST"
-        formContent.addView(textview)
+
+        val webdavConfig = ca.pkay.rcloneexplorer.RemoteConfig.DynamicConfigs.WebdavConfig()
+
+
+        webdavConfig.getTypes().forEach {
+
+
+            val textViewTitle = TextView(mContext)
+            textViewTitle.contentDescription = it.title
+            textViewTitle.text = it.title
+            formContent.addView(textViewTitle)
+
+
+            val textViewDescription = TextView(mContext)
+            textViewDescription.contentDescription = it.description
+            textViewDescription.text = it.description
+            formContent.addView(textViewDescription)
+
+            val textViewRclone = TextView(mContext)
+            textViewRclone.contentDescription = it.rcloneOption
+            textViewRclone.text = it.rcloneOption
+            formContent.addView(textViewRclone)
+            
+            when (it.type) {
+                ConfigType.TYPE_STRING -> {
+                    val input = EditText(mContext)
+                    formContent.addView(input)
+                }
+                ConfigType.TYPE_SPINNER -> {
+                    val input = Spinner(mContext)
+                    val adapter = it.spinnerElements?.let { it1 ->
+                        this.mContext?.let { it2 ->
+                            ArrayAdapter(
+                                it2,
+                                android.R.layout.simple_spinner_item,
+                                it1.toList()
+                            )
+                        }
+                    }
+                    input.adapter = adapter
+
+                    formContent.addView(input)
+                }
+                else -> {
+
+                }
+            }
+
+
+        }
+
+
+
+
+
 
     }
 
