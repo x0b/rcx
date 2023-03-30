@@ -42,12 +42,12 @@
                     android:paddingBottom="@dimen/config_form_template"
                     android:visibility="gone"
                     tools:visibility="visible">
+
                     <EditText
                         android:id="@+id/remote_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/remote_name_hint"
-                        android:textColor="@color/textColorPrimary"
                         android:inputType="textAutoCorrect"
                         tools:text="Remote name" />
                 </com.google.android.material.textfield.TextInputLayout>

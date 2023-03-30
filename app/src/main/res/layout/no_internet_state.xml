@@ -5,36 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="invisible">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
-                app:tint="@color/cardColor"
+                android:contentDescription="@string/content_description_circle"
                 android:src="@drawable/ic_circle"
-                android:contentDescription="@string/content_description_circle"/>
+                app:tint="@color/cardColor" />
+
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_signal_wifi_off"
-                app:tint="@color/iconTint"
                 android:layout_gravity="center"
-                android:contentDescription="@string/no_internet_connection" />
+                android:contentDescription="@string/no_internet_connection"
+                android:src="@drawable/ic_signal_wifi_off"
+                app:tint="@color/iconTint" />
         </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
             android:text="@string/no_internet_connection"
-            android:textColor="@color/textColorPrimary"
-            android:textStyle="bold"
-            android:paddingTop="16dp"/>
+            android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>

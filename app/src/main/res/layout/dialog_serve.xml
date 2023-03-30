@@ -17,28 +17,25 @@
         android:orientation="vertical" >
 
         <RadioButton
-                android:id="@+id/radio_ftp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:textColor="@color/textColorPrimary"
-                android:text="@string/provider_ftp"/>
+            android:id="@+id/radio_ftp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/provider_ftp" />
 
         <RadioButton
-                android:id="@+id/radio_dlna"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:textColor="@color/textColorPrimary"
-                android:text="@string/serve_dlna"/>
+            android:id="@+id/radio_dlna"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/serve_dlna" />
 
         <RadioButton
             android:id="@+id/radio_http"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:textColor="@color/textColorPrimary"
             android:checked="true"
+            android:paddingBottom="8dp"
             android:text="@string/provider_http" />
 
         <RadioButton
@@ -46,7 +43,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:textColor="@color/textColorPrimary"
             android:text="@string/provider_webdav" />
     </RadioGroup>
 
@@ -54,8 +50,7 @@
         android:id="@+id/checkbox_allow_remote_access"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/allow_remote_access"
-        android:textColor="@color/textColorPrimary" />
+        android:text="@string/allow_remote_access" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -74,7 +69,6 @@
             android:id="@+id/edit_text_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
             android:inputType="text"
             tools:text="Username" />
 
@@ -83,9 +77,8 @@
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="0dp"
-            android:textSize="12sp"
-            android:textColor="@color/textColorSecondary"
-            android:text="@string/optional"/>
+            android:text="@string/optional"
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -99,7 +92,6 @@
             android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColorPrimary"
             android:inputType="textPassword"
             tools:text="Username" />
 
@@ -108,9 +100,8 @@
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="0dp"
-            android:textSize="12sp"
-            android:textColor="@color/textColorSecondary"
-            android:text="@string/optional"/>
+            android:text="@string/optional"
+            android:textSize="12sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

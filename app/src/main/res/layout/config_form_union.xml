@@ -49,7 +49,6 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/remote_name_hint"
                         android:inputType="textAutoCorrect"
-                        android:textColor="@color/textColorPrimary"
                         tools:text="Remote name" />
                 </com.google.android.material.textfield.TextInputLayout>
 
