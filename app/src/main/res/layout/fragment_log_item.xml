@@ -10,7 +10,8 @@
         android:id="@+id/log_item_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:theme="@style/SecondaryCardStyle">
 
         <ImageView
             android:id="@+id/log_icon"
@@ -21,8 +22,7 @@
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_twotone_info_24"
-            app:tint="@color/iconTint" />
+            app:srcCompat="@drawable/ic_twotone_info_24" />
 
         <TextView
             android:id="@+id/logtitle"

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/SecondaryCardStyle">
 
     <include
         android:id="@+id/empty_folder_view"
@@ -60,8 +61,7 @@
                     android:contentDescription="@string/file_icon"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:src="@drawable/ic_arrow_back"
-                    android:tint="@color/iconTint" />
+                    android:src="@drawable/ic_arrow_back" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -80,7 +80,6 @@
                         android:fontFamily="sans-serif"
                         android:singleLine="true"
                         android:textAppearance="?attr/textAppearanceListItem"
-                        android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         tools:text="Previous" />
                 </LinearLayout>

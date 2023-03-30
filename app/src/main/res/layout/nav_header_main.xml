@@ -22,6 +22,7 @@
             android:gravity="bottom"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:text="@string/app_name"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="bold" />
 
         <Space
@@ -43,6 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="@string/app_description"/>
+        android:text="@string/app_description"
+        android:textColor="@color/textColorSecondary" />
 
 </LinearLayout>

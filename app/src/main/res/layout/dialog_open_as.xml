@@ -14,12 +14,12 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:text="@string/open_as_text"/>
+            android:text="@string/open_as_text"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -30,12 +30,12 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:text="@string/open_as_audio"/>
+            android:text="@string/open_as_audio"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,12 +46,12 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:text="@string/open_as_video"/>
+            android:text="@string/open_as_video"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -62,12 +62,12 @@
         android:gravity="center"
         android:paddingTop="12dp"
         android:paddingBottom="12dp" >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:text="@string/open_as_image"/>
+            android:text="@string/open_as_image"
+            android:textStyle="bold" />
     </LinearLayout>
 
 
