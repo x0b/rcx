@@ -146,6 +146,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private LinearLayoutManager recyclerViewLinearLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View searchBar;
+    private View searchButton;
+    private View searchClear;
     private AsyncTask fetchDirectoryTask;
     private boolean isRunning;
     private int sortOrder;
@@ -327,6 +329,23 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         searchBar = ((FragmentActivity) context).findViewById(R.id.search_bar);
+        searchButton = ((FragmentActivity) context).findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(click -> searchClicked());
+        searchButton.setVisibility(View.VISIBLE);
+
+        searchClear = ((FragmentActivity) context).findViewById(R.id.search_clear);
+        searchClear.setOnClickListener(v -> {
+            EditText searchField = searchBar.findViewById(R.id.search_field);
+            if (searchField.getText().toString().isEmpty()) {
+                searchClicked();
+            } else {
+                searchDirContent("");
+                searchField.setText("");
+                InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
+
         if (view.findViewById(R.id.background) != null) {
             view.findViewById(R.id.background).setOnClickListener(v -> onClickOutsideOfView());
         }
@@ -617,9 +636,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_search:
-                searchClicked();
-                return true;
             case R.id.action_sort:
                 showSortMenu();
                 return true;
@@ -754,30 +770,21 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (isSearchMode) {
-            searchBar.setVisibility(View.GONE);
+            searchBar.setVisibility(View.INVISIBLE);
+            searchButton.setVisibility(View.VISIBLE);
             searchDirContent("");
             ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
             recyclerViewAdapter.setSearchMode(false);
             isSearchMode = false;
         } else {
             searchBar.setVisibility(View.VISIBLE);
+            searchButton.setVisibility(View.GONE);
             recyclerViewAdapter.setSearchMode(true);
             isSearchMode = true;
             EditText search = searchBar.findViewById(R.id.search_field);
             search.requestFocus();
             keyboard.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
         }
-
-        searchBar.findViewById(R.id.search_clear).setOnClickListener(v -> {
-            EditText searchField = searchBar.findViewById(R.id.search_field);
-            if (searchField.getText().toString().isEmpty()) {
-                searchClicked();
-            } else {
-                searchDirContent("");
-                searchField.setText("");
-                keyboard.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-            }
-        });
     }
 
     private void showOpenAsDialog(FileItem fileItem) {

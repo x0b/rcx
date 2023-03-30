@@ -48,11 +48,11 @@
         </activity>
         <activity
             android:name=".Activities.ShortcutServiceActivity"
-            android:theme="@style/HiddenWindowShortcutSyncStartTheme"
+            android:exported="true"
             android:launchMode="singleTask"
-            android:taskAffinity=""
             android:noHistory="true"
-            android:exported="true" />
+            android:taskAffinity=""
+            android:theme="@style/HiddenWindowShortcutSyncStartTheme" />
 
         <provider
             android:name=".VirtualContentProvider"

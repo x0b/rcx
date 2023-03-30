@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
-        android:title="@string/search"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/action_sort"
         android:title="@string/sort"
         android:icon="@drawable/ic_sort"
@@ -18,7 +12,7 @@
         android:id="@+id/action_select_all"
         android:title="@string/select_all"
         android:icon="@drawable/ic_select_all"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_go_to"
