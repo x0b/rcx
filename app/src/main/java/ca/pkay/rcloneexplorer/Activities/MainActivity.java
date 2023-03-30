@@ -340,6 +340,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
+
+        // Always hide search icon when fragments go back
+        View searchButton = this.findViewById(R.id.searchButton);
+        searchButton.setVisibility(View.INVISIBLE);
+
         int id = item.getItemId();
         navigationView.setCheckedItem(id);
         if (drawerPinnedRemoteIds.containsKey(id)) {
