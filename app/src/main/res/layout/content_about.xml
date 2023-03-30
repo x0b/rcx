@@ -107,7 +107,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:theme="@style/PrimaryCardStyle"
+            android:theme="@style/SecondaryCardStyle"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:contentPadding="@dimen/cardPadding">
 
@@ -248,7 +248,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:theme="@style/PrimaryCardStyle"
+            android:theme="@style/SecondaryCardStyle"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:contentPadding="@dimen/cardPadding">
 
@@ -315,7 +315,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:theme="@style/PrimaryCardStyle"
+            android:theme="@style/SecondaryCardStyle"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:contentPadding="@dimen/cardPadding">
 
@@ -385,7 +385,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:theme="@style/PrimaryCardStyle"
+            android:theme="@style/SecondaryCardStyle"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:contentPadding="@dimen/cardPadding">
 
