@@ -602,8 +602,8 @@
 
     <string name="abi_not_supported_arm_downgrade">Unfortunately, this extRact version is not compatible with your device. Try the armeabi-v7a APK from github.com/newhinton/extRact/releases/latest.</string>
     <string name="abi_not_supported">Your device does not support this version of extRact.</string>
-    <string name="trigger">Trigger</string>
-    <string name="title_activity_trigger">Trigger</string>
+    <string name="trigger">Triggers</string>
+    <string name="title_activity_trigger">Triggers</string>
     <string name="enabled">Enabled</string>
     <string name="trigger_name">Description</string>
     <string name="monday">Monday</string>
