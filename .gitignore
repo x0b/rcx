@@ -59,7 +59,6 @@ freeline_project_description.json
 # Don't version native libraries or IDE artifacts. Module config should be done in gradle.
 # Generated artifacts (apks, libraries) just slow down cloning and can be recreated from source
 # anyways.
-app/lib/
 release/
 
 .idea/encodings.xml
