@@ -3,6 +3,13 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+tasks.whenTaskAdded { task ->
+    // Build rclone beforehand.
+    if (task.name.startsWith('compile')) {
+        task.dependsOn(':rclone:buildAll')
+    }
+}
+
 android {
     signingConfigs {
         github_x0b {

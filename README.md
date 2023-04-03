@@ -72,21 +72,23 @@ Usage
 
 Developing
 ------------
-[See the developer-documentation](https://x0b.github.io/dev/).
 
-Build rclone manually run:
+You should first make sure you have:
 
+- Go 1.20+ installed and in your PATH
+- Java installed and in your PATH
+- Android SDK command-line tools installed OR the NDK version specified in `gradle.properties`
+  installed
+
+You can then build the app normally from Android Studio or from CLI by running:
+
+```sh
+# Debug build
+./gradlew assembleOssDebug
+
+# or release build
+./gradlew assembleOssRelease
 ```
-./gradlew rclone:buildAll
-```
-
-When building rclone with a go version that is too old (eg 1.15.5), this error may show up:
-
-```
-ld.lld: error: duplicate symbol: x_cgo_inittls
-```
-
-It can be fixed by using a more recent version of go.
 
 Known Issues
 ------------
@@ -96,20 +98,6 @@ Known Issues
 Contributing
 ------------
 See [CONTRIBUTING](./CONTRIBUTING.md)
-
-
-Building
-------------
-```
-// choose the appropriate version for your device
-cd rclone
-../gradlew rclone:buildNative // For all devices
-../gradlew rclone:buildArm64
-../gradlew rclone:buildArm
-../gradlew rclone:buildx86
-../gradlew rclone:buildx64
-```
-
 
 
 License
