@@ -4,7 +4,10 @@ import org.json.JSONObject
 
 class Provider(val name: String) {
 
-    val options = ArrayList<ProviderItem>()
+    val options = ArrayList<ProviderOption>()
+    var description = ""
+    var Prefix = ""
+    var CommandHelp = ""
 
 
     companion object {
@@ -14,7 +17,7 @@ class Provider(val name: String) {
             val options = data.getJSONArray("Options")
 
             for (i in 0 until options.length()) {
-                item.options.add(ProviderItem.newInstance(options.getJSONObject(i)))
+                item.options.add(ProviderOption.newInstance(options.getJSONObject(i)))
             }
 
             return item

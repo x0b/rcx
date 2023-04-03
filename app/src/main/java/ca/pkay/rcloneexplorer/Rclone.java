@@ -46,7 +46,6 @@ import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.rclone.Provider;
-import ca.pkay.rcloneexplorer.rclone.ProviderItem;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
