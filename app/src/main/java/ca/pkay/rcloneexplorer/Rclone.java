@@ -45,6 +45,8 @@ import ca.pkay.rcloneexplorer.Database.json.SharedPreferencesBackup;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.rclone.Provider;
+import ca.pkay.rcloneexplorer.rclone.ProviderItem;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 import io.github.x0b.safdav.SafAccessProvider;
@@ -1429,4 +1431,53 @@ public class Rclone {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         }
     }
+
+
+    public ArrayList<Provider> getProviders() throws JSONException {
+        String[] command = createCommand("config", "providers");
+        StringBuilder output = new StringBuilder();
+        Process process;
+        JSONArray remotesJSON;
+
+        try {
+            process = getRuntimeProcess(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
+                logErrorOutput(process);
+                return new ArrayList<>();
+            }
+
+            remotesJSON = new JSONArray(output.toString());
+        } catch (IOException | InterruptedException | JSONException e) {
+            FLog.e(TAG, "getRemotes: error retrieving remotes", e);
+            return new ArrayList<>();
+        }
+
+
+
+        ArrayList<Provider> providerItems = new ArrayList();
+
+        for (int i = 0; i < remotesJSON.length(); i++) {
+            providerItems.add(Provider.Companion.newInstance(remotesJSON.getJSONObject(i)));
+        }
+
+        return providerItems;
+    }
+
+    public Provider getProviders(String name) throws JSONException {
+        for (Provider provider : getProviders()) {
+            if(provider.getName().equals(name)){
+                return provider;
+            }
+        }
+        return null;
+    }
+
 }

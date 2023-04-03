@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RemoteConfig
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,34 +45,31 @@ class DynamicConfig2 : Fragment() {
         val padding = resources.getDimensionPixelOffset(R.dimen.config_form_template)
 
 
-        val webdavConfig = ca.pkay.rcloneexplorer.RemoteConfig.DynamicConfigs.WebdavConfig()
+        val rclone = Rclone(this.context)
+        val prov = rclone.getProviders("webdav");
 
 
-        webdavConfig.getTypes().forEach {
-
-
+        prov.options.forEach {
             val textViewTitle = TextView(mContext)
-            textViewTitle.contentDescription = it.title
-            textViewTitle.text = it.title
+            textViewTitle.contentDescription = it.name
+            textViewTitle.text = it.name
             formContent.addView(textViewTitle)
 
 
             val textViewDescription = TextView(mContext)
-            textViewDescription.contentDescription = it.description
-            textViewDescription.text = it.description
+            textViewDescription.contentDescription = it.help
+            textViewDescription.text = it.help
             formContent.addView(textViewDescription)
 
-            val textViewRclone = TextView(mContext)
-            textViewRclone.contentDescription = it.rcloneOption
-            textViewRclone.text = it.rcloneOption
-            formContent.addView(textViewRclone)
-            
+
+            Log.e("TAG", "      Opt: ${it.name}")
+            Log.e("TAG", "      Opt: ${it.type}")
             when (it.type) {
-                ConfigType.TYPE_STRING -> {
+                "string" -> {
                     val input = EditText(mContext)
                     formContent.addView(input)
                 }
-                ConfigType.TYPE_SPINNER -> {
+                /*ConfigType.TYPE_SPINNER -> {
                     val input = Spinner(mContext)
                     val adapter = it.spinnerElements?.let { it1 ->
                         this.mContext?.let { it2 ->
@@ -85,7 +83,7 @@ class DynamicConfig2 : Fragment() {
                     input.adapter = adapter
 
                     formContent.addView(input)
-                }
+                }*/
                 else -> {
 
                 }
