@@ -9,7 +9,8 @@
 //
 // Supported host systems:
 //  - linux x64
-//  - mac os x64
+//  - macOS x64
+//  - macOS arm64 (Silicon)
 //  - windows x64
 //
 // Prerequisites:
@@ -90,12 +91,15 @@ def getCrossCompiler(abi) {
     def osName = System.properties['os.name']
     def osArch = System.properties['os.arch']
     def os = null
-    if (osName.contains('windows') && osArch == 'amd64') {
-        os = "windows-x86_64"
-    } else if (osName.contains("linux")) {
-        os = "linux-x86_64"
-    } else if (osName.contains('mac')) {
-        os = "darwin-x86_64"
+    if (osName.startsWith('Windows') && osArch == 'amd64') {
+        os = 'windows-x86_64'
+    } else if (osName.startsWith('Linux') && osArch == 'amd64') {
+        os = 'linux-x86_64'
+    } else if (osName.startsWith('Mac') && ['aarch64', 'amd64'].contains(osArch)) {
+        // Note that despite what the name suggests, the clang binary shipped
+        // with the NDK is a universal object file which should work on both
+        // x86_64 and arm64 (Silicon-based) architectures.
+        os = 'darwin-x86_64'
     }
     if (os == null) {
         throw new GradleException('Unsupported host OS or architecture.')
