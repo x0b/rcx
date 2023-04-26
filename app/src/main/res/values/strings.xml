@@ -262,7 +262,7 @@
     <string name="account_id_hint">Account ID</string>
     <string name="application_key_hint">Application key</string>
     <string name="endpoint_hint">Endpoint for the service</string>
-    <string name="drive_root_folder_id">Enter the root folder ID to access Computer folders'</string>
+    <string name="drive_root_folder_id">Enter the root folder ID to access Computer folders</string>
     <string name="ftp_host_hint">FTP host to connect to</string>
     <string name="ftp_user_hint">FTP username</string>
     <string name="ftp_port_hint">FTP port</string>
