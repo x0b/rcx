@@ -165,6 +165,7 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
         cardLayout.topMargin = getDPasPixel(16).toInt()
         cardLayout.marginStart = getDPasPixel(8).toInt()
         cardLayout.marginEnd = getDPasPixel(8).toInt()
+        cardLayout.bottomMargin = getDPasPixel(8).toInt()
         card.layoutParams = cardLayout
         // todo: Fix theming for dark mode
         card.setCardBackgroundColor(resources.getColor(R.color.md_theme_light_secondaryContainer))
