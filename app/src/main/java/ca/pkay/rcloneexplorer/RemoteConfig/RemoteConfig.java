@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import java.util.Locale;
+
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
@@ -116,79 +119,10 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
             return;
         }
 
+        // Todo: Check if we can make the list dynamic too
         String s = getResources().getStringArray(R.array.provider_ids)[provider];
         String title = getResources().getStringArray(R.array.provider_names)[provider];
-        switch (s) {
-            case "B2":
-                fragment = B2Config.newInstance();
-                break;
-            case "S3":
-                fragment = S3Config.newInstance();
-                break;
-            case "BOX":
-                fragment = BoxConfig.newInstance();
-                break;
-            case "FTP":
-                fragment = FtpConfig.newInstance();
-                break;
-            case "HTTP":
-                fragment = HttpConfig.newInstance();
-                break;
-            case "DROPBOX":
-                fragment = DropboxConfig.newInstance();
-                break;
-            case "HUBIC":
-                fragment = HubicConfig.newInstance();
-                break;
-            case "PCLOUD":
-                fragment = PcloudConfig.newInstance();
-                break;
-            case "SFTP":
-                fragment = SftpConfig.newInstance();
-                break;
-            case "YANDEX":
-                fragment = YandexConfig.newInstance();
-                break;
-            case "WEBDAV":
-                fragment = new DynamicConfig();
-                break;
-            case "ONEDRIVE":
-                fragment = OneDriveConfig.newInstance();
-                break;
-            case "ALIAS":
-                fragment = AliasConfig.newInstance();
-                break;
-            case "CRYPT":
-                fragment = CryptConfig.newInstance();
-                break;
-            case "QINGSTOR":
-                fragment = QingstorConfig.newInstance();
-                break;
-            case "AZUREBLOB":
-                fragment = Azureblob.newInstance();
-                break;
-            case "CACHE":
-                fragment = CacheConfig.newInstance();
-                break;
-            case "LOCAL":
-                fragment = LocalConfig.newInstance();
-                break;
-            case "DRIVE":
-                fragment = DriveConfig.newInstance();
-                break;
-            case "GOOGLE_PHOTOS":
-                fragment = GooglePhotosConfig.newInstance();
-                break;
-            case "UNION":
-                fragment = UnionConfig.newInstance();
-                break;
-            case "MEGA":
-                fragment = MegaConfig.newInstance();
-                break;
-            default:
-                return;
-        }
-
+        fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment, "new config");
         transaction.commit();
