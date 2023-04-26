@@ -26,10 +26,11 @@ jobs:
       with:
         go-version: 1.20
       id: go
-    - name: Force NDK version
-      run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;25.0.8775105"
-    - name: Build rclone
-      run: ./gradlew rclone:buildAll
+    - name: Install NDK
+      run: |
+        NDK_VERSION="$(grep -E "^de\.felixnuesse\.extract\.ndkVersion=" gradle.properties | cut -d'=' -f2)"
+        yes | sudo "${ANDROID_HOME}/tools/bin/sdkmanager" --licenses
+        sudo "${ANDROID_HOME}/tools/bin/sdkmanager" "ndk;${NDK_VERSION}"
     - name: Build app
       run: ./gradlew assembleOssDebug
     - name: Upload APK (arm)
