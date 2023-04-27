@@ -1,8 +1,6 @@
 package ca.pkay.rcloneexplorer.RemoteConfig;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,11 +21,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
-import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
-import es.dmoral.toasty.Toasty;
 
 public class DriveConfig extends Fragment {
 
@@ -234,51 +229,6 @@ public class DriveConfig extends Fragment {
             options.add(scopeString);
         }
 
-        authTask = new ConfigCreate(options).execute();
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class ConfigCreate extends AsyncTask<Void, Void, Boolean> {
-
-        private ArrayList<String> options;
-        private Process process;
-
-        ConfigCreate(ArrayList<String> options) {
-            this.options = new ArrayList<>(options);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            authView.setVisibility(View.VISIBLE);
-            formView.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            return OauthHelper.createOptionsWithOauth(options, rclone, context);
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            if (process != null) {
-                process.destroy();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            super.onPostExecute(success);
-            if (!success) {
-                Toasty.error(context, getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
-            } else {
-                Toasty.success(context, getString(R.string.remote_creation_success), Toast.LENGTH_SHORT, true).show();
-            }
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
+        authTask = new ca.pkay.rcloneexplorer.RemoteConfig.ConfigCreate(options, formView, authView, context, rclone).execute();
     }
 }

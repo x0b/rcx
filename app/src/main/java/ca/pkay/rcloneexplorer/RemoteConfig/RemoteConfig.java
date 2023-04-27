@@ -2,8 +2,10 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,9 +15,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.Locale;
 
-import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
+import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
 
 public class RemoteConfig extends AppCompatActivity implements RemotesConfigList.ProviderSelectedListener {
@@ -119,10 +121,41 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
             return;
         }
 
+        Log.e("TAG", "next?: "+provider);
+
         // Todo: Check if we can make the list dynamic too
         String s = getResources().getStringArray(R.array.provider_ids)[provider];
         String title = getResources().getStringArray(R.array.provider_names)[provider];
-        fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT));
+        Log.e("TAG", "next?: "+s);
+
+        switch (s) {
+            case "BOX":
+                fragment = BoxConfig.newInstance();
+                break;
+            case "DROPBOX":
+                fragment = DropboxConfig.newInstance();
+                break;
+            case "HUBIC":
+                fragment = HubicConfig.newInstance();
+                break;
+            case "PCLOUD":
+                fragment = PcloudConfig.newInstance();
+                break;
+            case "YANDEX":
+                fragment = YandexConfig.newInstance();
+                break;
+            case "DRIVE":
+                fragment = DriveConfig.newInstance();
+                break;
+            case "GOOGLE_PHOTOS":
+                fragment = GooglePhotosConfig.newInstance();
+                break;
+            default:
+                fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT));
+                break;
+        }
+
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.flFragment, fragment, "new config");
         transaction.commit();

@@ -2,11 +2,13 @@ package ca.pkay.rcloneexplorer.RemoteConfig
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,19 +20,31 @@ import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.rclone.Provider
 import ca.pkay.rcloneexplorer.rclone.ProviderOption
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-class DynamicConfig(val mProviderTitle: String) : Fragment() {
+class DynamicConfig(private val mProviderTitle: String) : Fragment() {
+
+    constructor(providerTitle: String, configExtension: ConfigExtension?) : this(providerTitle) {
+        this.mConfigExtension = configExtension
+    }
+
     private lateinit var mContext: Context
     private var rclone: Rclone? = null
 
+    private var mFormView: ViewGroup? = null
+    private var mAuthView: View? = null
     private var mCancelButton: Button? = null
+    private var mCancelAuthButton: Button? = null
     private var mNextButton: Button? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
 
 
+    private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
+
     private var mOptionMap = hashMapOf<String, String>()
+    var mConfigExtension: ConfigExtension? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,24 +62,35 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.remote_config_form, container, false)
-        setUpForm(view)
+        mFormView = view.findViewById(R.id.form_content)
+        mAuthView = view.findViewById(R.id.auth_screen)
+
         mRemoteName = view.findViewById(R.id.remote_name)
         mCancelButton = view.findViewById(R.id.cancel)
+        mCancelAuthButton = view.findViewById(R.id.cancel_auth)
         mNextButton = view.findViewById(R.id.next)
 
 
-        mCancelButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate(); }
+        setUpForm()
+        mCancelButton?.setOnClickListener { parentFragmentManager.popBackStack(); }
         mNextButton?.setOnClickListener { setUpRemote() }
+        mCancelAuthButton?.setOnClickListener { v: View? ->
+            mAuthTask?.cancel(true)
+            requireActivity().finish()
+        }
 
         return view
     }
 
-    private fun setUpForm(view: View) {
-        val formContent = view.findViewById<ViewGroup>(R.id.form_content)
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mAuthTask?.cancel(true)
+    }
 
-        val rclone = Rclone(this.context)
-        mProvider = rclone.getProviders(mProviderTitle)
+    private fun setUpForm() {
+        rclone = Rclone(this.context)
+        mProvider = rclone!!.getProviders(mProviderTitle)
         if(mProvider == null) {
             Log.e("TAG", "Unknown Provider: $mProviderTitle")
             Toast.makeText(this.mContext, R.string.dynamic_config_unknown_error, Toast.LENGTH_LONG).show()
@@ -103,7 +128,7 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
                         setTextInputListener(input, it.name)
 
                     } else if(it.examples.size > 0) {
-                        layout.addView(createSpinnerFromExample(it))
+                        createSpinnerFromExample(it, it.name ,layout)
                     } else {
                         val input = getAttachedEditText(it.name, layout)
                         setTextInputListener(input, it.name)
@@ -128,7 +153,7 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
 
             val cardContainer = getCard()
             cardContainer.addView(layout)
-            formContent.addView(cardContainer)
+            mFormView?.addView(cardContainer)
         }
     }
 
@@ -138,8 +163,17 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
     }
 
 
-    private fun createSpinnerFromExample(option: ProviderOption): View {
-        val input = Spinner(mContext)
+    private fun createSpinnerFromExample(option: ProviderOption, hint: String, layout: LinearLayout): View {
+
+
+        val padding = resources.getDimensionPixelOffset(R.dimen.cardPadding)
+        val textinput = TextInputLayout(ContextThemeWrapper(activity, R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu))
+        textinput.hint = hint
+        textinput.boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+        textinput.setPadding(0, padding, 0, 0)
+
+        var input = AutoCompleteTextView(textinput.context)
+        input.setPadding(padding)
         val items = ArrayList<String>()
 
         option.examples.forEach { example ->
@@ -151,8 +185,11 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
             items
         )
 
+        input.setAdapter(adapter)
+        input.isEnabled = false
 
-        input.adapter = adapter
+        textinput.addView(input)
+        layout.addView(textinput)
         return input
     }
 
@@ -188,7 +225,7 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
         textinput.setPadding(0, padding, 0, 0)
 
 
-        val editText = EditText(textinput.context)
+        val editText = TextInputEditText(textinput.context)
         editText.setPadding(padding)
 
         textinput.addView(editText)
@@ -221,7 +258,14 @@ class DynamicConfig(val mProviderTitle: String) : Fragment() {
             options.add(value)
         }
 
-        RemoteConfigHelper.setupAndWait(context, options)
-        requireActivity().finish()
+        if(mConfigExtension?.useConfigCreate() == true){
+            mAuthTask = ConfigCreate(
+                options, mFormView!!, mAuthView!!,
+                requireContext(), rclone!!
+            ).execute()
+        } else {
+            RemoteConfigHelper.setupAndWait(context, options)
+            requireActivity().finish()
+        }
     }
 }

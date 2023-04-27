@@ -51,15 +51,14 @@
     </LinearLayout>
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:srcCompat="@drawable/ic_cloud"
-            android:id="@+id/providerIcon"
-            android:contentDescription="@null"
-            android:layout_marginEnd="16dp"
-            app:tint="@color/iconTint"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+        android:id="@+id/providerIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_cloud" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
