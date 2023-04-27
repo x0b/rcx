@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import ca.pkay.rcloneexplorer.R;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
+
+import ca.pkay.rcloneexplorer.R;
 import java9.util.stream.IntStream;
 
 public class RemotesConfigList extends Fragment {
@@ -27,7 +27,7 @@ public class RemotesConfigList extends Fragment {
     }
 
     public List<String> providers;
-    private int[] selected = {-1};
+    private int selected = -1;
     private RadioButton lastSelected;
     private ProviderSelectedListener listener;
     private Context context;
@@ -73,7 +73,7 @@ public class RemotesConfigList extends Fragment {
         }
         radioButton.setChecked(true);
         lastSelected = radioButton;
-        selected[0] = providers.indexOf(provider);
+        selected = providers.indexOf(provider);
     }
 
     private void setClickListeners(View view) {
@@ -84,7 +84,7 @@ public class RemotesConfigList extends Fragment {
                 getActivity().finish();
             }
         });
-        view.findViewById(R.id.next).setOnClickListener(v -> listener.onProviderSelected(selected[0]));
+        view.findViewById(R.id.next).setOnClickListener(v -> listener.onProviderSelected(selected));
 
         final String[] ids = getResources().getStringArray(R.array.provider_ids);
         String[] names = getResources().getStringArray(R.array.provider_names);
@@ -94,7 +94,7 @@ public class RemotesConfigList extends Fragment {
         Integer[] sorted = IntStream.range(0, ids.length).boxed().toArray(Integer[]::new);
         Arrays.sort(sorted, (i, j) -> names[i].compareToIgnoreCase(names[j]));
 
-        for (int i = 0, itemsLength = ids.length; i < itemsLength; i++) {
+        for (int i = 0; i < ids.length; i++) {
             int j = sorted[i];
             View provider = View.inflate(context, R.layout.config_list_item_template, null);
             ((TextView) provider.findViewById(R.id.provider_tv)).setText(names[j]);
