@@ -19,7 +19,6 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -28,14 +27,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity
     public static final String MAIN_ACTIVITY_START_LOG = "MAIN_ACTIVITY_START_LOG";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
+    private static final int REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS = 63;
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
     private static final int ONBOARDING_REQUEST = 93;
@@ -111,6 +112,9 @@ public class MainActivity extends AppCompatActivity
 
         ActivityHelper.applyTheme(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission();
+        }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
@@ -567,6 +571,14 @@ public class MainActivity extends AppCompatActivity
             if (refresh.isRequired()) {
                 refresh.execute();
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    public void checkNotificationPermission() {
+        String postNotifications = Manifest.permission.POST_NOTIFICATIONS;
+        if(ContextCompat.checkSelfPermission(this,  postNotifications) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {postNotifications}, REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS );
         }
     }
 

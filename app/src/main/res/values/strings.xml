@@ -688,4 +688,6 @@
     <string name="save_trigger_button_description">Save Trigger</string>
     <string name="trigger_interval_label">Every</string>
     <string name="trigger_save_notitle">You need to set a title</string>
+    <string name="intro_notifications_title">Get Notified!</string>
+    <string name="intro_notifications_description">We need to show you notifications when we sync your files, so please grant us access to post notifications. We wont spam you!</string>
 </resources>
