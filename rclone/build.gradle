@@ -198,7 +198,8 @@ task buildx64(dependsOn: checkoutRclone) {
 }
 
 task buildAll {
-    dependsOn buildArm, buildArm64, buildx86, buildx64
+    dependsOn buildArm
+    //, buildArm64, buildx86, buildx64
 }
 
 task clean {
