@@ -35,13 +35,11 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
-            buildConfigField "java.lang.long", "BUILD_TIME", "0L"
         }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
         }
     }
 
@@ -60,7 +58,6 @@ android {
         // OSS build
         oss {
             dimension 'edition'
-            buildConfigField "java.lang.long", "BUILD_TIME", "0L"
         }
     }
 

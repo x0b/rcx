@@ -184,16 +184,6 @@ public class PackageUpdate {
         @Nullable
         private String getApkUrl(GitHubRelease release) {
             // Since the app is not published immediately during build, 60 minutes are added
-            long minStamp = BuildConfig.BUILD_TIME + 1000 * 60 * 60;
-            String[] supportedAbis = Build.SUPPORTED_ABIS;
-            for (ReleaseAsset asset : release.getAssets()) {
-                for (String supportedAbi : supportedAbis) {
-                    if (asset.getName().contains(supportedAbi)
-                            && release.getCreatedAt() >= minStamp) {
-                        return asset.getUrl();
-                    }
-                }
-            }
             return null;
         }
 
