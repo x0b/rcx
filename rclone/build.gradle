@@ -147,7 +147,7 @@ def buildRclone(abi) {
                 environment 'CGO_LDFLAGS', '-fuse-ld=lld -s'
                 abiToEnv[abi].each {entry -> environment entry.key, entry.value}
                 workingDir CACHE_PATH
-                def ldflags = "-X github.com/rclone/rclone/fs.Version=${RCLONE_VERSION}${RCLONE_CUSTOM_VERSION_SUFFIX}"
+                def ldflags = "-X github.com/rclone/rclone/fs.Version=${RCLONE_VERSION}${RCLONE_CUSTOM_VERSION_SUFFIX} -buildid="
                 commandLine (
                     'go',
                     'build',
