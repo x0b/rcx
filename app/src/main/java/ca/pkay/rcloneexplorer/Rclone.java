@@ -1470,7 +1470,7 @@ public class Rclone {
         return providerItems;
     }
 
-    public Provider getProviders(String name) throws JSONException {
+    public Provider getProvider(String name) throws JSONException {
         for (Provider provider : getProviders()) {
             if(provider.getName().equals(name)){
                 return provider;

@@ -90,7 +90,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
     private fun setUpForm() {
         rclone = Rclone(this.context)
-        mProvider = rclone!!.getProviders(mProviderTitle)
+        mProvider = rclone!!.getProvider(mProviderTitle)
         if(mProvider == null) {
             Log.e("TAG", "Unknown Provider: $mProviderTitle")
             Toast.makeText(this.mContext, R.string.dynamic_config_unknown_error, Toast.LENGTH_LONG).show()
