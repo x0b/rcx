@@ -58,4 +58,22 @@ class ProviderOption {
     }
 
 
+    fun getNameCapitalized(): String {
+        var tempName = name
+        var wasSpace = false
+        var capitalized = tempName[0].uppercaseChar().toString()
+
+        for(s in tempName.drop(1)){
+            if(wasSpace){
+                capitalized += s.uppercaseChar()
+            } else {
+                capitalized += if(s == '_') ' ' else s
+            }
+            wasSpace = s == '_'
+        }
+
+        return capitalized
+    }
+
+
 }

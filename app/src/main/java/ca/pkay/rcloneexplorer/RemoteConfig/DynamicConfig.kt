@@ -74,7 +74,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
 
         setUpForm()
-        mCancelButton?.setOnClickListener { parentFragmentManager.popBackStack(); }
+        mCancelButton?.setOnClickListener { activity?.supportFragmentManager?.popBackStack(); }
         mNextButton?.setOnClickListener { setUpRemote() }
         mCancelAuthButton?.setOnClickListener { v: View? ->
             mAuthTask?.cancel(true)
@@ -110,7 +110,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
             val textViewTitle = TextView(mContext)
             textViewTitle.contentDescription = it.name
-            textViewTitle.text = it.name
+            textViewTitle.text = it.getNameCapitalized()
             textViewTitle.typeface = Typeface.DEFAULT_BOLD
             layout.addView(textViewTitle)
 
