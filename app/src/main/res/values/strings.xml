@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">extRact</string>
+    <string name="app_name">Round Sync</string>
     <string name="app_description">Rclone for Android</string>
-    <string name="app_short_name">extRact</string>
-    <string name="title_activity_main">extRact</string>
+    <string name="app_short_name">Round Sync</string>
+    <string name="title_activity_main">Round Sync</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
