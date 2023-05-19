@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--Todo: Move this to strings, and replace this on demand in the spinner of the google one. We might need custom code for this-->
     <array name="drive_scopes">
         <item>Full access to all files, excluding Application Data Folder</item>
         <item>Read-only access to file metadata and file contents</item>

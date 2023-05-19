@@ -6,13 +6,16 @@ class Provider(val name: String) {
 
     val options = ArrayList<ProviderOption>()
     var description = ""
-    var Prefix = ""
-    var CommandHelp = ""
+    var prefix = ""
+    var commandHelp = ""
 
 
     companion object {
         fun newInstance(data: JSONObject): Provider {
             val item = Provider(data.optString("Name"))
+            item.description = data.optString("Description")
+            item.prefix = data.optString("Prefix")
+            item.commandHelp = data.optString("CommandHelp")
 
             val options = data.getJSONArray("Options")
 
@@ -22,6 +25,25 @@ class Provider(val name: String) {
 
             return item
         }
+    }
+
+
+
+    fun getNameCapitalized(): String {
+        var tempName = name
+        var wasSpace = false
+        var capitalized = tempName[0].uppercaseChar().toString()
+
+        for(s in tempName.drop(1)){
+            if(wasSpace){
+                capitalized += s.uppercaseChar()
+            } else {
+                capitalized += s
+            }
+            wasSpace = s == ' '
+        }
+
+        return capitalized
     }
 
 }

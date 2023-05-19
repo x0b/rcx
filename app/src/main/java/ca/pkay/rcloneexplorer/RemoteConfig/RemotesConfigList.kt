@@ -1,111 +1,137 @@
-package ca.pkay.rcloneexplorer.RemoteConfig;
+package ca.pkay.rcloneexplorer.RemoteConfig
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.TextView;
+import android.content.Context
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.Rclone
+import ca.pkay.rcloneexplorer.rclone.Provider
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import java.util.Arrays;
-import java.util.List;
-
-import ca.pkay.rcloneexplorer.R;
-import java9.util.stream.IntStream;
-
-public class RemotesConfigList extends Fragment {
-
-    public interface ProviderSelectedListener {
-        void onProviderSelected(int provider);
+class RemotesConfigList : Fragment() {
+    interface ProviderSelectedListener {
+        fun onProviderSelected(provider: Provider)
     }
 
-    public List<String> providers;
-    private int selected = -1;
-    private RadioButton lastSelected;
-    private ProviderSelectedListener listener;
-    private Context context;
+    private var mRclone: Rclone? = null
 
-    public RemotesConfigList() {}
+    var mProviders: ArrayList<Provider> = arrayListOf()
 
-    public static RemotesConfigList newInstance() { return new RemotesConfigList(); }
+    private var mSelectedProvider: Provider? = null
+    private var mLastSelected: RadioButton? = null
+    private var mProviderSelectedListener: ProviderSelectedListener? = null
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = getContext();
-        providers = Arrays.asList(getResources().getStringArray(R.array.provider_ids));
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mRclone = Rclone(this.context)
+        mProviders = mRclone?.providers ?: arrayListOf()
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_config_list, container, false);
-        setClickListeners(view);
-        return view;
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_config_list, container, false)
+        setClickListeners(view)
+        return view
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ProviderSelectedListener) {
-            listener = (ProviderSelectedListener) context;
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mProviderSelectedListener = if (context is ProviderSelectedListener) {
+            context
         } else {
-            throw new RuntimeException(context.toString() + " must implement ProviderSelectedListener");
+            throw RuntimeException("$context must implement ProviderSelectedListener")
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
+    override fun onDetach() {
+        super.onDetach()
+        mProviderSelectedListener = null
     }
 
-    private void setSelected(RadioButton radioButton, String provider) {
-        if (lastSelected != null) {
-            lastSelected.setChecked(false);
+    private fun setSelected(radioButton: RadioButton, provider: Provider) {
+        if (mLastSelected != null) {
+            mLastSelected!!.isChecked = false
         }
-        radioButton.setChecked(true);
-        lastSelected = radioButton;
-        selected = providers.indexOf(provider);
+        radioButton.isChecked = true
+        mLastSelected = radioButton
+        mSelectedProvider = provider
     }
 
-    private void setClickListeners(View view) {
-        ViewGroup listContent = view.findViewById(R.id.config_content);
+    private fun setClickListeners(view: View) {
+        val listContent = view.findViewById<ViewGroup>(R.id.config_content)
 
-        view.findViewById(R.id.cancel).setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().finish();
+
+        view.findViewById<View>(R.id.cancel).setOnClickListener {
+           requireActivity().finish()
+        }
+
+
+        view.findViewById<View>(R.id.next).setOnClickListener {
+            mSelectedProvider?.let { it1 -> mProviderSelectedListener!!.onProviderSelected(it1) }
+        }
+
+        for (provider in mProviders) {
+
+
+            val providerView = View.inflate(context, R.layout.config_list_item_template, null)
+
+
+            Log.e("RemotesConfigList", "Add Name:    "+provider.getNameCapitalized())
+            Log.e("RemotesConfigList", "Description: "+provider.description)
+
+            (providerView.findViewById<View>(R.id.provider_tv) as TextView).text = provider.getNameCapitalized()
+            (providerView.findViewById<View>(R.id.provider_summary) as TextView).text = provider.description
+            (providerView.findViewById<View>(R.id.providerIcon) as ImageView).setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), getIconIfAvailable(provider.name))
+            )
+
+            providerView.findViewById<View>(R.id.provider).setOnClickListener { v: View ->
+                val rb = v.findViewById<RadioButton>(R.id.provider_rb)
+                setSelected(rb, provider)
             }
-        });
-        view.findViewById(R.id.next).setOnClickListener(v -> listener.onProviderSelected(selected));
+            listContent.addView(providerView)
+        }
+    }
 
-        final String[] ids = getResources().getStringArray(R.array.provider_ids);
-        String[] names = getResources().getStringArray(R.array.provider_names);
-        String[] summaries = getResources().getStringArray(R.array.provider_summaries);
-        TypedArray icons = getResources().obtainTypedArray(R.array.provider_icons);
+    companion object {
+        @JvmStatic
+        fun newInstance(): RemotesConfigList {
+            return RemotesConfigList()
+        }
+    }
 
-        Integer[] sorted = IntStream.range(0, ids.length).boxed().toArray(Integer[]::new);
-        Arrays.sort(sorted, (i, j) -> names[i].compareToIgnoreCase(names[j]));
-
-        for (int i = 0; i < ids.length; i++) {
-            int j = sorted[i];
-            View provider = View.inflate(context, R.layout.config_list_item_template, null);
-            ((TextView) provider.findViewById(R.id.provider_tv)).setText(names[j]);
-            ((TextView) provider.findViewById(R.id.provider_summary)).setText(summaries[j]);
-            ((ImageView) provider.findViewById(R.id.providerIcon)).setImageDrawable(icons.getDrawable(j));
-            final String providerId = ids[j];
-            provider.findViewById(R.id.provider).setOnClickListener(v -> {
-                RadioButton rb = v.findViewById(R.id.provider_rb);
-                setSelected(rb, providerId);
-            });
-            listContent.addView(provider);
+    private fun getIconIfAvailable(providerName: String ): Int {
+        return when(providerName) {
+            "box" -> R.drawable.ic_box
+            "b2" -> R.drawable.ic_backblaze_b2_black
+            "s3" -> R.drawable.ic_amazon
+            "dropbox" -> R.drawable.ic_dropbox
+            "pcloud" -> R.drawable.ic_pcloud
+            "sftp" -> R.drawable.ic_terminal
+            "yandex" -> R.drawable.ic_yandex_mono
+            "webdav" -> R.drawable.ic_webdav
+            "onedrive" -> R.drawable.ic_onedrive
+            "alias" -> R.drawable.ic_rclone_logo
+            "crypt" -> R.drawable.ic_lock_black
+            "azureblob" -> R.drawable.ic_azure_storage_blob_logo
+            "cache" -> R.drawable.ic_rclone_logo
+            "local" -> R.drawable.ic_tablet_cellphone
+            "drive" -> R.drawable.ic_google_drive
+            "google photos" -> R.drawable.ic_google_photos
+            "union" -> R.drawable.ic_union_24dp
+            "mega" -> R.drawable.ic_mega_logo_black
+            else -> {
+                R.drawable.ic_cloud
+            }
         }
     }
 }

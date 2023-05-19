@@ -2,7 +2,6 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -13,10 +12,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.util.Locale;
-
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RuntimeConfiguration;
+import ca.pkay.rcloneexplorer.rclone.Provider;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import es.dmoral.toasty.Toasty;
 
@@ -115,30 +113,23 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
     }
 
     @Override
-    public void onProviderSelected(int provider) {
-        if (provider < 0) {
+    public void onProviderSelected(Provider provider) {
+        if (provider == null) {
             Toasty.error(this, getString(R.string.nothing_selected), Toast.LENGTH_SHORT, true).show();
             return;
         }
 
-        Log.e("TAG", "next?: "+provider);
-
-        // Todo: Check if we can make the list dynamic too
-        String s = getResources().getStringArray(R.array.provider_ids)[provider];
-        String title = getResources().getStringArray(R.array.provider_names)[provider];
-        Log.e("TAG", "next?: "+s);
-
-        switch (s) {
-            case "BOX":
-            case "DROPBOX":
-            case "PCLOUD":
-            case "YANDEX":
-            case "DRIVE":
-            case "GOOGLE_PHOTOS":
-                fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT), true);
+        switch (provider.getName()) {
+            case "box":
+            case "dropbox":
+            case "pcloud":
+            case "yandex":
+            case "drive":
+            case "google photos":
+                fragment = new DynamicConfig(provider.getName(), true);
                 break;
             default:
-                fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT));
+                fragment = new DynamicConfig(provider.getName());
                 break;
         }
 
@@ -148,7 +139,7 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
         transaction.commit();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
+            getSupportActionBar().setTitle(provider.getNameCapitalized());
         }
     }
 }
