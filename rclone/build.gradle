@@ -144,23 +144,7 @@ def buildRclone(abi) {
                 environment 'CC_FOR_TARGET', crossCompiler
                 environment 'GOOS', 'android'
                 environment 'CGO_ENABLED', '1'
-                environment 'CGO_LDFLAGS', '-fuse-ld=lld -s'
-                abiToEnv[abi].each {entry -> environment entry.key, entry.value}
-                workingDir CACHE_PATH
-                def ldflags = "-buildid= -X github.com/rclone/rclone/fs.Version=${RCLONE_VERSION}${RCLONE_CUSTOM_VERSION_SUFFIX}"
-                commandLine (
-                        'go',
-                        'env'
-                )
-            }
-            exec {
-                environment 'GOPATH', GOPATH
-                def crossCompiler = getCrossCompiler(abi)
-                environment 'CC', crossCompiler
-                environment 'CC_FOR_TARGET', crossCompiler
-                environment 'GOOS', 'android'
-                environment 'CGO_ENABLED', '1'
-                environment 'CGO_LDFLAGS', '-fuse-ld=lld -s'
+                environment 'CGO_LDFLAGS', '-s'
                 abiToEnv[abi].each {entry -> environment entry.key, entry.value}
                 workingDir CACHE_PATH
                 def ldflags = "-buildid= -X github.com/rclone/rclone/fs.Version=${RCLONE_VERSION}${RCLONE_CUSTOM_VERSION_SUFFIX}"
