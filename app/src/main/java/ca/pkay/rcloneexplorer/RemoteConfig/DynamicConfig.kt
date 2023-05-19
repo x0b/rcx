@@ -12,10 +12,20 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import ca.pkay.rcloneexplorer.Fragments.RemotesFragment
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.rclone.Provider
@@ -74,9 +84,9 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
 
         setUpForm()
-        mCancelButton?.setOnClickListener { activity?.supportFragmentManager?.popBackStack(); }
+        mCancelButton?.setOnClickListener { activity?.onBackPressed() }
         mNextButton?.setOnClickListener { setUpRemote() }
-        mCancelAuthButton?.setOnClickListener { v: View? ->
+        mCancelAuthButton?.setOnClickListener {
             mAuthTask?.cancel(true)
             requireActivity().finish()
         }
