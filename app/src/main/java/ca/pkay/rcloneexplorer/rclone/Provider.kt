@@ -28,8 +28,22 @@ class Provider(val name: String) {
     }
 
 
-
+    /**
+     * For ease of use, this usually applies title-capitalization.
+     * However, some special cases are changed differently, for ease of use.
+     * One example is ftp: it will be changed to FTP.
+     */
     fun getNameCapitalized(): String {
+
+        when(name) {
+            "ftp" -> return "FTP"
+            "hdfs" -> return "HDFS"
+            "hidrive" -> return "HiDrive"
+            "sftp" -> return "SFTP"
+            "smb" -> return "SMB"
+            "http" -> return "HTTP"
+        }
+
         var tempName = name
         var wasSpace = false
         var capitalized = tempName[0].uppercaseChar().toString()
