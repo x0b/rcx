@@ -22,6 +22,8 @@ import ca.pkay.rcloneexplorer.rclone.Provider
 import ca.pkay.rcloneexplorer.rclone.ProviderOption
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.util.Locale
+
 
 class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
@@ -88,6 +90,9 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         mAuthTask?.cancel(true)
     }
 
+
+    // Todo: required attribute is not honored (also apply to title!)
+    // Todo: hidden attribute is not applied
     private fun setUpForm() {
         rclone = Rclone(this.context)
         mProvider = rclone!!.getProvider(mProviderTitle)
@@ -135,6 +140,17 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
                     }
 
 
+                }
+                "bool" -> {
+                    val input = CheckBox(mContext)
+                    input.text = it.name
+                    setCheckboxListener(input, it.name)
+
+                    if(it.default.lowercase(Locale.ROOT).toBoolean()){
+                        input.isChecked = true
+                    }
+
+                    layout.addView(input)
                 }
                 else -> {
                     val unknownType = getAttachedEditText(it.name, layout)
@@ -244,6 +260,16 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         })
     }
 
+    private fun setCheckboxListener(input: CheckBox, option: String) {
+
+        input.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            if(isChecked) {
+                mOptionMap[option] = "true"
+            } else {
+                mOptionMap[option] = "false"
+            }
+        }
+    }
     private fun setUpRemote() {
         Log.e("TAG", "LOG")
 
