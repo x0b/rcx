@@ -130,22 +130,12 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
 
         switch (s) {
             case "BOX":
-                fragment = BoxConfig.newInstance();
-                break;
             case "DROPBOX":
-                fragment = DropboxConfig.newInstance();
-                break;
             case "PCLOUD":
-                fragment = PcloudConfig.newInstance();
-                break;
             case "YANDEX":
-                fragment = YandexConfig.newInstance();
-                break;
             case "DRIVE":
-                fragment = DriveConfig.newInstance();
-                break;
             case "GOOGLE_PHOTOS":
-                fragment = GooglePhotosConfig.newInstance();
+                fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT), true);
                 break;
             default:
                 fragment = new DynamicConfig(s.toLowerCase(Locale.ROOT));

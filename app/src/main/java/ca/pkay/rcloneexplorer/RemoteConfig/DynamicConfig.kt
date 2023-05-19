@@ -25,8 +25,8 @@ import com.google.android.material.textfield.TextInputLayout
 
 class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
-    constructor(providerTitle: String, configExtension: ConfigExtension?) : this(providerTitle) {
-        this.mConfigExtension = configExtension
+    constructor(providerTitle: String, useOauth: Boolean) : this(providerTitle) {
+        this.useOauth = useOauth
     }
 
     private lateinit var mContext: Context
@@ -44,7 +44,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
 
     private var mOptionMap = hashMapOf<String, String>()
-    var mConfigExtension: ConfigExtension? = null
+    var useOauth: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -258,7 +258,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
             options.add(value)
         }
 
-        if(mConfigExtension?.useConfigCreate() == true){
+        if(useOauth){
             mAuthTask = ConfigCreate(
                 options, mFormView!!, mAuthView!!,
                 requireContext(), rclone!!
