@@ -135,9 +135,6 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
             case "DROPBOX":
                 fragment = DropboxConfig.newInstance();
                 break;
-            case "HUBIC":
-                fragment = HubicConfig.newInstance();
-                break;
             case "PCLOUD":
                 fragment = PcloudConfig.newInstance();
                 break;

@@ -214,9 +214,6 @@
     <string name="provider_http">HTTP</string>
     <string name="serve_dlna">DLNA</string>
     <string name="url_hint">Server-URL</string>
-    <string name="hubic_client_id_hint">HubiC Client-ID</string>
-    <string name="hubic_client_secret_hint">HubiC Client-Secret</string>
-    <string name="provider_hubic">HubiC</string>
     <string name="pcloud_client_id_hint">Pcloud Client-ID</string>
     <string name="pcloud_client_secret_hint">Pcloud Client-Secret</string>
     <string name="provider_pcloud">Pcloud</string>

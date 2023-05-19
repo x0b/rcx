@@ -18,7 +18,6 @@
         <item>DROPBOX</item>
         <item>FTP</item>
         <item>HTTP</item>
-        <item>HUBIC</item>
         <item>PCLOUD</item>
         <item>SFTP</item>
         <item>YANDEX</item>
@@ -43,7 +42,6 @@
         <item>@drawable/ic_dropbox</item>
         <item>@drawable/ic_cloud</item>
         <item>@drawable/ic_cloud</item>
-        <item>@drawable/ic_hubic_black</item>
         <item>@drawable/ic_pcloud</item>
         <item>@drawable/ic_terminal</item>
         <item>@drawable/ic_yandex_mono</item>

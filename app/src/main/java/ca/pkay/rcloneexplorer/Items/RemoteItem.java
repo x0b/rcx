@@ -4,15 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
-import ca.pkay.rcloneexplorer.R;
-import io.github.x0b.safdav.file.SafConstants;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import ca.pkay.rcloneexplorer.R;
+import io.github.x0b.safdav.file.SafConstants;
 
 public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
@@ -40,7 +42,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public static final int GOOGLE_CLOUD_STORAGE = 12;
     public static final int GOOGLE_DRIVE = 13;
     public static final int GOOGLE_PHOTOS = 14;
-    public static final int HUBIC = 15;
     public static final int JOTTACLOUD = 16;
     public static final int KOOFR = 17;
     public static final int LOCAL = 18;
@@ -124,7 +125,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         switch (type) {
             case DROPBOX:
             case B2:
-            case HUBIC:
             case GOOGLE_PHOTOS:
                 return false;
             default:
@@ -134,7 +134,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
 
     public boolean isOAuth() {
         switch (type) {
-            case HUBIC:
             case PCLOUD:
             case PREMIUMIZEME:
             case BOX:
@@ -311,8 +310,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                 return HTTP;
             case "swift":
                 return SWIFT;
-            case "hubic":
-                return HUBIC;
             case "jottacloud":
                 return JOTTACLOUD;
             case "koofr":
@@ -377,8 +374,6 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
                     return R.drawable.ic_google;
                 case RemoteItem.GOOGLE_PHOTOS:
                     return R.drawable.ic_google_photos;
-                case RemoteItem.HUBIC:
-                    return R.drawable.ic_hubic_black;
                 case RemoteItem.KOOFR:
                     return R.drawable.ic_koofr;
                 case RemoteItem.MEGA:
