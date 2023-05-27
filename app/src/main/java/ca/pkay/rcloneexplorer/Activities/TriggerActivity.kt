@@ -33,7 +33,7 @@ class TriggerActivity : AppCompatActivity() {
 
     private lateinit var mTrigger: Trigger
     private lateinit var dbHandler: DatabaseHandler
-    private var mTaskList: List<Task> = ArrayList();
+    private var mTaskList: List<Task> = ArrayList()
 
     private lateinit var mCardInterval: CardView
     private lateinit var mCardWeekday: CardView
@@ -145,7 +145,7 @@ class TriggerActivity : AppCompatActivity() {
                 Trigger.TRIGGER_DAY_MON, isChecked
             )
         }
-        mWeekdayThu.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+        mWeekdayTue.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             mTrigger.setEnabledAtDay(
                 Trigger.TRIGGER_DAY_TUE, isChecked
             )
