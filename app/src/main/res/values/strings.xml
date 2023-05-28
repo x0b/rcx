@@ -44,8 +44,8 @@
     <string name="cancel">Cancel</string>
     <string name="select">Select</string>
     <string name="app_icon">App Icon</string>
-    <string name="github_app_url" translatable="false">https://github.com/newhinton/extRact</string>
-    <string name="github_issue_url" translatable="false">https://github.com/newhinton/extRact/issues/new/choose</string>
+    <string name="github_app_url" translatable="false">https://github.com/newhinton/Round-Sync</string>
+    <string name="github_issue_url" translatable="false">https://github.com/newhinton/Round-Sync/issues/new/choose</string>
     <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
     <string name="github_maintainer_url" translatable="false">https://github.com/newhinton</string>
     <string name="replace_config_file_question">Replace the current configuration file?</string>
@@ -120,11 +120,11 @@
     <string name="flaticon" translatable="false">Flaticon</string>
     <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
     <string name="intro_welcome_title">Welcome</string>
-    <string name="intro_welcome_description">extRact is a file management tool that can handle files stored on your device or in the cloud. For more information, visit the x0b.github.io/docs.</string>
+    <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more information, visit the x0b.github.io/docs.</string>
     <string name="intro_storage_title">Storage access required</string>
-    <string name="intro_storage_description">extRact relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.</string>
+    <string name="intro_storage_description">Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">extRact is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit x0b.github.io/rcx-privacy.</string>
+    <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit x0b.github.io/rcx-privacy.</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_theme_mode</string>
     <string name="pref_key_wrap_filenames" translatable="false">pref_key_wrap_filenames</string>
@@ -169,7 +169,7 @@
     <string name="open_system_settings">Open system settings</string>
     <string name="content_description_circle">circle</string>
     <string name="loading">Loading</string>
-    <string name="app_not_configured">extRact is not configured</string>
+    <string name="app_not_configured">Round Sync is not configured</string>
     <string name="open_app_to_configure">Please open the app to set it up first</string>
     <string name="error_retrieving_files">Error retrieving files</string>
     <string name="background_service_broadcast" translatable="false">ca.pkay.rcexplorer.BACKGROUND_SERVICE_BROADCAST</string>
@@ -315,9 +315,9 @@
     <string name="shared_preferences_pinned_remotes" translatable="false">shared_preferences_pinned_remotes</string>
     <string name="shared_preferences_drawer_pinned_remotes" translatable="false">shared_preferences_drawer_pinned_remotes</string>
     <string name="shared_preferences_allow_sync_trigger_while_idle" translatable="false">shared_preferences_allow_sync_trigger_while_idle</string>
-    <string name="app_latest_release_url" translatable="false">https://github.com/newhinton/extRact/releases/latest</string>
-    <string name="app_relase_api_url" translatable="false">https://api.github.com/repos/newhinton/extRact/releases/latest</string>
-    <string name="app_pre_release_api_url" translatable="false">https://api.github.com/repos/newhinton/extRact/releases</string>
+    <string name="app_latest_release_url" translatable="false">https://github.com/newhinton/Round-Sync/releases/latest</string>
+    <string name="app_relase_api_url" translatable="false">https://api.github.com/repos/newhinton/Round-Sync/releases/latest</string>
+    <string name="app_pre_release_api_url" translatable="false">https://api.github.com/repos/newhinton/Round-Sync/releases</string>
     <string name="pref_key_update_last_check" translatable="false">last_update_check</string>
     <string name="show_thumbnails">Show thumbnails</string>
     <string name="pref_thumbnails_size_title">Maximum file size for thumbnails</string>
@@ -409,7 +409,7 @@
     <string name="virtual_content_provider_exception_error">Support info: \n%1$s</string>
     <string name="virtual_content_provider_null_content">Failed to retrieve remote or directory contents. Check the log file for more details.</string>
     <string name="virtual_content_provider_service_error">Failed to connect to rclone service. Force stop the app and try again.</string>
-    <string name="virtual_content_provider_no_remotes">No remotes configured. Open extRact to add a storage location.</string>
+    <string name="virtual_content_provider_no_remotes">No remotes configured. Open Round Sync to add a storage location.</string>
     <string name="remote_properties_remote_name">Remote name</string>
     <string name="remote_properties_storage_usage">Storage usage</string>
     <string name="remote_properties_storage_stats">%1$s / %2$s used (%3$s free)</string>
@@ -503,8 +503,8 @@
         <item quantity="other">%s Seconds</item>
     </plurals>
 
-    <string name="abi_not_supported_arm_downgrade">Unfortunately, this extRact version is not compatible with your device. Try the armeabi-v7a APK from github.com/newhinton/extRact/releases/latest.</string>
-    <string name="abi_not_supported">Your device does not support this version of extRact.</string>
+    <string name="abi_not_supported_arm_downgrade">Unfortunately, this Round Sync version is not compatible with your device. Try the armeabi-v7a APK from github.com/newhinton/Round-Sync/releases/latest.</string>
+    <string name="abi_not_supported">Your device does not support this version of Round Sync.</string>
     <string name="trigger">Triggers</string>
     <string name="title_activity_trigger">Triggers</string>
     <string name="enabled">Enabled</string>
