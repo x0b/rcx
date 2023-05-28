@@ -34,15 +34,18 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
         <item name="tint">?attr/colorOnPrimary</item>
+        <item name="android:iconTint">?attr/colorOnPrimary</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
         <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
         <item name="android:actionMenuTextColor">?attr/colorOnPrimary</item>
         <item name="popupTheme">@style/MainViewToolbarOverflowMenu</item>
         <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="MainViewToolbarOverflowMenu" parent="ThemeOverlay.AppCompat.Light">
+    <style name="MainViewToolbarOverflowMenu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textColorPrimary">?attr/colorSecondary</item>
     </style>
 
     <style name="FloatingActionButtonMulti">
