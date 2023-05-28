@@ -34,10 +34,10 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 
 Screenshots
 -----------
-|                                Manage Storage                                 |                                Explore Files                                  |                                 Manage Files                                  |                                 Set up Tasks                                  |
-:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" height="360vh" /> |
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8.png" height="360vh" /> |
+|                                                                                            |                                                                                            | 
+|:------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------:|
+| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" height="360vh" /> |
+| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.jpg" height="360vh" /> |
 
 
 Intentservice
