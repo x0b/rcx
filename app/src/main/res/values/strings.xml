@@ -676,4 +676,5 @@
     <string name="sync_service_notification_channel_success_description">Notification for successful syncs</string>
     <string name="sync_service_notification_channel_fail_description">Notification for failed syncs</string>
     <string name="dynamic_config_unknown_error">This Prodvider is unknown!</string>
+    <string name="toggle_advanced_options">Toggle Advanced Options</string>
 </resources>

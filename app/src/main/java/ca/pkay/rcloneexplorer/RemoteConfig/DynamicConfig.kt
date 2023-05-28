@@ -10,6 +10,9 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -23,9 +26,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.setPadding
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import ca.pkay.rcloneexplorer.Fragments.RemotesFragment
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.rclone.Provider
@@ -51,6 +53,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
     private var mNextButton: Button? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
+    private var mShowAdvanced = false
 
 
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
@@ -64,6 +67,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         if (context == null) {
             return
         }
+        setHasOptionsMenu(true)
         mContext = context as Context
         rclone = Rclone(context)
     }
@@ -94,6 +98,22 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         return view
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_config_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_toggle_advanced -> {
+                mShowAdvanced = mShowAdvanced.not()
+                setUpForm()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -113,7 +133,13 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         }
 
 
+        mFormView?.let { it.removeViews(1, it.size-1) }
+
         mProvider!!.options.forEach {
+
+            if(it.advanced && !mShowAdvanced ) {
+                return@forEach
+            }
 
             val layout = LinearLayout(mContext)
             layout.orientation = LinearLayout.VERTICAL
@@ -130,9 +156,6 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
             textViewDescription.text = it.help
             layout.addView(textViewDescription)
 
-
-            Log.e("TAG", "      Opt: ${it.name}")
-            Log.e("TAG", "      Opt: ${it.type}")
             when (it.type) {
                 "string" -> {
                     if(it.isPassword) {
@@ -140,12 +163,14 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
                         input.inputType =
                             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
+                        input.setText(mOptionMap[it.name])
                         setTextInputListener(input, it.name)
 
                     } else if(it.examples.size > 0) {
                         createSpinnerFromExample(it, it.name ,layout)
                     } else {
                         val input = getAttachedEditText(it.name, layout)
+                        input.setText(mOptionMap[it.name])
                         setTextInputListener(input, it.name)
                     }
 
@@ -160,11 +185,16 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
                         input.isChecked = true
                     }
 
+                    if(mOptionMap.containsKey(it.name)) {
+                        input.isChecked  = mOptionMap[it.name].toBoolean()
+                    }
+
                     layout.addView(input)
                 }
                 else -> {
                     val unknownType = getAttachedEditText(it.name, layout)
                     //unknownType.hint = it.type
+                    unknownType.setText(mOptionMap[it.name])
                     setTextInputListener(unknownType, it.name)
                 }
             }
