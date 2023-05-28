@@ -31,6 +31,13 @@
             android:focusable="true"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/fab_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        app:clickable_overlay="true"/>
+
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_fragment_file_explorer_list"
         android:layout_width="wrap_content"
