@@ -31,20 +31,12 @@
             android:focusable="true"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-        android:id="@+id/fab_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/fabOverlayColor"
-        app:clickable_overlay="true"/>
-
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/fab_fragment_file_explorer_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="2dp"
-        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
         app:sdExpansionMode="top"
         android:theme="@style/FloatingActionButtonMulti"
         app:sdMainFabOpenedSrc="@drawable/ic_close"
