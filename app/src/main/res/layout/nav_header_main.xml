@@ -22,7 +22,7 @@
             android:gravity="bottom"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:text="@string/app_name"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="@color/md_theme_dark_onPrimary"
             android:textStyle="bold" />
 
         <Space
@@ -32,12 +32,14 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:contentDescription="@string/app_icon"
             android:elevation="2dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@mipmap/ic_launcher_round" />
+            app:srcCompat="@drawable/appicon"
+            app:iconTint="@color/md_theme_dark_onPrimary"
+            android:tint="@color/md_theme_dark_onPrimary" />
     </LinearLayout>
 
     <TextView
@@ -45,6 +47,6 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/app_description"
-        android:textColor="@color/textColorSecondary" />
+        android:textColor="@color/md_theme_dark_onPrimary" />
 
 </LinearLayout>

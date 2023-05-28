@@ -65,6 +65,8 @@
     <color name="md_theme_dark_inversePrimary">#006E1C</color>
 
 
+    <color name="selectedItem">#424940</color>
+
     <color name="white">@android:color/white</color>
     <color name="colorAccent">@color/md_theme_light_secondary</color>
     <color name="textColorTertiary">@color/md_theme_light_tertiary</color>

@@ -1,11 +1,9 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -430,10 +428,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     private int getSelectionBackgroundColor() {
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.colorSurfaceVariant, typedValue, true);
-        return typedValue.data;
+        return context.getColor(R.color.selectedItem);
     }
 
     private void onLongClickAction(FileItem item, ViewHolder holder) {
