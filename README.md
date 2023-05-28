@@ -6,12 +6,21 @@ A cloud file manager, powered by rclone.
 <br/>
 <br/>
 
+Screenshots
+-----------
+| | | |
+|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
+| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="360vh" /> |
+
+
 Current State
 -------- 
 ## ⚠️ 🏗️  This app is currently undergoing many changes. It may not be fully stable and contain bugs or untested features. Use at your own risk!  ⚠️ 🏗️
 
 <br/>
 <br/>
+
+
 
 Features
 --------
@@ -30,14 +39,6 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 - **Storage Access Framework (SAF)** ([see docs](https://x0b.github.io/docs/#adding-local-storage-saf)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
 - **Task Management** to allow regular runs of your important tasks!
-
-
-Screenshots
------------
-|                                                                                            |                                                                                            | 
-|:------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------:|
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" height="360vh" /> |
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" height="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.jpg" height="360vh" /> |
 
 
 Intentservice
