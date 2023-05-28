@@ -6,6 +6,7 @@
     android:id="@+id/bac"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/android:colorBackground"
     android:orientation="vertical">
 
     <include layout="@layout/empty_directory_state" />
