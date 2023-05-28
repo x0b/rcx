@@ -479,7 +479,6 @@ public class MainActivity extends AppCompatActivity
     private void startRemotesFragment() {
         fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        this.setTitle(R.string.remotes);
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
             fragmentManager.popBackStack();

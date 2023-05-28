@@ -196,6 +196,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (getArguments() == null) {
             return;
         }
+
+        if (getContext() == null) {
+            return;
+        }
+        setHasOptionsMenu(true);
+
         remote = getArguments().getParcelable(ARG_REMOTE);
         if (remote == null) {
             return;
@@ -226,12 +232,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             renameItem = savedInstanceState.getParcelable(SAVED_RENAME_ITEM);
         }
 
-        if (getContext() == null) {
-            return;
-        }
         originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
         setTitle();
-        setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
@@ -778,7 +780,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             isSearchMode = false;
         } else {
             searchBar.setVisibility(View.VISIBLE);
-            searchButton.setVisibility(View.GONE);
+            searchButton.setVisibility(View.INVISIBLE);
             recyclerViewAdapter.setSearchMode(true);
             isSearchMode = true;
             EditText search = searchBar.findViewById(R.id.search_field);
@@ -1121,7 +1123,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
-        searchBar.setVisibility(View.GONE);
+        searchBar.setVisibility(View.INVISIBLE);
         ((FragmentActivity) context).setTitle(originalToolbarTitle);
         showNavDrawerButtonInToolbar();
         prefChangeListener = null;

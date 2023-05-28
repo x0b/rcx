@@ -23,7 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -88,7 +87,6 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         }
 
         setHasOptionsMenu(true);
-        ((FragmentActivity) context).setTitle(getString(R.string.remotes_toolbar_title));
 
         rclone = new Rclone(getContext());
         remotes = filterRemotes();

@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -137,6 +136,12 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         if (getArguments() == null) {
             return;
         }
+
+        if (getContext() == null) {
+            return;
+        }
+        setHasOptionsMenu(true);
+
         remote = getArguments().getParcelable(ARG_REMOTE);
         if (remote == null) {
             return;
@@ -165,11 +170,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
 
             buildStackFromPath(remoteName, path);
         }
-
-        if (getContext() == null) {
-            return;
-        }
-        setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
@@ -250,10 +250,6 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
         } else {
             breadcrumbView.addCrumb(remote.getDisplayName(), "//");
         }
-
-
-        final TypedValue accentColorValue = new TypedValue ();
-        context.getTheme ().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
 
         if (savedInstanceState != null && savedInstanceState.getBoolean(SAVED_SEARCH_MODE, false)) {
             searchString = savedInstanceState.getString(SAVED_SEARCH_STRING);
