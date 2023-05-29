@@ -250,7 +250,8 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
     }
 
     private fun getCard(): CardView {
-        val card = CardView(mContext)
+        //val card = CardView(mContext, null, R.style.SecondaryCardStyle)
+        val card = CardView(ContextThemeWrapper(activity, R.style.SecondaryCardStyle))
         val cardLayout = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -261,7 +262,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         cardLayout.bottomMargin = getDPasPixel(8).toInt()
         card.layoutParams = cardLayout
         // todo: Fix theming for dark mode
-        card.setCardBackgroundColor(resources.getColor(R.color.md_theme_light_secondaryContainer))
+        //card.setCardBackgroundColor(resources.getColor(R.color.md_theme_light_secondaryContainer))
         card.radius = resources.getDimension(R.dimen.cardCornerRadius)
         card.setContentPadding(
             resources.getDimension(R.dimen.cardPadding).toInt(),

@@ -45,7 +45,6 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="@color/md_theme_light_secondaryContainer"
                     app:cardCornerRadius="@dimen/cardCornerRadius">
 
                     <LinearLayout
@@ -55,7 +54,7 @@
                         android:padding="@dimen/cardPadding">
 
                         <TextView
-                            android:id="@+id/lableTitle"
+                            android:id="@+id/labelTitle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingBottom="@dimen/cardPadding"
@@ -73,7 +72,6 @@
                                 android:layout_height="wrap_content"
                                 android:hint="@string/remote_name_hint"
                                 android:inputType="textAutoCorrect"
-                                android:textColor="@color/textColorPrimary"
                                 tools:text="Remote name" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
