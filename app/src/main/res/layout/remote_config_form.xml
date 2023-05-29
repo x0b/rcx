@@ -45,6 +45,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
+                    style="@style/SecondaryCardStyle"
                     app:cardCornerRadius="@dimen/cardCornerRadius">
 
                     <LinearLayout

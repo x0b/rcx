@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
@@ -250,8 +251,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
     }
 
     private fun getCard(): CardView {
-        //val card = CardView(mContext, null, R.style.SecondaryCardStyle)
-        val card = CardView(ContextThemeWrapper(activity, R.style.SecondaryCardStyle))
+        val card = CardView(mContext)
         val cardLayout = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -261,8 +261,9 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         cardLayout.marginEnd = getDPasPixel(8).toInt()
         cardLayout.bottomMargin = getDPasPixel(8).toInt()
         card.layoutParams = cardLayout
-        // todo: Fix theming for dark mode
-        //card.setCardBackgroundColor(resources.getColor(R.color.md_theme_light_secondaryContainer))
+
+        //@ManualTheming
+        card.setCardBackgroundColor(convertAttributeToColor(R.attr.colorSecondaryContainer))
         card.radius = resources.getDimension(R.dimen.cardCornerRadius)
         card.setContentPadding(
             resources.getDimension(R.dimen.cardPadding).toInt(),
@@ -273,6 +274,12 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         return card
     }
 
+    private fun convertAttributeToColor(id: Int): Int {
+        val typedValue = TypedValue()
+        mContext.theme.resolveAttribute(id, typedValue, true)
+        return typedValue.data
+    }
+
     private fun getAttachedEditText(hint: String, layout: LinearLayout): EditText {
         val padding = resources.getDimensionPixelOffset(R.dimen.cardPadding)
 
@@ -281,9 +288,11 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
         textinput.boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
         textinput.setPadding(0, padding, 0, 0)
 
-
         val editText = TextInputEditText(textinput.context)
         editText.setPadding(padding)
+
+        //@ManualTheming
+        editText.setTextColor(convertAttributeToColor(R.attr.colorOnSecondaryContainer))
 
         textinput.addView(editText)
         layout.addView(textinput)
