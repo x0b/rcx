@@ -39,11 +39,13 @@
     <include layout="@layout/content_trigger" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_twotone_save_24" />
+        app:srcCompat="@drawable/ic_twotone_save_24"
+        android:tint="@color/white"
+        android:contentDescription="@string/save_trigger_button_description" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

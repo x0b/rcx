@@ -7,7 +7,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/provider"
         android:paddingTop="16dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:theme="@style/SecondaryCardStyle">
 
     <RadioButton
             android:id="@+id/provider_rb"

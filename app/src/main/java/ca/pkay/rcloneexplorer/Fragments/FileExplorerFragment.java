@@ -146,6 +146,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private LinearLayoutManager recyclerViewLinearLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     private View searchBar;
+    private View searchButton;
+    private View searchClear;
     private AsyncTask fetchDirectoryTask;
     private boolean isRunning;
     private int sortOrder;
@@ -194,6 +196,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         if (getArguments() == null) {
             return;
         }
+
+        if (getContext() == null) {
+            return;
+        }
+        setHasOptionsMenu(true);
+
         remote = getArguments().getParcelable(ARG_REMOTE);
         if (remote == null) {
             return;
@@ -224,12 +232,8 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             renameItem = savedInstanceState.getParcelable(SAVED_RENAME_ITEM);
         }
 
-        if (getContext() == null) {
-            return;
-        }
         originalToolbarTitle = ((FragmentActivity) context).getTitle().toString();
         setTitle();
-        setHasOptionsMenu(true);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
@@ -327,6 +331,23 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
 
         searchBar = ((FragmentActivity) context).findViewById(R.id.search_bar);
+        searchButton = ((FragmentActivity) context).findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(click -> searchClicked());
+        searchButton.setVisibility(View.VISIBLE);
+
+        searchClear = ((FragmentActivity) context).findViewById(R.id.search_clear);
+        searchClear.setOnClickListener(v -> {
+            EditText searchField = searchBar.findViewById(R.id.search_field);
+            if (searchField.getText().toString().isEmpty()) {
+                searchClicked();
+            } else {
+                searchDirContent("");
+                searchField.setText("");
+                InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
+
         if (view.findViewById(R.id.background) != null) {
             view.findViewById(R.id.background).setOnClickListener(v -> onClickOutsideOfView());
         }
@@ -617,9 +638,6 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_search:
-                searchClicked();
-                return true;
             case R.id.action_sort:
                 showSortMenu();
                 return true;
@@ -754,30 +772,21 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         InputMethodManager keyboard = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (isSearchMode) {
-            searchBar.setVisibility(View.GONE);
+            searchBar.setVisibility(View.INVISIBLE);
+            searchButton.setVisibility(View.VISIBLE);
             searchDirContent("");
             ((EditText)searchBar.findViewById(R.id.search_field)).setText("");
             recyclerViewAdapter.setSearchMode(false);
             isSearchMode = false;
         } else {
             searchBar.setVisibility(View.VISIBLE);
+            searchButton.setVisibility(View.INVISIBLE);
             recyclerViewAdapter.setSearchMode(true);
             isSearchMode = true;
             EditText search = searchBar.findViewById(R.id.search_field);
             search.requestFocus();
             keyboard.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
         }
-
-        searchBar.findViewById(R.id.search_clear).setOnClickListener(v -> {
-            EditText searchField = searchBar.findViewById(R.id.search_field);
-            if (searchField.getText().toString().isEmpty()) {
-                searchClicked();
-            } else {
-                searchDirContent("");
-                searchField.setText("");
-                keyboard.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-            }
-        });
     }
 
     private void showOpenAsDialog(FileItem fileItem) {
@@ -1114,7 +1123,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         }
         breadcrumbView.clearCrumbs();
         breadcrumbView.setVisibility(View.GONE);
-        searchBar.setVisibility(View.GONE);
+        searchBar.setVisibility(View.INVISIBLE);
         ((FragmentActivity) context).setTitle(originalToolbarTitle);
         showNavDrawerButtonInToolbar();
         prefChangeListener = null;

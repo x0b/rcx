@@ -11,15 +11,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
         <ImageView
             android:id="@+id/empty_state_ic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_empty_box"
-            app:tint="@color/iconTint"
-            android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:contentDescription="@string/empty_state_icon" />
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/empty_state_icon"
+            android:src="@drawable/ic_empty_box" />
 
         <TextView
             android:id="@+id/empty_state_title"
@@ -28,9 +28,8 @@
             android:layout_below="@+id/empty_state_ic"
             android:layout_centerHorizontal="true"
             android:text="@string/ooops"
-            android:textColor="@color/colorAccent"
-            android:textStyle="bold"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/empty_state_message"
@@ -38,9 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/empty_state_title"
             android:layout_centerHorizontal="true"
-            android:text="@string/no_config_found"
-            android:textColor="@color/textColorPrimary"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:text="@string/no_config_found" />
 
         <Button
             android:id="@+id/empty_state_btn"
@@ -57,6 +55,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        app:sdMainFabClosedSrc="@drawable/ic_add"
-        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior" />
+        app:sdMainFabClosedSrc="@drawable/ic_add" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

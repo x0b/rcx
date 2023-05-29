@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/SecondaryCardStyle">
 
     <include
         android:id="@+id/empty_folder_view"
@@ -53,15 +54,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="76dp"
                 android:background="?selectableItemBackground">
+
                 <ImageView
                     android:id="@+id/previous_dir_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="76dp"
+                    android:contentDescription="@string/file_icon"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:src="@drawable/ic_arrow_back"
-                    android:contentDescription="@string/file_icon"
-                    app:tint="@color/iconTint" />
+                    android:src="@drawable/ic_arrow_back" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -71,16 +72,16 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_centerVertical="true">
+
                     <TextView
                         android:id="@+id/previous_dir_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
-                        android:textSize="16sp"
-                        android:textColor="@color/textColorPrimary"
                         android:ellipsize="middle"
+                        android:fontFamily="sans-serif"
                         android:singleLine="true"
-                        tools:text="Previous"/>
+                        android:textSize="16sp"
+                        tools:text="Previous" />
                 </LinearLayout>
 
                 <View

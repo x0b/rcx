@@ -3,6 +3,13 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+tasks.whenTaskAdded { task ->
+    // Build rclone beforehand.
+    if (task.name.startsWith('compile')) {
+        task.dependsOn(':rclone:buildAll')
+    }
+}
+
 android {
     signingConfigs {
         github_x0b {
@@ -10,31 +17,35 @@ android {
         }
     }
     compileSdkVersion 33
-    ndkVersion '25.0.8775105'
+    ndkVersion project.properties['de.felixnuesse.extract.ndkVersion']
     defaultConfig {
         applicationId 'de.felixnuesse.extract'
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 200 // last digit is reserved for ABI, only ever end on 0!
-        versionName '2.0.6-dev'
+        versionCode 220 // last digit is reserved for ABI, only ever end on 0!
+        versionName '2.1.2'
         resConfigs "en", "de" // restrict to used languages
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"c03129b6-b09f-9cb4-8fcd-7f143b8f94ef\""
         buildConfigField "java.lang.String", "VCP_AUTHORITY", "\"" + applicationId + ".vcp\"";
-        setProperty("archivesBaseName",  "extRact_v"+versionName+"_"+now())
+        setProperty("archivesBaseName",  "roundsync_v"+versionName+"_"+now())
+
+        externalNativeBuild {
+            ndkBuild {
+                arguments "LOCAL_LDFLAGS += -Wl,--build-id=none"
+            }
+        }
     }
 
     buildTypes {
         debug {
             minifyEnabled false
             shrinkResources false
-            buildConfigField "java.lang.long", "BUILD_TIME", "0L"
         }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "java.lang.long", "BUILD_TIME", String.valueOf(System.currentTimeMillis()) + "L"
         }
     }
 
@@ -53,7 +64,6 @@ android {
         // OSS build
         oss {
             dimension 'edition'
-            buildConfigField "java.lang.long", "BUILD_TIME", "0L"
         }
     }
 
@@ -67,10 +77,11 @@ android {
     }
 
     project.ext.versionCodes = [
-            'armeabi-v7a': 6,
-            'arm64-v8a'  : 7,
-            'x86'        : 8,
-            'x86_64'     : 9]
+        'armeabi-v7a': 6,
+        'arm64-v8a'  : 7,
+        'x86'        : 8,
+        'x86_64'     : 9
+    ]
 
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -83,8 +94,15 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
+
+
+    packagingOptions {
+        doNotStrip '**/*.so'
+    }
+
+
 }
 
 def now() {

@@ -1,6 +1,14 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_FRI;
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_MON;
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_SAT;
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_SUN;
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_THU;
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_TUE;
+import static ca.pkay.rcloneexplorer.Items.Trigger.TRIGGER_DAY_WED;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -22,90 +30,111 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ca.pkay.rcloneexplorer.Activities.TriggerActivity;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Activities.TriggerActivity;
+import ca.pkay.rcloneexplorer.Services.TriggerService;
 import es.dmoral.toasty.Toasty;
 
-public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecyclerViewAdapter.ViewHolder>{
+public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private List<Trigger> triggers;
     private final Context context;
+
+    private static final int VIEW_TYPE_SCHEDULE = 0;
+    private static final int VIEW_TYPE_INTERVAL = 1;
 
     public TriggerRecyclerViewAdapter(List<Trigger> triggers, Context context) {
         this.triggers = triggers;
         this.context = context;
     }
 
+    @Override
+    public int getItemCount() {
+        if (triggers == null) {
+            return 0;
+        }
+        return triggers.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return triggers.get(position).getType();
+    }
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trigger_item, parent, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        switch (viewType) {
+            default:
+            case VIEW_TYPE_SCHEDULE:
+                View scheduleView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trigger_item_schedule, parent, false);
+                return new ScheduleViewHolder(scheduleView);
+            case VIEW_TYPE_INTERVAL:
+                View intervalView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trigger_item_interval, parent, false);
+                return new IntervalViewHolder(intervalView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         final Trigger selectedTrigger = triggers.get(position);
-        holder.triggerName.setText(selectedTrigger.getTitle());
+
         Task task = (new DatabaseHandler(context)).getTask(selectedTrigger.getWhatToTrigger());
-        String taskTitle = "ERR: NOTFOUND";
-        if(task != null){
-            taskTitle = task.getTitle();
+        String targetTaskTitle = "ERR: NOTFOUND";
+        if(task != null){ targetTaskTitle = task.getTitle(); }
+
+        switch (holder.getItemViewType()) {
+            case VIEW_TYPE_SCHEDULE:
+                ScheduleViewHolder scheduleView = (ScheduleViewHolder) holder;
+                scheduleView.mName.setText(selectedTrigger.getTitle());
+                scheduleView.mTarget.setText(targetTaskTitle);
+                updateStatusIcon(selectedTrigger, scheduleView.mIcon);
+                scheduleView.mIcon.setOnClickListener(v -> setIconListener(selectedTrigger, scheduleView.mIcon));
+                scheduleView.mOptions.setOnClickListener(v -> showFileMenu(v, selectedTrigger));
+
+                scheduleView.setWeekdays(selectedTrigger);
+                scheduleView.setTime(selectedTrigger, this.context);
+                break;
+
+            case VIEW_TYPE_INTERVAL:
+                IntervalViewHolder intervalView = (IntervalViewHolder) holder;
+                intervalView.mName.setText(selectedTrigger.getTitle());
+                intervalView.mTarget.setText(targetTaskTitle);
+                updateStatusIcon(selectedTrigger, intervalView.mIcon);
+                intervalView.mIcon.setOnClickListener(v -> setIconListener(selectedTrigger, intervalView.mIcon));
+                intervalView.mOptions.setOnClickListener(v -> showFileMenu(v, selectedTrigger));
+                intervalView.setTime(selectedTrigger, context);
+                break;
         }
-        holder.triggerTarget.setText(taskTitle);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, selectedTrigger.getTime()/60);
-        calendar.set(Calendar.MINUTE, selectedTrigger.getTime()%60);
-
-        DateFormat dateFormat = android.text.format.DateFormat.getTimeFormat(context);
-        holder.time.setText(dateFormat.format(new Date(calendar.getTimeInMillis())));
-
-        setTextViewValue(holder.mon, selectedTrigger.isEnabledAtDay(0));
-        setTextViewValue(holder.tue, selectedTrigger.isEnabledAtDay(1));
-        setTextViewValue(holder.wed, selectedTrigger.isEnabledAtDay(2));
-        setTextViewValue(holder.thur, selectedTrigger.isEnabledAtDay(3));
-        setTextViewValue(holder.fri, selectedTrigger.isEnabledAtDay(4));
-        setTextViewValue(holder.sat, selectedTrigger.isEnabledAtDay(5));
-        setTextViewValue(holder.sun, selectedTrigger.isEnabledAtDay(6));
-
-        updateTriggerIcon(selectedTrigger,holder.triggerIcon);
-
-        holder.triggerIcon.setOnClickListener(v-> {
-            DatabaseHandler db = new DatabaseHandler(context);
-            selectedTrigger.setEnabled(!selectedTrigger.isEnabled());
-            db.updateTrigger(selectedTrigger);
-            updateTriggerIcon(selectedTrigger, holder.triggerIcon);
-
-            String message = context.getResources().getString(R.string.message_trigger_disabled);
-            if(selectedTrigger.isEnabled()){
-                message = context.getResources().getString(R.string.message_trigger_enabled);
-            }
-            Toasty.info(context, message).show();
-        });
-
-        holder.triggerOptions.setOnClickListener(v-> {
-            showFileMenu(v, selectedTrigger);
-        });
-
     }
 
-    private void updateTriggerIcon(Trigger trigger, ImageButton button){
-        Drawable d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_twotone_check_circle_24, null);
+    private void updateStatusIcon(Trigger trigger, ImageButton button){
+        Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_twotone_check_circle_24, null);
         if(!trigger.isEnabled()){
             d =ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_twotone_cancel_24, null);
         }
         button.setImageDrawable(d);
     }
 
-    private void setTextViewValue(TextView view, boolean disabled){
-        if(!disabled){
-            view.setPaintFlags(view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+    private void setIconListener(Trigger trigger, ImageButton button){
+        DatabaseHandler db = new DatabaseHandler(context);
+        trigger.setEnabled(!trigger.isEnabled());
+        db.updateTrigger(trigger);
+        updateStatusIcon(trigger, button);
+
+        String message = context.getResources().getString(R.string.message_trigger_disabled);
+        if(trigger.isEnabled()){
+            message = context.getResources().getString(R.string.message_trigger_enabled);
+            new TriggerService(context).queueTrigger();
+        } else {
+            new TriggerService(context).cancelTrigger(trigger.getId());
         }
+        Toasty.info(context, message).show();
     }
+
     public void setList(ArrayList<Trigger> data) {
         triggers=data;
         notifyDataSetChanged();
@@ -133,14 +162,6 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
         }
     }
 
-    @Override
-    public int getItemCount() {
-        if (triggers == null) {
-            return 0;
-        }
-        return triggers.size();
-    }
-
     private void showFileMenu(View view, final Trigger trigger) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.trigger_item_menu, popupMenu.getMenu());
@@ -163,40 +184,106 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<TriggerRecy
         popupMenu.show();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ScheduleViewHolder extends RecyclerView.ViewHolder {
 
-        final View view;
-        final ImageButton triggerIcon;
-        final ImageButton triggerOptions;
-        final TextView triggerName;
-        final TextView time;
-        final TextView triggerTarget;
+        final View mView;
+        final ImageButton mIcon;
+        final ImageButton mOptions;
+        final TextView mName;
+        final TextView mTime;
+        final TextView mTarget;
 
 
         final TextView mon;
         final TextView tue;
         final TextView wed;
-        final TextView thur;
+        final TextView thu;
         final TextView fri;
         final TextView sat;
         final TextView sun;
 
-        ViewHolder(View itemView) {
+        ScheduleViewHolder(View itemView) {
             super(itemView);
-            this.view = itemView;
-            this.triggerIcon = view.findViewById(R.id.triggerIcon);
-            this.triggerName = view.findViewById(R.id.triggerName);
-            this.triggerOptions = view.findViewById(R.id.triggerOptions);
-            this.triggerTarget = view.findViewById(R.id.trigger_target);
-            this.time = view.findViewById(R.id.time_starttime);
+            this.mView = itemView;
+            this.mIcon = mView.findViewById(R.id.triggerIcon);
+            this.mName = mView.findViewById(R.id.triggerName);
+            this.mOptions = mView.findViewById(R.id.triggerOptions);
+            this.mTarget = mView.findViewById(R.id.trigger_target);
+            this.mTime = mView.findViewById(R.id.intervalLabel);
 
-            this.mon = view.findViewById(R.id.trigger_enabled_mon);
-            this.tue = view.findViewById(R.id.trigger_enabled_tue);
-            this.wed = view.findViewById(R.id.trigger_enabled_wed);
-            this.thur = view.findViewById(R.id.trigger_enabled_thu);
-            this.fri = view.findViewById(R.id.trigger_enabled_fri);
-            this.sat = view.findViewById(R.id.trigger_enabled_sat);
-            this.sun = view.findViewById(R.id.trigger_enabled_sun);
+            this.mon = mView.findViewById(R.id.trigger_enabled_mon);
+            this.tue = mView.findViewById(R.id.trigger_enabled_tue);
+            this.wed = mView.findViewById(R.id.trigger_enabled_wed);
+            this.thu = mView.findViewById(R.id.trigger_enabled_thu);
+            this.fri = mView.findViewById(R.id.trigger_enabled_fri);
+            this.sat = mView.findViewById(R.id.trigger_enabled_sat);
+            this.sun = mView.findViewById(R.id.trigger_enabled_sun);
+        }
+
+
+        private void setTextViewValue(TextView view, boolean disabled){
+            if(!disabled){
+                view.setPaintFlags(view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+        }
+
+        public void setWeekdays(Trigger trigger) {
+            setTextViewValue(mon, trigger.isEnabledAtDay(TRIGGER_DAY_MON));
+            setTextViewValue(tue, trigger.isEnabledAtDay(TRIGGER_DAY_TUE));
+            setTextViewValue(wed, trigger.isEnabledAtDay(TRIGGER_DAY_WED));
+            setTextViewValue(thu, trigger.isEnabledAtDay(TRIGGER_DAY_THU));
+            setTextViewValue(fri, trigger.isEnabledAtDay(TRIGGER_DAY_FRI));
+            setTextViewValue(sat, trigger.isEnabledAtDay(TRIGGER_DAY_SAT));
+            setTextViewValue(sun, trigger.isEnabledAtDay(TRIGGER_DAY_SUN));
+        }
+
+        public void setTime(Trigger trigger, Context context) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, trigger.getTime()/60);
+            calendar.set(Calendar.MINUTE, trigger.getTime()%60);
+
+            DateFormat dateFormat = android.text.format.DateFormat.getTimeFormat(context);
+            mTime.setText(dateFormat.format(new Date(calendar.getTimeInMillis())));
+        }
+
+    }
+
+    public static class IntervalViewHolder extends RecyclerView.ViewHolder {
+
+        final View mView;
+        final ImageButton mIcon;
+        final TextView mName;
+        final ImageButton mOptions;
+        final TextView mIinterval;
+        final TextView mTarget;
+
+        IntervalViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+            mIcon = mView.findViewById(R.id.triggerIcon);
+            mName = mView.findViewById(R.id.triggerName);
+            mOptions = mView.findViewById(R.id.triggerOptions);
+            mTarget = mView.findViewById(R.id.trigger_target);
+            mIinterval = mView.findViewById(R.id.intervalLabel);
+        }
+
+        public void setTime(Trigger trigger, Context context) {
+            String text;
+            switch (trigger.getTime()) {
+                case 15:
+                    text = context.getString(R.string.trigger_interval_15_min);
+                    break;
+                case 30:
+                    text = context.getString(R.string.trigger_interval_30_min);
+                    break;
+                case 120:
+                    text = context.getString(R.string.trigger_interval_120_min);
+                    break;
+                case 60:
+                default:
+                    text = context.getString(R.string.trigger_interval_60_min);
+            }
+            mIinterval.setText(text);
         }
     }
 }

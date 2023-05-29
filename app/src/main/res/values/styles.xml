@@ -7,8 +7,6 @@
     </style>
 
 
-    <style name="OnboardingTheme" parent="AppTheme.NoActionBar" />
-
     <style name="HiddenWindowShortcutSyncStartTheme" parent="android:Theme">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsFloating">true</item>
@@ -34,15 +32,18 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:tint">?attr/colorOnPrimary</item>
         <item name="tint">?attr/colorOnPrimary</item>
+        <item name="android:iconTint">?attr/colorOnPrimary</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
         <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
         <item name="android:actionMenuTextColor">?attr/colorOnPrimary</item>
         <item name="popupTheme">@style/MainViewToolbarOverflowMenu</item>
         <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="MainViewToolbarOverflowMenu" parent="ThemeOverlay.AppCompat.Light">
+    <style name="MainViewToolbarOverflowMenu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textColorPrimary">?attr/colorSecondary</item>
     </style>
 
     <style name="FloatingActionButtonMulti">
@@ -82,12 +83,6 @@
         <item name="cardBackgroundColor">?attr/colorSecondaryContainer</item>
         <item name="android:textColor">?attr/colorOnSecondaryContainer</item>
         <item name="android:tint">?attr/colorOnSecondaryContainer</item>
-    </style>
-
-    <style name="TertiaryCardStyle">
-        <item name="cardBackgroundColor">?attr/colorTertiaryContainer</item>
-        <item name="android:textColor">?attr/colorOnTertiaryContainer</item>
-        <item name="android:tint">?attr/colorOnTertiaryContainer</item>
     </style>
 
 </resources>

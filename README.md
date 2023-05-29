@@ -1,4 +1,4 @@
-# extRact - Rclone for Android
+# Round Sync - Rclone for Android
 [![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/extract/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/newhinton/extract/total.svg)](https://github.com/newhinton/extract/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/extract?include_prereleases)](https://github.com/newhinton/extract/releases/latest)
 
 A cloud file manager, powered by rclone. 
@@ -6,12 +6,21 @@ A cloud file manager, powered by rclone.
 <br/>
 <br/>
 
+Screenshots
+-----------
+| | | |
+|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
+| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="360vh" /> |
+
+
 Current State
 -------- 
 ## ⚠️ 🏗️  This app is currently undergoing many changes. It may not be fully stable and contain bugs or untested features. Use at your own risk!  ⚠️ 🏗️
 
 <br/>
 <br/>
+
+
 
 Features
 --------
@@ -30,14 +39,6 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 - **Storage Access Framework (SAF)** ([see docs](https://x0b.github.io/docs/#adding-local-storage-saf)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
 - **Task Management** to allow regular runs of your important tasks!
-
-
-Screenshots
------------
-|                                Manage Storage                                 |                                Explore Files                                  |                                 Manage Files                                  |                                 Set up Tasks                                  |
-:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|:-----------------------------------------------------------------------------:|
- ![screenshot1](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![screenshot2](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) | ![screenshot3](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![screenshot3](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
- ![screenshot5](fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) | ![screenshot6](fastlane/metadata/android/en-US/images/phoneScreenshots/6.png) | ![screenshot7](fastlane/metadata/android/en-US/images/phoneScreenshots/7.png) | ![screenshot8](fastlane/metadata/android/en-US/images/phoneScreenshots/8.png) |
 
 
 Intentservice
@@ -72,21 +73,23 @@ Usage
 
 Developing
 ------------
-[See the developer-documentation](https://x0b.github.io/dev/).
 
-Build rclone manually run:
+You should first make sure you have:
 
+- Go 1.20+ installed and in your PATH
+- Java installed and in your PATH
+- Android SDK command-line tools installed OR the NDK version specified in `gradle.properties`
+  installed
+
+You can then build the app normally from Android Studio or from CLI by running:
+
+```sh
+# Debug build
+./gradlew assembleOssDebug
+
+# or release build
+./gradlew assembleOssRelease
 ```
-./gradlew rclone:buildAll
-```
-
-When building rclone with a go version that is too old (eg 1.15.5), this error may show up:
-
-```
-ld.lld: error: duplicate symbol: x_cgo_inittls
-```
-
-It can be fixed by using a more recent version of go.
 
 Known Issues
 ------------
@@ -96,20 +99,6 @@ Known Issues
 Contributing
 ------------
 See [CONTRIBUTING](./CONTRIBUTING.md)
-
-
-Building
-------------
-```
-// choose the appropriate version for your device
-cd rclone
-../gradlew rclone:buildNative // For all devices
-../gradlew rclone:buildArm64
-../gradlew rclone:buildArm
-../gradlew rclone:buildx86
-../gradlew rclone:buildx64
-```
-
 
 
 License

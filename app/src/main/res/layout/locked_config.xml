@@ -21,7 +21,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/locked_configuration_password"
-            app:tint="@color/iconTint" />
+            android:tint="@color/cardColor" />
 
         <TextView
             android:id="@+id/locked_config_message"

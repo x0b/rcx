@@ -17,12 +17,11 @@
             android:text="@string/remote_properties_remote_name"/>
 
     <TextView
-            android:id="@+id/remote_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/textColorSecondary"
-            android:textIsSelectable="true"
-            tools:text="my-remote"/>
+        android:id="@+id/remote_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        tools:text="my-remote" />
 
     <LinearLayout
             android:id="@+id/remote_storage_container"
@@ -41,13 +40,12 @@
                 android:text="@string/remote_properties_storage_usage"/>
 
         <TextView
-                android:id="@+id/remote_storage_stats"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textColorSecondary"
-                android:textIsSelectable="false"
-                android:text="@string/tap_to_calculate"
-                tools:text="12.5 GB / 15 GB used (2.5 GB free)"/>
+            android:id="@+id/remote_storage_stats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_to_calculate"
+            android:textIsSelectable="false"
+            tools:text="12.5 GB / 15 GB used (2.5 GB free)" />
     </LinearLayout>
 
     <LinearLayout
@@ -66,10 +64,9 @@
                 android:text="@string/remote_properties_authorization"/>
 
         <TextView
-                android:id="@+id/remote_authorization"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textColorSecondary"
-                android:text="@string/remote_properties_authorize_tap"/>
+            android:id="@+id/remote_authorization"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/remote_properties_authorize_tap" />
     </LinearLayout>
 </LinearLayout>

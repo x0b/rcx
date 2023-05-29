@@ -4,7 +4,8 @@
                                                    android:layout_height="wrap_content"
                                                    android:minHeight="72dp"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools">
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                    android:theme="@style/SecondaryCardStyle">
 
     <FrameLayout
         android:id="@+id/flIcons"
@@ -27,9 +28,8 @@
             android:id="@+id/folder_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            app:tint="@color/iconTint"
-            android:src="@drawable/ic_folder"
-            android:contentDescription="@string/file_icon" />
+            android:contentDescription="@string/file_icon"
+            android:src="@drawable/ic_folder" />
 
     </FrameLayout>
 

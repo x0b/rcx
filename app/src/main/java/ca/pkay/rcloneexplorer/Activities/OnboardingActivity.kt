@@ -10,9 +10,9 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import ca.pkay.rcloneexplorer.RuntimeConfiguration
 import ca.pkay.rcloneexplorer.BuildConfig
 import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.RuntimeConfiguration
 import ca.pkay.rcloneexplorer.util.ActivityHelper
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
@@ -61,6 +61,17 @@ class OnboardingActivity : AppIntro2() {
                 imageDrawable = R.drawable.ic_intro_storage,
                 backgroundColor = resources.getColor(R.color.seed),
             ))
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            addSlide(
+                AppIntroFragment.newInstance(
+                    title = getString(R.string.intro_notifications_title),
+                    description = getString(R.string.intro_notifications_description),
+                    imageDrawable = R.drawable.ic_intro_notifications,
+                    backgroundColor = resources.getColor(R.color.md_theme_light_tertiary),
+                ))
+        }
     }
 
     override fun attachBaseContext(newBase: Context) {

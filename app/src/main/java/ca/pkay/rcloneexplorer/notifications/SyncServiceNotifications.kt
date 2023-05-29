@@ -73,7 +73,7 @@ class SyncServiceNotifications(var mContext: Context) {
             .setPriority(NotificationCompat.PRIORITY_LOW)
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(notificationId, builder.build())
-        createSummaryNotificationForSuccess()
+        //createSummaryNotificationForSuccess()
     }
 
     // this will show up if mul

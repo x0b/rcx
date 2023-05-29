@@ -11,6 +11,7 @@ import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_CREATE_TABLES_
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_CREATE_TABLE_TRIGGER
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_MD5
 import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TASK_ADD_WIFI
+import ca.pkay.rcloneexplorer.Database.DatabaseInfo.Companion.SQL_UPDATE_TRIGGER_ADD_TYPE
 import ca.pkay.rcloneexplorer.Items.Task
 import ca.pkay.rcloneexplorer.Items.Trigger
 import java.util.ArrayList
@@ -23,6 +24,7 @@ class DatabaseHandler(context: Context?) :
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE_TRIGGER)
         sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_MD5)
         sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_WIFI)
+        sqLiteDatabase.execSQL(SQL_UPDATE_TRIGGER_ADD_TYPE)
     }
 
     override fun onUpgrade(sqLiteDatabase: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -32,6 +34,9 @@ class DatabaseHandler(context: Context?) :
         if (oldVersion < 3) {
             sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_MD5)
             sqLiteDatabase.execSQL(SQL_UPDATE_TASK_ADD_WIFI)
+        }
+        if (oldVersion < 4) {
+            sqLiteDatabase.execSQL(SQL_UPDATE_TRIGGER_ADD_TYPE)
         }
     }
 
@@ -249,6 +254,7 @@ class DatabaseHandler(context: Context?) :
         values.put(Trigger.COLUMN_NAME_TIME, t.time)
         values.put(Trigger.COLUMN_NAME_WEEKDAY, t.weekdays)
         values.put(Trigger.COLUMN_NAME_TARGET, t.whatToTrigger)
+        values.put(Trigger.COLUMN_NAME_TYPE, t.type)
         return values
     }
 
@@ -259,7 +265,8 @@ class DatabaseHandler(context: Context?) :
             Trigger.COLUMN_NAME_ENABLED,
             Trigger.COLUMN_NAME_TIME,
             Trigger.COLUMN_NAME_WEEKDAY,
-            Trigger.COLUMN_NAME_TARGET
+            Trigger.COLUMN_NAME_TARGET,
+            Trigger.COLUMN_NAME_TYPE
         )
 
     private fun triggerFromCursor(cursor: Cursor): Trigger {
@@ -270,6 +277,7 @@ class DatabaseHandler(context: Context?) :
         val weekdays = cursor.getInt(4)
         trigger.setWeekdays(weekdays.toByte())
         trigger.whatToTrigger = cursor.getLong(5)
+        trigger.type = cursor.getInt(6)
         return trigger
     }
 

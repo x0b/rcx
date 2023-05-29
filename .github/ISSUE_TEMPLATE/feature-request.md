@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new feature or enhancement for RCX
+about: Suggest a new feature or enhancement for extRact
 ---
 
 ---
@@ -15,7 +15,7 @@ about: Suggest a new feature or enhancement for RCX
  - [ ] The feature already exists in rclone (on your PC or in Termux)
  - [ ] I am prepared to help make this feature
 
-#### What version of RCX are you using (About -> App version)?
+#### What version of extRact are you using (About -> App version)?
 
 
 
@@ -23,5 +23,5 @@ about: Suggest a new feature or enhancement for RCX
 <!-- describe your goals or problems, save the solution for the next question -->
 
 
-#### What should RCX be able to do differently to help with this problem?
+#### What should extRact be able to do differently to help with this problem?
 <!-- describe your ideas: how would you solve this problem?  -->

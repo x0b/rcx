@@ -11,6 +11,20 @@ public class Trigger {
     public static String COLUMN_NAME_WEEKDAY = "trigger_weekday";
     public static String COLUMN_NAME_ENABLED = "trigger_enabled";
     public static String COLUMN_NAME_TARGET = "trigger_target";
+    public static String COLUMN_NAME_TYPE = "trigger_type";
+
+    public static int TRIGGER_TYPE_SCHEDULE = 0;
+    public static int TRIGGER_TYPE_INTERVAL = 1;
+
+    public static long TRIGGER_ID_DOESNTEXIST = -1L;
+
+    public static int TRIGGER_DAY_MON = 0;
+    public static int TRIGGER_DAY_TUE = 1;
+    public static int TRIGGER_DAY_WED = 2;
+    public static int TRIGGER_DAY_THU = 3;
+    public static int TRIGGER_DAY_FRI = 4;
+    public static int TRIGGER_DAY_SAT = 5;
+    public static int TRIGGER_DAY_SUN = 6;
 
     private Long id;
 
@@ -19,6 +33,7 @@ public class Trigger {
     private byte weekdays = 0b01111111;      //treat as binary, so that each digit represents an boolean.
     private int time = 0;                   //in seconds since 00:00
     private Long whatToTrigger = 0L;
+    private int type = TRIGGER_TYPE_SCHEDULE;
 
     public Trigger(Long id) {
         this.id = id;
@@ -98,11 +113,29 @@ public class Trigger {
         this.whatToTrigger = whatToTrigger;
     }
 
-    public String toString(){
-        return title + ": " + id ;
+
+    @Override
+    public String toString() {
+        return "Trigger{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", isEnabled=" + isEnabled +
+                ", weekdays=" + weekdays +
+                ", time=" + time +
+                ", whatToTrigger=" + whatToTrigger +
+                ", type=" + type +
+                '}';
     }
 
     private String binary(byte i){
         return String.format("%8s", Integer.toBinaryString(i & 0xFF)).replace(' ', '0');
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

@@ -10,34 +10,34 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:theme="@style/SecondaryCardStyle">
+
         <ImageView
             android:id="@+id/remoteIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/remote_icon"
             android:paddingStart="16dp"
             android:paddingEnd="0dp"
-            android:contentDescription="@string/remote_icon"
-            app:tint="@color/iconTint"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             tools:src="@drawable/ic_cloud" />
 
         <TextView
             android:id="@+id/remoteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
             android:paddingStart="32dp"
             android:paddingEnd="0dp"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@color/textColorPrimary"
-            android:fontFamily="sans-serif"
             android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/remoteIcon"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Google Drive"/>
+            tools:text="Google Drive" />
 
         <ImageView
             android:id="@+id/pin_icon"
@@ -45,13 +45,12 @@
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="0dp"
-            android:src="@drawable/ic_pin"
-            app:tint="@color/iconTint"
-            android:visibility="invisible"
             android:rotation="40"
-            tools:visibility="visible"
+            android:src="@drawable/ic_pin"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/remote_options"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

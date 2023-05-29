@@ -30,7 +30,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_baseline_check_circle_outline_24" />
+                tools:src="@drawable/ic_twotone_check_circle_24" />
 
             <TextView
                 android:id="@+id/triggerName"
@@ -69,7 +69,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/triggerName" />
 
             <TextView
-                android:id="@+id/time_starttime"
+                android:id="@+id/intervalLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -145,8 +145,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:text="@string/trigger_task_label"
-                app:layout_constraintStart_toEndOf="@+id/time_starttime"
-                app:layout_constraintTop_toTopOf="@+id/time_starttime" />
+                app:layout_constraintStart_toEndOf="@+id/intervalLabel"
+                app:layout_constraintTop_toTopOf="@+id/intervalLabel" />
 
             <TextView
                 android:id="@+id/trigger_target"

@@ -27,7 +27,8 @@
                 android:layout_height="178dp"
                 android:contentDescription="@string/no_tasks_warning"
                 android:padding="24dp"
-                android:src="@drawable/ic_info_outline" />
+                android:src="@drawable/ic_info_outline"
+                android:tint="@color/cardColor" />
 
             <TextView
                 android:id="@+id/textView"
@@ -134,7 +135,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingBottom="88dp"
-            tools:listitem="@layout/fragment_trigger_item">
+            tools:listitem="@layout/fragment_trigger_item_schedule">
 
         </androidx.recyclerview.widget.RecyclerView>
 

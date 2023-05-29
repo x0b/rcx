@@ -27,10 +27,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -76,7 +78,6 @@ import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Services.TriggerService;
 import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
-import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SharedPreferencesUtil;
 import es.dmoral.toasty.Toasty;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
     public static final String MAIN_ACTIVITY_START_LOG = "MAIN_ACTIVITY_START_LOG";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
+    private static final int REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS = 63;
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
     private static final int ONBOARDING_REQUEST = 93;
@@ -110,15 +112,11 @@ public class MainActivity extends AppCompatActivity
 
         ActivityHelper.applyTheme(this);
 
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableCrashReports = sharedPreferences.getBoolean(
-                getString(R.string.pref_key_crash_reports),
-                getResources().getBoolean(R.bool.default_crash_log_enable));
-        if (enableCrashReports) {
-            CrashLogger.initCrashLogging(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission();
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }
@@ -316,6 +314,11 @@ public class MainActivity extends AppCompatActivity
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         boolean superOnBackPressed = true;
+
+        // Always hide search icon when fragments go back
+        View searchButton = this.findViewById(R.id.searchButton);
+        searchButton.setVisibility(View.INVISIBLE);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (fragment != null) {
@@ -341,6 +344,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
+
+        // Always hide search icon when fragments go back
+        View searchButton = this.findViewById(R.id.searchButton);
+        searchButton.setVisibility(View.INVISIBLE);
+
         int id = item.getItemId();
         navigationView.setCheckedItem(id);
         if (drawerPinnedRemoteIds.containsKey(id)) {
@@ -471,7 +479,6 @@ public class MainActivity extends AppCompatActivity
     private void startRemotesFragment() {
         fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        this.setTitle(R.string.remotes);
 
         for (int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
             fragmentManager.popBackStack();
@@ -563,6 +570,14 @@ public class MainActivity extends AppCompatActivity
             if (refresh.isRequired()) {
                 refresh.execute();
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    public void checkNotificationPermission() {
+        String postNotifications = Manifest.permission.POST_NOTIFICATIONS;
+        if(ContextCompat.checkSelfPermission(this,  postNotifications) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {postNotifications}, REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS );
         }
     }
 
@@ -883,13 +898,6 @@ public class MainActivity extends AppCompatActivity
             AppShortcutsHelper.removeAllAppShortcuts(context);
             AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
             pinRemotesToDrawer();
-            if (!isFinishing() && !isDestroyed()) {
-                try {
-                    startRemotesFragment();
-                } catch (IllegalStateException e) {
-                    FLog.e(TAG, "Could not refresh remotes, UI reference not valid", e);
-                }
-            }
         }
     }
 
