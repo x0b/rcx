@@ -80,13 +80,7 @@ class RemotesConfigList : Fragment() {
         }
 
         for (provider in mProviders) {
-
-
             val providerView = View.inflate(context, R.layout.config_list_item_template, null)
-
-
-            Log.e("RemotesConfigList", "Add Name:    "+provider.getNameCapitalized())
-            Log.e("RemotesConfigList", "Description: "+provider.description)
 
             (providerView.findViewById<View>(R.id.provider_tv) as TextView).text = provider.getNameCapitalized()
             (providerView.findViewById<View>(R.id.provider_summary) as TextView).text = provider.description
