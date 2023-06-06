@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
@@ -24,12 +25,16 @@ class SyncServiceNotifications(var mContext: Context) {
 
     }
 
-    private var reportManager = ReportNotifications(mContext)
+    private var mReportManager = ReportNotifications(mContext)
 
     private val OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP"
     private val OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP"
 
 
+    private fun useReports(): Boolean {
+        val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext)
+        return mSharedPreferences.getBoolean(mContext.getString(R.string.pref_key_app_notification_reports), true)
+    }
 
     fun showFailedNotificationOrReport(
         title: String,
@@ -37,13 +42,19 @@ class SyncServiceNotifications(var mContext: Context) {
         notificationId: Int,
         taskid: Long
     ) {
-        if(reportManager.getFailures()<=1) {
+
+
+        if(!useReports()){
             showFailedNotification(content, notificationId, taskid)
-            reportManager.lastFailedNotification(notificationId)
-            reportManager.addToFailureReport(title, content?: "")
+            return
+        }
+        if(mReportManager.getFailures()<=1) {
+            showFailedNotification(content, notificationId, taskid)
+            mReportManager.lastFailedNotification(notificationId)
+            mReportManager.addToFailureReport(title, content?: "")
         } else {
-            reportManager.cancelLastFailedNotification()
-            reportManager.showFailReport(title, content?: "")
+            mReportManager.cancelLastFailedNotification()
+            mReportManager.showFailReport(title, content?: "")
         }
     }
 
@@ -85,13 +96,19 @@ class SyncServiceNotifications(var mContext: Context) {
         notificationId: Int,
         taskid: Long
     ) {
-        if(reportManager.getSucesses()<=1) {
+
+        if(!useReports()){
             showSuccessNotification(title, content, notificationId)
-            reportManager.lastSuccededNotification(notificationId)
-            reportManager.addToSuccessReport(title, content?: "")
+            return
+        }
+
+        if(mReportManager.getSucesses()<=1) {
+            showSuccessNotification(title, content, notificationId)
+            mReportManager.lastSuccededNotification(notificationId)
+            mReportManager.addToSuccessReport(title, content?: "")
         } else {
-            reportManager.cancelLastSuccededNotification()
-            reportManager.showSuccessReport(title, content?: "")
+            mReportManager.cancelLastSuccededNotification()
+            mReportManager.showSuccessReport(title, content?: "")
         }
     }
     fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
