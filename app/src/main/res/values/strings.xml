@@ -455,6 +455,10 @@
         <item quantity="other">Successfully synced %2$s in %3$d files.</item>
     </plurals>
     <string name="operation_success_description_deletions_prefix">Also deleted %d files and folders.</string>
+    <string name="operation_report_success_title">Sync-Report Successes</string>
+    <string name="operation_report_success_short_content">%d Tasks succeeded</string>
+    <string name="operation_report_fail_title">Sync-Report Failures</string>
+    <string name="operation_report_fail_short_content">%d Tasks failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
     <string name="title_activity_task">Create a new Task</string>
     <!-- Strings used for fragments for navigation -->
@@ -577,6 +581,8 @@
     <string name="sync_service_notification_channel_fail_title">Sync service fail</string>
     <string name="sync_service_notification_channel_success_description">Notification for successful syncs</string>
     <string name="sync_service_notification_channel_fail_description">Notification for failed syncs</string>
+    <string name="sync_service_notification_channel_report_title">Sync service reports</string>
+    <string name="sync_service_notification_channel_report_description">Notification for sync-reports</string>
     <string name="trigger_type_schedule">Scheduled</string>
     <string name="trigger_type_interval">Interval</string>
     <string name="task_interval">Interval Settings</string>

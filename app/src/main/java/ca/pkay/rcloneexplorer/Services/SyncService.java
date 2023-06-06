@@ -34,6 +34,7 @@ import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
+import ca.pkay.rcloneexplorer.notifications.ReportNotifications;
 import ca.pkay.rcloneexplorer.notifications.StatusObject;
 import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
@@ -98,6 +99,11 @@ public class SyncService extends IntentService {
                 SyncServiceNotifications.CHANNEL_FAIL_ID,
                 getString(R.string.sync_service_notification_channel_fail_title),
                 R.string.sync_service_notification_channel_fail_description
+        );
+        (new GenericSyncNotification(this)).setNotificationChannel(
+                ReportNotifications.CHANNEL_REPORT_ID,
+                getString(R.string.sync_service_notification_channel_report_title),
+                R.string.sync_service_notification_channel_report_description
         );
         rclone = new Rclone(this);
         log2File = new Log2File(this);
@@ -225,8 +231,8 @@ public class SyncService extends IntentService {
                 if(!errors.isEmpty()) {
                     content += "\n\n\n"+statusObject.getAllErrorMessages();
                 }
-                SyncLog.error(this, getString(R.string.operation_failed), content);
-                notificationManager.showFailedNotification(content, notificationId, internalTask.id);
+                SyncLog.error(this, getString(R.string.operation_failed), title+": "+content);
+                notificationManager.showFailedNotificationOrReport(title, content, notificationId, internalTask.id);
             }else{
                 String message = getResources().getQuantityString(R.plurals.operation_success_description,
                         statusObject.getTotalTransfers(),
@@ -241,6 +247,7 @@ public class SyncService extends IntentService {
                     message += "\n" + getString(R.string.operation_success_description_deletions_prefix, statusObject.getDeletions());
                 }
                 SyncLog.info(this, getString(R.string.operation_success, title), message);
+                //reportManager.showSuccessReport(title, message);
                 notificationManager.showSuccessNotification(title, message, notificationId);
             }
         }
