@@ -5,11 +5,23 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import ca.pkay.rcloneexplorer.BroadcastReceivers.ClearReportBroadcastReciever
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "notifications")
 
 class SyncServiceNotifications(var mContext: Context) {
 
@@ -19,13 +31,21 @@ class SyncServiceNotifications(var mContext: Context) {
         const val CHANNEL_SUCCESS_ID = "ca.pkay.rcexplorer.sync_service_success"
         const val CHANNEL_FAIL_ID = "ca.pkay.rcexplorer.sync_service_fail"
 
+        @JvmField
+        val REPORT_SUCCESS_DELETE_INTENT = "REPORT_SUCCESS_DELETE_INTENT"
+
         const val PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162
         private const val OPERATION_FAILED_NOTIFICATION_ID = 89
         private const val OPERATION_SUCCESS_NOTIFICATION_ID = 698
+
+
+        val NOTIFICATION_CACHE_SUCCESS = stringPreferencesKey("NOTIFICATION_CACHE_SUCCESS")
     }
 
     private val OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP"
     private val OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP"
+
+
 
     fun showFailedNotification(
         content: String?,
@@ -60,6 +80,19 @@ class SyncServiceNotifications(var mContext: Context) {
     }
 
     fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
+
+        val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
+        runBlocking {
+            mContext.dataStore.edit { settings ->
+                val currentCounterValue: String = (prefMap[NOTIFICATION_CACHE_SUCCESS] ?: "") as String
+                if(currentCounterValue.isEmpty()) {
+                    settings[NOTIFICATION_CACHE_SUCCESS] = currentCounterValue + content
+                } else {
+                    settings[NOTIFICATION_CACHE_SUCCESS] = currentCounterValue + "\n" +content
+                }
+            }
+        }
+
         val builder = NotificationCompat.Builder(mContext, CHANNEL_SUCCESS_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setContentTitle(mContext.getString(R.string.operation_success, title))
@@ -73,8 +106,39 @@ class SyncServiceNotifications(var mContext: Context) {
             .setPriority(NotificationCompat.PRIORITY_LOW)
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(notificationId, builder.build())
+        showSuccessReport()
         //createSummaryNotificationForSuccess()
     }
+
+
+    fun showSuccessReport() {
+        val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
+        val te: String = prefMap[NOTIFICATION_CACHE_SUCCESS].toString()
+
+        Log.e("TAAAG", "notify: $te")
+
+        val builder = NotificationCompat.Builder(mContext, CHANNEL_SUCCESS_ID)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
+            .setContentTitle(mContext.getString(R.string.operation_success, "Report:"))
+            .setContentText(te)
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(
+                    te
+                )
+            )
+            .setGroup(OPERATION_SUCCESS_GROUP)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setDeleteIntent(createDeleteIntent())
+
+
+        val notificationManager = NotificationManagerCompat.from(mContext)
+        notificationManager.notify(1234567, builder.build())
+        //createSummaryNotificationForSuccess()
+    }
+
+
+
+
 
     // this will show up if mul
     fun createSummaryNotificationForFailed() {
@@ -145,5 +209,17 @@ class SyncServiceNotifications(var mContext: Context) {
         )
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
         notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder!!.build())
+    }
+
+
+    private fun createDeleteIntent(): PendingIntent? {
+        val intent = Intent(mContext, ClearReportBroadcastReciever::class.java)
+        intent.action = REPORT_SUCCESS_DELETE_INTENT
+        return PendingIntent.getBroadcast(
+            mContext,
+            0,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT or FLAG_IMMUTABLE
+        )
     }
 }

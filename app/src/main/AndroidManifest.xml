@@ -106,7 +106,10 @@
         <receiver
             android:name=".BroadcastReceivers.TriggerReciever"
             android:exported="true" />
-
+        <receiver
+            android:name=".BroadcastReceivers.ClearReportBroadcastReciever"
+            android:exported="false">
+        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
