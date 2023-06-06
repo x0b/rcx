@@ -39,11 +39,14 @@ class SyncServiceNotifications(var mContext: Context) {
     ) {
         if(reportManager.getFailures()<=1) {
             showFailedNotification(content, notificationId, taskid)
+            reportManager.lastFailedNotification(notificationId)
             reportManager.addToFailureReport(title, content?: "")
         } else {
+            reportManager.cancelLastFailedNotification()
             reportManager.showFailReport(title, content?: "")
         }
     }
+
     fun showFailedNotification(
         content: String?,
         notificationId: Int,
@@ -75,6 +78,22 @@ class SyncServiceNotifications(var mContext: Context) {
         notificationManager.notify(notificationId, builder.build())
     }
 
+
+    fun showSuccessNotificationOrReport(
+        title: String,
+        content: String?,
+        notificationId: Int,
+        taskid: Long
+    ) {
+        if(reportManager.getSucesses()<=1) {
+            showSuccessNotification(title, content, notificationId)
+            reportManager.lastSuccededNotification(notificationId)
+            reportManager.addToSuccessReport(title, content?: "")
+        } else {
+            reportManager.cancelLastSuccededNotification()
+            reportManager.showSuccessReport(title, content?: "")
+        }
+    }
     fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_SUCCESS_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)

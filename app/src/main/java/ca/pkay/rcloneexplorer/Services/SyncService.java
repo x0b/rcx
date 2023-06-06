@@ -247,8 +247,7 @@ public class SyncService extends IntentService {
                     message += "\n" + getString(R.string.operation_success_description_deletions_prefix, statusObject.getDeletions());
                 }
                 SyncLog.info(this, getString(R.string.operation_success, title), message);
-                //reportManager.showSuccessReport(title, message);
-                notificationManager.showSuccessNotification(title, message, notificationId);
+                notificationManager.showSuccessNotificationOrReport(title, message, notificationId, internalTask.id);
             }
         }
     }

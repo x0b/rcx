@@ -37,13 +37,42 @@ class ReportNotifications(var mContext: Context) {
 
         val NOTIFICATION_CACHE_SUCCESS_PREFERENCE = stringPreferencesKey("NOTIFICATION_CACHE_SUCCESS")
         val NOTIFICATION_CACHE_FAIL_PREFERENCE = stringPreferencesKey("NOTIFICATION_CACHE_FAIL")
+        val NOTIFICATION_LAST_SUCCESS_ID_PREFERENCE = intPreferencesKey("NOTIFICATION_LAST_SUCCESS_ID")
+        val NOTIFICATION_LAST_FAIL_ID_PREFERENCE = intPreferencesKey("NOTIFICATION_LAST_FAIL_ID")
+    }
+
+
+    fun lastSuccededNotification(id: Int) {
+        runBlocking {
+            mContext.dataStore.edit { settings ->
+                settings[NOTIFICATION_LAST_SUCCESS_ID_PREFERENCE] =  id
+            }
+        }
+    }
+
+    fun cancelLastSuccededNotification() {
+        val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
+        val notificationManager = NotificationManagerCompat.from(mContext)
+        notificationManager.cancel((prefMap[NOTIFICATION_LAST_SUCCESS_ID_PREFERENCE] ?: 0) as Int)
+    }
+
+    fun addToSuccessReport(title: String, line: String) {
+        val content = "$title: $line\n"
+        val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
+        runBlocking {
+            mContext.dataStore.edit { settings ->
+                val currentCounterValue: String = (prefMap[NOTIFICATION_CACHE_SUCCESS_PREFERENCE] ?: "") as String
+                if(currentCounterValue.isEmpty()) {
+                    settings[NOTIFICATION_CACHE_SUCCESS_PREFERENCE] = currentCounterValue + content
+                } else {
+                    settings[NOTIFICATION_CACHE_SUCCESS_PREFERENCE] =  content + currentCounterValue
+                }
+            }
+        }
     }
 
     fun showSuccessReport(title: String, line: String) {
         val content = "$title: $line\n"
-        var successes = 0
-
-
 
         val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
         runBlocking {
@@ -59,7 +88,7 @@ class ReportNotifications(var mContext: Context) {
         val notificationContent: String = content + prefMap[NOTIFICATION_CACHE_SUCCESS_PREFERENCE].toString()
 
         val builder = NotificationCompat.Builder(mContext, CHANNEL_REPORT_ID)
-            .setSmallIcon(R.drawable.ic_twotone_cloud_24)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setContentTitle(mContext.getString(R.string.operation_report_success_title))
             .setContentText(mContext.getString(R.string.operation_report_success_short_content, notificationContent.lines().size-1))
             .setStyle(
@@ -76,6 +105,21 @@ class ReportNotifications(var mContext: Context) {
     }
 
 
+
+    fun lastFailedNotification(id: Int) {
+        val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
+        runBlocking {
+            mContext.dataStore.edit { settings ->
+                settings[NOTIFICATION_LAST_FAIL_ID_PREFERENCE] =  id
+            }
+        }
+    }
+
+    fun cancelLastFailedNotification() {
+        val prefMap = runBlocking { mContext.dataStore.data.first().asMap() }
+        val notificationManager = NotificationManagerCompat.from(mContext)
+        notificationManager.cancel((prefMap[NOTIFICATION_LAST_FAIL_ID_PREFERENCE] ?: 0) as Int)
+    }
 
     fun addToFailureReport(title: String, line: String) {
         val content = "$title: $line\n"
@@ -99,7 +143,7 @@ class ReportNotifications(var mContext: Context) {
         val notificationContent: String = prefMap[NOTIFICATION_CACHE_FAIL_PREFERENCE].toString()
 
         val builder = NotificationCompat.Builder(mContext, CHANNEL_REPORT_ID)
-            .setSmallIcon(R.drawable.ic_twotone_cloud_24)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
             .setContentTitle(mContext.getString(R.string.operation_report_fail_title))
             .setContentText(mContext.getString(R.string.operation_report_fail_short_content, notificationContent.lines().size-1))
             .setStyle(
