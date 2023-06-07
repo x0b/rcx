@@ -135,7 +135,6 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
         final TypedValue accentColorValue = new TypedValue ();
         context.getTheme().resolveAttribute (R.attr.colorAccent, accentColorValue, true);
-        view.findViewById(R.id.move_bar).setBackgroundColor(accentColorValue.data);
         view.findViewById(R.id.move_bar).setVisibility(View.VISIBLE);
         view.findViewById(R.id.cancel_move).setOnClickListener(v -> dismiss());
         view.findViewById(R.id.select_move).setOnClickListener(v -> {
@@ -156,7 +155,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
             }
         }
 
-        ((TextView)view.findViewById(R.id.dialog_title)).setText(title);
+       // ((TextView)view.findViewById(R.id.dialog_title)).setText(title);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogThemeFullScreen);
         builder.setView(view);
