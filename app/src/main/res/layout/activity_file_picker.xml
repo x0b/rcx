@@ -21,6 +21,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             app:cardBackgroundColor="?attr/colorPrimary"
+            android:theme="@style/MainViewToolbar"
             app:cardCornerRadius="36dp"
             app:cardElevation="2dp"
             app:strokeWidth="0dp">
