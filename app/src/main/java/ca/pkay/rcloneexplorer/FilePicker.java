@@ -55,7 +55,6 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
     private File root;
     private File current;
     private ArrayList<File> fileList;
-    private boolean isDarkTheme;
     private int sortOrder;
     private SpeedDialView speedDialView;
     private boolean destinationPickerType;
@@ -77,7 +76,6 @@ public class FilePicker extends AppCompatActivity implements FilePickerAdapter.O
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortOrder = sharedPreferences.getInt(SHARED_PREFS_SORT_ORDER, SortDialog.ALPHA_ASCENDING);
-        isDarkTheme = ActivityHelper.isDarkTheme(this);
 
         if (savedInstanceState != null) {
             destinationPickerType = savedInstanceState.getBoolean(SAVED_DESTINATION_PICKER_TYPE);
