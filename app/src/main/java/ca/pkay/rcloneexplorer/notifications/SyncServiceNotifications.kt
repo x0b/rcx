@@ -156,6 +156,9 @@ class SyncServiceNotifications(var mContext: Context) {
         bigTextArray: ArrayList<String?>?,
         percent: Int
     ) {
+        if(content?.isBlank() == true || content == null){
+            return
+        }
         val builder = GenericSyncNotification(mContext).updateGenericNotification(
             mContext.getString(R.string.syncing_service, title),
             content,
