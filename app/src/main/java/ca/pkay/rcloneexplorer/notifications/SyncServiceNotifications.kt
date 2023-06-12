@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
@@ -19,13 +20,43 @@ class SyncServiceNotifications(var mContext: Context) {
         const val CHANNEL_SUCCESS_ID = "ca.pkay.rcexplorer.sync_service_success"
         const val CHANNEL_FAIL_ID = "ca.pkay.rcexplorer.sync_service_fail"
 
+
         const val PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162
-        private const val OPERATION_FAILED_NOTIFICATION_ID = 89
-        private const val OPERATION_SUCCESS_NOTIFICATION_ID = 698
+
     }
+
+    private var mReportManager = ReportNotifications(mContext)
 
     private val OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP"
     private val OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP"
+
+
+    private fun useReports(): Boolean {
+        val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext)
+        return mSharedPreferences.getBoolean(mContext.getString(R.string.pref_key_app_notification_reports), true)
+    }
+
+    fun showFailedNotificationOrReport(
+        title: String,
+        content: String?,
+        notificationId: Int,
+        taskid: Long
+    ) {
+
+
+        if(!useReports()){
+            showFailedNotification(content, notificationId, taskid)
+            return
+        }
+        if(mReportManager.getFailures()<=1) {
+            showFailedNotification(content, notificationId, taskid)
+            mReportManager.lastFailedNotification(notificationId)
+            mReportManager.addToFailureReport(title, content?: "")
+        } else {
+            mReportManager.cancelLastFailedNotification()
+            mReportManager.showFailReport(title, content?: "")
+        }
+    }
 
     fun showFailedNotification(
         content: String?,
@@ -56,9 +87,30 @@ class SyncServiceNotifications(var mContext: Context) {
             )
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(notificationId, builder.build())
-        createSummaryNotificationForFailed()
     }
 
+
+    fun showSuccessNotificationOrReport(
+        title: String,
+        content: String?,
+        notificationId: Int,
+        taskid: Long
+    ) {
+
+        if(!useReports()){
+            showSuccessNotification(title, content, notificationId)
+            return
+        }
+
+        if(mReportManager.getSucesses()<=1) {
+            showSuccessNotification(title, content, notificationId)
+            mReportManager.lastSuccededNotification(notificationId)
+            mReportManager.addToSuccessReport(title, content?: "")
+        } else {
+            mReportManager.cancelLastSuccededNotification()
+            mReportManager.showSuccessReport(title, content?: "")
+        }
+    }
     fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_SUCCESS_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
@@ -73,36 +125,7 @@ class SyncServiceNotifications(var mContext: Context) {
             .setPriority(NotificationCompat.PRIORITY_LOW)
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(notificationId, builder.build())
-        //createSummaryNotificationForSuccess()
     }
-
-    // this will show up if mul
-    fun createSummaryNotificationForFailed() {
-        val summaryNotification = NotificationCompat.Builder(mContext, CHANNEL_ID)
-            .setContentTitle(mContext.getString(R.string.operation_failed)) //set content text to support devices running API level < 24
-            .setContentText(mContext.getString(R.string.operation_failed))
-            .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
-            .setGroup(OPERATION_FAILED_GROUP)
-            .setGroupSummary(true)
-            .setAutoCancel(true)
-            .build()
-        val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(OPERATION_FAILED_NOTIFICATION_ID, summaryNotification)
-    }
-
-    fun createSummaryNotificationForSuccess() {
-        val summaryNotification = NotificationCompat.Builder(mContext, CHANNEL_ID)
-            .setContentTitle(mContext.getString(R.string.operation_success)) //set content text to support devices running API level < 24
-            .setContentText(mContext.getString(R.string.operation_success))
-            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
-            .setGroup(OPERATION_SUCCESS_GROUP)
-            .setGroupSummary(true)
-            .setAutoCancel(true)
-            .build()
-        val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(OPERATION_SUCCESS_NOTIFICATION_ID, summaryNotification)
-    }
-
     fun getPersistentNotification(title: String?): NotificationCompat.Builder {
 
         var flags = 0
