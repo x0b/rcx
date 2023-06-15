@@ -53,6 +53,9 @@ class DownloadNotifications(var mContext: Context) {
         bigTextArray: java.util.ArrayList<String?>?,
         percent: Int
     ) {
+        if(content?.isBlank() == true || content == null){
+            return
+        }
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
         var builder = GenericSyncNotification(mContext).updateGenericNotification(
             title,
