@@ -171,7 +171,7 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
                         input.inputType =
                             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
-                        input.setText(mOptionMap[it.name])
+                        //input.setText(mOptionMap[it.name])
                         setTextInputListener(input, it.name)
 
                     } else if(it.examples.size > 0) {
