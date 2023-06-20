@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +62,8 @@ public class Rclone {
     public static final int SERVE_PROTOCOL_WEBDAV = 2;
     public static final int SERVE_PROTOCOL_FTP = 3;
     public static final int SERVE_PROTOCOL_DLNA = 4;
+
+    public static final String RCLONE_CONFIG_NAME_KEY = "rclone_remote_name";
     private static volatile Boolean isCompatible;
     private static SafDAVServer safDAVServer;
     private Context context;
@@ -486,6 +489,47 @@ public class Rclone {
             FLog.e(TAG, "configCreate: error starting rclone", e);
             return null;
         }
+    }
+
+    @Nullable
+    public HashMap<String, String> getConfig(String name) {
+        String[] command = createCommand("config", "dump");
+        StringBuilder output = new StringBuilder();
+        Process process;
+        JSONObject configs = new JSONObject();
+
+        HashMap<String, String> options = new HashMap<>();
+
+        try {
+            process = getRuntimeProcess(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                Toasty.error(context, context.getString(R.string.error_getting_config), Toast.LENGTH_SHORT, true).show();
+                logErrorOutput(process);
+            }
+
+            configs = new JSONObject(output.toString());
+        } catch (IOException | InterruptedException | JSONException e) {
+            FLog.e(TAG, "getRemotes: error retrieving remotes", e);
+        }
+
+        JSONObject selectedConfig = configs.optJSONObject(name);
+        Iterator<String> keys = selectedConfig.keys();
+
+        while(keys.hasNext()) {
+            String key = keys.next();
+            options.put(key,  selectedConfig.optString(key));
+        }
+
+        options.put(RCLONE_CONFIG_NAME_KEY,  name);
+        return options;
+        
     }
 
     public Process configInteractive() throws IOException {
@@ -1432,6 +1476,8 @@ public class Rclone {
     }
 
 
+    //Todo: Investigate if we can create the json during compile-time, so that we can cache the results.
+    // Instantiating rclone takes a while and is visible in the ui.
     public ArrayList<Provider> getProviders() throws JSONException {
         String[] command = createCommand("config", "providers");
         StringBuilder output = new StringBuilder();

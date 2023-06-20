@@ -31,6 +31,7 @@ import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
+import ca.pkay.rcloneexplorer.Rclone.RCLONE_CONFIG_NAME_KEY
 import ca.pkay.rcloneexplorer.rclone.Provider
 import ca.pkay.rcloneexplorer.rclone.ProviderOption
 import com.google.android.material.textfield.TextInputEditText
@@ -38,11 +39,13 @@ import com.google.android.material.textfield.TextInputLayout
 import java.util.Locale
 
 
-class DynamicConfig(private val mProviderTitle: String) : Fragment() {
+class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: HashMap<String, String>, private var mUseOauth: Boolean) : Fragment() {
 
-    constructor(providerTitle: String, useOauth: Boolean) : this(providerTitle) {
-        this.useOauth = useOauth
-    }
+    constructor(providerTitle: String) : this(providerTitle, hashMapOf<String, String>(), false)
+    constructor(providerTitle: String, useOauth: Boolean) : this(providerTitle, hashMapOf<String, String>(), useOauth)
+    constructor(providerTitle: String, optionMap: HashMap<String, String>) : this(providerTitle, optionMap, false)
+
+
 
     private lateinit var mContext: Context
     private var rclone: Rclone? = null
@@ -58,9 +61,6 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
 
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
-
-    private var mOptionMap = hashMapOf<String, String>()
-    var useOauth: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,6 +135,13 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
 
 
         mFormView?.let { it.removeViews(1, it.size-1) }
+
+
+        if(mOptionMap.getValue(RCLONE_CONFIG_NAME_KEY).isNotEmpty()) {
+            mRemoteName?.setText(mOptionMap.getValue(RCLONE_CONFIG_NAME_KEY))
+            mRemoteName?.isFocusable = false
+            mRemoteName?.isEnabled = false
+        }
 
         mProvider!!.options.forEach {
 
@@ -334,7 +341,7 @@ class DynamicConfig(private val mProviderTitle: String) : Fragment() {
             options.add(value)
         }
 
-        if(useOauth){
+        if(mUseOauth){
             mAuthTask = ConfigCreate(
                 options, mFormView!!, mAuthView!!,
                 requireContext(), rclone!!

@@ -1,5 +1,8 @@
 package ca.pkay.rcloneexplorer.Fragments;
 
+import static ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig.CONFIG_EDIT_CODE;
+import static ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfig.CONFIG_EDIT_TARGET;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -51,6 +54,7 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
 
     private final int CONFIG_REQ_CODE = 171;
     private final int CONFIG_RECREATE_REQ_CODE = 156;
+
     private Rclone rclone;
     private RemotesRecyclerViewAdapter recyclerViewAdapter;
     private List<RemoteItem> remotes;
@@ -273,6 +277,11 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
             switch (item.getItemId()) {
                 case R.id.action_remote_properties:
                     showRemotePropertiesDialog(remoteItem);
+                    break;
+                case R.id.action_edit_remote:
+                    Intent intent = new Intent(context, RemoteConfig.class);
+                    intent.putExtra(CONFIG_EDIT_TARGET, remoteItem.getName());
+                    startActivityForResult(intent, CONFIG_EDIT_CODE);
                     break;
                 case R.id.action_delete:
                     deleteRemote(remoteItem);
