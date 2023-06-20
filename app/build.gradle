@@ -12,23 +12,26 @@ tasks.whenTaskAdded { task ->
 
 android {
     signingConfigs {
-        github_x0b {
-            keyAlias 'github_x0b'
+        release {
+            keyAlias 'fdroid'
+            storeFile file('.config/android/roundsync.keystore')
         }
     }
     compileSdkVersion 33
     ndkVersion project.properties['de.felixnuesse.extract.ndkVersion']
     defaultConfig {
+        generatedDensities = []
+        vectorDrawables.generatedDensities = []
         applicationId 'de.felixnuesse.extract'
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 230 // last digit is reserved for ABI, only ever end on 0!
-        versionName '2.1.3'
-        resConfigs "en", "de" // restrict to used languages
+        versionCode 240 // last digit is reserved for ABI, only ever end on 0!
+        versionName '2.1.4'
+        resourceConfigurations += ['en', 'de']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"c03129b6-b09f-9cb4-8fcd-7f143b8f94ef\""
         buildConfigField "java.lang.String", "VCP_AUTHORITY", "\"" + applicationId + ".vcp\"";
-        setProperty("archivesBaseName",  "roundsync_v"+versionName+"_"+now())
+        setProperty("archivesBaseName",  "roundsync_v"+versionName)
 
         externalNativeBuild {
             ndkBuild {
@@ -44,7 +47,7 @@ android {
         }
         release {
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -96,11 +99,12 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
-
-
     packagingOptions {
-        doNotStrip '**/*.so'
+        jniLibs {
+            keepDebugSymbols += ['**/*.so']
+        }
     }
+    namespace 'ca.pkay.rcloneexplorer'
 
 
 }
