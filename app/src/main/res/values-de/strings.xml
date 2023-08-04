@@ -484,7 +484,7 @@
     <string name="bisync">Bidirektional</string>
     <string name="description_sync_direction">Dies bestimmt die Quelle und das Ziel für den Datentransfer.</string>
     <string name="intro_successful_setup">Du kannst nun loslegen!</string>
-    <string name="intro_unsuccessful_setup">Dateizugriff nicht erlaubt.</string>
+    <string name="intro_manage_external_storage_failed">Dateizugriff nicht erlaubt.</string>
     <string name="status_offendingfile">Die problematische Datei:</string>
     <string name="use_md5checksum">Benutze md5-Prüfsummen</string>
     <string name="task_hint_wifi_ignore_defaults">Wenn eingeschaltet überschreibt diese die globale Einstellung bezüglich des Datentransfers über WLan</string>

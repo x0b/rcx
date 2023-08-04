@@ -566,8 +566,10 @@
     <string name="description_sync_direction_copy_toremote">Copy new or modified files from local storage to remote storage. No files are deleted, existing files on the remote may be overwritten.</string>
     <string name="description_sync_direction_copy_tolocal">Copy new or modified files from remote storage to local storage. No files are deleted, existing files on the local storage may be overwritten.</string>
     <string name="description_sync_direction_sync_bidirectional">Make sure local and remote storage have the same files by transferring, downloading, and deleting files as needed to maintain an identical folder structure.</string>
-    <string name="intro_successful_setup">You are now ready to start</string>
-    <string name="intro_unsuccessful_setup">File access permission not granted</string>
+    <string name="intro_success">Success!</string>
+    <string name="intro_successful_setup">You are now ready to start!</string>
+    <string name="intro_manage_external_storage_granted">File access permission granted!</string>
+    <string name="intro_manage_external_storage_failed">File access permission not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
     <string name="s3_spinner_prompt">S3 service provider</string>
     <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>
