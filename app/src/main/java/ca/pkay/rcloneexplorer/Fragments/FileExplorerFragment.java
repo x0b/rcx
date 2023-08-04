@@ -1536,6 +1536,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setTag("new dir")
+                    .setHint(R.string.hint_new_folder)
                     .show(getChildFragmentManager(), "input dialog");
         }
     }
