@@ -69,6 +69,7 @@
     <string name="type_new_file_name">Enter a new file name</string>
     <string name="select_destination">Select destination</string>
     <string name="create_new_folder">Create a folder</string>
+    <string name="hint_new_folder">Foldername</string>
     <string name="type_new_folder_name">Enter a new folder name</string>
     <string name="loading_file">Loading file</string>
     <string name="please_wait">Please wait</string>
