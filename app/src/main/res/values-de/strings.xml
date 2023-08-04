@@ -370,7 +370,7 @@
     <string name="intro_welcome_description">Round Sync verwaltet deine Dateien, egal ob sie auf deinem Smartphone in der Cloud gespeichert sind. Bei Fragen gibt es eine Dokumentation unter x0b.github.io/docs.</string>
     <string name="intro_storage_title">Speicherzugriff</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">Round Sync wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf x0b.github.io/rcx-privacy erfährst du mehr.</string>
+    <string name="intro_community_description">Round Sync wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf felixnuesse.de/privacy-roundsync erfährst du mehr.</string>
     <string name="pref_send_sigquit_title">Debug: Mit SIGQUIT beenden</string>
     <string name="pref_send_sigquit_summary">Alle rclone-Prozesse mit kill -SIGQUIT beenden. Rclone-Protokollierung muss aktiviert sein.</string>
     <string name="sync_direction_local_remote">Synchronisiere Lokal zu entferntem Speicher</string>

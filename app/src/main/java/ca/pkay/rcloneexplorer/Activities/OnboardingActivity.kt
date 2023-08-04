@@ -41,7 +41,7 @@ class OnboardingActivity : AppIntro2() {
             AppIntroFragment.newInstance(
                 title = getString(R.string.intro_welcome_title),
                 description = getString(R.string.intro_welcome_description),
-                imageDrawable = R.drawable.ic_dino2,
+                imageDrawable = R.drawable.appicon,
                 backgroundColor = resources.getColor(R.color.seed),
         ))
 
