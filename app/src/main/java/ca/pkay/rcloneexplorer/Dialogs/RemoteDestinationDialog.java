@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -157,7 +159,7 @@ public class RemoteDestinationDialog extends DialogFragment implements  SwipeRef
 
        // ((TextView)view.findViewById(R.id.dialog_title)).setText(title);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogThemeFullScreen);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.DialogThemeFullScreen);
         builder.setView(view);
         builder.setOnKeyListener((dialog, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {

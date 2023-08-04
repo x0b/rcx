@@ -40,6 +40,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -314,9 +315,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             return false;
         });
         fab.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_upload, R.drawable.ic_file_upload)
+                .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, this.context.getTheme()))
                 .setLabel(getString(R.string.fab_upload_files))
                 .create());
         fab.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_add_folder, R.drawable.ic_create_new_folder)
+                .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, this.context.getTheme()))
                 .setLabel(getString(R.string.fab_new_folder))
                 .create());
 
@@ -1533,6 +1536,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     .setNegativeButton(R.string.cancel)
                     .setPositiveButton(R.string.okay_confirmation)
                     .setTag("new dir")
+                    .setHint(R.string.hint_new_folder)
                     .show(getChildFragmentManager(), "input dialog");
         }
     }

@@ -8,8 +8,8 @@
     <string name="title_activity_contributors">License</string>
     <string name="remotes">Remotes</string>
     <string name="settings">Settings</string>
-    <string name="import_rclone_config">Import rclone config</string>
-    <string name="export_rclone_config">Export rclone config</string>
+    <string name="import_rclone_config">Import config</string>
+    <string name="export_rclone_config">Export config</string>
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
@@ -69,6 +69,7 @@
     <string name="type_new_file_name">Enter a new file name</string>
     <string name="select_destination">Select destination</string>
     <string name="create_new_folder">Create a folder</string>
+    <string name="hint_new_folder">Foldername</string>
     <string name="type_new_folder_name">Enter a new folder name</string>
     <string name="loading_file">Loading file</string>
     <string name="please_wait">Please wait</string>
@@ -119,12 +120,12 @@
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
     <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
-    <string name="intro_welcome_title">Welcome</string>
-    <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more information, visit the x0b.github.io/docs.</string>
-    <string name="intro_storage_title">Storage access required</string>
+    <string name="intro_welcome_title">Welcome!</string>
+    <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more questions, visit github.com/newhinton/Round-Sync.</string>
+    <string name="intro_storage_title">Storage access</string>
     <string name="intro_storage_description">Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit x0b.github.io/rcx-privacy.</string>
+    <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit felixnuesse.de/privacy-roundsync.</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_theme_mode</string>
     <string name="pref_key_wrap_filenames" translatable="false">pref_key_wrap_filenames</string>
@@ -565,8 +566,10 @@
     <string name="description_sync_direction_copy_toremote">Copy new or modified files from local storage to remote storage. No files are deleted, existing files on the remote may be overwritten.</string>
     <string name="description_sync_direction_copy_tolocal">Copy new or modified files from remote storage to local storage. No files are deleted, existing files on the local storage may be overwritten.</string>
     <string name="description_sync_direction_sync_bidirectional">Make sure local and remote storage have the same files by transferring, downloading, and deleting files as needed to maintain an identical folder structure.</string>
-    <string name="intro_successful_setup">You are now ready to start</string>
-    <string name="intro_unsuccessful_setup">File access permission not granted</string>
+    <string name="intro_success">Success!</string>
+    <string name="intro_successful_setup">You are now ready to start!</string>
+    <string name="intro_manage_external_storage_granted">File access permission granted!</string>
+    <string name="intro_manage_external_storage_failed">File access permission not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
     <string name="s3_spinner_prompt">S3 service provider</string>
     <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>

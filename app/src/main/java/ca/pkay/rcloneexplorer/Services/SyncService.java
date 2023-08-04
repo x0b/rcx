@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -253,7 +254,11 @@ public class SyncService extends IntentService {
     }
 
     private InternalTaskItem handleTaskStartIntent(Intent intent) {
-        final String action = intent.getAction();
+        String action = intent.getAction();
+        if(action == null) {
+            // equals might fail otherwise when internal tasks send an intent without action.
+            action = "";
+        }
         if (action.equals(TASK_ACTION)) {
             DatabaseHandler db = new DatabaseHandler(this);
             for (Task task: db.getAllTasks()){
@@ -355,14 +360,22 @@ public class SyncService extends IntentService {
             InternalTaskItem itt = new InternalTaskItem();
             itt.id = intent.getLongExtra(EXTRA_TASK_ID, -1);
             itt.remoteItem = intent.getParcelableExtra(REMOTE_ARG);
-            itt.remotePath = intent.getStringExtra(REMOTE_PATH_ARG);
-            itt.localPath = intent.getStringExtra(LOCAL_PATH_ARG);
-            itt.title = intent.getStringExtra(TASK_NAME);
+            itt.remotePath = (String) opt(intent.getStringExtra(REMOTE_PATH_ARG), "");
+            itt.localPath = (String) opt(intent.getStringExtra(LOCAL_PATH_ARG), "");
+            itt.title = (String) opt(intent.getStringExtra(TASK_NAME), "");
             itt.syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
             itt.silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
             itt.md5sum = intent.getBooleanExtra(TASK_MD5SUM, Task.TASK_MD5SUM_DEFAULT);
             itt.transferOnWiFiOnly = intent.getBooleanExtra(TASK_WIFI_ONLY, transferOnWiFiOnly);
+
             return itt;
+        }
+
+        private static Object opt(Object preferred, @NonNull Object alternate){
+            if(preferred != null) {
+                return preferred;
+            }
+            return alternate;
         }
 
     }
