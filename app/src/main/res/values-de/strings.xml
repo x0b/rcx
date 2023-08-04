@@ -366,7 +366,7 @@
     <string name="report_collection_stop_collection">Erfassung beenden</string>
     <string name="pref_bugreport_start_title">Lokalen Fehlerbericht erfassen</string>
     <string name="pref_bugreport_start_summary">Auswählen, um Fehlererfassung zu starten. Anschließend Fehler nachvollziehen und Erfassung beenden.</string>
-    <string name="intro_welcome_title">Hallo</string>
+    <string name="intro_welcome_title">Hallo!</string>
     <string name="intro_welcome_description">Round Sync verwaltet deine Dateien, egal ob sie auf deinem Smartphone in der Cloud gespeichert sind. Bei Fragen besuche uns auf github.com/newhinton/Round-Sync!</string>
     <string name="intro_storage_title">Speicherzugriff</string>
     <string name="intro_community_title">Community</string>

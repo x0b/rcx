@@ -120,9 +120,9 @@
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
     <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
-    <string name="intro_welcome_title">Welcome</string>
+    <string name="intro_welcome_title">Welcome!</string>
     <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more questions, visit github.com/newhinton/Round-Sync.</string>
-    <string name="intro_storage_title">Storage access required</string>
+    <string name="intro_storage_title">Storage access</string>
     <string name="intro_storage_description">Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.</string>
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit felixnuesse.de/privacy-roundsync.</string>
