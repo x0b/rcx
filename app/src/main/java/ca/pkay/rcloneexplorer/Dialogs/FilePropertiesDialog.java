@@ -18,6 +18,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
@@ -58,7 +60,7 @@ public class FilePropertiesDialog extends DialogFragment {
 
         rclone = new Rclone(context);
         asyncTasks = new AsyncTask[2];
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 

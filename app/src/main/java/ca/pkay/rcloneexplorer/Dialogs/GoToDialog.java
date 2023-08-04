@@ -12,6 +12,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import ca.pkay.rcloneexplorer.R;
 
 public class GoToDialog extends DialogFragment {
@@ -33,7 +35,7 @@ public class GoToDialog extends DialogFragment {
             listener = (Callbacks) getParentFragment();
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_go_to, null);
         builder.setTitle(R.string.dialog_go_to_title);
