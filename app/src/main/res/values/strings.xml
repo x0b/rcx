@@ -8,8 +8,8 @@
     <string name="title_activity_contributors">License</string>
     <string name="remotes">Remotes</string>
     <string name="settings">Settings</string>
-    <string name="import_rclone_config">Import rclone config</string>
-    <string name="export_rclone_config">Export rclone config</string>
+    <string name="import_rclone_config">Import config</string>
+    <string name="export_rclone_config">Export config</string>
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
