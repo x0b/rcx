@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="ca.pkay.rcloneexplorer">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature
         android:name="android.software.leanback"
@@ -106,7 +105,10 @@
         <receiver
             android:name=".BroadcastReceivers.TriggerReciever"
             android:exported="true" />
-
+        <receiver
+            android:name=".BroadcastReceivers.ClearReportBroadcastReciever"
+            android:exported="false">
+        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

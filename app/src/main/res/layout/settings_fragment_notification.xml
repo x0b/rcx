@@ -19,6 +19,46 @@
         android:paddingBottom="16dp"
         android:animateLayoutChanges="true">
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/notifications_reports"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:paddingTop="@dimen/settings_padding_topbottom"
+                android:paddingBottom="@dimen/settings_padding_topbottom"
+                android:text="@string/notification_reports"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/app_notification_report_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Switch
+                android:id="@+id/app_notification_report_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/app_notification_report_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_divider_size"
+                android:background="@color/dividerColor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
