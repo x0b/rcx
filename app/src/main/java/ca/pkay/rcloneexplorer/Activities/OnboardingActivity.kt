@@ -49,7 +49,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_welcome_title),
                 description = getString(R.string.intro_welcome_description),
                 imageDrawable = R.drawable.undraw_hello,
-                backgroundColor = resources.getColor(R.color.seed),
+                backgroundColor = resources.getColor(R.color.intro_color1),
         ))
 
         addSlide(
@@ -57,7 +57,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_community_title),
                 description = getString(R.string.intro_community_description),
                 imageDrawable = R.drawable.undraw_the_world_is_mine,
-                backgroundColor = resources.getColor(R.color.seed_alt),
+                backgroundColor = resources.getColor(R.color.intro_color2),
 
             ))
 
@@ -66,7 +66,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_storage_title),
                 description = getString(R.string.intro_storage_description),
                 imageDrawable = R.drawable.ic_intro_storage,
-                backgroundColor = resources.getColor(R.color.seed),
+                backgroundColor = resources.getColor(R.color.intro_color1),
             ))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -75,7 +75,7 @@ class OnboardingActivity : AppIntro2() {
                     title = getString(R.string.intro_notifications_title),
                     description = getString(R.string.intro_notifications_description),
                     imageDrawable = R.drawable.undraw_post_online,
-                    backgroundColor = resources.getColor(R.color.seed_alt),
+                    backgroundColor = resources.getColor(R.color.intro_color2),
                 ))
 
             askForPermissions(
@@ -89,7 +89,7 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_success),
                 description = getString(R.string.intro_successful_setup),
                 imageDrawable = R.drawable.undraw_sync,
-                backgroundColor = resources.getColor(R.color.seed),
+                backgroundColor = resources.getColor(R.color.intro_color1),
             ))
     }
 

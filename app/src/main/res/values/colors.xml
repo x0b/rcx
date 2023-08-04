@@ -1,7 +1,8 @@
 
 <resources>
     <color name="seed">#4CAF50</color>
-    <color name="seed_alt">#19871D</color>
+    <color name="intro_color1">#19871D</color>
+    <color name="intro_color2">#196487</color>
 
     <color name="md_theme_light_primary">#4CAF50</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
