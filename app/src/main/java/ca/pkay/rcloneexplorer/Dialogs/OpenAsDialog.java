@@ -40,7 +40,7 @@ public class OpenAsDialog extends DialogFragment {
 
         listener = (OnClickListener) getParentFragment();
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_open_as, null);
         setListeners();

@@ -35,7 +35,7 @@ public class GoToDialog extends DialogFragment {
             listener = (Callbacks) getParentFragment();
         }
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_go_to, null);
         builder.setTitle(R.string.dialog_go_to_title);

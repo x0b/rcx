@@ -45,7 +45,7 @@ public class ServeDialog extends DialogFragment {
         }
 
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_serve, null);
 

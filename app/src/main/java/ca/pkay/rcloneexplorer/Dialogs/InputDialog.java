@@ -75,7 +75,7 @@ public class InputDialog extends DialogFragment {
             onPositiveListener = (OnPositive) getParentFragment();
         }
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_input, null);
         editText = view.findViewById(R.id.dialog_input);

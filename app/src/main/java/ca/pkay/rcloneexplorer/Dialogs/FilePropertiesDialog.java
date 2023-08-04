@@ -60,7 +60,7 @@ public class FilePropertiesDialog extends DialogFragment {
 
         rclone = new Rclone(context);
         asyncTasks = new AsyncTask[2];
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_file_properties, null);
 

@@ -49,7 +49,7 @@ public class LoadingDialog extends DialogFragment {
             negativeTextId = savedInstanceState.getInt(SAVED_NEGATIVE_TEXT_ID);
         }
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_loading_indicator, null);
         builder.setCancelable(cancelable);

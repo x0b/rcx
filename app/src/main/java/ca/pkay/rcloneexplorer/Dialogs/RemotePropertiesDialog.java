@@ -84,7 +84,7 @@ public class RemotePropertiesDialog extends DialogFragment {
 
         rclone = new Rclone(context);
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity) context).getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_remote_properties, null);
 

@@ -54,7 +54,7 @@ public class SortDialog extends DialogFragment {
             sortOrder = savedInstanceState.getInt("sortOrder");
         }
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater layoutInflater = ((FragmentActivity)context).getLayoutInflater();
         view = layoutInflater.inflate(R.layout.dialog_sort, null);
 
