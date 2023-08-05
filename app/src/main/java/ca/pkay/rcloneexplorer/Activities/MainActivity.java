@@ -40,12 +40,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -490,7 +492,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void warnUserAboutOverwritingConfiguration() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         builder.setTitle(R.string.replace_config_file_question);
         builder.setMessage(R.string.config_file_lost_statement);
         builder.setPositiveButton(R.string.continue_statement, (dialogInterface, i) -> {
@@ -543,9 +545,7 @@ public class MainActivity extends AppCompatActivity
     public void importConfigFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        String [] mimeTypes = {"application/zip", "text/plain"};
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 
         tryStartActivityForResult(this, intent, READ_REQUEST_CODE);
     }
@@ -649,7 +649,17 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("StaticFieldLeak")
     private class CopyConfigFile extends AsyncTask<Uri, Void, Boolean> {
 
+        private final int SUCCESS_IMPORT = 0;
+        private final int FAILURE_UNSPECIFIED = 1;
+        private final int FAILURE_RCLONE_CONF_NOT_VALID = 2;
+        private final int FAILURE_ZIP_NO_JSON = 3;
+        private final int FAILURE_ZIP_INVALID_JSON = 4;
+        private final int FAILURE_ZIP_INVALID_CONF = 5;
+        private final int FAILURE_ZIP_MISSING_CONF = 6;
+
+        private int statusCode = FAILURE_UNSPECIFIED;
         private LoadingDialog loadingDialog;
+
 
         @Override
         protected void onPreExecute() {
@@ -661,23 +671,54 @@ public class MainActivity extends AppCompatActivity
             loadingDialog.show(getSupportFragmentManager(), "loading dialog");
         }
 
-        //todo: this may fail badly. Check in which order we delete and update settings and configs.
-        // We should make sure that this first checks integrity and only then replaces.
+        //todo: Check shared preferences if they will be overridden by the onPostExecute
+        //todo: This assumes that zip-files are uncorrupted. That means that if the rclone.conf is valid,
+        //todo: but the jsons are not, we import half a configuration package.
+
         @Override
         protected Boolean doInBackground(Uri... uris) {
 
             ContentResolver resolver = context.getContentResolver();
             String mime = resolver.getType(uris[0]);
-            try {
-                if(mime.equals("text/plain") ) {
-                    return rclone.copyConfigFile(uris[0]);
+
+            if(mime.equals("application/zip")) {
+                try {
+                    boolean validRclone = rclone.copyConfigFileFromZip(uris[0]);
+                    if(!validRclone) {
+                        statusCode = FAILURE_ZIP_INVALID_CONF;
+                        return false;
+                    }
+                    statusCode = SUCCESS_IMPORT;
+                } catch (Exception e) {
+                    statusCode = FAILURE_ZIP_MISSING_CONF;
+                    return false;
                 }
-                String json = rclone.readDatabaseJson(uris[0]);
-                Importer.importJson(json, context);
-                json = rclone.readSharedPrefs(uris[0]);
-                SharedPreferencesBackup.importJson(json, context);
-                return rclone.copyConfigFileFromZip(uris[0]);
-            } catch (IOException | JSONException e) {
+
+                try {
+                    String json = rclone.readDatabaseJson(uris[0]);
+                    Importer.importJson(json, context);
+                    json = rclone.readSharedPrefs(uris[0]);
+                    SharedPreferencesBackup.importJson(json, context);
+                } catch (JSONException e) {
+                    statusCode = FAILURE_ZIP_INVALID_JSON;
+                    return false;
+                } catch (Exception e) {
+                    statusCode = FAILURE_ZIP_NO_JSON;
+                    return false;
+                }
+                return true;
+            }
+
+            try {
+                boolean validRclone = rclone.copyConfigFile(uris[0]);
+                if(validRclone) {
+                    statusCode = SUCCESS_IMPORT;
+                    return true;
+                }
+                statusCode = FAILURE_RCLONE_CONF_NOT_VALID;
+                return false;
+            } catch (IOException e) {
+                statusCode = FAILURE_RCLONE_CONF_NOT_VALID;
                 return false;
             }
         }
@@ -686,8 +727,23 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
             Dialogs.dismissSilently(loadingDialog);
+
+            String errorMessage = getString(R.string.copying_rclone_config_fail);
             if (!success) {
-                Toasty.error(context, getString(R.string.copying_rclone_config_fail), Toast.LENGTH_LONG, true).show();
+                switch (statusCode) {
+                    case FAILURE_RCLONE_CONF_NOT_VALID:
+                    case FAILURE_ZIP_INVALID_CONF:
+                        errorMessage = getString(R.string.import_configuration_fail_rclone);
+                        break;
+                    case FAILURE_ZIP_MISSING_CONF:
+                        errorMessage = getString(R.string.import_configuration_fail_zip_conf_missing);
+                        break;
+                    case FAILURE_ZIP_NO_JSON:
+                    case FAILURE_ZIP_INVALID_JSON:
+                        errorMessage = getString(R.string.import_configuration_fail_zip_json_missing);
+                        break;
+                }
+                Toasty.error(context, errorMessage, Toast.LENGTH_LONG, true).show();
                 return;
             }
 

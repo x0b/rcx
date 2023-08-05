@@ -97,6 +97,9 @@
     <string name="hash_copied_confirmation">Hash copied to clipboard</string>
     <string name="copying_rclone_config">Copying rclone configuration</string>
     <string name="copying_rclone_config_fail">Failed to copy rclone configuration</string>
+    <string name="import_configuration_fail_rclone">Failed to import. Your rclone.conf is not valid!</string>
+    <string name="import_configuration_fail_zip_json_missing">Failed to import. Your Zip does not contain Triggers and Tasks!</string>
+    <string name="import_configuration_fail_zip_conf_missing">Failed to import. Your Zip does not contain rclone.conf!</string>
     <string name="config_password_protected">Configuration file is password protected</string>
     <string name="please_enter_password">Enter your password</string>
     <string name="working">Working</string>
