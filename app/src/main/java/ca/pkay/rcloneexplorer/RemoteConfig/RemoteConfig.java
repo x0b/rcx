@@ -70,17 +70,20 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
         fragmentTransaction.replace(R.id.flFragment, fragment, "config list");
         fragmentTransaction.commit();
 
-        if(!getIntent().getStringExtra(CONFIG_EDIT_TARGET).isEmpty()){
-            Rclone rclone = new Rclone(this);
-            HashMap<String, String> config = rclone.getConfig(getIntent().getStringExtra(CONFIG_EDIT_TARGET));
+        String shouldEdit = getIntent().getStringExtra(CONFIG_EDIT_TARGET);
+        if(shouldEdit != null) {
+            if(!shouldEdit.isEmpty()){
+                Rclone rclone = new Rclone(this);
+                HashMap<String, String> config = rclone.getConfig(getIntent().getStringExtra(CONFIG_EDIT_TARGET));
 
-            if (config != null) {
-                try {
-                    Provider provider = rclone.getProvider(config.get("type"));
-                    fragment = new DynamicConfig(provider.getName(), config);
-                    startConfig(provider);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                if (config != null) {
+                    try {
+                        Provider provider = rclone.getProvider(config.get("type"));
+                        fragment = new DynamicConfig(provider.getName(), config);
+                        startConfig(provider);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

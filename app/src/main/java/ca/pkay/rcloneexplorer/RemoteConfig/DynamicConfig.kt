@@ -136,8 +136,7 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
 
         mFormView?.let { it.removeViews(1, it.size-1) }
 
-
-        if(mOptionMap.getValue(RCLONE_CONFIG_NAME_KEY).isNotEmpty()) {
+        if(mOptionMap.containsKey(RCLONE_CONFIG_NAME_KEY)) {
             mRemoteName?.setText(mOptionMap.getValue(RCLONE_CONFIG_NAME_KEY))
             mRemoteName?.isFocusable = false
             mRemoteName?.isEnabled = false
