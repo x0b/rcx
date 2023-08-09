@@ -126,6 +126,13 @@ public class AboutLibsActivity extends AppCompatActivity implements AboutLibrari
         libraryUrls.put(rfc3339, "https://github.com/x0b/rfc3339parser");
         libraryLicences.put(rfc3339, "Licensed under MIT");
         libraryLicenceUrls.put(rfc3339, "https://github.com/x0b/rfc3339parser/blob/master/LICENSE");
+
+
+        String undraw = "unDraw - Open Source Illustrations";
+        libraryNames.add(undraw);
+        libraryUrls.put(undraw, "https://undraw.co/");
+        libraryLicences.put(undraw, "Licensed under Custom License");
+        libraryLicenceUrls.put(undraw, "https://undraw.co/license");
     }
 
     @Override

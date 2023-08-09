@@ -85,4 +85,12 @@
         <item name="android:tint">?attr/colorOnSecondaryContainer</item>
     </style>
 
+    <style name="RoundedCornersDialog" parent="@style/MaterialAlertDialog.MaterialComponents">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Dialog.Rounded</item>
+        <item name="android:padding">@dimen/dialogPadding</item>
+    </style>
+    <style name="ShapeAppearanceOverlay.Dialog.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/dialogCornerRadius</item>
+    </style>
 </resources>

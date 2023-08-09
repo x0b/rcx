@@ -1,13 +1,17 @@
 package ca.pkay.rcloneexplorer.Activities
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BuildConfig
@@ -16,7 +20,6 @@ import ca.pkay.rcloneexplorer.RuntimeConfiguration
 import ca.pkay.rcloneexplorer.util.ActivityHelper
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
-import com.github.appintro.AppIntroPageTransformerType
 import es.dmoral.toasty.Toasty
 
 class OnboardingActivity : AppIntro2() {
@@ -26,31 +29,35 @@ class OnboardingActivity : AppIntro2() {
         private const val REQ_ALL_FILES_ACCESS = 3101
     }
 
+    private var isStorageSlide = false
+    private var storageRequested = false
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // You can customize your parallax parameters in the constructors.
-        setTransformer(
-            AppIntroPageTransformerType.Parallax(
-                titleParallaxFactor = 1.0,
-                imageParallaxFactor = -1.0,
-                descriptionParallaxFactor = 2.0
-            ))
+
+        isWizardMode = true
+        isColorTransitionsEnabled = true
+
+        // dont allow the intro to be bypassed
+        isSystemBackButtonLocked = true
+
 
         addSlide(
             AppIntroFragment.newInstance(
                 title = getString(R.string.intro_welcome_title),
                 description = getString(R.string.intro_welcome_description),
-                imageDrawable = R.drawable.ic_dino2,
-                backgroundColor = resources.getColor(R.color.seed),
+                imageDrawable = R.drawable.undraw_hello,
+                backgroundColor = resources.getColor(R.color.intro_color1),
         ))
 
         addSlide(
             AppIntroFragment.newInstance(
                 title = getString(R.string.intro_community_title),
                 description = getString(R.string.intro_community_description),
-                imageDrawable = R.drawable.ic_heart_red_24dp,
-                backgroundColor = resources.getColor(R.color.md_theme_light_tertiary),
+                imageDrawable = R.drawable.undraw_the_world_is_mine,
+                backgroundColor = resources.getColor(R.color.intro_color2),
 
             ))
 
@@ -59,65 +66,104 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_storage_title),
                 description = getString(R.string.intro_storage_description),
                 imageDrawable = R.drawable.ic_intro_storage,
-                backgroundColor = resources.getColor(R.color.seed),
+                backgroundColor = resources.getColor(R.color.intro_color1),
             ))
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             addSlide(
                 AppIntroFragment.newInstance(
                     title = getString(R.string.intro_notifications_title),
                     description = getString(R.string.intro_notifications_description),
-                    imageDrawable = R.drawable.ic_intro_notifications,
-                    backgroundColor = resources.getColor(R.color.md_theme_light_tertiary),
+                    imageDrawable = R.drawable.undraw_post_online,
+                    backgroundColor = resources.getColor(R.color.intro_color2),
                 ))
+
+            askForPermissions(
+                permissions = arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                slideNumber = 4,
+                required = false)
         }
+
+        addSlide(
+            AppIntroFragment.newInstance(
+                title = getString(R.string.intro_success),
+                description = getString(R.string.intro_successful_setup),
+                imageDrawable = R.drawable.undraw_sync,
+                backgroundColor = resources.getColor(R.color.intro_color1),
+            ))
+    }
+
+    override fun onPageSelected(position: Int) {
+        isStorageSlide = position == 2
+        Log.e(TAG, "is storage: $isStorageSlide, $position")
+    }
+
+    override fun onCanRequestNextPage(): Boolean {
+        if(!isStorageSlide) {
+            return super.onCanRequestNextPage()
+        }
+
+        if(storageRequested) {
+            return true
+        }
+
+        if(checkExternalStorageManagerPermission()){
+            storageRequested = true
+            return true
+        }
+
+        tryGrantingAllStorageAccess()
+        return false
     }
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(RuntimeConfiguration.attach(this, newBase))
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_ALL_FILES_ACCESS) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
-                Toasty.success(
-                    this,
-                    getString(R.string.intro_successful_setup),
-                    Toast.LENGTH_LONG,
-                    true
-                ).show()
-            } else {
-                Toasty.info(this, getString(R.string.intro_unsuccessful_setup), Toast.LENGTH_LONG, true).show()
-            }
-            finish()
-        }
-    }
-
     override fun onDonePressed(currentFragment: Fragment?) {
-        tryGrantingAllStorageAccess()
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit()
             .putBoolean(getString(R.string.pref_key_intro_v1_12_0), true)
             .apply()
+        finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQ_ALL_FILES_ACCESS) {
+            if(checkExternalStorageManagerPermission()){
+                Toasty.success(this, getString(R.string.intro_manage_external_storage_granted), Toast.LENGTH_SHORT, true).show()
+            } else {
+                Toasty.info(this, getString(R.string.intro_manage_external_storage_failed), Toast.LENGTH_LONG, true).show()
+            }
+            storageRequested = true
+        }
     }
 
     private fun tryGrantingAllStorageAccess() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if(!Environment.isExternalStorageManager()){
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.data = Uri.fromParts(
-                    "package",
-                    BuildConfig.APPLICATION_ID,
-                    null
-                )
-                ActivityHelper.tryStartActivityForResult(this, intent, REQ_ALL_FILES_ACCESS)
-            } else {
-                finish()
-            }
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.data = Uri.fromParts(
+                "package",
+                BuildConfig.APPLICATION_ID,
+                null
+            )
+            ActivityHelper.tryStartActivityForResult(this, intent,
+                REQ_ALL_FILES_ACCESS
+            )
         } else {
-            finish()
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQ_ALL_FILES_ACCESS
+            )
+        }
+    }
+
+    private fun checkExternalStorageManagerPermission(): Boolean  {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
         }
     }
 }

@@ -536,6 +536,7 @@ public class RemoteFolderPickerFragment extends Fragment implements   FileExplor
                 .setMessage(R.string.type_new_folder_name)
                 .setNegativeButton(R.string.cancel)
                 .setPositiveButton(R.string.okay_confirmation)
+                .setHint(R.string.hint_new_folder)
                 .show(getChildFragmentManager(), "input dialog");
     }
 

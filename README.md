@@ -1,4 +1,4 @@
-# Round Sync - Rclone for Android
+# Round Sync - Rclone for Android 🇺🇦🏳️‍⚧️🏳️‍🌈
 [![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/extract/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/newhinton/extract/total.svg)](https://github.com/newhinton/extract/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/extract?include_prereleases)](https://github.com/newhinton/extract/releases/latest)
 
 A cloud file manager, powered by rclone. 
@@ -99,6 +99,8 @@ Known Issues
 Contributing
 ------------
 See [CONTRIBUTING](./CONTRIBUTING.md)
+
+Anyone is welcome to contribute and help out. However, hate, discrimination and racism are decidedly unwelcome here. If you feel offended by this, you might belong to the group of people who are not welcome. I will not tolerate hate in any way. 
 
 
 License

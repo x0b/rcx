@@ -17,5 +17,8 @@
     <dimen name="filepicker_row_padding">8dp</dimen>
     <dimen name="cardCornerRadius">16dp</dimen>
     <dimen name="cardPadding">16dp</dimen>
+    <dimen name="dialogCornerRadius">16dp</dimen>
+    <dimen name="dialogPadding">2dp</dimen>
+
     <dimen name="settings_inset_item_padding">16dp</dimen>
 </resources>

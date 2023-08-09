@@ -36,8 +36,8 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="24dp"
         android:clickable="true"
-        android:src="@drawable/ic_check"
         android:visibility="visible"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/ic_check"
+        tools:srcCompat="@drawable/ic_check" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

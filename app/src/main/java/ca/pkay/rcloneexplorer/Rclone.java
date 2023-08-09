@@ -1287,15 +1287,15 @@ public class Rclone {
         return null;
     }
 
-    public String readDatabaseJson(Uri uri) throws IOException {
+    public String readDatabaseJson(Uri uri) throws Exception {
         return readTextfileFromZip(uri, "rcx.json-tmp", "rcx.json");
     }
 
-    public String readSharedPrefs(Uri uri) throws IOException {
+    public String readSharedPrefs(Uri uri) throws Exception {
         return readTextfileFromZip(uri, "rcx.prefs-tmp", "rcx.prefs");
     }
 
-    public String readTextfileFromZip(Uri uri, String tempfile, String targetfile) throws IOException {
+    public String readTextfileFromZip(Uri uri, String tempfile, String targetfile) throws Exception {
         File temp = new File(context.getFilesDir().getPath(), tempfile);
         temp = getFileFromZip(uri, targetfile, temp);
 
@@ -1309,7 +1309,7 @@ public class Rclone {
         return json.toString();
     }
 
-    public boolean copyConfigFileFromZip(Uri uri) throws IOException {
+    public boolean copyConfigFileFromZip(Uri uri) throws Exception {
         String appsFileDir = context.getFilesDir().getPath();
 
         File tempFile = new File(appsFileDir, "rclone.conf-tmp");
@@ -1326,6 +1326,14 @@ public class Rclone {
     }
 
 
+    /***
+     * This function replaces the config by replacing rclone.conf.
+     * First a rclone.conf-tmp is created, which is then verified to be working.
+     * Then the rclone.conf is beeing replaced by the temp file.
+     * @param uri Uri to the new rclone file.
+     * @return True if rclone.conf has been replaced, false if not.
+     * @throws IOException
+     */
     public boolean copyConfigFile(Uri uri) throws IOException {
         String appsFileDir = context.getFilesDir().getPath();
         InputStream inputStream;

@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
@@ -26,6 +27,7 @@ public class NotificationsSettingsFragment extends Fragment {
     private Switch appUpdatesSwitch;
     private View betaAppUpdatesElement;
     private Switch betaAppUpdatesSwitch;
+    private Switch mNotificationReportSwitch;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -70,15 +72,18 @@ public class NotificationsSettingsFragment extends Fragment {
         appUpdatesSwitch = view.findViewById(R.id.app_updates_switch);
         betaAppUpdatesElement = view.findViewById(R.id.beta_app_updates);
         betaAppUpdatesSwitch = view.findViewById(R.id.beta_app_updates_switch);
+        mNotificationReportSwitch = view.findViewById(R.id.app_notification_report_switch);
     }
 
     private void setDefaultStates() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean appUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates), true);
         boolean betaUpdates = sharedPreferences.getBoolean(getString(R.string.pref_key_app_updates_beta), false);
+        boolean notificationReports = sharedPreferences.getBoolean(getString(R.string.pref_key_app_notification_reports), true);
 
         appUpdatesSwitch.setChecked(appUpdates);
         betaAppUpdatesSwitch.setChecked(betaUpdates);
+        mNotificationReportSwitch.setChecked(notificationReports);
 
         String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
         boolean isPlayStore = "com.android.vending".equals(installer);
@@ -115,6 +120,9 @@ public class NotificationsSettingsFragment extends Fragment {
             }
         });
         betaAppUpdatesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onBetaAppUpdatesClicked(isChecked));
+
+
+        mNotificationReportSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onNotificationReportsClicked(isChecked));
     }
 
     private void onNotificationsClicked() {
@@ -155,6 +163,13 @@ public class NotificationsSettingsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(getString(R.string.pref_key_app_updates_beta), isChecked);
         editor.putLong(getString(R.string.pref_key_update_last_check), 0L);
+        editor.apply();
+    }
+
+    private void onNotificationReportsClicked(boolean isChecked) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_key_app_notification_reports), isChecked);
         editor.apply();
     }
 }

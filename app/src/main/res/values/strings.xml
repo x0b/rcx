@@ -8,8 +8,8 @@
     <string name="title_activity_contributors">License</string>
     <string name="remotes">Remotes</string>
     <string name="settings">Settings</string>
-    <string name="import_rclone_config">Import rclone config</string>
-    <string name="export_rclone_config">Export rclone config</string>
+    <string name="import_rclone_config">Import config</string>
+    <string name="export_rclone_config">Export config</string>
     <string name="about">About</string>
     <string name="sort">Sort</string>
     <string name="select_all">Select all</string>
@@ -69,6 +69,7 @@
     <string name="type_new_file_name">Enter a new file name</string>
     <string name="select_destination">Select destination</string>
     <string name="create_new_folder">Create a folder</string>
+    <string name="hint_new_folder">Foldername</string>
     <string name="type_new_folder_name">Enter a new folder name</string>
     <string name="loading_file">Loading file</string>
     <string name="please_wait">Please wait</string>
@@ -96,6 +97,9 @@
     <string name="hash_copied_confirmation">Hash copied to clipboard</string>
     <string name="copying_rclone_config">Copying rclone configuration</string>
     <string name="copying_rclone_config_fail">Failed to copy rclone configuration</string>
+    <string name="import_configuration_fail_rclone">Failed to import. Your rclone.conf is not valid!</string>
+    <string name="import_configuration_fail_zip_json_missing">Failed to import. Your Zip does not contain Triggers and Tasks!</string>
+    <string name="import_configuration_fail_zip_conf_missing">Failed to import. Your Zip does not contain rclone.conf!</string>
     <string name="config_password_protected">Configuration file is password protected</string>
     <string name="please_enter_password">Enter your password</string>
     <string name="working">Working</string>
@@ -119,17 +123,18 @@
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
     <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
-    <string name="intro_welcome_title">Welcome</string>
-    <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more information, visit the x0b.github.io/docs.</string>
-    <string name="intro_storage_title">Storage access required</string>
+    <string name="intro_welcome_title">Welcome!</string>
+    <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more questions, visit github.com/newhinton/Round-Sync.</string>
+    <string name="intro_storage_title">Storage access</string>
     <string name="intro_storage_description">Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit x0b.github.io/rcx-privacy.</string>
+    <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit felixnuesse.de/privacy-roundsync.</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_theme_mode</string>
     <string name="pref_key_wrap_filenames" translatable="false">pref_key_wrap_filenames</string>
     <string name="pref_key_app_updates" translatable="false">pref_key_app_updates</string>
     <string name="pref_key_app_updates_beta" translatable="false">pref_key_app_updates_beta</string>
+    <string name="pref_key_app_notification_reports" translatable="false">pref_key_app_notification_reports</string>
     <string name="pref_key_crash_reports" translatable="false">pref_key_crash_reports</string>
     <string name="pref_key_show_thumbnails" translatable="false">pref_key_show_thumbnails</string>
     <string name="pref_key_thumbnail_size_limit" translatable="false">thumbnail_max_size</string>
@@ -453,6 +458,10 @@
         <item quantity="other">Successfully synced %2$s in %3$d files.</item>
     </plurals>
     <string name="operation_success_description_deletions_prefix">Also deleted %d files and folders.</string>
+    <string name="operation_report_success_title">Sync-Report Successes</string>
+    <string name="operation_report_success_short_content">%d Tasks succeeded</string>
+    <string name="operation_report_fail_title">Sync-Report Failures</string>
+    <string name="operation_report_fail_short_content">%d Tasks failed</string>
     <string name="pin_to_dektop">Pin to Home</string>
     <string name="title_activity_task">Create a new Task</string>
     <!-- Strings used for fragments for navigation -->
@@ -558,8 +567,10 @@
     <string name="description_sync_direction_copy_toremote">Copy new or modified files from local storage to remote storage. No files are deleted, existing files on the remote may be overwritten.</string>
     <string name="description_sync_direction_copy_tolocal">Copy new or modified files from remote storage to local storage. No files are deleted, existing files on the local storage may be overwritten.</string>
     <string name="description_sync_direction_sync_bidirectional">Make sure local and remote storage have the same files by transferring, downloading, and deleting files as needed to maintain an identical folder structure.</string>
-    <string name="intro_successful_setup">You are now ready to start</string>
-    <string name="intro_unsuccessful_setup">File access permission not granted</string>
+    <string name="intro_success">Success!</string>
+    <string name="intro_successful_setup">You are now ready to start!</string>
+    <string name="intro_manage_external_storage_granted">File access permission granted!</string>
+    <string name="intro_manage_external_storage_failed">File access permission not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
     <string name="s3_spinner_prompt">S3 service provider</string>
     <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>
@@ -575,6 +586,8 @@
     <string name="sync_service_notification_channel_fail_title">Sync service fail</string>
     <string name="sync_service_notification_channel_success_description">Notification for successful syncs</string>
     <string name="sync_service_notification_channel_fail_description">Notification for failed syncs</string>
+    <string name="sync_service_notification_channel_report_title">Sync service reports</string>
+    <string name="sync_service_notification_channel_report_description">Notification for sync-reports</string>
     <string name="dynamic_config_unknown_error">This Prodvider is unknown!</string>
     <string name="toggle_advanced_options">Toggle Advanced Options</string>
     <string name="trigger_type_schedule">Scheduled</string>
@@ -589,4 +602,5 @@
     <string name="intro_notifications_title">Get Notified!</string>
     <string name="intro_notifications_description">We need to show you notifications when we sync your files, so please grant us access to post notifications. We wont spam you!</string>
     <string name="error_getting_config">We could not load your configuration!</string>
+    <string name="notification_reports">Create Reports for Syncs. Replaces singular notifications with a unified one.</string>
 </resources>

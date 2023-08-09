@@ -13,6 +13,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
 import ca.pkay.rcloneexplorer.R;
 
 public class InputDialog extends DialogFragment {
@@ -29,9 +33,12 @@ public class InputDialog extends DialogFragment {
     private final String SAVED_NEGATIVE_TEXT_ID = "ca.pkay.rcexplorer.InputDialog.NEGATIVE_TEXT_ID";
     private final String SAVED_FILLED_TEXT = "ca.pkay.rcexplorer.InputDialog.FILLED_TEXT";
     private final String SAVED_INPUT_TYPE = "ca.pkay.rcexplorer.InputDialog.INPUT_TYPE";
+
+    private final String SAVED_INPUT_HINT = "ca.pkay.rcexplorer.InputDialog.INPUT_HINT";
+    private final String SAVED_INPUT_HINT_ID = "ca.pkay.rcexplorer.InputDialog.INPUT_HINT_ID";
     private final String SAVED_TAG = "ca.pkay.rcexplorer.InputDialog.TAG";
     private Context context;
-    private EditText editText;
+    private TextInputEditText editText;
     private String title;
     private int titleId;
     private String message;
@@ -40,6 +47,8 @@ public class InputDialog extends DialogFragment {
     private int negativeTextId;
     private String filledText;
     private int inputType;
+    private String inputHint;
+    private int inputHintId;
     private String tag;
     private OnPositive onPositiveListener;
 
@@ -57,6 +66,8 @@ public class InputDialog extends DialogFragment {
             negativeTextId = savedInstanceState.getInt(SAVED_NEGATIVE_TEXT_ID);
             filledText = savedInstanceState.getString(SAVED_FILLED_TEXT);
             inputType = savedInstanceState.getInt(SAVED_INPUT_TYPE);
+            inputHint = savedInstanceState.getString(SAVED_INPUT_HINT);
+            inputHintId = savedInstanceState.getInt(SAVED_INPUT_HINT_ID);
             tag = savedInstanceState.getString(SAVED_TAG);
         }
 
@@ -64,7 +75,7 @@ public class InputDialog extends DialogFragment {
             onPositiveListener = (OnPositive) getParentFragment();
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.RoundedCornersDialog);
         LayoutInflater inflater = ((FragmentActivity)context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_input, null);
         editText = view.findViewById(R.id.dialog_input);
@@ -98,6 +109,13 @@ public class InputDialog extends DialogFragment {
             editText.setInputType(inputType);
         }
 
+        TextInputLayout textContainer = (TextInputLayout) view.findViewById(R.id.dialog_input_layout);
+        if (inputHint != null) {
+            textContainer.setHint(inputHint);
+        } else if (inputHintId > 1) {
+            textContainer.setHint(inputHintId);
+        }
+
         return builder.create();
     }
 
@@ -112,6 +130,8 @@ public class InputDialog extends DialogFragment {
         outState.putInt(SAVED_NEGATIVE_TEXT_ID, negativeTextId);
         outState.putString(SAVED_FILLED_TEXT, filledText);
         outState.putInt(SAVED_INPUT_TYPE, inputType);
+        outState.putString(SAVED_INPUT_HINT, inputHint);
+        outState.putInt(SAVED_INPUT_HINT_ID, inputHintId);
         outState.putString(SAVED_TAG, tag);
     }
 
@@ -152,6 +172,16 @@ public class InputDialog extends DialogFragment {
 
     public InputDialog setMessage(int id) {
         this.messageId = id;
+        return this;
+    }
+
+    public InputDialog setHint(String hint) {
+        this.inputHint = hint;
+        return this;
+    }
+
+    public InputDialog setHint(int hint) {
+        this.inputHintId = hint;
         return this;
     }
 
