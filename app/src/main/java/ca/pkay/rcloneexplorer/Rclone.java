@@ -18,9 +18,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1483,39 +1485,72 @@ public class Rclone {
         }
     }
 
-
-    //Todo: Investigate if we can create the json during compile-time, so that we can cache the results.
-    // Instantiating rclone takes a while and is visible in the ui.
     public ArrayList<Provider> getProviders() throws JSONException {
-        String[] command = createCommand("config", "providers");
-        StringBuilder output = new StringBuilder();
-        Process process;
+        return getProviders(false);
+    }
+    public ArrayList<Provider> getProviders(boolean silent) throws JSONException {
+
         JSONArray remotesJSON;
+        int versionCode = BuildConfig.VERSION_CODE;
+        File file = new File(context.getCacheDir(), "rclone.provider."+versionCode);
 
-        try {
-            process = getRuntimeProcess(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line);
-            }
+        if(!file.exists()) {
+            String[] command = createCommand("config", "providers");
+            StringBuilder output = new StringBuilder();
+            Process process;
 
-            process.waitFor();
-            if (process.exitValue() != 0) {
-                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
-                logErrorOutput(process);
+            try {
+                process = getRuntimeProcess(command);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line);
+                }
+
+                process.waitFor();
+                if (process.exitValue() != 0) {
+                    if(!silent){
+                        Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
+                    }
+                    logErrorOutput(process);
+                    return new ArrayList<>();
+                }
+
+                remotesJSON = new JSONArray(output.toString());
+            } catch (IOException | InterruptedException | JSONException e) {
+                FLog.e(TAG, "getRemotes: error retrieving remotes", e);
                 return new ArrayList<>();
             }
 
-            remotesJSON = new JSONArray(output.toString());
-        } catch (IOException | InterruptedException | JSONException e) {
-            FLog.e(TAG, "getRemotes: error retrieving remotes", e);
-            return new ArrayList<>();
+            try {
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(remotesJSON.toString(4));
+                bw.close();
+            } catch (IOException e) {
+                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
+                FLog.e(TAG, "Could not save providers to cache!", e);
+                return new ArrayList<>();
+            }
+        } else {
+            StringBuilder fileContent = new StringBuilder();
+            try {
+                FileInputStream inputstream = new FileInputStream(file);
+                byte[] buffer = new byte[8128];
+                int size;
+                while ((size = inputstream.read(buffer)) != -1) {
+                    fileContent.append(new String(buffer, 0, size));
+                }
+            } catch (IOException e) {
+                Toasty.error(context, context.getString(R.string.error_getting_remotes), Toast.LENGTH_SHORT, true).show();
+                FLog.e(TAG, "Could not read cached providers, but the file exists! Please clear your app cache.", e);
+                return new ArrayList<>();
+            }
+
+            remotesJSON = new JSONArray(fileContent.toString());
         }
 
-
-
-        ArrayList<Provider> providerItems = new ArrayList();
+        ArrayList<Provider> providerItems = new ArrayList<>();
 
         for (int i = 0; i < remotesJSON.length(); i++) {
             providerItems.add(Provider.Companion.newInstance(remotesJSON.getJSONObject(i)));
