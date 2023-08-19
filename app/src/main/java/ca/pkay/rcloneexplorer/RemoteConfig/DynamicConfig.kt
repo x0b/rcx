@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.RemoteConfig
 
+import android.app.ActionBar.LayoutParams
 import android.content.Context
 import android.graphics.Typeface
 import android.os.AsyncTask
@@ -180,8 +181,6 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
                         input.setText(mOptionMap[it.name])
                         setTextInputListener(input, it.name)
                     }
-
-
                 }
                 "bool" -> {
                     val input = CheckBox(mContext)
@@ -197,6 +196,26 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
                     }
 
                     layout.addView(input)
+                }
+                "int" -> {
+                    val input = getAttachedEditText(it.name, layout)
+                    input.inputType = InputType.TYPE_CLASS_NUMBER
+
+                    Integer.getInteger(mOptionMap[it.name].toString())
+                        ?.let { it1 -> input.setText(it1) }
+                    setTextInputListener(input, it.name)
+                }
+                "SizeSuffix" -> {
+                    createSuffixSelector(it ,layout)
+                }
+                "CommaSepList" -> {
+                    // todo
+                }
+                "Duration" -> {
+                    // todo
+                }
+                "MultiEncoder" -> {
+                    // todo
                 }
                 else -> {
                     val unknownType = getAttachedEditText(it.name, layout)
@@ -256,6 +275,78 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
         return input
     }
 
+
+
+    private fun createSuffixSelector(option: ProviderOption, layout: LinearLayout): View {
+        val padding = resources.getDimensionPixelOffset(R.dimen.cardPadding)
+        val textinput = TextInputLayout(ContextThemeWrapper(activity, R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu))
+        textinput.hint = option.name
+        textinput.boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+        textinput.setPadding(padding, padding, 0, 0)
+
+        // todo: restore content on load.
+        // \d*(p|t|g|m|k|b)
+
+
+        var input = AutoCompleteTextView(textinput.context)
+        input.setPadding(padding)
+        val items = ArrayList<String>()
+
+        items.add("P")
+        items.add("T")
+        items.add("G")
+        items.add("M")
+        items.add("K")
+        items.add("B")
+
+        val adapter = ArrayAdapter(
+            this.mContext,
+            android.R.layout.simple_spinner_item,
+            items
+        )
+
+        input.setAdapter(adapter)
+        input.isEnabled = false
+
+        textinput.addView(input)
+
+        val leftright = LinearLayout(mContext)
+        leftright.orientation = LinearLayout.HORIZONTAL
+
+        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        //layoutParams.width = LayoutParams.MATCH_PARENT
+        leftright.layoutParams = layoutParams
+
+        val mainInput = getAttachedEditText(option.name, leftright)
+        mainInput.inputType = InputType.TYPE_CLASS_NUMBER
+
+        leftright.addView(textinput)
+        layout.addView(leftright)
+
+        mainInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                mOptionMap[option.name] = s.toString()+input.text
+            }
+            override fun afterTextChanged(s: Editable) {}
+        })
+
+        input.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                mOptionMap[option.name] = mainInput.text.toString() + s.toString()
+            }
+            override fun afterTextChanged(s: Editable) {}
+        })
+
+
+
+
+
+
+        return leftright
+    }
+
     private fun getCard(): CardView {
         val card = CardView(mContext)
         val cardLayout = LinearLayout.LayoutParams(
@@ -299,6 +390,7 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
 
         //@ManualTheming
         editText.setTextColor(convertAttributeToColor(R.attr.colorOnSecondaryContainer))
+        editText.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
         textinput.addView(editText)
         layout.addView(textinput)
