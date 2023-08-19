@@ -1,7 +1,7 @@
-# Round Sync - Rclone for Android 🇺🇦🏳️‍⚧️🏳️‍🌈
+# Round Sync - Rclone for Android
 [![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/Round-Sync/blob/master/LICENSE) [![Latest Downloads](https://img.shields.io/github/downloads/newhinton/round-sync/latest/total
 )](https://github.com/newhinton/Round-Sync/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/Round-Sync?include_prereleases)](https://github.com/newhinton/Round-Sync/releases/latest)
-[![Documentation](https://img.shields.io/badge/homepage-roundsync.com-4aad4e)](https://roundsync.com)
+[![Documentation](https://img.shields.io/badge/Documentation-roundsync.com-4aad4e)](https://roundsync.com) [![supportive flags](https://img.shields.io/badge/support-🇺🇦_🏳️‍⚧_🏳️‍🌈-4aad4e)](https://roundsync.com)
 
 A cloud file manager, powered by rclone.
 
