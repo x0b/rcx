@@ -3,16 +3,29 @@
 )](https://github.com/newhinton/Round-Sync/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/Round-Sync?include_prereleases)](https://github.com/newhinton/Round-Sync/releases/latest)
 [![Documentation](https://img.shields.io/badge/Documentation-roundsync.com-4aad4e)](https://roundsync.com) [![supportive flags](https://img.shields.io/badge/support-🇺🇦_🏳️‍⚧_🏳️‍🌈-4aad4e)](https://roundsync.com)
 
+-----------
 A cloud file manager, powered by rclone.
+Visit [https://roundsync.com](https://roundsync.com) for more information!
 
 <br/>
 <br/>
 
 Screenshots
 -----------
-| | | |
-|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="360vh" /> |
+
+<table>
+  <tr style="border:none">
+    <td style="border:none">
+      <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="360vh" />
+    </td>
+    <td style="border:none">
+      <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="360vh" />
+    </td>
+    <td style="border:none">
+      <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="360vh" />
+    </td>
+  </tr>
+</table>
 
 
 
@@ -20,10 +33,10 @@ Screenshots
 Features
 --------
 
-Cloud Access | 256 Bit Encryption<sup>[1](https://rclone.org/crypt/#file-encryption)</sup> | Integrated Experience
-:-----:|:--------------:|:-----------:
-<img src="https://github.com/newhinton/Round-Sync/blob/master/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="144" /> | <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/locked-padlock.png?raw=true" alt="256 Bit End-to-End Encryption" width="108" /> | <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/smartphone.png?raw=true" alt="Integrated Experience" width="132"/>
-Use your cloud storage like a local folder. | Keep your files private on any cloud provider with crypt remotes. | Don't give up features or comfort just because it runs on a phone.
+|                                                            Cloud Access                                                             |                                    256 Bit Encryption<sup>[1](https://rclone.org/crypt/#file-encryption)</sup>                                     |                                                         Integrated Experience                                                         |
+|:-----------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------:|
+| <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="144" />  | <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/locked-padlock.png?raw=true" alt="256 Bit End-to-End Encryption" width="108" /> | <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/smartphone.png?raw=true" alt="Integrated Experience" width="132"/> |
+|                                             Use your cloud storage like a local folder.                                             |                                         Keep your files private on any cloud provider with crypt remotes.                                          |                                  Don't give up features or comfort just because it runs on a phone.                                   |
 
 - **File Management** (list, view, download, upload, move, rename, delete files and folders)
 - **Streaming** (Stream media files, serve files and directories over FTP, HTTP, WebDAV or DLNA)
@@ -36,18 +49,18 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 - **Task Management** to allow regular runs of your important tasks!
 
 
-Intentservice
+Intents
 -------------
 This app includes the ability to launch an intent! Create a task to sync to a remote, and copy it's id (via the treedot-menu)
 The intent needs the following:
 
-| Intent        | Content       |         |
-| :------------- | :-------------: | -------------: |
-| packageName      | ca.pkay.rcloneexplorer | |
-| className      | ca.pkay.rcloneexplorer.Services.SyncService | |
-| Action    | START_TASK | |
-| Integer Extra    | task | idOfTask |
-| Boolean Extra    | notification | true or false |
+| Intent          |                   Content                   |                 |
+|:----------------|:-------------------------------------------:|----------------:|
+| packageName     |           ca.pkay.rcloneexplorer            |                 |
+| className       | ca.pkay.rcloneexplorer.Services.SyncService |                 |
+| Action          |                 START_TASK                  |                 |
+| Integer Extra   |                    task                     |        idOfTask |
+| Boolean Extra   |                notification                 |   true or false |
 
 Installation
 ------------
