@@ -2,6 +2,8 @@ package ca.pkay.rcloneexplorer.RemoteConfig
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +12,11 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
+import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemoteConfigListItemAdapter
 import ca.pkay.rcloneexplorer.rclone.Provider
 
 class RemotesConfigList : Fragment() {
@@ -19,13 +24,17 @@ class RemotesConfigList : Fragment() {
         fun onProviderSelected(provider: Provider)
     }
 
+    fun interface SelectionChangedListener {
+        fun onProviderChanged(provider: Provider)
+    }
+
     private var mRclone: Rclone? = null
 
-    var mProviders: ArrayList<Provider> = arrayListOf()
-
+    private var mProviders: ArrayList<Provider> = arrayListOf()
     private var mSelectedProvider: Provider? = null
-    private var mLastSelected: RadioButton? = null
     private var mProviderSelectedListener: ProviderSelectedListener? = null
+
+    private var mSelectionChangeListener = SelectionChangedListener { mSelectedProvider = it }
 
 
 
@@ -56,75 +65,31 @@ class RemotesConfigList : Fragment() {
         mProviderSelectedListener = null
     }
 
-    private fun setSelected(radioButton: RadioButton, provider: Provider) {
-        if (mLastSelected != null) {
-            mLastSelected!!.isChecked = false
-        }
-        radioButton.isChecked = true
-        mLastSelected = radioButton
-        mSelectedProvider = provider
-    }
-
     private fun setClickListeners(view: View) {
-        val listContent = view.findViewById<ViewGroup>(R.id.config_content)
-
 
         view.findViewById<View>(R.id.cancel).setOnClickListener {
            requireActivity().finish()
         }
 
-
         view.findViewById<View>(R.id.next).setOnClickListener {
             mSelectedProvider?.let { it1 -> mProviderSelectedListener!!.onProviderSelected(it1) }
         }
 
-        for (provider in mProviders) {
-            val providerView = View.inflate(context, R.layout.config_list_item_template, null)
+        val customAdapter = RemoteConfigListItemAdapter(
+            mProviders,
+            requireContext(),
+            mSelectionChangeListener
+        )
 
-            (providerView.findViewById<View>(R.id.provider_tv) as TextView).text = provider.getNameCapitalized()
-            (providerView.findViewById<View>(R.id.provider_summary) as TextView).text = provider.description
-            (providerView.findViewById<View>(R.id.providerIcon) as ImageView).setImageDrawable(
-                ContextCompat.getDrawable(requireContext(), getIconIfAvailable(provider.name))
-            )
-
-            providerView.findViewById<View>(R.id.provider).setOnClickListener { v: View ->
-                val rb = v.findViewById<RadioButton>(R.id.provider_rb)
-                setSelected(rb, provider)
-            }
-            listContent.addView(providerView)
-        }
+        val recyclerView: RecyclerView = view.findViewById(R.id.config_content)
+        recyclerView.adapter = customAdapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     companion object {
         @JvmStatic
         fun newInstance(): RemotesConfigList {
             return RemotesConfigList()
-        }
-    }
-
-    private fun getIconIfAvailable(providerName: String ): Int {
-        return when(providerName) {
-            "box" -> R.drawable.ic_box
-            "b2" -> R.drawable.ic_backblaze_b2_black
-            "s3" -> R.drawable.ic_amazon
-            "dropbox" -> R.drawable.ic_dropbox
-            "pcloud" -> R.drawable.ic_pcloud
-            "sftp" -> R.drawable.ic_terminal
-            "yandex" -> R.drawable.ic_yandex_mono
-            "webdav" -> R.drawable.ic_webdav
-            "onedrive" -> R.drawable.ic_onedrive
-            "alias" -> R.drawable.ic_rclone_logo
-            "crypt" -> R.drawable.ic_lock_black
-            "azureblob" -> R.drawable.ic_azure_storage_blob_logo
-            "cache" -> R.drawable.ic_rclone_logo
-            "local" -> R.drawable.ic_tablet_cellphone
-            "drive" -> R.drawable.ic_google_drive
-            "google photos" -> R.drawable.ic_google_photos
-            "union" -> R.drawable.ic_union_24dp
-            "mega" -> R.drawable.ic_mega_logo_black
-            else -> {
-                R.drawable.ic_cloud
-            }
         }
     }
 }
