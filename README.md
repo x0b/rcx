@@ -1,34 +1,42 @@
-# Round Sync - Rclone for Android 🇺🇦🏳️‍⚧️🏳️‍🌈
-[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/extract/blob/master/LICENSE) [![Github Releases](https://img.shields.io/github/downloads/newhinton/extract/total.svg)](https://github.com/newhinton/extract/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/extract?include_prereleases)](https://github.com/newhinton/extract/releases/latest)
+# Round Sync - Rclone for Android
+[![license: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/newhinton/Round-Sync/blob/master/LICENSE) [![Latest Downloads](https://img.shields.io/github/downloads/newhinton/round-sync/latest/total
+)](https://github.com/newhinton/Round-Sync/releases) [![GitHub release](https://img.shields.io/github/v/release/newhinton/Round-Sync?include_prereleases)](https://github.com/newhinton/Round-Sync/releases/latest)
+[![Documentation](https://img.shields.io/badge/Documentation-roundsync.com-4aad4e)](https://roundsync.com) [![supportive flags](https://img.shields.io/badge/support-🇺🇦_🏳️‍⚧_🏳️‍🌈-4aad4e)](https://roundsync.com)
 
-A cloud file manager, powered by rclone. 
+-----------
+A cloud file manager, powered by rclone.
+Visit [https://roundsync.com](https://roundsync.com) for more information!
 
 <br/>
 <br/>
 
 Screenshots
 -----------
-| | | |
-|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="360vh" /> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="360vh" /> |
 
+<table>
+  <tr style="border:none">
+    <td style="border:none">
+      <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg" width="360vh" />
+    </td>
+    <td style="border:none">
+      <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.jpg" width="360vh" />
+    </td>
+    <td style="border:none">
+      <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.jpg" width="360vh" />
+    </td>
+  </tr>
+</table>
 
-Current State
--------- 
-## ⚠️ 🏗️  This app is currently undergoing many changes. It may not be fully stable and contain bugs or untested features. Use at your own risk!  ⚠️ 🏗️
-
-<br/>
-<br/>
 
 
 
 Features
 --------
 
-Cloud Access | 256 Bit Encryption<sup>[1](https://rclone.org/crypt/#file-encryption)</sup> | Integrated Experience
-:-----:|:--------------:|:-----------:
-<img src="https://github.com/x0b/rcx/blob/master/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="144" /> | <img src="https://github.com/x0b/rcx/blob/master/docs/locked-padlock.png?raw=true" alt="256 Bit End-to-End Encryption" width="108" /> | <img src="https://github.com/x0b/rcx/blob/master/docs/smartphone.png?raw=true" alt="Integrated Experience" width="132"/>
-Use your cloud storage like a local folder. | Keep your files private on any cloud provider with crypt remotes. | Don't give up features or comfort just because it runs on a phone.
+|                                                            Cloud Access                                                             |                                    256 Bit Encryption<sup>[1](https://rclone.org/crypt/#file-encryption)</sup>                                     |                                                         Integrated Experience                                                         |
+|:-----------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------:|
+| <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/cloud-computing.png?raw=true" alt="Cloud Access" width="144" />  | <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/locked-padlock.png?raw=true" alt="256 Bit End-to-End Encryption" width="108" /> | <img src="https://github.com/newhinton/Round-Sync/blob/master/docs/smartphone.png?raw=true" alt="Integrated Experience" width="132"/> |
+|                                             Use your cloud storage like a local folder.                                             |                                         Keep your files private on any cloud provider with crypt remotes.                                          |                                  Don't give up features or comfort just because it runs on a phone.                                   |
 
 - **File Management** (list, view, download, upload, move, rename, delete files and folders)
 - **Streaming** (Stream media files, serve files and directories over FTP, HTTP, WebDAV or DLNA)
@@ -36,28 +44,27 @@ Use your cloud storage like a local folder. | Keep your files private on any clo
 - **Many cloud storage providers** (all via rclone config import, some without ui-setup)
 - **Material 3 Design** (Dark theme)
 - **All architectures** (runs on ARM, ARM64, x86 and x64 devices, Android 7+)
-- **Storage Access Framework (SAF)** ([see docs](https://x0b.github.io/docs/#adding-local-storage-saf)) for SD card and USB device access.
+- **Storage Access Framework (SAF)** ([see docs](https://roundsync.com/usage/saf.html)) for SD card and USB device access.
 - **Intentservice** to start tasks via third party apps!
 - **Task Management** to allow regular runs of your important tasks!
 
 
-Intentservice
+Intents
 -------------
 This app includes the ability to launch an intent! Create a task to sync to a remote, and copy it's id (via the treedot-menu)
 The intent needs the following:
 
-| Intent        | Content       |         |
-| :------------- | :-------------: | -------------: |
-| packageName      | ca.pkay.rcloneexplorer | |
-| className      | ca.pkay.rcloneexplorer.Services.SyncService | |
-| Action    | START_TASK | |
-| Integer Extra    | task | idOfTask |
-| Boolean Extra    | notification | true or false |
+| Intent          |                   Content                   |                 |
+|:----------------|:-------------------------------------------:|----------------:|
+| packageName     |           ca.pkay.rcloneexplorer            |                 |
+| className       | ca.pkay.rcloneexplorer.Services.SyncService |                 |
+| Action          |                 START_TASK                  |                 |
+| Integer Extra   |                    task                     |        idOfTask |
+| Boolean Extra   |                notification                 |   true or false |
 
 Installation
 ------------
-Grab the [latest version](https://github.com/x0b/rcx/releases/latest) of the signed APK and install it on your phone. You can also [register for the closed Google Play testing group](https://groups.google.com/forum/#!forum/rcx-alpha/join), the [Google Play Beta](https://play.google.com/apps/testing/io.github.x0b.rcx), or on [F-Droid](https://f-droid.org/packages/io.github.x0b.rcx).
-
+Grab the [latest version](https://github.com/newhinton/Round-Sync/releases/latest) of the signed APK and install it on your phone.
 | CPU architecture | Where to find | APK identifier |
 |:---|:--|:---:|
 |ARM 32 Bit | older devices | ```armeabi-v7a``` |
@@ -65,11 +72,11 @@ Grab the [latest version](https://github.com/x0b/rcx/releases/latest) of the sig
 |Intel/AMD 32 Bit | some TV boxes and tablets | ```x86``` |
 |Intel/AMD 64 Bit | some emulators | ```x86_64``` |
 
-If you don't know which version to pick use ```rcx-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any phone, tablet or TV with Android 7 or newer, as long as you have a touchscreen or mouse.
+If you don't know which version to pick use ```roundsync-<version>-universal-release.apk```. Most devices run ARM 64 Bit, and 64 Bit devices often can also run the respective 32 bit version at lower performance. The app runs on any phone, tablet or TV with Android 7 or newer, as long as you have a touchscreen or mouse.
 
 Usage
 ------------
-[See the documentation](https://x0b.github.io/docs/).
+[See the documentation](https://roundsync.com/).
 
 Developing
 ------------
