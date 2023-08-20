@@ -10,13 +10,13 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ca.pkay.rcloneexplorer.R
-import ca.pkay.rcloneexplorer.RemoteConfig.RemotesConfigList
+import ca.pkay.rcloneexplorer.RemoteConfig.ProviderListFragment
 import ca.pkay.rcloneexplorer.rclone.Provider
 
 class RemoteConfigListItemAdapter(
     private val mProvider: ArrayList<Provider>,
     private val mContext: Context,
-    private var mSelectionChange: RemotesConfigList.SelectionChangedListener
+    private var mSelectionChange: ProviderListFragment.SelectionChangedListener
     ): RecyclerView.Adapter<RemoteConfigListItemAdapter.ViewHolder>() {
 
     private var mLastSelected: RadioButton? = null

@@ -13,7 +13,7 @@ import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemoteConfigListItemAdapter
 import ca.pkay.rcloneexplorer.rclone.Provider
 
-class RemotesConfigList : Fragment() {
+class ProviderListFragment : Fragment() {
     interface ProviderSelectedListener {
         fun onProviderSelected(provider: Provider)
     }
@@ -31,6 +31,12 @@ class RemotesConfigList : Fragment() {
     private var mSelectionChangeListener = SelectionChangedListener { mSelectedProvider = it }
 
 
+    companion object {
+        @JvmStatic
+        fun newProviderListConfig(): ProviderListFragment {
+            return ProviderListFragment()
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,12 +84,5 @@ class RemotesConfigList : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.config_content)
         recyclerView.adapter = customAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(): RemotesConfigList {
-            return RemotesConfigList()
-        }
     }
 }

@@ -40,7 +40,7 @@ import com.google.android.material.textfield.TextInputLayout
 import java.util.Locale
 
 
-class DynamicConfig(private val mProviderTitle: String, private val optionMap: HashMap<String, String>?, private var mUseOauth: Boolean) : Fragment() {
+class DynamicRemoteConfigFragment(private val mProviderTitle: String, private val optionMap: HashMap<String, String>?, private var mUseOauth: Boolean) : Fragment() {
 
     private lateinit var mContext: Context
     private var rclone: Rclone? = null
