@@ -100,7 +100,11 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
             if ((mFragment as DynamicRemoteConfigFragment).isEditConfig()) {
                 finish()
             } else {
-                startProviderlist()
+                var title: String? = null
+                if (supportActionBar != null) {
+                    title = supportActionBar!!.title.toString()
+                }
+                startProviderlist(title)
             }
         } else {
             startProviderlist()
@@ -141,7 +145,10 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
     }
 
     private fun startProviderlist() {
-        mFragment = newProviderListConfig()
+        startProviderlist(null)
+    }
+    private fun startProviderlist(preselection: String?) {
+        mFragment = newProviderListConfig(preselection)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.flFragment, getCurrentFragment(), "config list")
         fragmentTransaction.commit()

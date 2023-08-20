@@ -13,7 +13,7 @@ import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemoteConfigListItemAdapter
 import ca.pkay.rcloneexplorer.rclone.Provider
 
-class ProviderListFragment : Fragment() {
+class ProviderListFragment(private val mPreselection: String?) : Fragment() {
     interface ProviderSelectedListener {
         fun onProviderSelected(provider: Provider)
     }
@@ -34,7 +34,12 @@ class ProviderListFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newProviderListConfig(): ProviderListFragment {
-            return ProviderListFragment()
+            return ProviderListFragment(null)
+        }
+
+        @JvmStatic
+        fun newProviderListConfig(preselection: String?): ProviderListFragment {
+            return ProviderListFragment(preselection)
         }
     }
 
@@ -67,10 +72,6 @@ class ProviderListFragment : Fragment() {
 
     private fun setClickListeners(view: View) {
 
-        view.findViewById<View>(R.id.back).setOnClickListener {
-           requireActivity().finish()
-        }
-
         view.findViewById<View>(R.id.next).setOnClickListener {
             mSelectedProvider?.let { it1 -> mProviderSelectedListener!!.onProviderSelected(it1) }
         }
@@ -78,7 +79,8 @@ class ProviderListFragment : Fragment() {
         val customAdapter = RemoteConfigListItemAdapter(
             mProviders,
             requireContext(),
-            mSelectionChangeListener
+            mSelectionChangeListener,
+            mPreselection
         )
 
         val recyclerView: RecyclerView = view.findViewById(R.id.config_content)

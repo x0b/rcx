@@ -49,7 +49,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var mAuthView: View? = null
     private var mBackButton: Button? = null
     private var mCancelAuthButton: Button? = null
-    private var mNextButton: Button? = null
+    private var mFinishButton: Button? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
     private var mShowAdvanced = false
@@ -77,6 +77,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         setHasOptionsMenu(true)
         mContext = context as Context
         rclone = Rclone(context)
+
     }
 
     override fun onCreateView(
@@ -89,16 +90,24 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         mAuthView = view.findViewById(R.id.auth_screen)
 
         mRemoteName = view.findViewById(R.id.remote_name)
-        mBackButton = view.findViewById(R.id.back)
         mCancelAuthButton = view.findViewById(R.id.cancel_auth)
-        mNextButton = view.findViewById(R.id.next)
 
+        mBackButton = view.findViewById(R.id.back)
+        mFinishButton = view.findViewById(R.id.finish)
+
+        if(mIsEditTask) {
+            (mBackButton as Button).text = getString(R.string.cancel)
+        }
+
+        if(mUseOauth) {
+            (mFinishButton as Button).text = getString(R.string.next)
+        }
 
         setUpForm()
         mBackButton?.setOnClickListener {
             cancelCurrentStep()
         }
-        mNextButton?.setOnClickListener { setUpRemote() }
+        mFinishButton?.setOnClickListener { setUpRemote() }
         mCancelAuthButton?.setOnClickListener {
             mAuthTask?.cancel(true)
             requireActivity().finish()
@@ -119,7 +128,6 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
                 setUpForm()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }

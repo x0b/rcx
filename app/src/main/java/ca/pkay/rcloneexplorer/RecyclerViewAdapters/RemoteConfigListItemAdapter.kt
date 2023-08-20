@@ -16,8 +16,9 @@ import ca.pkay.rcloneexplorer.rclone.Provider
 class RemoteConfigListItemAdapter(
     private val mProvider: ArrayList<Provider>,
     private val mContext: Context,
-    private var mSelectionChange: ProviderListFragment.SelectionChangedListener
-    ): RecyclerView.Adapter<RemoteConfigListItemAdapter.ViewHolder>() {
+    private var mSelectionChange: ProviderListFragment.SelectionChangedListener,
+    private val mPreselection: String?
+): RecyclerView.Adapter<RemoteConfigListItemAdapter.ViewHolder>() {
 
     private var mLastSelected: RadioButton? = null
 
@@ -41,6 +42,13 @@ class RemoteConfigListItemAdapter(
         viewHolder.isSelectedButton.setOnClickListener { v: View ->
             val rb = v.findViewById<RadioButton>(R.id.provider_rb)
             setSelected(rb, provider)
+        }
+
+        if(mPreselection != null) {
+            if(provider.name == mPreselection.lowercase()){
+                val rb = viewHolder.isSelectedButton.findViewById<RadioButton>(R.id.provider_rb)
+                setSelected(rb, provider)
+            }
         }
     }
 
