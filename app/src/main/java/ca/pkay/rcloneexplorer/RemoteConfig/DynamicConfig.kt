@@ -40,29 +40,34 @@ import com.google.android.material.textfield.TextInputLayout
 import java.util.Locale
 
 
-class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: HashMap<String, String>, private var mUseOauth: Boolean) : Fragment() {
-
-    constructor(providerTitle: String) : this(providerTitle, hashMapOf<String, String>(), false)
-    constructor(providerTitle: String, useOauth: Boolean) : this(providerTitle, hashMapOf<String, String>(), useOauth)
-    constructor(providerTitle: String, optionMap: HashMap<String, String>) : this(providerTitle, optionMap, false)
-
-
+class DynamicConfig(private val mProviderTitle: String, private val optionMap: HashMap<String, String>?, private var mUseOauth: Boolean) : Fragment() {
 
     private lateinit var mContext: Context
     private var rclone: Rclone? = null
 
     private var mFormView: ViewGroup? = null
     private var mAuthView: View? = null
-    private var mCancelButton: Button? = null
+    private var mBackButton: Button? = null
     private var mCancelAuthButton: Button? = null
     private var mNextButton: Button? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
     private var mShowAdvanced = false
-
-
+    private var mIsEditTask = false
+    private var mOptionMap = hashMapOf<String, String>()
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
 
+    constructor(providerTitle: String) : this(providerTitle, null, false)
+    constructor(providerTitle: String, useOauth: Boolean) : this(providerTitle, null, useOauth)
+    constructor(providerTitle: String, optionMap: HashMap<String, String>) : this(providerTitle, optionMap, false)
+
+    init {
+        if(optionMap != null) {
+            // we assume that if the option-map is passed, we are editing.
+            this.mIsEditTask = true
+            mOptionMap = optionMap
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,13 +89,15 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
         mAuthView = view.findViewById(R.id.auth_screen)
 
         mRemoteName = view.findViewById(R.id.remote_name)
-        mCancelButton = view.findViewById(R.id.cancel)
+        mBackButton = view.findViewById(R.id.back)
         mCancelAuthButton = view.findViewById(R.id.cancel_auth)
         mNextButton = view.findViewById(R.id.next)
 
 
         setUpForm()
-        mCancelButton?.setOnClickListener { activity?.onBackPressed() }
+        mBackButton?.setOnClickListener {
+            cancelCurrentStep()
+        }
         mNextButton?.setOnClickListener { setUpRemote() }
         mCancelAuthButton?.setOnClickListener {
             mAuthTask?.cancel(true)
@@ -122,6 +129,17 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
         mAuthTask?.cancel(true)
     }
 
+    fun isEditConfig(): Boolean {
+        return mIsEditTask
+    }
+
+    fun cancelCurrentStep() {
+        if(isEditConfig()){
+            activity?.finish()
+        } else {
+            activity?.onBackPressed()
+        }
+    }
 
     // Todo: required attribute is not honored (also apply to title!)
     // Todo: hidden attribute is not applied
@@ -218,6 +236,7 @@ class DynamicConfig(private val mProviderTitle: String, private var mOptionMap: 
                     // todo
                 }
                 else -> {
+                    Log.e(this::class.java.simpleName, "Unknown Provideroption: ${it.type}")
                     val unknownType = getAttachedEditText(it.name, layout)
                     //unknownType.hint = it.type
                     unknownType.setText(mOptionMap[it.name])

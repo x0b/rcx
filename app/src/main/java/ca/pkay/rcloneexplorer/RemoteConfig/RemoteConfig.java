@@ -109,34 +109,26 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
 
     @Override
     public boolean onSupportNavigateUp() {
-        if (fragment instanceof RemotesConfigList) {
-            finish();
-        } else {
-            fragment = RemotesConfigList.newInstance();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.flFragment, fragment, "config list");
-            fragmentTransaction.commit();
-
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(R.string.title_activity_remote_config);
-            }
-        }
+        handleBackAction();
         return true;
     }
 
     @Override
     public void onBackPressed() {
+        handleBackAction();
+    }
+
+    private void handleBackAction() {
         if (fragment instanceof RemotesConfigList) {
             finish();
-        } else {
-            fragment = RemotesConfigList.newInstance();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.flFragment, fragment, "config list");
-            fragmentTransaction.commit();
-
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(R.string.title_activity_remote_config);
+        } else if (fragment instanceof DynamicConfig){
+            if(((DynamicConfig) fragment).isEditConfig()){
+                finish();
+            } else {
+                startProviderlist();
             }
+        } else {
+            startProviderlist();
         }
     }
 
@@ -170,6 +162,17 @@ public class RemoteConfig extends AppCompatActivity implements RemotesConfigList
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(provider.getNameCapitalized());
+        }
+    }
+
+    private void startProviderlist() {
+        fragment = RemotesConfigList.newInstance();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.flFragment, fragment, "config list");
+        fragmentTransaction.commit();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.title_activity_remote_config);
         }
     }
 }

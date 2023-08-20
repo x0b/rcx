@@ -603,4 +603,5 @@
     <string name="intro_notifications_description">We need to show you notifications when we sync your files, so please grant us access to post notifications. We wont spam you!</string>
     <string name="error_getting_config">We could not load your configuration!</string>
     <string name="notification_reports">Create Reports for Syncs. Replaces singular notifications with a unified one.</string>
+    <string name="back">Back</string>
 </resources>

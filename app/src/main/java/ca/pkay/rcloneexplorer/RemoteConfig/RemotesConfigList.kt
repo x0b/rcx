@@ -2,15 +2,9 @@ package ca.pkay.rcloneexplorer.RemoteConfig
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -67,7 +61,7 @@ class RemotesConfigList : Fragment() {
 
     private fun setClickListeners(view: View) {
 
-        view.findViewById<View>(R.id.cancel).setOnClickListener {
+        view.findViewById<View>(R.id.back).setOnClickListener {
            requireActivity().finish()
         }
 
