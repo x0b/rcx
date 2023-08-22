@@ -52,7 +52,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var mFinishButton: Button? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
-    private var mShowAdvanced = false
+    private var mShowAdvanced = true
     private var mIsEditTask = false
     private var mOptionMap = hashMapOf<String, String>()
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
@@ -200,7 +200,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
                         //input.setText(mOptionMap[it.name])
                         setTextInputListener(input, it.name)
 
-                    } else if(it.examples.size > 0) {
+                    } else if(it.examples.size > 0 && it.type != "CommaSepList") {
                         createSpinnerFromExample(it, it.name ,layout)
                     } else {
                         val input = getAttachedEditText(it.name, layout)
@@ -232,16 +232,15 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
                     setTextInputListener(input, it.name)
                 }
                 "SizeSuffix" -> {
-                    createSuffixSelector(it ,layout)
+                    layout.addView(createSuffixSelector(it))
                 }
-                "CommaSepList" -> {
-                    // todo
-                }
-                "Duration" -> {
-                    // todo
-                }
-                "MultiEncoder" -> {
-                    // todo
+                // This is a bit lazy. Optimally we would try to build proper ui's for this,
+                // but that is tedious. I am going to weasle myself out of this by stating that
+                // those are usually advanced options and users are likely to know whats valid.
+                "CommaSepList", "Duration", "MultiEncoder"  -> {
+                    val input = getAttachedEditText(it.name, layout)
+                    input.setText(mOptionMap[it.name])
+                    setTextInputListener(input, it.name)
                 }
                 else -> {
                     Log.e(this::class.java.simpleName, "Unknown Provideroption: ${it.type}")
@@ -252,28 +251,13 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
                 }
             }
 
-
-            //val divider = View(mContext)
-            //divider.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
-            //val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getDPasPixel(1).toInt())
-            //divider.layoutParams = lp
-            //layout.addView(divider)
-
-
             val cardContainer = getCard()
             cardContainer.addView(layout)
             mFormView?.addView(cardContainer)
         }
     }
 
-    private fun getDPasPixel(dp: Int): Float {
-        val scale = resources.displayMetrics.density
-        return (dp * scale + 0.5f)
-    }
-
-
     private fun createSpinnerFromExample(option: ProviderOption, hint: String, layout: LinearLayout): View {
-
 
         val padding = resources.getDimensionPixelOffset(R.dimen.cardPadding)
         val textinput = TextInputLayout(ContextThemeWrapper(activity, R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu))
@@ -304,104 +288,79 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
 
 
 
-    private fun createSuffixSelector(option: ProviderOption, layout: LinearLayout): View {
+    private fun createSuffixSelector(option: ProviderOption): View {
         val padding = resources.getDimensionPixelOffset(R.dimen.cardPadding)
-        val textinput = TextInputLayout(ContextThemeWrapper(activity, R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu))
-        textinput.hint = option.name
-        textinput.boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
-        textinput.setPadding(padding, padding, 0, 0)
 
-        // todo: restore content on load.
-        // \d*(p|t|g|m|k|b)
+        val regex = Regex("\\d*(p|t|g|m|k|b)")
+        val optionvalue = mOptionMap[option.name]?: ""
+        var suffix = "";
+        var number = "";
+        if(regex.matches(optionvalue.lowercase())) {
+            number = optionvalue.substring(0,optionvalue.length-1)
+            suffix = optionvalue.substring(optionvalue.length-1, optionvalue.length)
+        }
 
 
-        var input = AutoCompleteTextView(textinput.context)
-        input.setPadding(padding)
-        val items = ArrayList<String>()
+        // Outer Container
+        val leftright = LinearLayout(mContext)
+        leftright.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        leftright.orientation = LinearLayout.HORIZONTAL
 
-        items.add("P")
-        items.add("T")
-        items.add("G")
-        items.add("M")
-        items.add("K")
-        items.add("B")
+        // Value Container
+        val valueContainer = TextInputLayout(mContext)
+        valueContainer.hint = getString(R.string.dynamic_config_suffixselector_value_hint)
+        valueContainer.boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+        valueContainer.setPadding(0, padding, 0, 0)
+        valueContainer.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0f)
 
+        val valueInput = TextInputEditText(valueContainer.context)
+        valueInput.setPadding(padding)
+        valueInput.setText(number)
+        //@ManualTheming
+        valueInput.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        valueContainer.addView(valueInput)
+
+
+        // Suffix Container
+        val suffixContainer = TextInputLayout(ContextThemeWrapper(activity, R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu))
+        suffixContainer.boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
+        suffixContainer.setPadding(padding, padding, 0, 0)
+        suffixContainer.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.3f)
+        valueInput.setText(suffix)
+
+        val items = listOf("P", "T", "G", "M", "K", "B")
         val adapter = ArrayAdapter(
             this.mContext,
             android.R.layout.simple_spinner_item,
             items
         )
 
-        input.setAdapter(adapter)
-        input.isEnabled = false
+        val suffixSpinner = AutoCompleteTextView(suffixContainer.context)
+        suffixSpinner.setPadding(padding)
+        suffixSpinner.hint = getString(R.string.dynamic_config_suffixselector_suffix_hint)
+        suffixSpinner.setAdapter(adapter)
+        //suffixSpinner.isEnabled = false
+        suffixContainer.addView(suffixSpinner)
 
-        textinput.addView(input)
 
-        val leftright = LinearLayout(mContext)
-        leftright.orientation = LinearLayout.HORIZONTAL
-
-        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        //layoutParams.width = LayoutParams.MATCH_PARENT
-        leftright.layoutParams = layoutParams
-
-        val mainInput = getAttachedEditText(option.name, leftright)
-        mainInput.inputType = InputType.TYPE_CLASS_NUMBER
-
-        leftright.addView(textinput)
-        layout.addView(leftright)
-
-        mainInput.addTextChangedListener(object : TextWatcher {
+        valueInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                mOptionMap[option.name] = s.toString()+input.text
+                mOptionMap[option.name] = s.toString()+suffixSpinner.text
+            }
+            override fun afterTextChanged(s: Editable) {}
+        })
+        suffixSpinner.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                mOptionMap[option.name] = valueInput.text.toString() + s.toString()
             }
             override fun afterTextChanged(s: Editable) {}
         })
 
-        input.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                mOptionMap[option.name] = mainInput.text.toString() + s.toString()
-            }
-            override fun afterTextChanged(s: Editable) {}
-        })
-
-
-
-
-
-
+        leftright.addView(valueContainer)
+        leftright.addView(suffixContainer)
         return leftright
-    }
-
-    private fun getCard(): CardView {
-        val card = CardView(mContext)
-        val cardLayout = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        cardLayout.topMargin = getDPasPixel(16).toInt()
-        cardLayout.marginStart = getDPasPixel(8).toInt()
-        cardLayout.marginEnd = getDPasPixel(8).toInt()
-        cardLayout.bottomMargin = getDPasPixel(8).toInt()
-        card.layoutParams = cardLayout
-
-        //@ManualTheming
-        card.setCardBackgroundColor(convertAttributeToColor(R.attr.colorSecondaryContainer))
-        card.radius = resources.getDimension(R.dimen.cardCornerRadius)
-        card.setContentPadding(
-            resources.getDimension(R.dimen.cardPadding).toInt(),
-            resources.getDimension(R.dimen.cardPadding).toInt(),
-            resources.getDimension(R.dimen.cardPadding).toInt(),
-            resources.getDimension(R.dimen.cardPadding).toInt()
-        )
-        return card
-    }
-
-    private fun convertAttributeToColor(id: Int): Int {
-        val typedValue = TypedValue()
-        mContext.theme.resolveAttribute(id, typedValue, true)
-        return typedValue.data
     }
 
     private fun getAttachedEditText(hint: String, layout: LinearLayout): EditText {
@@ -445,6 +404,42 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             }
         }
     }
+
+    private fun getCard(): CardView {
+        val card = CardView(mContext)
+        val cardLayout = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        cardLayout.topMargin = getDPasPixel(16).toInt()
+        cardLayout.marginStart = getDPasPixel(8).toInt()
+        cardLayout.marginEnd = getDPasPixel(8).toInt()
+        cardLayout.bottomMargin = getDPasPixel(8).toInt()
+        card.layoutParams = cardLayout
+
+        //@ManualTheming
+        card.setCardBackgroundColor(convertAttributeToColor(R.attr.colorSecondaryContainer))
+        card.radius = resources.getDimension(R.dimen.cardCornerRadius)
+        card.setContentPadding(
+            resources.getDimension(R.dimen.cardPadding).toInt(),
+            resources.getDimension(R.dimen.cardPadding).toInt(),
+            resources.getDimension(R.dimen.cardPadding).toInt(),
+            resources.getDimension(R.dimen.cardPadding).toInt()
+        )
+        return card
+    }
+
+    private fun getDPasPixel(dp: Int): Float {
+        val scale = resources.displayMetrics.density
+        return (dp * scale + 0.5f)
+    }
+
+    private fun convertAttributeToColor(id: Int): Int {
+        val typedValue = TypedValue()
+        mContext.theme.resolveAttribute(id, typedValue, true)
+        return typedValue.data
+    }
+
     private fun setUpRemote() {
         Log.e("TAG", "LOG")
 

@@ -519,4 +519,5 @@
     <string name="back">Back</string>
     <string name="save">Save</string>
     <string name="dynamic_config_suffixselector_suffix_hint">Size Suffix</string>
+    <string name="dynamic_config_suffixselector_value_hint">Value</string>
 </resources>
