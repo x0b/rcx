@@ -470,7 +470,7 @@
         errorLine2="                                ~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Items/RemoteItem.java"
-            line="419"
+            line="414"
             column="33"/>
     </issue>
 
@@ -481,7 +481,7 @@
         errorLine2="                                                                                    ~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Items/RemoteItem.java"
-            line="419"
+            line="414"
             column="85"/>
     </issue>
 
@@ -516,17 +516,6 @@
             file="src/main/java/ca/pkay/rcloneexplorer/VirtualContentProvider.java"
             line="1520"
             column="50"/>
-    </issue>
-
-    <issue
-        id="DefaultLocale"
-        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
-        errorLine1="        options.add(vendorString.toLowerCase());"
-        errorLine2="                                 ~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/WebdavConfig.java"
-            line="177"
-            column="34"/>
     </issue>
 
     <issue
@@ -753,7 +742,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="497"
+            line="501"
             column="13"/>
     </issue>
 
@@ -764,7 +753,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="543"
+            line="547"
             column="17"/>
     </issue>
 
@@ -775,7 +764,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="550"
+            line="554"
             column="17"/>
     </issue>
 
@@ -786,7 +775,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="559"
+            line="563"
             column="17"/>
     </issue>
 
@@ -1435,74 +1424,8 @@
         errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="196"
+            line="200"
             column="18"/>
-    </issue>
-
-    <issue
-        id="NonConstantResourceId"
-        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
-        errorLine1="                case R.id.action_remote_properties:"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="274"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NonConstantResourceId"
-        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
-        errorLine1="                case R.id.action_delete:"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="277"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NonConstantResourceId"
-        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
-        errorLine1="                case R.id.action_remote_rename:"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="280"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NonConstantResourceId"
-        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
-        errorLine1="                case R.id.action_pin:"
-        errorLine2="                     ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="283"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NonConstantResourceId"
-        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
-        errorLine1="                case R.id.action_favorite:"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="290"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="NonConstantResourceId"
-        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
-        errorLine1="                case R.id.action_add_to_home_screen:"
-        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/Fragments/RemotesFragment.java"
-            line="297"
-            column="22"/>
     </issue>
 
     <issue
@@ -1728,28 +1651,6 @@
     <issue
         id="UseSwitchCompatOrMaterialCode"
         message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
-        errorLine1="            Switch s = v.findViewById(R.id.flip_switch);"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/CryptConfig.java"
-            line="239"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="UseSwitchCompatOrMaterialCode"
-        message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
-        errorLine1="            Switch s = buttonView.findViewById(R.id.flip_switch);"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/CryptConfig.java"
-            line="243"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="UseSwitchCompatOrMaterialCode"
-        message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
         errorLine1="    private Switch safEnabledSwitch;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -1965,17 +1866,6 @@
             file="src/main/java/ca/pkay/rcloneexplorer/Activities/TaskActivity.kt"
             line="40"
             column="5"/>
-    </issue>
-
-    <issue
-        id="UseSwitchCompatOrMaterialXml"
-        message="Use `SwitchCompat` from AppCompat or `SwitchMaterial` from Material library"
-        errorLine1="        &lt;Switch"
-        errorLine2="        ^">
-        <location
-            file="src/main/res/layout/config_form_template_switch.xml"
-            line="20"
-            column="9"/>
     </issue>
 
     <issue
@@ -2370,68 +2260,13 @@
         errorLine2="                                                                  ~~">
         <location
             file="src/main/res/values-de/strings.xml"
-            line="444"
+            line="365"
             column="67"/>
         <location
             file="src/main/res/values/strings.xml"
-            line="492"
+            line="405"
             column="5"
             message="Conflicting argument type (`s&apos;) here"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;hint_new_folder&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;hint_new_folder&quot;>Foldername&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="72"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;import_configuration_fail_rclone&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;import_configuration_fail_rclone&quot;>Failed to import. Your rclone.conf is not valid!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="100"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;import_configuration_fail_zip_json_missing&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;import_configuration_fail_zip_json_missing&quot;>Failed to import. Your Zip does not contain Triggers and Tasks!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="101"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;import_configuration_fail_zip_conf_missing&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;import_configuration_fail_zip_conf_missing&quot;>Failed to import. Your Zip does not contain rclone.conf!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="102"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;intro_storage_description&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;intro_storage_description&quot;>Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="129"
-            column="13"/>
     </issue>
 
     <issue
@@ -2441,150 +2276,29 @@
         errorLine2="             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="409"
+            line="322"
             column="14"/>
     </issue>
 
     <issue
         id="MissingTranslation"
-        message="&quot;task_item_label_from_bisync&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;task_item_label_from_bisync&quot;>Path 1:&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;dynamic_config_suffixselector_suffix_hint&quot; is not translated in &quot;de&quot; (German)"
+        errorLine1="    &lt;string name=&quot;dynamic_config_suffixselector_suffix_hint&quot;>Size Suffix&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="548"
+            line="521"
             column="13"/>
     </issue>
 
     <issue
         id="MissingTranslation"
-        message="&quot;task_item_label_to_bisync&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;task_item_label_to_bisync&quot;>Path 2:&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="549"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;description_sync_direction_sync_tolocal&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;description_sync_direction_sync_tolocal&quot;>Synchronize files from remote storage to local storage. It can also delete files from the local storage if they don\&apos;t exist on the remote storage. Only the local storage is updated with changes.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="567"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;description_sync_direction_sync_toremote&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;description_sync_direction_sync_toremote&quot;>Synchronize files from local storage to remote storage. Any files that are not present locally will be deleted from the remote storage. Only affects the files on the remote storage.&lt;/string>"
+        message="&quot;dynamic_config_suffixselector_value_hint&quot; is not translated in &quot;de&quot; (German)"
+        errorLine1="    &lt;string name=&quot;dynamic_config_suffixselector_value_hint&quot;>Value&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="568"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;description_sync_direction_copy_toremote&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;description_sync_direction_copy_toremote&quot;>Copy new or modified files from local storage to remote storage. No files are deleted, existing files on the remote may be overwritten.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="569"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;description_sync_direction_copy_tolocal&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;description_sync_direction_copy_tolocal&quot;>Copy new or modified files from remote storage to local storage. No files are deleted, existing files on the local storage may be overwritten.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="570"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;description_sync_direction_sync_bidirectional&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;description_sync_direction_sync_bidirectional&quot;>Make sure local and remote storage have the same files by transferring, downloading, and deleting files as needed to maintain an identical folder structure.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="571"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;intro_success&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;intro_success&quot;>Success!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="572"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;intro_manage_external_storage_granted&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;intro_manage_external_storage_granted&quot;>File access permission granted!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="574"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;s3_spinner_prompt&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;s3_spinner_prompt&quot;>S3 service provider&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="577"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;s3_spinner_wrong_selection&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;s3_spinner_wrong_selection&quot;>You need to select a proper provider&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="578"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;intro_notifications_description&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;intro_notifications_description&quot;>We need to show you notifications when we sync your files, so please grant us access to post notifications. We wont spam you!&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="603"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;notification_reports&quot; is not translated in &quot;de&quot; (German)"
-        errorLine1="    &lt;string name=&quot;notification_reports&quot;>Create Reports for Syncs. Replaces singular notifications with a unified one.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="604"
+            line="522"
             column="13"/>
     </issue>
 
@@ -2595,7 +2309,7 @@
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="462"
+            line="375"
             column="5"/>
     </issue>
 
@@ -2606,7 +2320,7 @@
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="464"
+            line="377"
             column="5"/>
     </issue>
 
@@ -2617,7 +2331,7 @@
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="466"
+            line="379"
             column="5"/>
     </issue>
 
@@ -2628,7 +2342,7 @@
         errorLine2="    ^">
         <location
             file="src/main/res/values-de/strings.xml"
-            line="388"
+            line="309"
             column="5"/>
     </issue>
 
@@ -2894,39 +2608,6 @@
             file="src/main/java/ca/pkay/rcloneexplorer/RecyclerViewAdapters/TriggerRecyclerViewAdapter.java"
             line="140"
             column="9"/>
-    </issue>
-
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="            notifyDataSetChanged();"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/UnionConfig.java"
-            line="256"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="            notifyDataSetChanged();"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/UnionConfig.java"
-            line="261"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="Recycle"
-        message="This `TypedArray` should be recycled after use with `#recycle()`"
-        errorLine1="        TypedArray icons = getResources().obtainTypedArray(R.array.provider_icons);"
-        errorLine2="                                          ~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/RemotesConfigList.java"
-            line="92"
-            column="43"/>
     </issue>
 
     <issue
@@ -3349,28 +3030,6 @@
 
     <issue
         id="VectorPath"
-        message="Very long vector path (1357 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
-        errorLine1="        android:pathData=&quot;m316.61,101.6c0,-12.181 -4.935,-23.209 -12.914,-31.194 0.502,-1.677 0.764,-3.463 0.764,-5.331 0,-4.133 -1.466,-11.86 -11.281,-17.182 -5.714,-3.097 -12.976,-4.668 -21.586,-4.668h-0.056c-7.436,0.047 -14.25,1.41 -20.236,4.043 -0.247,0.108 -0.486,0.223 -0.73,0.334 -11.99,-12.785 -29.032,-20.774 -47.943,-20.774 -4.455,0 -8.806,0.446 -13.013,1.29C173.555,10.825 150.624,0 125.162,0c-40.044,0 -73.836,26.769 -84.466,63.385 -1.736,0.114 -3.485,0.362 -5.243,0.751v-6.308c0,-4.847 -0.672,-8.45 -2.116,-11.338l-0.051,-0.1c-1.461,-2.833 -3.688,-5.126 -6.621,-6.813 -2.793,-1.606 -5.8,-2.42 -8.938,-2.42 -3.14,0 -6.148,0.815 -8.938,2.42 -2.934,1.688 -5.163,3.981 -6.624,6.818l-0.047,0.092c-1.445,2.888 -2.118,6.492 -2.118,11.342v65.686c0,4.892 0.673,8.515 2.119,11.402l0.046,0.09c1.461,2.837 3.689,5.131 6.621,6.817 2.793,1.607 5.801,2.422 8.941,2.422 3.138,0 6.146,-0.815 8.941,-2.422 2.125,-1.222 3.874,-2.768 5.235,-4.602 8.708,9.522 21.233,15.495 35.153,15.495 3.704,0 7.31,-0.423 10.77,-1.223 14.438,9.406 31.674,14.876 50.19,14.876 17.676,0 34.186,-4.985 48.209,-13.62 8.081,3.55 17.011,5.524 26.404,5.524 17.651,0 33.674,-6.959 45.481,-18.281 4.82,2.516 10.137,4.162 15.923,4.929a44.367,44.367 0,0 0,8.446 0.811c6.525,0 12.719,-1.418 18.292,-3.959 1.49,-0.651 2.925,-1.382 4.296,-2.204a25.05,25.05 0,0 0,1.829 -1.204c11.883,-7.907 19.715,-21.421 19.715,-36.765z&quot; android:strokeWidth=&quot;0.26458332&quot;/>"
-        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/drawable/ic_hubic_black.xml"
-            line="4"
-            column="27"/>
-    </issue>
-
-    <issue
-        id="VectorPath"
-        message="Very long vector path (4562 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
-        errorLine1="        android:pathData=&quot;m26.563,77.328c5.655,-3.417 11.075,-5.125 16.259,-5.125 6.245,0 11.448,1.965 15.611,5.891 2.159,2.043 3.701,4.34 4.625,6.893 0.922,2.553 1.384,5.773 1.384,9.662v28.867c0,3.378 -0.393,5.852 -1.178,7.423 -0.668,1.296 -1.718,2.356 -3.152,3.181 -1.434,0.825 -2.937,1.237 -4.507,1.237 -1.571,0 -3.073,-0.412 -4.507,-1.237 -1.434,-0.825 -2.484,-1.885 -3.152,-3.181 -0.786,-1.571 -1.178,-4.045 -1.178,-7.423v-23.859c0,-3.809 -0.825,-6.716 -2.474,-8.719 -1.925,-2.317 -4.399,-3.476 -7.423,-3.476 -2.946,0 -5.4,1.041 -7.364,3.122 -1.965,2.082 -2.946,4.713 -2.946,7.894v25.037c0,3.378 -0.393,5.852 -1.178,7.423 -0.668,1.296 -1.718,2.356 -3.152,3.181 -1.434,0.825 -2.937,1.237 -4.507,1.237 -1.571,0 -3.073,-0.412 -4.507,-1.237 -1.434,-0.825 -2.484,-1.885 -3.152,-3.181 -0.786,-1.571 -1.178,-4.045 -1.178,-7.423v-65.686c0,-3.337 0.392,-5.793 1.178,-7.364 0.667,-1.296 1.717,-2.356 3.152,-3.181 1.433,-0.825 2.936,-1.237 4.507,-1.237 1.57,0 3.072,0.412 4.507,1.237 1.433,0.825 2.483,1.885 3.152,3.181 0.785,1.571 1.178,4.026 1.178,7.364zM129.893,84.398v26.274c0,6.009 -1.434,10.879 -4.301,14.61 -2.436,3.142 -5.577,5.617 -9.426,7.423 -4.321,2.042 -8.916,3.063 -13.785,3.063 -6.834,0 -12.823,-1.826 -17.968,-5.479 -3.339,-2.356 -5.764,-5.096 -7.276,-8.218 -1.512,-3.122 -2.268,-6.922 -2.268,-11.399L74.87,84.398c0,-3.337 0.392,-5.812 1.178,-7.423 0.667,-1.296 1.708,-2.356 3.122,-3.181 1.414,-0.825 2.925,-1.237 4.536,-1.237 1.57,0 3.072,0.412 4.507,1.237 1.433,0.825 2.483,1.885 3.152,3.181 0.785,1.571 1.178,4.045 1.178,7.423v24.095c0,1.847 0.206,3.319 0.619,4.418 0.412,1.1 1.149,2.16 2.209,3.181 1.924,1.885 4.261,2.828 7.01,2.828 2.748,0 5.086,-0.943 7.01,-2.828 1.885,-1.806 2.828,-4.339 2.828,-7.6v-24.095c0,-3.377 0.392,-5.852 1.178,-7.423 0.667,-1.296 1.717,-2.356 3.152,-3.181 1.433,-0.825 2.936,-1.237 4.507,-1.237 1.57,0 3.072,0.412 4.507,1.237 1.433,0.825 2.483,1.885 3.152,3.181 0.785,1.572 1.178,4.046 1.178,7.423zM157.848,77.387c2.631,-1.924 5.017,-3.279 7.158,-4.065 2.14,-0.785 4.526,-1.178 7.157,-1.178 7.344,0 13.726,2.966 19.146,8.896 5.576,6.048 8.365,13.609 8.365,22.681 0,10.015 -3.122,18.145 -9.367,24.389 -5.028,5.066 -11.016,7.6 -17.968,7.6 -3.338,0 -6.156,-0.55 -8.453,-1.649 -2.297,-1.099 -4.389,-2.887 -6.275,-5.361 -1.807,4.438 -4.595,6.657 -8.365,6.657 -2.671,0 -4.851,-0.873 -6.539,-2.621 -1.689,-1.747 -2.533,-4.015 -2.533,-6.804v-68.102c0,-3.337 0.392,-5.793 1.178,-7.364 0.667,-1.296 1.708,-2.356 3.122,-3.181 1.414,-0.825 2.925,-1.237 4.536,-1.237 1.61,0 3.122,0.412 4.536,1.237 1.414,0.825 2.454,1.885 3.122,3.181 0.786,1.571 1.178,4.026 1.178,7.364v19.559zM169.984,88.639c-3.456,0 -6.362,1.443 -8.719,4.33 -2.356,2.887 -3.535,6.471 -3.535,10.751 0,4.635 1.178,8.365 3.535,11.193 2.435,2.867 5.361,4.301 8.778,4.301 3.378,0 6.216,-1.462 8.513,-4.389 2.298,-2.925 3.446,-6.569 3.446,-10.928 0,-4.124 -1.081,-7.678 -3.24,-10.663 -2.2,-3.024 -5.126,-4.555 -8.778,-4.595zM213.917,46.046c2.946,0 5.439,1.14 7.482,3.417 1.767,1.965 2.651,4.262 2.651,6.893 0,3.063 -1.14,5.617 -3.417,7.658 -1.964,1.767 -4.262,2.651 -6.893,2.651 -3.063,0 -5.617,-1.139 -7.658,-3.417 -1.767,-1.963 -2.651,-4.28 -2.651,-6.951 0,-2.866 1.011,-5.292 3.034,-7.276 2.022,-1.983 4.507,-2.975 7.452,-2.975zM204.726,123.515L204.726,84.398c0,-3.377 0.392,-5.852 1.178,-7.423 0.667,-1.296 1.718,-2.356 3.152,-3.181 1.433,-0.825 2.935,-1.237 4.507,-1.237 1.571,0 3.082,0.412 4.536,1.237 1.453,0.825 2.493,1.885 3.122,3.181 0.785,1.571 1.178,4.045 1.178,7.423v39.117c0,3.378 -0.393,5.852 -1.178,7.423 -0.629,1.296 -1.67,2.356 -3.122,3.181 -1.454,0.825 -2.966,1.237 -4.536,1.237 -1.571,0 -3.074,-0.412 -4.507,-1.237 -1.434,-0.825 -2.485,-1.885 -3.152,-3.181 -0.786,-1.571 -1.178,-4.045 -1.178,-7.423zM271.593,52.114c7.148,0 12.931,1.199 17.349,3.594 4.418,2.396 6.628,5.518 6.628,9.367 0,2.356 -0.707,4.301 -2.121,5.832 -1.414,1.532 -3.221,2.298 -5.42,2.298 -1.414,0 -3.653,-0.609 -6.716,-1.826 -3.339,-1.335 -6.559,-2.003 -9.662,-2.003 -5.538,0 -9.995,1.67 -13.373,5.008 -4.635,4.595 -6.951,11.311 -6.951,20.147 0,8.837 2.277,15.396 6.834,19.676 3.573,3.339 8.109,5.008 13.609,5.008 2.317,0 4.006,-0.147 5.066,-0.442 1.06,-0.294 3.653,-1.364 7.776,-3.211 1.453,-0.628 2.807,-0.943 4.065,-0.943 2.081,0 3.859,0.825 5.331,2.474 1.473,1.65 2.209,3.614 2.209,5.891 0,3.692 -1.905,6.677 -5.714,8.955 -5.106,3.063 -11.331,4.595 -18.675,4.595 -11.35,0 -20.639,-3.456 -27.865,-10.368 -8.248,-7.933 -12.371,-18.655 -12.371,-32.165 0,-4.28 0.579,-8.61 1.738,-12.99 1.158,-4.379 2.74,-8.159 4.742,-11.34 4.006,-6.362 9.603,-11.114 16.79,-14.257 4.909,-2.159 10.486,-3.259 16.731,-3.299z&quot; android:strokeWidth=&quot;0.26458332&quot;/>"
-        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/drawable/ic_hubic_black.xml"
-            line="6"
-            column="27"/>
-    </issue>
-
-    <issue
-        id="VectorPath"
         message="Very long vector path (1915 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
         errorLine1="        android:pathData=&quot;m4.0714,45.6718c-1.3662,-0.6362 -2.6813,-1.9202 -3.4989,-3.4163 -0.4267,-0.7808 -0.4748,-2.0196 -0.5457,-14.0439 -0.0871,-14.7639 -0.062,-15.0175 1.6839,-17.0573 1.569,-1.8331 2.67,-2.2637 6.1991,-2.4247l3.0427,-0.1388 0.1669,-1.867c0.2666,-2.9815 1.661,-5.0346 4.1987,-6.182 1.1118,-0.5027 1.716,-0.5385 9.1281,-0.5415 7.7622,-0.003 7.9668,0.0104 9.2623,0.6137 1.4673,0.6833 2.8996,2.1502 3.4981,3.5829 0.2151,0.5149 0.4681,1.7142 0.5622,2.6651l0.171,1.7289 3.0427,0.1388c3.4597,0.1578 4.5913,0.5812 6.0774,2.2738 1.7898,2.0385 1.7278,1.4459 1.7278,16.5051 0,15.081 0.0655,14.4627 -1.7509,16.5315 -0.4901,0.5582 -1.4872,1.2925 -2.2159,1.6318l-1.3248,0.6169h-19.05,-19.05zM8.3436,41.4097c0.3034,-0.2125 0.6817,-0.7185 0.8407,-1.1245 0.159,-0.406 1.0784,-4.8458 2.0429,-9.8663 0.9646,-5.0205 1.8803,-9.4628 2.035,-9.8718 0.1547,-0.409 0.7009,-1.0639 1.2138,-1.4552l0.9326,-0.7115 14.4406,-0.1323 14.4406,-0.1323v-1.8089c0,-1.6539 -0.0636,-1.8635 -0.7424,-2.4474 -0.7248,-0.6235 -0.8539,-0.6385 -5.4701,-0.6385h-4.7277l-0.0861,-3.7277c-0.0858,-3.7111 -0.0894,-3.7306 -0.8285,-4.3656l-0.7424,-0.6379h-7.2816,-7.2816l-0.7734,0.7734 -0.7734,0.7734v3.5922,3.5922h-4.7477c-4.637,0 -4.7651,0.0149 -5.4901,0.6384l-0.7424,0.6384 -0.0735,12.8684 -0.0735,12.8684 0.7808,0.7807c0.8804,0.8804 2.1784,1.0451 3.1074,0.3944zM34.8755,40.0378 L37.1462,38.8086 39.578,40.0974c1.3375,0.7088 2.4935,1.2271 2.569,1.1516 0.0754,-0.0754 -0.0757,-1.3521 -0.336,-2.837l-0.4731,-2.6999 1.9382,-1.8794c1.066,-1.0337 1.8844,-1.9666 1.8185,-2.0731 -0.0659,-0.1066 -1.2965,-0.3437 -2.7348,-0.527l-2.6151,-0.3333 -1.1669,-2.3818c-0.6418,-1.31 -1.2542,-2.4359 -1.3608,-2.5019 -0.1066,-0.066 -0.7515,1.0026 -1.4331,2.3747l-1.2393,2.4948 -2.3977,0.3277c-1.3188,0.1802 -2.5594,0.3897 -2.7571,0.4656 -0.2389,0.0917 0.308,0.8127 1.6317,2.1513l1.9911,2.0134 -0.2538,1.3229c-0.5773,3.0094 -0.6899,4.101 -0.4229,4.101 0.1479,0 1.2908,-0.5531 2.5396,-1.2291z&quot; android:strokeWidth=&quot;0.26458332&quot;/>"
         errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -3558,17 +3217,6 @@
 
     <issue
         id="Overdraw"
-        message="Possible overdraw: Root element paints background `?selectableItemBackground` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
-        errorLine1="    android:background=&quot;?selectableItemBackground&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_text_field.xml"
-            line="5"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="Overdraw"
         message="Possible overdraw: Root element paints background `?attr/android:colorBackground` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
         errorLine1="    android:background=&quot;?attr/android:colorBackground&quot;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -3642,39 +3290,6 @@
             file="src/main/res/drawable/ic_intro_notifications.xml"
             line="1"
             column="1"/>
-    </issue>
-
-    <issue
-        id="UselessParent"
-        message="This `LinearLayout` layout or its `LinearLayout` parent is possibly unnecessary; transfer the `background` attribute to the other view"
-        errorLine1="    &lt;LinearLayout"
-        errorLine2="     ~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_spinner.xml"
-            line="6"
-            column="6"/>
-    </issue>
-
-    <issue
-        id="UselessParent"
-        message="This `RelativeLayout` layout or its `LinearLayout` parent is possibly unnecessary; transfer the `background` attribute to the other view"
-        errorLine1="    &lt;RelativeLayout"
-        errorLine2="     ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_switch.xml"
-            line="6"
-            column="6"/>
-    </issue>
-
-    <issue
-        id="UselessParent"
-        message="This `LinearLayout` layout or its `LinearLayout` parent is unnecessary; transfer the `background` attribute to the other view"
-        errorLine1="    &lt;LinearLayout"
-        errorLine2="     ~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_text_field.xml"
-            line="9"
-            column="6"/>
     </issue>
 
     <issue
@@ -3841,39 +3456,6 @@
     <issue
         id="Autofill"
         message="Missing `autofillHints` attribute"
-        errorLine1="        &lt;EditText"
-        errorLine2="         ~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_edit_text.xml"
-            line="12"
-            column="10"/>
-    </issue>
-
-    <issue
-        id="Autofill"
-        message="Missing `autofillHints` attribute"
-        errorLine1="    &lt;EditText"
-        errorLine2="     ~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_password.xml"
-            line="12"
-            column="6"/>
-    </issue>
-
-    <issue
-        id="Autofill"
-        message="Missing `autofillHints` attribute"
-        errorLine1="                    &lt;EditText"
-        errorLine2="                     ~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_union.xml"
-            line="46"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="Autofill"
-        message="Missing `autofillHints` attribute"
         errorLine1="                    &lt;EditText"
         errorLine2="                     ~~~~~~~~">
         <location
@@ -3910,31 +3492,20 @@
         errorLine1="                    &lt;EditText"
         errorLine2="                     ~~~~~~~~">
         <location
-            file="src/main/res/layout/remote_config_form.xml"
-            line="46"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="Autofill"
-        message="Missing `autofillHints` attribute"
-        errorLine1="                    &lt;EditText"
-        errorLine2="                     ~~~~~~~~">
-        <location
             file="src/main/res/layout-sw720dp/remote_config_form.xml"
             line="53"
             column="22"/>
     </issue>
 
     <issue
-        id="ButtonCase"
-        message="The standard Android way to capitalize CANCEL is &quot;Cancel&quot; (tip: use `@android:string/cancel` instead)"
-        errorLine1="    &lt;string name=&quot;cancel_caps&quot;>CANCEL&lt;/string>"
-        errorLine2="                               ~~~~~~">
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="                            &lt;EditText"
+        errorLine2="                             ~~~~~~~~">
         <location
-            file="src/main/res/values/strings.xml"
-            line="211"
-            column="32"/>
+            file="src/main/res/layout/remote_config_form.xml"
+            line="69"
+            column="30"/>
     </issue>
 
     <issue
@@ -4053,28 +3624,6 @@
         errorLine1="        &lt;EditText"
         errorLine2="         ~~~~~~~~">
         <location
-            file="src/main/res/layout/config_form_template_edit_text.xml"
-            line="12"
-            column="10"/>
-    </issue>
-
-    <issue
-        id="LabelFor"
-        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`"
-        errorLine1="    &lt;EditText"
-        errorLine2="     ~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_password.xml"
-            line="12"
-            column="6"/>
-    </issue>
-
-    <issue
-        id="LabelFor"
-        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`"
-        errorLine1="        &lt;EditText"
-        errorLine2="         ~~~~~~~~">
-        <location
             file="src/main/res/layout/dialog_serve.xml"
             line="68"
             column="10"/>
@@ -4089,28 +3638,6 @@
             file="src/main/res/layout/dialog_serve.xml"
             line="91"
             column="10"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="        scope.setText(&quot;scope: \&quot;&quot; + scopeString + &quot;\&quot;&quot;);"
-        errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/DriveConfig.java"
-            line="201"
-            column="23"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="String literal in `setText` can not be translated. Use Android resources instead."
-        errorLine1="        scope.setText(&quot;scope: \&quot;&quot; + scopeString + &quot;\&quot;&quot;);"
-        errorLine2="                      ~~~~~~~~~~~">
-        <location
-            file="src/main/java/ca/pkay/rcloneexplorer/RemoteConfig/DriveConfig.java"
-            line="201"
-            column="23"/>
     </issue>
 
     <issue
@@ -4177,17 +3704,6 @@
             file="src/main/res/layout/fragment_trigger_item_schedule.xml"
             line="156"
             column="17"/>
-    </issue>
-
-    <issue
-        id="RelativeOverlap"
-        message="`@id/switch_text` can overlap `@id/flip_switch` if @id/switch_text grows due to localized text expansion"
-        errorLine1="        &lt;TextView"
-        errorLine2="         ~~~~~~~~">
-        <location
-            file="src/main/res/layout/config_form_template_switch.xml"
-            line="14"
-            column="10"/>
     </issue>
 
     <issue
