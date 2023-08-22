@@ -52,7 +52,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var mFinishButton: Button? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
-    private var mShowAdvanced = true
+    private var mShowAdvanced = false
     private var mIsEditTask = false
     private var mOptionMap = hashMapOf<String, String>()
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
