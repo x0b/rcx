@@ -39,7 +39,7 @@ class RemoteConfigListItemAdapter(
             ContextCompat.getDrawable(mContext, getIconIfAvailable(provider.name))
         )
 
-        viewHolder.isSelectedButton.setOnClickListener { v: View ->
+        viewHolder.itemView.setOnClickListener { v: View ->
             val rb = v.findViewById<RadioButton>(R.id.provider_rb)
             setSelected(rb, provider)
         }
