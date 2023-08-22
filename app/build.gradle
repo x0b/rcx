@@ -105,6 +105,10 @@ android {
             useLegacyPackaging true
         }
     }
+
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
     namespace 'ca.pkay.rcloneexplorer'
 
 
