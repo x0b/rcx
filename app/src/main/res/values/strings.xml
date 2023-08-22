@@ -199,90 +199,16 @@
     <string name="nothing_selected">Nothing selected</string>
     <string name="file_picker_root_title">Device storage</string>
     <string name="remote_name_hint">Name (a–z, 0-9 only)</string>
-    <string name="box_client_id_hint">Box App Client ID</string>
-    <string name="box_client_secret_hint">Box App Client Secret</string>
-    <string name="dropbox_client_id_hint">DropBox App Client ID</string>
-    <string name="dropbox_client_secret_hint">DropBox App Client Secret</string>
-    <string name="drive_client_id_hint">Google App Client ID</string>
-    <string name="drive_client_secret_hint">Google App Client Secret</string>
-    <string name="remote_name_cannot_be_empty">Remote name can\'t be blank</string>
     <string name="waiting_for_code">Waiting for code</string>
     <string name="open_browser">Open browser</string>
-    <string name="cancel_caps">CANCEL</string>
-    <string name="next_caps">NEXT</string>
-    <string name="required_field">Required field</string>
-    <string name="account_id_hint">Account ID</string>
-    <string name="application_key_hint">Application key</string>
-    <string name="endpoint_hint">Endpoint for the service</string>
-    <string name="drive_root_folder_id">Enter the root folder ID to access Computer folders</string>
-    <string name="ftp_host_hint">FTP host to connect to</string>
-    <string name="ftp_user_hint">FTP username</string>
-    <string name="ftp_port_hint">FTP port</string>
-    <string name="ftp_pass_hint">FTP password</string>
     <string name="provider_ftp">FTP</string>
     <string name="provider_http">HTTP</string>
     <string name="serve_dlna">DLNA</string>
-    <string name="url_hint">URL of http host to connect to</string>
-    <string name="pcloud_client_id_hint">Pcloud Client ID</string>
-    <string name="pcloud_client_secret_hint">Pcloud Client Secret</string>
-    <string name="sftp_host_hint">SSH Host to connect to</string>
-    <string name="ssh_user_hint">SSH username</string>
-    <string name="ssh_port_hint">SSH port</string>
-    <string name="ssh_pass_hint">SSH password</string>
-    <string name="yandex_client_id_hint">Yandex Client ID</string>
-    <string name="yandex_client_secret_hint">Yandex Client Secret</string>
-    <string name="webdav_user_hint">User name</string>
-    <string name="webdav_pass_hint">Password</string>
     <string name="provider_webdav">Webdav</string>
     <string name="error_creating_remote">Error creating remote</string>
-    <string name="ftp_default_port" translatable="false">21</string>
-    <string name="sftp_default_port" translatable="false">22</string>
     <string name="remote_creation_success">Remote created successfully</string>
     <string name="next">Next</string>
-    <string name="leave_blank_normally">Leave blank normally</string>
     <string name="title_activity_remote_config">Select type</string>
-    <string name="onedrive_client_id_hint">Microsoft Client ID</string>
-    <string name="onedrive_client_secret_hint">Microsoft Client Secret</string>
-    <string name="provider_mega_config_user">Mega username</string>
-    <string name="provider_mega_config_password">Mega password</string>
-    <string name="alias_remote_hint">Click to select remote or path to alias</string>
-    <string name="encrypt_remote_hint">Click to select remote or path to encrypt</string>
-    <string name="drive_scope__hint">Click to select scope</string>
-    <string name="select_remote">Select a remote</string>
-    <string name="select_path_to_alias">Select path to Alias</string>
-    <string name="select_path_to_crypt">Select path to Encrypt</string>
-    <string name="webdav_spinner_prompt">WebDAV service provider</string>
-    <string-array name="filename_encryption_spinner_values" translatable="false">
-        <item>How to encrypt the filenames</item>
-        <item>Off</item>
-        <item>Standard</item>
-        <item>Obfuscate</item>
-    </string-array>
-    <string-array name="filename_encryption_spinner_labels">
-        <item>How to encrypt the filenames</item>
-        <item>Off</item>
-        <item>Standard</item>
-        <item>Obfuscate</item>
-    </string-array>
-    <string name="directory_name_encryption_hint">Directory name encryption</string>
-    <string name="crypt_pass_hint">Password for encryption</string>
-    <string name="crypt_pass2_hint">Password for salt</string>
-    <string name="crypt_pass2_helper_text">Optional but recommended</string>
-    <string name="crypt_config_error_no_remotes">There are no remotes</string>
-    <string name="qingstor_access_key_hint">QingStor Access Key ID</string>
-    <string name="qingstor_secret_access_key_hint">QingStor Secret Access Key (password)</string>
-    <string name="qingstor_endpoint_hint">Enter an enpoint URL to connection QingStor API</string>
-    <string name="qingstor_connection_retries_hint">Number of connection retries</string>
-    <string name="leave_blank_for_anon_access">Leave blank for anonymous access</string>
-    <string name="qingstor_endpoint_helper_text">Leave blank for default value (qingstor.com:443)</string>
-    <string name="qingstor_zone_spinner_prompt">Choose a zone to connect to</string>
-    <string name="qingstor_connection_retires_helper">Leave blank to use the default value (3)</string>
-    <string name="azureblob_account_hint">Storage Account Name</string>
-    <string name="azureblob_key_hint">Storage Account Key</string>
-    <string name="union_add_remote">Add Remote</string>
-    <string name="union_select_remote">Select remote path for Union</string>
-    <string name="create">Create</string>
-    <string name="no_remotes">There are no remotes</string>
     <string name="error_exporting_config_file">Error exporting config file</string>
     <string name="app_update_notification_title">App update available on Github</string>
     <string name="app_updates_notifications">Get notified about app updates</string>
@@ -298,15 +224,6 @@
     <string name="generating_public_link">Generating public link</string>
     <string name="public_link">Public link</string>
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
-    <string name="chunk_size_hint">Click to set chunk size (default 5 MB)</string>
-    <string name="info_age_hint">Click to set cache expiry time (default 6 h)</string>
-    <string name="chunk_total_size_hint">Click to select cache size (default 10 GB)</string>
-    <string name="chunk_size">Chunk size</string>
-    <string name="selected_chunk_size">Chunk size: %1$s</string>
-    <string name="cache_expiry">Cache expiry time</string>
-    <string name="selected_cache_expiry">Cache expiry time: %1$s</string>
-    <string name="cache_size">Cache size</string>
-    <string name="selected_cache_size">Cache size: %1$s</string>
     <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
     <string name="pref_crash_report_summary">Help the devs by sending error and crash reports. See https://x0b.github.io/rcx-privacy. \nID: %1$s.</string>
     <string name="pref_send_test_report_title">Send Test Report</string>
@@ -334,7 +251,6 @@
     <string name="password_numbers_checkbox">Numbers</string>
     <string name="password_special_chars_checkbox">Special characters</string>
     <string name="password_refresh_content_description">Refresh button</string>
-    <string name="show_passwords">Show passwords</string>
     <string name="wrap_filenames">Wrap filenames</string>
     <string name="error_retrieving_remote">Error retrieving remote %1$s</string>
     <string name="dialog_go_to_title">Go to</string>
@@ -344,7 +260,6 @@
     <string name="sftp_root">root</string>
     <string name="pref_key_go_to_default_set" translatable="false">pref_key_go_to_default_set</string>
     <string name="pref_key_start_at_root" translatable="false">pref_key_start_at_root</string>
-    <string name="drive_scope_title">Google Drive Scope</string>
     <string name="menu_select_storage">Storage</string>
     <string name="select_storage">Select Storage</string>
     <string name="empty_trash_confirmation">Are you sure you want to empty the trash?</string>
@@ -572,8 +487,6 @@
     <string name="intro_manage_external_storage_granted">File access permission granted!</string>
     <string name="intro_manage_external_storage_failed">File access permission not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
-    <string name="s3_spinner_prompt">S3 service provider</string>
-    <string name="s3_spinner_wrong_selection">You need to select a proper provider</string>
     <string name="use_md5checksum">Use md5 checksum</string>
     <string name="task_hint_wifi_ignore_defaults">If enabled, this setting overrides the global setting to only transfer files over Wi-Fi</string>
     <string name="task_hint_md5checksum">This will use the checksum instead of filesize. May take longer or use more battery.</string>
@@ -600,7 +513,7 @@
     <string name="save_trigger_button_description">Save Trigger</string>
     <string name="trigger_save_notitle">You need to set a title</string>
     <string name="intro_notifications_title">Get Notified!</string>
-    <string name="intro_notifications_description">We need to show you notifications when we sync your files, so please grant us access to post notifications. We wont spam you!</string>
+    <string name="intro_notifications_description">We want to show you notifications when we sync your files, so please grant us access to post notifications. We wont spam you!</string>
     <string name="error_getting_config">We could not load your configuration!</string>
     <string name="notification_reports">Create Reports for Syncs. Replaces singular notifications with a unified one.</string>
     <string name="back">Back</string>

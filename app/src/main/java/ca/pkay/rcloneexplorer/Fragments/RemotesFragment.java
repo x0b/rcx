@@ -274,41 +274,36 @@ public class RemotesFragment extends Fragment implements RemotesRecyclerViewAdap
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.getMenuInflater().inflate(R.menu.remote_options, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.action_remote_properties:
-                    showRemotePropertiesDialog(remoteItem);
-                    break;
-                case R.id.action_edit_remote:
-                    Intent intent = new Intent(context, RemoteConfig.class);
-                    intent.putExtra(CONFIG_EDIT_TARGET, remoteItem.getName());
-                    startActivityForResult(intent, CONFIG_EDIT_CODE);
-                    break;
-                case R.id.action_delete:
-                    deleteRemote(remoteItem);
-                    break;
-                case R.id.action_remote_rename:
-                    renameRemote(remoteItem);
-                    break;
-                case R.id.action_pin:
-                    if (remoteItem.isPinned()) {
-                        unPinRemote(remoteItem);
-                    } else {
-                        pinRemote(remoteItem);
-                    }
-                    break;
-                case R.id.action_favorite:
-                    if (remoteItem.isDrawerPinned()) {
-                        unpinFromDrawer(remoteItem);
-                    } else {
-                        pinToDrawer(remoteItem);
-                    }
-                    break;
-                case R.id.action_add_to_home_screen:
-                    AppShortcutsHelper.addRemoteToHomeScreen(context, remoteItem);
-                    break;
-                default:
-                    return false;
+            int itemID = item.getItemId();
+
+            if(itemID == R.id.action_remote_properties) {
+                showRemotePropertiesDialog(remoteItem);
+            } else if (itemID == R.id.action_edit_remote) {
+                Intent intent = new Intent(context, RemoteConfig.class);
+                intent.putExtra(CONFIG_EDIT_TARGET, remoteItem.getName());
+                startActivityForResult(intent, CONFIG_EDIT_CODE);
+            } else if (itemID == R.id.action_delete) {
+                deleteRemote(remoteItem);
+            } else if (itemID == R.id.action_remote_rename) {
+                renameRemote(remoteItem);
+            } else if (itemID == R.id.action_pin) {
+                if (remoteItem.isPinned()) {
+                    unPinRemote(remoteItem);
+                } else {
+                    pinRemote(remoteItem);
+                }
+            } else if (itemID == R.id.action_favorite) {
+                if (remoteItem.isDrawerPinned()) {
+                    unpinFromDrawer(remoteItem);
+                } else {
+                    pinToDrawer(remoteItem);
+                }
+            } else if (itemID == R.id.action_add_to_home_screen) {
+                AppShortcutsHelper.addRemoteToHomeScreen(context, remoteItem);
+            } else {
+                return false;
             }
+
             return true;
         });
         popupMenu.show();
