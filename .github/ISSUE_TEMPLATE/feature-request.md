@@ -1,6 +1,10 @@
 ---
 name: Feature request
 about: Suggest a new feature or enhancement for extRact
+title: ''
+labels: ''
+assignees: ''
+
 ---
 
 ---
