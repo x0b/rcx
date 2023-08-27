@@ -19,6 +19,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -275,6 +276,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         } else if (requestCode == ONBOARDING_REQUEST) {
+            startRemotesFragment();
             RefreshLocalAliases refresh = new RefreshLocalAliases();
             if(refresh.isRequired()) {
                 refresh.execute();
@@ -287,6 +289,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for (int i = 0; i < permissions.length; i++) {
             switch (permissions[i]) {
                 case Manifest.permission.WRITE_EXTERNAL_STORAGE:
