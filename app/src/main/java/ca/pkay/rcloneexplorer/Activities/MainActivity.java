@@ -492,6 +492,7 @@ public class MainActivity extends AppCompatActivity
         if (!isFinishing()) {
             fragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commitAllowingStateLoss();
         }
+        navigationView.setCheckedItem(R.id.nav_remotes);
     }
 
     private void warnUserAboutOverwritingConfiguration() {
