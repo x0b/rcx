@@ -277,10 +277,6 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (requestCode == ONBOARDING_REQUEST) {
             startRemotesFragment();
-            RefreshLocalAliases refresh = new RefreshLocalAliases();
-            if(refresh.isRequired()) {
-                refresh.execute();
-            }
         } else if (requestCode == FileExplorerFragment.STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(this, StreamingService.class);
             context.stopService(serveIntent);
@@ -958,6 +954,10 @@ public class MainActivity extends AppCompatActivity
             AppShortcutsHelper.removeAllAppShortcuts(context);
             AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
             pinRemotesToDrawer();
+
+            if (fragment instanceof RemotesFragment) {
+                startRemotesFragment();
+            }
         }
     }
 
@@ -991,7 +991,6 @@ public class MainActivity extends AppCompatActivity
                 findViewById(R.id.locked_config).setVisibility(View.GONE);
                 AppShortcutsHelper.removeAllAppShortcuts(context);
                 AppShortcutsHelper.populateAppShortcuts(context, rclone.getRemotes());
-                startRemotesFragment();
             }
         }
     }
