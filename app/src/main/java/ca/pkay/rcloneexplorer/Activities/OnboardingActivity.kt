@@ -22,6 +22,7 @@ import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
 import es.dmoral.toasty.Toasty
 
+
 class OnboardingActivity : AppIntro2() {
 
     companion object {
@@ -95,7 +96,6 @@ class OnboardingActivity : AppIntro2() {
 
     override fun onPageSelected(position: Int) {
         isStorageSlide = position == 2
-        Log.e(TAG, "is storage: $isStorageSlide, $position")
     }
 
     override fun onCanRequestNextPage(): Boolean {
@@ -128,17 +128,24 @@ class OnboardingActivity : AppIntro2() {
         finish()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        handleStorageRequestResult(requestCode)
+
+    }
+
+    fun handleStorageRequestResult(requestCode: Int) {
         if (requestCode == REQ_ALL_FILES_ACCESS) {
             if(checkExternalStorageManagerPermission()){
                 Toasty.success(this, getString(R.string.intro_manage_external_storage_granted), Toast.LENGTH_SHORT, true).show()
+                goToNextSlide()
             } else {
                 Toasty.info(this, getString(R.string.intro_manage_external_storage_failed), Toast.LENGTH_LONG, true).show()
             }
             storageRequested = true
         }
     }
+
 
     private fun tryGrantingAllStorageAccess() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -163,7 +170,7 @@ class OnboardingActivity : AppIntro2() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager()
         } else {
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         }
     }
 }
