@@ -46,6 +46,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var rclone: Rclone? = null
 
     private var mFormView: ViewGroup? = null
+    private var mTitleLabel: TextView? = null
     private var mAuthView: View? = null
     private var mBackButton: Button? = null
     private var mCancelAuthButton: Button? = null
@@ -87,6 +88,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     ): View? {
         val view = inflater.inflate(R.layout.remote_config_form, container, false)
         mFormView = view.findViewById(R.id.form_content)
+        mTitleLabel = view.findViewById(R.id.labelTitle)
         mAuthView = view.findViewById(R.id.auth_screen)
 
         mRemoteName = view.findViewById(R.id.remote_name)
@@ -103,6 +105,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             (mFinishButton as Button).text = getString(R.string.next)
         }
 
+        (mTitleLabel as TextView).text = getText(R.string.remote_properties_remote_name)
         setUpForm()
         mBackButton?.setOnClickListener {
             cancelCurrentStep()
