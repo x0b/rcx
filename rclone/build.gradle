@@ -26,6 +26,7 @@ ext {
     NDK_VERSION = project.properties['de.felixnuesse.extract.ndkVersion']
     NDK_TOOLCHAIN_VERSION = project.properties['de.felixnuesse.extract.ndkToolchainVersion']
     RCLONE_VERSION = project.properties['de.felixnuesse.extract.rCloneVersion']
+    GO_REQ_VERSION = project.properties['de.felixnuesse.extract.goVersion']
     RCLONE_MODULE = 'github.com/rclone/rclone'
     RCLONE_CUSTOM_VERSION_SUFFIX = '-extract'
 
@@ -192,6 +193,20 @@ task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
 
     workingDir CACHE_PATH
     environment 'GOPATH', GOPATH
+
+    def goVersionOutput = new ByteArrayOutputStream()
+    exec{
+        commandLine 'go', 'version'
+        standardOutput = goVersionOutput;
+    }
+
+    if (goVersionOutput.toString().contains(GO_REQ_VERSION)) {
+        println "You are running the required go version."
+    } else {
+        logger.error("The requred go version is: ${GO_REQ_VERSION}")
+        logger.error( "You are running: ${goVersionOutput}")
+    }
+
     commandLine 'go', 'get', '-v', '-d', "${RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
 
