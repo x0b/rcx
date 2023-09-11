@@ -78,7 +78,7 @@
     <color name="iconTint">@color/white</color>
 
 
-    <color name="dividerColor">@color/md_theme_light_secondary</color>
+    <color name="dividerColor">@color/md_theme_light_secondaryContainer</color>
     <color name="fabOverlayColor">@color/md_theme_light_secondary</color>
 
 </resources>
