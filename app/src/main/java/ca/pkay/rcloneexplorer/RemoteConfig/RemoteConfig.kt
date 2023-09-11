@@ -118,7 +118,7 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
             return
         }
         mFragment = when (provider.name) {
-            "box", "dropbox", "pcloud", "yandex", "drive", "google photos" -> DynamicRemoteConfigFragment(
+            "box", "dropbox", "pcloud", "yandex", "drive", "google photos", "onedrive" -> DynamicRemoteConfigFragment(
                 provider.name,
                 true
             )
