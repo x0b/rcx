@@ -273,6 +273,9 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         if(!mOptionMap.containsKey(option.name)) {
             // then set it to true if it is enabled by default
             when (view::class.java) {
+                AutoCompleteTextView::class.java -> {
+                    (view as AutoCompleteTextView).setText(option.default)
+                }
                 TextInputEditText::class.java -> {
                     (view as TextInputEditText).setText(option.default)
                 }
@@ -288,6 +291,9 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         } else {
             //otherwise, set it to what it was.
             when (view::class.java) {
+                AutoCompleteTextView::class.java -> {
+                    (view as AutoCompleteTextView).setText(mOptionMap[option.name], false)
+                }
                 TextInputEditText::class.java -> {
                     (view as TextInputEditText).setText(mOptionMap[option.name])
                 }
@@ -326,6 +332,10 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         input.isEnabled = false
 
         textinput.addView(input)
+
+        updateValue(input, option)
+
+        setTextInputListener(input, option.name)
         layout.addView(textinput)
         return input
     }
