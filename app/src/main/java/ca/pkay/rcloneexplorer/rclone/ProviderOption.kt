@@ -29,7 +29,7 @@ class ProviderOption {
             item.name = data.getString("Name")
             item.help = data.getString("Help")
             item.provider = data.getString("Type")
-            item.default = data.getString("Type")
+            item.default = data.getString("Default")
             //item.value = data.get("Value")
             item.shortOpt = data.getString("ShortOpt")
             item.hide = data.getInt("Hide")

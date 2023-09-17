@@ -476,7 +476,16 @@ public class Rclone {
 
     @Nullable
     public Process configCreate(List<String> options) {
-        String[] command = createCommand("config", "create");
+        return config("create" , options);
+    }
+
+    @Nullable
+    public Process configUpdate(List<String> options) {
+        return config("create" , options);
+    }
+    
+    public Process config(String task, List<String> options) {
+        String[] command = createCommand("config", task);
         String[] opt = options.toArray(new String[0]);
         String[] commandWithOptions = new String[command.length + options.size()];
 

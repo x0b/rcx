@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.RemoteConfig;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
@@ -32,9 +33,19 @@ public class RemoteConfigHelper {
         return remotePath;
     }
 
+    public static void updateAndWait(Context context, ArrayList<String> options) {
+        Rclone rclone = new Rclone(context);
+        Process process = rclone.configUpdate(options);
+        rcloneRun(process, context, options);
+    }
+
     public static void setupAndWait(Context context, ArrayList<String> options) {
         Rclone rclone = new Rclone(context);
         Process process = rclone.configCreate(options);
+        rcloneRun(process, context, options);
+    }
+
+    private static void rcloneRun(Process process, Context context, ArrayList<String> options) {
         if (null == process) {
             Toasty.error(context, context.getString(R.string.error_creating_remote), Toast.LENGTH_SHORT, true).show();
             return;

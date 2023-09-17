@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemoteConfigListItemAdapter
+import ca.pkay.rcloneexplorer.RemoteConfig.ProviderListFragment.SelectionChangedListener
 import ca.pkay.rcloneexplorer.rclone.Provider
+
 
 class ProviderListFragment(private val mPreselection: String?) : Fragment() {
     interface ProviderSelectedListener {
@@ -24,7 +26,8 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
 
     private var mRclone: Rclone? = null
 
-    private var mProviders: ArrayList<Provider> = arrayListOf()
+    private var mProviders: List<Provider> = listOf()
+    private var mProviderFilter = ""
     private var mSelectedProvider: Provider? = null
     private var mProviderSelectedListener: ProviderSelectedListener? = null
 
@@ -47,7 +50,7 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mRclone = Rclone(this.context)
-        mProviders = mRclone?.providers ?: arrayListOf()
+        mProviders = mRclone?.providers ?: listOf()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -76,8 +79,16 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
             mSelectedProvider?.let { it1 -> mProviderSelectedListener!!.onProviderSelected(it1) }
         }
 
+        var filteredProvider = mProviders
+        if(mProviderFilter.isNotBlank()) {
+            filteredProvider = filteredProvider.filter {
+                it.name.contains(mProviderFilter.lowercase()) ||
+                        it.description.contains(mProviderFilter.lowercase())
+            }
+        }
+
         val customAdapter = RemoteConfigListItemAdapter(
-            mProviders,
+            ArrayList(filteredProvider.sortedWith(compareBy { it.name })),
             requireContext(),
             mSelectionChangeListener,
             mPreselection

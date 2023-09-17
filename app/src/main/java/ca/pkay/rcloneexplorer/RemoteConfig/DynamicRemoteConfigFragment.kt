@@ -40,8 +40,9 @@ import com.google.android.material.textfield.TextInputLayout
 import java.util.Locale
 
 
-class DynamicRemoteConfigFragment(private val mProviderTitle: String, private val optionMap: HashMap<String, String>?, private var mUseOauth: Boolean) : Fragment() {
+class DynamicRemoteConfigFragment(private val mProviderTitle: String, private val optionMap: HashMap<String, String>?) : Fragment() {
 
+    private val TAG = "DynamicRemoteConfigFragment"
     private lateinit var mContext: Context
     private var rclone: Rclone? = null
 
@@ -57,16 +58,27 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var mIsEditTask = false
     private var mOptionMap = hashMapOf<String, String>()
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
+    private var mUseOauth = false
 
-    constructor(providerTitle: String) : this(providerTitle, null, false)
-    constructor(providerTitle: String, useOauth: Boolean) : this(providerTitle, null, useOauth)
-    constructor(providerTitle: String, optionMap: HashMap<String, String>) : this(providerTitle, optionMap, false)
+    constructor(providerTitle: String) : this(providerTitle, null)
 
     init {
         if(optionMap != null) {
             // we assume that if the option-map is passed, we are editing.
             this.mIsEditTask = true
             mOptionMap = optionMap
+        }
+
+        this.mUseOauth = when (mProvider?.name) {
+            "box",
+            "dropbox",
+            "pcloud",
+            "yandex",
+            "drive",
+            "google photos",
+            "onedrive"
+            -> true
+            else -> false
         }
     }
 
@@ -193,45 +205,40 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             textViewDescription.text = it.help
             layout.addView(textViewDescription)
 
+
             when (it.type) {
                 "string" -> {
                     if(it.isPassword) {
                         val input = getAttachedEditText(it.name, layout)
                         input.inputType =
                             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-
                         //input.setText(mOptionMap[it.name])
+                        updateValue(input, it)
                         setTextInputListener(input, it.name)
 
                     } else if(it.examples.size > 0 && it.type != "CommaSepList") {
                         createSpinnerFromExample(it, it.name ,layout)
                     } else {
                         val input = getAttachedEditText(it.name, layout)
-                        input.setText(mOptionMap[it.name])
+                        //input.setText(mOptionMap[it.name])
+                        updateValue(input, it)
                         setTextInputListener(input, it.name)
                     }
                 }
                 "bool" -> {
                     val input = CheckBox(mContext)
                     input.text = it.name
+                    updateValue(input, it)
+
+                    // only now add listener, so to not store default values if they have not been changed.
                     setCheckboxListener(input, it.name)
-
-                    if(it.default.lowercase(Locale.ROOT).toBoolean()){
-                        input.isChecked = true
-                    }
-
-                    if(mOptionMap.containsKey(it.name)) {
-                        input.isChecked  = mOptionMap[it.name].toBoolean()
-                    }
 
                     layout.addView(input)
                 }
                 "int" -> {
                     val input = getAttachedEditText(it.name, layout)
                     input.inputType = InputType.TYPE_CLASS_NUMBER
-
-                    Integer.getInteger(mOptionMap[it.name].toString())
-                        ?.let { it1 -> input.setText(it1) }
+                    updateValue(input, it)
                     setTextInputListener(input, it.name)
                 }
                 "SizeSuffix" -> {
@@ -242,14 +249,15 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
                 // those are usually advanced options and users are likely to know whats valid.
                 "CommaSepList", "Duration", "MultiEncoder"  -> {
                     val input = getAttachedEditText(it.name, layout)
-                    input.setText(mOptionMap[it.name])
+                    //input.setText(mOptionMap[it.name])
+                    updateValue(input, it)
                     setTextInputListener(input, it.name)
                 }
                 else -> {
                     Log.e(this::class.java.simpleName, "Unknown Provideroption: ${it.type}")
                     val unknownType = getAttachedEditText(it.name, layout)
                     //unknownType.hint = it.type
-                    unknownType.setText(mOptionMap[it.name])
+                    updateValue(unknownType, it)
                     setTextInputListener(unknownType, it.name)
                 }
             }
@@ -257,6 +265,39 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             val cardContainer = getCard()
             cardContainer.addView(layout)
             mFormView?.addView(cardContainer)
+        }
+    }
+    
+    private fun updateValue(view: View, option: ProviderOption) {
+        // check if this value was never set
+        if(!mOptionMap.containsKey(option.name)) {
+            // then set it to true if it is enabled by default
+            when (view::class.java) {
+                TextInputEditText::class.java -> {
+                    (view as TextInputEditText).setText(option.default)
+                }
+                CheckBox::class.java -> {
+                    if(option.default.lowercase(Locale.ROOT).toBoolean()){
+                        (view as CheckBox).isChecked = true
+                    }
+                }
+                else -> {
+                    Log.e(TAG, "Input Class not supported! ${view::class.java}")
+                }
+            }
+        } else {
+            //otherwise, set it to what it was.
+            when (view::class.java) {
+                TextInputEditText::class.java -> {
+                    (view as TextInputEditText).setText(mOptionMap[option.name])
+                }
+                CheckBox::class.java -> {
+                    (view as CheckBox).isChecked = mOptionMap[option.name].toBoolean()
+                }
+                else -> {
+                    Log.e(TAG, "Input Class not supported! ${view::class.java}")
+                }
+            }
         }
     }
 
@@ -451,10 +492,22 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         options.add(name)
         options.add(mProviderTitle)
 
+
+        if(mIsEditTask) {
+            if(mUseOauth) {
+                options.add("config_refresh_token")
+                options.add("false")
+            }
+        }
         for ((key, value) in mOptionMap) {
             Log.e("TAG", "key: $key value: $value")
             options.add(key)
             options.add(value)
+        }
+
+        if(mIsEditTask) {
+            RemoteConfigHelper.updateAndWait(context, options)
+            requireActivity().finish()
         }
 
         if(mUseOauth){
