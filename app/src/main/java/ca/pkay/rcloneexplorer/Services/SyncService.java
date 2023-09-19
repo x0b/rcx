@@ -25,8 +25,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -76,8 +79,7 @@ public class SyncService extends IntentService {
     Process currentProcess;
     SyncServiceNotifications notificationManager = new SyncServiceNotifications(this);
 
-    private Queue<InternalTaskItem> mTaskQueue = new PriorityQueue();
-    private boolean mTaskRecieved = false;
+    private static ArrayList<Long> mConcurrentRunList = new ArrayList<>();
 
     public SyncService() {
         super("ca.pkay.rcexplorer.SYNC_SERCVICE");
@@ -118,17 +120,31 @@ public class SyncService extends IntentService {
             return;
         }
 
-        Log.e(TAG, "onHandleIntent "+intent.getLongExtra(EXTRA_TASK_ID, -1));
-
         startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification("SyncService").build());
-
-        handleTask(handleTaskStartIntent(intent));
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
-        stopForeground(true);
+        handleTaskNonblocking(handleTaskStartIntent(intent));
 
     }
+
+    private void handleTaskNonblocking(InternalTaskItem internalTask) {
+        if(mConcurrentRunList.contains(internalTask.id)){
+            FLog.e(TAG, "No identical runs!");
+            SyncLog.error(
+                    this,
+                    getString(R.string.operation_no_identical_title),
+                    getString(R.string.operation_no_identical, internalTask.title)
+            );
+            notificationManager.showFailedNotificationOrReport(
+                    getString(R.string.operation_no_identical_title),
+                    getString(R.string.operation_no_identical, internalTask.title),
+                    (int)System.currentTimeMillis(),
+                    internalTask.id);
+            return;
+        }
+        mConcurrentRunList.add(internalTask.id);
+
+        new Thread(() -> handleTask(internalTask)).start();
+    }
+
 
     private void handleTask(InternalTaskItem internalTask) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -139,6 +155,8 @@ public class SyncService extends IntentService {
         if(internalTask.title.equals("")){
             title = internalTask.remotePath;
         }
+
+        int notificationID = (new Random()).nextInt();
 
         StatusObject statusObject = new StatusObject(this);
         Connection connection = WifiConnectivitiyUtil.Companion.dataConnection(this.getApplicationContext());
@@ -180,7 +198,8 @@ public class SyncService extends IntentService {
                                         title,
                                         statusObject.getNotificationContent(),
                                         statusObject.getNotificationBigText(),
-                                        statusObject.getNotificationPercent()
+                                        statusObject.getNotificationPercent(),
+                                        notificationID
                                 );
 
                             } catch (JSONException e) {
@@ -250,6 +269,16 @@ public class SyncService extends IntentService {
                 SyncLog.info(this, getString(R.string.operation_success, title), message);
                 notificationManager.showSuccessNotificationOrReport(title, message, notificationId, internalTask.id);
             }
+        }
+        mConcurrentRunList.remove(internalTask.id);
+        discardOfServiceIfRequired();
+    }
+
+    private void discardOfServiceIfRequired() {
+        if(mConcurrentRunList.isEmpty()){
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
+            stopForeground(true);
         }
     }
 
@@ -337,7 +366,7 @@ public class SyncService extends IntentService {
      * and because they use different methods to do stuff, we need to unify it here.
      */
     private static class InternalTaskItem {
-        public long id;
+        public Long id;
         public RemoteItem remoteItem;
         public String remotePath;
         public String localPath;

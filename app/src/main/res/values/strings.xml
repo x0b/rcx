@@ -520,4 +520,6 @@
     <string name="save">Save</string>
     <string name="dynamic_config_suffixselector_suffix_hint">Size Suffix</string>
     <string name="dynamic_config_suffixselector_value_hint">Value</string>
+    <string name="operation_no_identical_title">Sync aborted</string>
+    <string name="operation_no_identical">You cannot run the same task in parallel: %s</string>
 </resources>

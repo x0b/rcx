@@ -150,11 +150,29 @@ class SyncServiceNotifications(var mContext: Context) {
             .setPriority(NotificationCompat.PRIORITY_LOW)
     }
 
+
+    @Deprecated("Use with specific notification id")
     fun updateSyncNotification(
         title: String?,
         content: String?,
         bigTextArray: ArrayList<String?>?,
         percent: Int
+    ) {
+        updateSyncNotification(
+            title,
+            content,
+            bigTextArray,
+            percent,
+            PERSISTENT_NOTIFICATION_ID_FOR_SYNC
+        )
+    }
+
+    fun updateSyncNotification(
+        title: String?,
+        content: String?,
+        bigTextArray: ArrayList<String?>?,
+        percent: Int,
+        notificationId: Int
     ) {
         if(content?.isBlank() == true || content == null){
             return
@@ -170,6 +188,6 @@ class SyncServiceNotifications(var mContext: Context) {
             CHANNEL_ID
         )
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
-        notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID_FOR_SYNC, builder!!.build())
+        notificationManagerCompat.notify(notificationId, builder!!.build())
     }
 }
