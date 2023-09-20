@@ -44,11 +44,19 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher_debug",
+                    appIconRound: "@mipmap/ic_launcher_debug_round"
+            ]
         }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [
+                    appIcon: "@mipmap/ic_launcher",
+                    appIconRound: "@mipmap/ic_launcher_round"
+            ]
         }
     }
 
@@ -103,6 +111,15 @@ android {
         jniLibs {
             keepDebugSymbols += ['**/*.so']
             useLegacyPackaging true
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
+            resValue("string", "app_name", "RS Debug")
+            resValue("string", "app_short_name", "RS Debug")
         }
     }
 
