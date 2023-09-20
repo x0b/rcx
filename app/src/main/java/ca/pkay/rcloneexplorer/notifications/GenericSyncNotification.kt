@@ -65,4 +65,14 @@ class GenericSyncNotification(var mContext: Context) {
             notificationManager?.createNotificationChannel(channel)
         }
     }
+
+    companion object {
+        public fun  getFlags(): Int {
+            var flags = 0
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                flags = FLAG_IMMUTABLE
+            }
+            return flags
+        }
+    }
 }

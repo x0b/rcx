@@ -1,15 +1,12 @@
 package ca.pkay.rcloneexplorer.notifications
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.BroadcastReceivers.UploadCancelAction
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
+import ca.pkay.rcloneexplorer.Services.UploadService
 
 class UploadNotifications(var mContext: Context) {
 
@@ -38,7 +35,7 @@ class UploadNotifications(var mContext: Context) {
             R.drawable.ic_twotone_cloud_upload_24,
             bigTextArray!!,
             0,
-            SyncService::class.java,
+            UploadService::class.java,
             UploadCancelAction::class.java,
             CHANNEL_ID
         )
@@ -63,8 +60,8 @@ class UploadNotifications(var mContext: Context) {
             R.drawable.ic_twotone_cloud_upload_24,
             bigTextArray!!,
             percent,
-            SyncService::class.java,
-            SyncCancelAction::class.java,
+            UploadService::class.java,
+            UploadCancelAction::class.java,
             CHANNEL_ID
         )
         builder?.let { notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID, it.build()) }

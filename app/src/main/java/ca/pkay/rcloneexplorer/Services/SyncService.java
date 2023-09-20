@@ -25,10 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Random;
 
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
@@ -52,7 +49,8 @@ public class SyncService extends IntentService {
 
     //those Extras do not follow the above schema, because they are exposed to external applications
     //That means shorter values make it easier to use. There is no other technical reason
-    public static final String TASK_ACTION= "START_TASK";
+    public static final String TASK_START_ACTION = "START_TASK";
+    public static final String TASK_CANCEL_ACTION = "CANCEL_TASK";
     public static final String EXTRA_TASK_ID= "task";
     public static final String EXTRA_TASK_SILENT= "notification";
 
@@ -76,10 +74,9 @@ public class SyncService extends IntentService {
     private Rclone rclone;
     private Log2File log2File;
     private boolean connectivityChanged;
-    Process currentProcess;
     SyncServiceNotifications notificationManager = new SyncServiceNotifications(this);
 
-    private static ArrayList<Long> mConcurrentRunList = new ArrayList<>();
+    private static HashMap<Long, Process> mCurrentProcesses = new HashMap();
 
     public SyncService() {
         super("ca.pkay.rcexplorer.SYNC_SERCVICE");
@@ -119,14 +116,30 @@ public class SyncService extends IntentService {
         if (intent == null) {
             return;
         }
+        Log.e(TAG, "With Intent: "+intent.getAction());
 
-        startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC, notificationManager.getPersistentNotification("SyncService").build());
-        handleTaskNonblocking(handleTaskStartIntent(intent));
+        if(intent.getAction().equals(TASK_CANCEL_ACTION)) {
 
+            long taskId = intent.getLongExtra(EXTRA_TASK_ID, -1);
+            Log.e(TAG, "With Intent: "+taskId);
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            notificationManagerCompat.cancel((int) taskId);
+            discardOfServiceIfRequired();
+        }
+
+        if(intent.getAction().equals(TASK_START_ACTION)) {
+            startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC,
+                    notificationManager.getPersistentNotification("SyncService").build());
+
+            InternalTaskItem task = handleTaskStartIntent(intent);
+            notificationManager.setCancelId(task.id);
+            handleTaskNonblocking(task);
+        }
     }
 
     private void handleTaskNonblocking(InternalTaskItem internalTask) {
-        if(mConcurrentRunList.contains(internalTask.id)){
+        if(mCurrentProcesses.get(internalTask.id) != null){
             FLog.e(TAG, "No identical runs!");
             SyncLog.error(
                     this,
@@ -140,7 +153,6 @@ public class SyncService extends IntentService {
                     internalTask.id);
             return;
         }
-        mConcurrentRunList.add(internalTask.id);
 
         new Thread(() -> handleTask(internalTask)).start();
     }
@@ -161,16 +173,18 @@ public class SyncService extends IntentService {
         StatusObject statusObject = new StatusObject(this);
         Connection connection = WifiConnectivitiyUtil.Companion.dataConnection(this.getApplicationContext());
 
+        Process rcloneProcess = null;
 
         if (internalTask.transferOnWiFiOnly && connection == Connection.METERED) {
             failureReason = FAILURE_REASON.NO_UNMETERED;
         } else if (connection == Connection.DISCONNECTED || connection == Connection.NOT_AVAILABLE) {
             failureReason = FAILURE_REASON.NO_CONNECTION;
         } else {
-            currentProcess = rclone.sync(internalTask.remoteItem, internalTask.remotePath, internalTask.localPath, internalTask.syncDirection, internalTask.md5sum);
-            if (currentProcess != null) {
+            rcloneProcess = rclone.sync(internalTask.remoteItem, internalTask.remotePath, internalTask.localPath, internalTask.syncDirection, internalTask.md5sum);
+            mCurrentProcesses.put(internalTask.id,  rcloneProcess);
+            if (rcloneProcess != null) {
                 try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(currentProcess.getErrorStream()));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(rcloneProcess.getErrorStream()));
                     String line;
                     while ((line = reader.readLine()) != null) {
                         boolean isJson = false;
@@ -218,7 +232,7 @@ public class SyncService extends IntentService {
                 }
 
                 try {
-                    currentProcess.waitFor();
+                    rcloneProcess.waitFor();
                 } catch (InterruptedException e) {
                     FLog.e(TAG, "onHandleIntent: error waiting for process", e);
                 }
@@ -229,7 +243,7 @@ public class SyncService extends IntentService {
         int notificationId = (int)System.currentTimeMillis();
 
         if(internalTask.silentRun){
-            if (internalTask.transferOnWiFiOnly && connectivityChanged || (currentProcess == null || currentProcess.exitValue() != 0)) {
+            if (internalTask.transferOnWiFiOnly && connectivityChanged || (rcloneProcess == null || rcloneProcess.exitValue() != 0)) {
                 String content = getString(R.string.operation_failed_unknown, title);
 
                 switch (failureReason) {
@@ -270,14 +284,12 @@ public class SyncService extends IntentService {
                 notificationManager.showSuccessNotificationOrReport(title, message, notificationId, internalTask.id);
             }
         }
-        mConcurrentRunList.remove(internalTask.id);
+        mCurrentProcesses.remove(internalTask.id);
         discardOfServiceIfRequired();
     }
 
     private void discardOfServiceIfRequired() {
-        if(mConcurrentRunList.isEmpty()){
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-            notificationManagerCompat.cancel(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC);
+        if(mCurrentProcesses.isEmpty()){
             stopForeground(true);
         }
     }
@@ -288,7 +300,7 @@ public class SyncService extends IntentService {
             // equals might fail otherwise when internal tasks send an intent without action.
             action = "";
         }
-        if (action.equals(TASK_ACTION)) {
+        if (action.equals(TASK_START_ACTION)) {
             DatabaseHandler db = new DatabaseHandler(this);
             for (Task task: db.getAllTasks()){
                 if(task.getId() == intent.getLongExtra(EXTRA_TASK_ID, -1)){
@@ -322,7 +334,7 @@ public class SyncService extends IntentService {
 
     public static Intent createInternalStartIntent(Context context, long id) {
         Intent i = new Intent(context, SyncService.class);
-        i.setAction(TASK_ACTION);
+        i.setAction(TASK_START_ACTION);
         i.putExtra(EXTRA_TASK_ID, id);
         return i;
     }
@@ -344,8 +356,8 @@ public class SyncService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (currentProcess != null) {
-            currentProcess.destroy();
+        for (Process p : mCurrentProcesses.values()) {
+            p.destroy();
         }
 
         unregisterReceiver(connectivityChangeBroadcastReceiver);

@@ -15,9 +15,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import ca.pkay.rcloneexplorer.BroadcastReceivers.ClearReportBroadcastReciever
-import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.R
-import ca.pkay.rcloneexplorer.Services.SyncService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 

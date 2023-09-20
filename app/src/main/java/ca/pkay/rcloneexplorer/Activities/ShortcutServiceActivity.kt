@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
-import ca.pkay.rcloneexplorer.Services.SyncService.TASK_ACTION
+import ca.pkay.rcloneexplorer.Services.SyncService.TASK_START_ACTION
 
 class ShortcutServiceActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class ShortcutServiceActivity : AppCompatActivity() {
 
         Log.e(TAG, "Recieved start signal!")
 
-        if(intent.action == TASK_ACTION) {
+        if(intent.action == TASK_START_ACTION) {
             Log.e(TAG, "Recieved valid intent.")
             val id = intent.extras?.getLong(SyncService.EXTRA_TASK_ID)
             val i = SyncService.createInternalStartIntent(this, id?:0)

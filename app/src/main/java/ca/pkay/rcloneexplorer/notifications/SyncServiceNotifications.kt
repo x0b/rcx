@@ -2,6 +2,7 @@ package ca.pkay.rcloneexplorer.notifications
 
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -22,6 +23,7 @@ class SyncServiceNotifications(var mContext: Context) {
 
 
         const val PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162
+        const val CANCEL_ID_NOTSET = -1L
 
     }
 
@@ -30,6 +32,11 @@ class SyncServiceNotifications(var mContext: Context) {
     private val OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP"
     private val OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP"
 
+    private var mCancelId: Long = CANCEL_ID_NOTSET
+
+    public fun setCancelId(id: Long) {
+        mCancelId = id
+    }
 
     private fun useReports(): Boolean {
         val mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -64,13 +71,10 @@ class SyncServiceNotifications(var mContext: Context) {
         taskid: Long
     ) {
         val i = Intent(mContext, SyncService::class.java)
-        i.action = SyncService.TASK_ACTION
+        i.action = SyncService.TASK_START_ACTION
         i.putExtra(SyncService.EXTRA_TASK_ID, taskid)
-        var flags = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            flags = flags or FLAG_IMMUTABLE;
-        }
-        val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, flags)
+
+        val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, GenericSyncNotification.getFlags())
         val builder = NotificationCompat.Builder(mContext, CHANNEL_FAIL_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
             .setContentTitle(mContext.getString(R.string.operation_failed))
@@ -128,25 +132,15 @@ class SyncServiceNotifications(var mContext: Context) {
     }
     fun getPersistentNotification(title: String?): NotificationCompat.Builder {
 
-        var flags = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            flags = PendingIntent.FLAG_IMMUTABLE
-        }
+        var flags = GenericSyncNotification.getFlags()
+
         val foregroundIntent = Intent(mContext, SyncService::class.java)
         val pendingIntent =
             PendingIntent.getActivity(mContext, 0, foregroundIntent, flags)
-        val cancelIntent = Intent(mContext, SyncCancelAction::class.java)
-        val cancelPendingIntent =
-            PendingIntent.getBroadcast(mContext, 0, cancelIntent, flags)
         return NotificationCompat.Builder(mContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_rounded_cloud_sync_24)
             .setContentTitle(mContext.getString(R.string.syncing_service, title))
             .setContentIntent(pendingIntent)
-            .addAction(
-                R.drawable.ic_cancel_download,
-                mContext.getString(R.string.cancel),
-                cancelPendingIntent
-            )
             .setPriority(NotificationCompat.PRIORITY_LOW)
     }
 
@@ -187,6 +181,26 @@ class SyncServiceNotifications(var mContext: Context) {
             SyncCancelAction::class.java,
             CHANNEL_ID
         )
+
+        if(mCancelId != CANCEL_ID_NOTSET) {
+            val cancelIntent = Intent(mContext, SyncCancelAction::class.java)
+            cancelIntent.putExtra(SyncService.EXTRA_TASK_ID, mCancelId)
+            val cancelPendingIntent =
+                PendingIntent.getBroadcast(
+                    mContext,
+                    0,
+                    cancelIntent,
+                    (FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
+                )
+
+            builder?.clearActions()
+            builder?.addAction(
+                    R.drawable.ic_cancel_download,
+                    mContext.getString(R.string.cancel),
+                    cancelPendingIntent
+                )
+        }
+
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
         notificationManagerCompat.notify(notificationId, builder!!.build())
     }
