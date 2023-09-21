@@ -63,6 +63,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
     public static final int PREMIUMIZEME = 34;
 
     private String name;
+    @Deprecated
     private int type;
     private String typeReadable;
     private boolean isCrypt;
@@ -79,6 +80,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         this.type = getTypeFromString(type);
     }
 
+    @Deprecated
     public RemoteItem(String name, int type, String typeReadable) {
         this.name = name;
         this.typeReadable = typeReadable;
@@ -173,6 +175,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return name;
     }
 
+    @Deprecated
     public int getType() {
         return type;
     }
@@ -242,6 +245,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return this.isDrawerPinned;
     }
 
+    @Deprecated
     public boolean isRemoteType(int ...remotes) {
         boolean isSameType = false;
 
@@ -274,6 +278,7 @@ public class RemoteItem implements Comparable<RemoteItem>, Parcelable {
         return items;
     }
 
+    @Deprecated
     private int getTypeFromString(String type) {
         switch (type) {
             case SafConstants.SAF_REMOTE_NAME:
