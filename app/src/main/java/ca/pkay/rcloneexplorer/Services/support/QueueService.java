@@ -10,7 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 
-import androidx.annotation.Nullable
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
