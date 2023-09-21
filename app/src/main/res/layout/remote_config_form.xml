@@ -40,12 +40,13 @@
 
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/titleCardView"
+                    style="@style/SecondaryCardStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    style="@style/SecondaryCardStyle"
                     app:cardCornerRadius="@dimen/cardCornerRadius">
 
                     <LinearLayout
@@ -59,6 +60,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingBottom="@dimen/cardPadding"
+                            android:text="@string/remote_properties_remote_name"
                             android:textStyle="bold" />
 
                         <com.google.android.material.textfield.TextInputLayout

@@ -86,7 +86,7 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
         val searchbar = findViewById<SearchView>(R.id.search)
 
         searchbar.setOnCloseListener {
-            searchbar.visibility = View.GONE
+            toggleSearch(false)
             return@setOnCloseListener searchbar.isIconified
         }
 
@@ -95,28 +95,37 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
                 if(isProviderlist()) {
                     (getCurrentFragment() as ProviderListFragment).setSearchterm(newText)
                 }
+                if(isDynamicRemoteConfigFragment()) {
+                    (getCurrentFragment() as DynamicRemoteConfigFragment).setSearchterm(newText)
+                }
                 return true
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                if(isProviderlist()) {
-                    (getCurrentFragment() as ProviderListFragment).setSearchterm(query)
-                }
                 return true
             }
         })
         return true
     }
 
+    private fun toggleSearch(show: Boolean) {
+        val searchbar = findViewById<SearchView>(R.id.search)
+        if(show) {
+            searchbar.visibility = View.VISIBLE
+            searchbar.requestFocus()
+            searchbar.isFocusable = true
+            searchbar.isIconified = false
+            searchbar.requestFocusFromTouch()
+        } else {
+            searchbar.visibility = View.GONE
+            searchbar.isIconified = true
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.app_bar_search -> {
-                val searchbar = findViewById<SearchView>(R.id.search)
-                searchbar.visibility = View.VISIBLE
-                searchbar.requestFocus()
-                searchbar.isFocusable = true
-                searchbar.isIconified = false
-                searchbar.requestFocusFromTouch()
+                toggleSearch(true)
                 true
             }
 
@@ -143,6 +152,7 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
     }
 
     private fun handleBackAction() {
+        toggleSearch(false)
         if (mFragment is ProviderListFragment) {
             finish()
         } else if (mFragment is DynamicRemoteConfigFragment) {
@@ -166,6 +176,7 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
                 .show()
             return
         }
+        toggleSearch(false)
         mFragment = DynamicRemoteConfigFragment(provider.name)
         startConfig(provider)
     }
@@ -205,6 +216,13 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
         }
         return false
     }
+    private fun isDynamicRemoteConfigFragment(): Boolean {
+        if (mFragment is DynamicRemoteConfigFragment) {
+            return true
+        }
+        return false
+    }
+
 
     /**
      * This defauls to the provider list

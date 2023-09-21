@@ -30,6 +30,8 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.setPadding
 import androidx.core.view.size
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.Rclone.RCLONE_CONFIG_NAME_KEY
@@ -59,6 +61,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var mOptionMap = hashMapOf<String, String>()
     private var mAuthTask: AsyncTask<Void?, Void?, Boolean>? = null
     private var mUseOauth = false
+    private var mOptionFilter = ""
 
     constructor(providerTitle: String) : this(providerTitle, null)
 
@@ -117,7 +120,14 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             (mFinishButton as Button).text = getString(R.string.next)
         }
 
-        (mTitleLabel as TextView).text = getText(R.string.remote_properties_remote_name)
+        rclone = Rclone(this.context)
+        mProvider = rclone!!.getProvider(mProviderTitle)
+        if(mProvider == null) {
+            Log.e(this::class.java.simpleName, "Unknown Provider: $mProviderTitle")
+            Toast.makeText(this.mContext, R.string.dynamic_config_unknown_error, Toast.LENGTH_LONG).show()
+            requireActivity().finish()
+        }
+
         setUpForm()
         mBackButton?.setOnClickListener {
             cancelCurrentStep()
@@ -164,19 +174,25 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         }
     }
 
+    fun setSearchterm (term: String) {
+        mOptionFilter = term
+        Log.e(TAG, "Filter:: $term")
+        setUpForm()
+    }
+
     // Todo: required attribute is not honored (also apply to title!)
     // Todo: hidden attribute is not applied
     private fun setUpForm() {
-        rclone = Rclone(this.context)
-        mProvider = rclone!!.getProvider(mProviderTitle)
-        if(mProvider == null) {
-            Log.e(this::class.java.simpleName, "Unknown Provider: $mProviderTitle")
-            Toast.makeText(this.mContext, R.string.dynamic_config_unknown_error, Toast.LENGTH_LONG).show()
-            requireActivity().finish()
-        }
-
 
         mFormView?.let { it.removeViews(1, it.size-1) }
+
+
+        (mFormView?.findViewById(R.id.titleCardView) as CardView).visibility = View.VISIBLE
+        if(mOptionFilter.isNotBlank()) {
+            if(!getText(R.string.remote_properties_remote_name).contains(mOptionFilter)) {
+                (mFormView?.findViewById(R.id.titleCardView) as CardView).visibility = View.GONE
+            }
+        }
 
         if(mOptionMap.containsKey(RCLONE_CONFIG_NAME_KEY)) {
             mRemoteName?.setText(mOptionMap.getValue(RCLONE_CONFIG_NAME_KEY))
@@ -188,6 +204,12 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
 
             if(it.advanced && !mShowAdvanced ) {
                 return@forEach
+            }
+
+            if(mOptionFilter.isNotBlank()) {
+                if(!it.name.contains(mOptionFilter) and !it.help.contains(mOptionFilter)) {
+                    return@forEach
+                }
             }
 
             val layout = LinearLayout(mContext)

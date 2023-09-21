@@ -106,7 +106,7 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
 
     }
 
-    public fun setSearchterm (term: String) {
+    fun setSearchterm (term: String) {
         mProviderFilter = term
 
         if(mRootView != null) {
