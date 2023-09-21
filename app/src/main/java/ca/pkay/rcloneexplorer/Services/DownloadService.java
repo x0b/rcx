@@ -1,18 +1,10 @@
 package ca.pkay.rcloneexplorer.Services;
 
-import static ca.pkay.rcloneexplorer.notifications.DownloadNotifications.PERSISTENT_NOTIFICATION_ID;
 import static ca.pkay.rcloneexplorer.notifications.UploadNotifications.CHANNEL_NAME;
 
-import android.app.IntentService;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONException;
@@ -22,34 +14,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.Services.support.QueueItem;
+import ca.pkay.rcloneexplorer.Services.support.QueueService;
 import ca.pkay.rcloneexplorer.notifications.DownloadNotifications;
-import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.support.StatusObject;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncLog;
-import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
 
 
-public class DownloadService extends IntentService {
+public class DownloadService extends QueueService {
 
     private static final String TAG = "DownloadService";
     public static final String DOWNLOAD_ITEM_ARG = "ca.pkay.rcexplorer.download_service.arg1";
     public static final String DOWNLOAD_PATH_ARG = "ca.pkay.rcexplorer.download_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.download_service.arg3";
-
-    private boolean connectivityChanged;
-    private boolean transferOnWiFiOnly;
-    private Rclone rclone;
-    private Log2File log2File;
-    private Process currentProcess;
-    private DownloadNotifications mNotifications;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -59,53 +41,41 @@ public class DownloadService extends IntentService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        rclone = new Rclone(this);
-        log2File = new Log2File(this);
-
-        mNotifications = new DownloadNotifications(this);
-        (new GenericSyncNotification(this)).setNotificationChannel(
+    public void prepare() {
+        mNotifications = new DownloadNotifications(this.getApplicationContext());
+        setUpNotificationChannels(
                 DownloadNotifications.CHANNEL_ID,
                 CHANNEL_NAME,
-                R.string.download_service_notification_description
+                getString(R.string.download_service_notification_description)
         );
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
-
-        if (transferOnWiFiOnly) {
-            registerBroadcastReceivers();
-        }
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent == null) {
-            return;
-        }
+    public QueueItem unpackIntent(Intent intent) {
 
+        FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
+        String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
+        RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
-        if (transferOnWiFiOnly && !WifiConnectivitiyUtil.Companion.checkWifiOnAndConnected(this.getApplicationContext())) {
-            mNotifications.showConnectivityChangedNotification();
-            stopSelf();
-            return;
-        }
+        QueueItem item = new QueueItem(downloadItem.getName());
+        item.set(DOWNLOAD_ITEM_ARG, downloadItem);
+        item.set(DOWNLOAD_PATH_ARG, downloadPath);
+        item.set(REMOTE_ARG, remote);
 
-        final FileItem downloadItem = intent.getParcelableExtra(DOWNLOAD_ITEM_ARG);
-        final String downloadPath = intent.getStringExtra(DOWNLOAD_PATH_ARG);
-        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
+        return item;
+    }
+
+    @Override
+    public void handleAction(QueueItem item) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
-        ArrayList<String> notificationBigText = new ArrayList<>();
-        startForeground(PERSISTENT_NOTIFICATION_ID, mNotifications.createNotification(
-                downloadItem.getName(),
-                notificationBigText
-        ).build());
-
-        currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
+        currentProcess = rclone.downloadFile(
+                (RemoteItem) item.get(REMOTE_ARG),
+                (FileItem) item.get(DOWNLOAD_ITEM_ARG),
+                (String) item.get(DOWNLOAD_PATH_ARG)
+        );
 
 
         //Todo: Check if this can be moved together with UploadService;SyncService etc.
@@ -124,13 +94,13 @@ public class DownloadService extends IntentService {
                         }
 
                         mNotifications.updateNotification(
-                                downloadItem.getName(),
+                                item.getTitle(),
                                 so.getNotificationContent(),
                                 so.getNotificationBigText(),
                                 so.getNotificationPercent()
                         );
                     } catch (JSONException e) {
-                        FLog.e(TAG, "onHandleIntent: error reading json", e);
+                        //FLog.e(TAG, "onHandleIntent: error reading json", e);
                     }
                 }
             } catch (InterruptedIOException e) {
@@ -154,41 +124,11 @@ public class DownloadService extends IntentService {
             mNotifications.showConnectivityChangedNotification();
         } else if (currentProcess != null && currentProcess.exitValue() == 0) {
 
-            SyncLog.info(this, getString(R.string.download_complete), downloadItem.getName());
-            mNotifications.showFinishedNotification(notificationId, downloadItem.getName());
+            SyncLog.info(this, getString(R.string.download_complete), item.getTitle());
+            mNotifications.showFinishedNotification(notificationId, item.getTitle());
         } else {
-            SyncLog.error(this, getString(R.string.download_failed), downloadItem.getName());
-            mNotifications.showFailedNotification(notificationId, downloadItem.getName());
-        }
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.cancel(PERSISTENT_NOTIFICATION_ID);
-        stopForeground(true);
-    }
-
-    private void registerBroadcastReceivers() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter);
-    }
-
-    private BroadcastReceiver connectivityChangeBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            connectivityChanged = true;
-            stopSelf();
-        }
-    };
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (currentProcess != null) {
-            currentProcess.destroy();
-        }
-
-        if (transferOnWiFiOnly) {
-            unregisterReceiver(connectivityChangeBroadcastReceiver);
+            SyncLog.error(this, getString(R.string.download_failed), item.getTitle());
+            mNotifications.showFailedNotification(notificationId, item.getTitle());
         }
     }
 }

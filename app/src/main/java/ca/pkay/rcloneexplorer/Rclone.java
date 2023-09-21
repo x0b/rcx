@@ -654,21 +654,21 @@ public class Rclone {
     /**
      * This is only kept for legacy purposes. It was used before md5-checksum was introduced.
      * @param remoteItem
-     * @param remote
      * @param localPath
+     * @param remotePath
      * @param syncDirection
      * @return
      */
     @Deprecated
-    public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection) {
-        return sync(remoteItem, remote, localPath, syncDirection, false);
+    public Process sync(RemoteItem remoteItem, String localPath, String remotePath, int syncDirection) {
+        return sync(remoteItem, localPath, remotePath, syncDirection, false);
     }
 
-    public Process sync(RemoteItem remoteItem, String remote, String localPath, int syncDirection, boolean useMD5Sum) {
+    public Process sync(RemoteItem remoteItem, String localPath, String remotePath, int syncDirection, boolean useMD5Sum) {
         String[] command;
         String remoteName = remoteItem.getName();
         String localRemotePath = (remoteItem.isRemoteType(RemoteItem.LOCAL)) ? getLocalRemotePathPrefix(remoteItem, context)  + "/" : "";
-        String remotePath = (remote.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remote;
+        String remoteSection = (remotePath.compareTo("//" + remoteName) == 0) ? remoteName + ":" + localRemotePath : remoteName + ":" + localRemotePath + remotePath;
 
         ArrayList<String> defaultParameter = new ArrayList<>(Arrays.asList("--transfers", "1", "--stats=1s", "--stats-log-level", "NOTICE", "--use-json-log"));
         ArrayList<String> directionParameter = new ArrayList<>();
@@ -678,19 +678,19 @@ public class Rclone {
         }
 
         if (syncDirection == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE) {
-            Collections.addAll(directionParameter, "sync", localPath, remotePath);
+            Collections.addAll(directionParameter, "sync", localPath, remoteSection);
             directionParameter.addAll(defaultParameter);
             command = createCommandWithOptions(directionParameter);
         } else if (syncDirection == SyncDirectionObject.SYNC_REMOTE_TO_LOCAL) {
-            Collections.addAll(directionParameter, "sync", remotePath, localPath);
+            Collections.addAll(directionParameter, "sync", remoteSection, localPath);
             directionParameter.addAll(defaultParameter);
             command = createCommandWithOptions(directionParameter);
         } else if (syncDirection == SyncDirectionObject.COPY_LOCAL_TO_REMOTE) {
-            Collections.addAll(directionParameter, "copy", localPath, remotePath);
+            Collections.addAll(directionParameter, "copy", localPath, remoteSection);
             directionParameter.addAll(defaultParameter);
             command = createCommandWithOptions(directionParameter);
         }else if (syncDirection == SyncDirectionObject.COPY_REMOTE_TO_LOCAL) {
-            Collections.addAll(directionParameter, "copy", remotePath, localPath);
+            Collections.addAll(directionParameter, "copy", remoteSection, localPath);
             directionParameter.addAll(defaultParameter);
             command = createCommandWithOptions(directionParameter);
         }else {
@@ -736,26 +736,6 @@ public class Rclone {
         }
     }
 
-    // Can't pass \u0000 as cmd arg - encode like rclone with U+2400
-    // Ref: Appcenter #22305285
-    // TODO Appcenter #170195533 - rclone serve
-    @NonNull
-    private String encodePath(String localFilePath) {
-        if (localFilePath.indexOf('\u0000') < 0) {
-            return localFilePath;
-        }
-        StringBuilder localPathBuilder = new StringBuilder(localFilePath.length());
-        for (char c : localFilePath.toCharArray()) {
-            if (c == '\u0000') {
-                localPathBuilder.append('\u2400');
-            } else {
-                localPathBuilder.append(c);
-            }
-
-        }
-        return localPathBuilder.toString();
-    }
-
     public Process uploadFile(RemoteItem remote, String uploadPath, String uploadFile) {
         String remoteName = remote.getName();
         String path;
@@ -787,6 +767,26 @@ public class Rclone {
             return null;
         }
 
+    }
+
+    // Can't pass \u0000 as cmd arg - encode like rclone with U+2400
+    // Ref: Appcenter #22305285
+    // TODO Appcenter #170195533 - rclone serve
+    @NonNull
+    private String encodePath(String localFilePath) {
+        if (localFilePath.indexOf('\u0000') < 0) {
+            return localFilePath;
+        }
+        StringBuilder localPathBuilder = new StringBuilder(localFilePath.length());
+        for (char c : localFilePath.toCharArray()) {
+            if (c == '\u0000') {
+                localPathBuilder.append('\u2400');
+            } else {
+                localPathBuilder.append(c);
+            }
+
+        }
+        return localPathBuilder.toString();
     }
 
     public Process deleteItems(RemoteItem remote, FileItem deleteItem) {

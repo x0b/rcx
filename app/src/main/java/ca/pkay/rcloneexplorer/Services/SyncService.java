@@ -88,22 +88,22 @@ public class SyncService extends IntentService {
         (new GenericSyncNotification(this)).setNotificationChannel(
                 SyncServiceNotifications.CHANNEL_ID,
                 getString(R.string.sync_service_notification_channel_title),
-                R.string.sync_service_notification_channel_description
+                getString(R.string.sync_service_notification_channel_description)
         );
         (new GenericSyncNotification(this)).setNotificationChannel(
                 SyncServiceNotifications.CHANNEL_SUCCESS_ID,
                 getString(R.string.sync_service_notification_channel_success_title),
-                R.string.sync_service_notification_channel_success_description
+                getString(R.string.sync_service_notification_channel_success_description)
         );
         (new GenericSyncNotification(this)).setNotificationChannel(
                 SyncServiceNotifications.CHANNEL_FAIL_ID,
                 getString(R.string.sync_service_notification_channel_fail_title),
-                R.string.sync_service_notification_channel_fail_description
+                getString(R.string.sync_service_notification_channel_fail_description)
         );
         (new GenericSyncNotification(this)).setNotificationChannel(
                 ReportNotifications.CHANNEL_REPORT_ID,
                 getString(R.string.sync_service_notification_channel_report_title),
-                R.string.sync_service_notification_channel_report_description
+                getString(R.string.sync_service_notification_channel_report_description)
         );
         rclone = new Rclone(this);
         log2File = new Log2File(this);
@@ -149,7 +149,7 @@ public class SyncService extends IntentService {
             notificationManager.showFailedNotificationOrReport(
                     getString(R.string.operation_no_identical_title),
                     getString(R.string.operation_no_identical, internalTask.title),
-                    (int)System.currentTimeMillis(),
+                    (int) System.currentTimeMillis(),
                     internalTask.id);
             return;
         }
@@ -180,7 +180,7 @@ public class SyncService extends IntentService {
         } else if (connection == Connection.DISCONNECTED || connection == Connection.NOT_AVAILABLE) {
             failureReason = FAILURE_REASON.NO_CONNECTION;
         } else {
-            rcloneProcess = rclone.sync(internalTask.remoteItem, internalTask.remotePath, internalTask.localPath, internalTask.syncDirection, internalTask.md5sum);
+            rcloneProcess = rclone.sync(internalTask.remoteItem, internalTask.localPath, internalTask.remotePath, internalTask.syncDirection, internalTask.md5sum);
             mCurrentProcesses.put(internalTask.id,  rcloneProcess);
             if (rcloneProcess != null) {
                 try {
@@ -300,7 +300,7 @@ public class SyncService extends IntentService {
             // equals might fail otherwise when internal tasks send an intent without action.
             action = "";
         }
-        if (action.equals(TASK_START_ACTION)) {
+        if (action.equals(TASK_SYNC_ACTION)) {
             DatabaseHandler db = new DatabaseHandler(this);
             for (Task task: db.getAllTasks()){
                 if(task.getId() == intent.getLongExtra(EXTRA_TASK_ID, -1)){
@@ -334,7 +334,7 @@ public class SyncService extends IntentService {
 
     public static Intent createInternalStartIntent(Context context, long id) {
         Intent i = new Intent(context, SyncService.class);
-        i.setAction(TASK_START_ACTION);
+        i.setAction(TASK_SYNC_ACTION);
         i.putExtra(EXTRA_TASK_ID, id);
         return i;
     }

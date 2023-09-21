@@ -24,34 +24,24 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
-import java.util.ArrayList;
 
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.notifications.support.GenericNotification;
-import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
+import ca.pkay.rcloneexplorer.Services.support.QueueItem;
+import ca.pkay.rcloneexplorer.Services.support.QueueService;
+import ca.pkay.rcloneexplorer.notifications.DownloadNotifications;
 import ca.pkay.rcloneexplorer.notifications.support.StatusObject;
-import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncLog;
-import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
 
 
-public class UploadService extends IntentService {
+public class UploadService extends QueueService {
 
     private static final String TAG = "UploadService";
     public static final String UPLOAD_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg1";
     public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.upload_service.arg2";
     public static final String REMOTE_ARG = "ca.pkay.rcexplorer.upload_service.arg3";
 
-    private boolean connectivityChanged;
-    private boolean transferOnWiFiOnly;
-    private Rclone rclone;
-    private Log2File log2File;
-    private Process currentProcess;
-    private GenericNotification mNotifications;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -61,60 +51,41 @@ public class UploadService extends IntentService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        rclone = new Rclone(this);
-        log2File = new Log2File(this);
-        mNotifications = new UploadNotifications(this);
-
-        (new GenericSyncNotification(this)).setNotificationChannel(
+    public void prepare() {
+        mNotifications = new DownloadNotifications(this.getApplicationContext());
+        setUpNotificationChannels(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                R.string.upload_service_notification_channel_description
+                getString(R.string.upload_service_notification_channel_description)
         );
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        transferOnWiFiOnly = sharedPreferences.getBoolean(getString(R.string.pref_key_wifi_only_transfers), false);
-
-        if (transferOnWiFiOnly) {
-            registerBroadcastReceivers();
-        }
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-        if (intent == null) {
-            return;
-        }
+    public QueueItem unpackIntent(Intent intent) {
 
-        if (transferOnWiFiOnly && !WifiConnectivitiyUtil.Companion.checkWifiOnAndConnected(this.getApplicationContext())) {
-            mNotifications.showConnectivityChangedNotification();
-            stopSelf();
-            return;
-        }
+        String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
+        String uploadFilePath = intent.getStringExtra(LOCAL_PATH_ARG);
+        RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
 
-        final String uploadPath = intent.getStringExtra(UPLOAD_PATH_ARG);
-        final String uploadFilePath = intent.getStringExtra(LOCAL_PATH_ARG);
-        final RemoteItem remote = intent.getParcelableExtra(REMOTE_ARG);
+        // todo: update title
+        QueueItem item = new QueueItem(getTitle(uploadFilePath));
+        item.set(UPLOAD_PATH_ARG, uploadPath);
+        item.set(LOCAL_PATH_ARG, uploadFilePath);
+        item.set(REMOTE_ARG, remote);
 
-        boolean isFile = new File(uploadFilePath).isFile();
-        String uploadFileName;
-        int slashIndex = uploadFilePath.lastIndexOf("/");
-        if (slashIndex >= 0) {
-            uploadFileName = uploadFilePath.substring(slashIndex + 1);
-        } else {
-            uploadFileName = uploadFilePath;
-        }
+        return item;
+    }
+
+    @Override
+    public void handleAction(QueueItem item) {
+
+
+        final String uploadPath = (String) item.get(UPLOAD_PATH_ARG);
+        final String uploadFilePath = (String) item.get(LOCAL_PATH_ARG);
+        final RemoteItem remote = (RemoteItem) item.get(REMOTE_ARG);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
-
-
-        ArrayList<String> notificationBigText = new ArrayList<>();
-        startForeground(UploadNotifications.PERSISTENT_NOTIFICATION_ID, mNotifications.createNotification(
-                uploadFileName,
-                notificationBigText
-        ).build());
+        boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
 
         //Todo: Check if this can be moved together with UploadService;SyncService etc.
         currentProcess = rclone.uploadFile(remote, uploadPath, uploadFilePath);
@@ -133,11 +104,11 @@ public class UploadService extends IntentService {
                         }
 
                         mNotifications.updateNotification(
-                                        uploadFileName,
-                                        so.getNotificationContent(),
-                                        so.getNotificationBigText(),
-                                        so.getNotificationPercent()
-                                );
+                                item.getTitle(),
+                                so.getNotificationContent(),
+                                so.getNotificationBigText(),
+                                so.getNotificationPercent()
+                        );
 
                     } catch (JSONException e) {
                         FLog.e(TAG, "onHandleIntent: error reading json", e);
@@ -162,25 +133,19 @@ public class UploadService extends IntentService {
         boolean result = currentProcess != null && currentProcess.exitValue() == 0;
         onUploadFinished(remote.getName(), uploadPath, uploadFilePath, result);
 
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.cancel(UploadNotifications.PERSISTENT_NOTIFICATION_ID);
-        stopForeground(true);
     }
 
-    private void registerBroadcastReceivers() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter);
-    }
+    private String getTitle(String path) {
 
-    private BroadcastReceiver connectivityChangeBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            connectivityChanged = true;
-            stopSelf();
+        String uploadFileName;
+        int slashIndex = path.lastIndexOf("/");
+        if (slashIndex >= 0) {
+            uploadFileName = path.substring(slashIndex + 1);
+        } else {
+            uploadFileName = path;
         }
-    };
-
+        return uploadFileName;
+    }
 
     //Todo: Check if this can be moved together with UploadService;SyncService etc.
     private void onUploadFinished(String remote, String uploadPath, String file, boolean result) {
@@ -213,18 +178,5 @@ public class UploadService extends IntentService {
         intent.putExtra(getString(R.string.background_service_broadcast_data_remote), remote);
         intent.putExtra(getString(R.string.background_service_broadcast_data_path), uploadPath);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (currentProcess != null) {
-            currentProcess.destroy();
-        }
-
-        if (transferOnWiFiOnly) {
-            unregisterReceiver(connectivityChangeBroadcastReceiver);
-        }
     }
 }

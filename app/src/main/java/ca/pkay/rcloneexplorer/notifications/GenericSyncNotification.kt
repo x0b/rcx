@@ -53,16 +53,15 @@ class GenericSyncNotification(var mContext: Context) {
             .setProgress(100, percent, false)
     }
 
-    fun setNotificationChannel(channelID: String, channelName: String, descriptionResource: Int) {
+    fun setNotificationChannel(channelID: String, channelName: String, description: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             val channel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_LOW)
-            channel.description =
-                mContext.getString(descriptionResource)
+            channel.description = description
             // Register the channel with the system
             val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager?.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 

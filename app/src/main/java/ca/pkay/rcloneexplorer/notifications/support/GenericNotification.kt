@@ -71,6 +71,17 @@ abstract class GenericNotification(var mContext: Context) {
         }
     }
 
+    fun showFinishedNotification(notificationID: Int, contentText: String) {
+        createSummaryNotificationForFinished()
+        val builder = NotificationCompat.Builder(mContext, sChannelId)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
+            .setContentTitle(mContext.getString(completeString))
+            .setContentText(contentText)
+            .setGroup(finishedGroup)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+        notify(builder, notificationID)
+    }
 
     private fun createSummaryNotificationForFinished() {
         val summaryNotification = NotificationCompat.Builder(mContext,
@@ -85,18 +96,16 @@ abstract class GenericNotification(var mContext: Context) {
         notify(summaryNotification, finishedNotificationId)
     }
 
-    fun showFinishedNotification(notificationID: Int, contentText: String) {
-        createSummaryNotificationForFinished()
+    fun showFailedNotification(notificationID: Int, contentText: String) {
+        createSummaryNotificationForFailed()
         val builder = NotificationCompat.Builder(mContext, sChannelId)
-            .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
-            .setContentTitle(mContext.getString(completeString))
+            .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
+            .setContentTitle(mContext.getString(failedString))
             .setContentText(contentText)
-            .setGroup(finishedGroup)
-            .setAutoCancel(true)
+            .setGroup(failedGroup)
             .setPriority(NotificationCompat.PRIORITY_LOW)
         notify(builder, notificationID)
     }
-
 
     fun createSummaryNotificationForFailed() {
         val summaryNotification = NotificationCompat.Builder(mContext, sChannelId)
@@ -109,17 +118,6 @@ abstract class GenericNotification(var mContext: Context) {
         notify(summaryNotification, failedNotificationId)
     }
 
-    fun showFailedNotification(notificationID: Int, contentText: String) {
-        createSummaryNotificationForFailed()
-        val builder = NotificationCompat.Builder(mContext, sChannelId)
-            .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
-            .setContentTitle(mContext.getString(failedString))
-            .setContentText(contentText)
-            .setGroup(failedGroup)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-        notify(builder, notificationID)
-    }
-
     fun showConnectivityChangedNotification() {
         val builder = NotificationCompat.Builder(mContext, sChannelId)
             .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
@@ -129,8 +127,12 @@ abstract class GenericNotification(var mContext: Context) {
         notify(builder, connectivityChangeId)
     }
 
+    fun cancelPersistent() {
+        val notificationManagerCompat = NotificationManagerCompat.from(mContext)
+        notificationManagerCompat.cancel(this.persistentId)
+    }
 
-    private fun notify(builder: NotificationCompat.Builder, id: Int ) {
+    private fun notify(builder: NotificationCompat.Builder, id: Int) {
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(id, builder.build())
     }
