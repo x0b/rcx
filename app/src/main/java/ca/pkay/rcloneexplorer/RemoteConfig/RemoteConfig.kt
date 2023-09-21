@@ -118,7 +118,6 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
             searchbar.requestFocusFromTouch()
         } else {
             searchbar.visibility = View.GONE
-            searchbar.isIconified = true
         }
     }
 

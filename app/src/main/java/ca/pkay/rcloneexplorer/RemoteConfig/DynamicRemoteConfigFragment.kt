@@ -189,7 +189,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
 
         (mFormView?.findViewById(R.id.titleCardView) as CardView).visibility = View.VISIBLE
         if(mOptionFilter.isNotBlank()) {
-            if(!getText(R.string.remote_properties_remote_name).contains(mOptionFilter)) {
+            if(!getText(R.string.remote_properties_remote_name).contains(mOptionFilter, true)) {
                 (mFormView?.findViewById(R.id.titleCardView) as CardView).visibility = View.GONE
             }
         }
@@ -207,7 +207,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             }
 
             if(mOptionFilter.isNotBlank()) {
-                if(!it.name.contains(mOptionFilter) and !it.help.contains(mOptionFilter)) {
+                if(!it.name.contains(mOptionFilter, true) and !it.help.contains(mOptionFilter, true)) {
                     return@forEach
                 }
             }

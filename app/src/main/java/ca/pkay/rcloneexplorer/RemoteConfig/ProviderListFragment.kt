@@ -92,8 +92,8 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
         var filteredProvider = mProviders
         if(mProviderFilter.isNotBlank()) {
             filteredProvider = filteredProvider.filter {
-                it.name.contains(mProviderFilter.lowercase()) ||
-                        it.description.contains(mProviderFilter.lowercase())
+                it.name.contains(mProviderFilter, true) ||
+                        it.description.contains(mProviderFilter, true)
             }
         }
 
