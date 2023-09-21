@@ -30,8 +30,9 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Log2File;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
+import ca.pkay.rcloneexplorer.notifications.support.GenericNotification;
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
-import ca.pkay.rcloneexplorer.notifications.StatusObject;
+import ca.pkay.rcloneexplorer.notifications.support.StatusObject;
 import ca.pkay.rcloneexplorer.notifications.UploadNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncLog;
@@ -50,7 +51,7 @@ public class UploadService extends IntentService {
     private Rclone rclone;
     private Log2File log2File;
     private Process currentProcess;
-    private UploadNotifications mNotifications;
+    private GenericNotification mNotifications;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.*
@@ -110,7 +111,7 @@ public class UploadService extends IntentService {
 
 
         ArrayList<String> notificationBigText = new ArrayList<>();
-        startForeground(UploadNotifications.PERSISTENT_NOTIFICATION_ID, mNotifications.createUploadNotification(
+        startForeground(UploadNotifications.PERSISTENT_NOTIFICATION_ID, mNotifications.createNotification(
                 uploadFileName,
                 notificationBigText
         ).build());
@@ -131,7 +132,7 @@ public class UploadService extends IntentService {
                             so.parseLoglineToStatusObject(logline);
                         }
 
-                        mNotifications.updateUploadNotification(
+                        mNotifications.updateNotification(
                                         uploadFileName,
                                         so.getNotificationContent(),
                                         so.getNotificationBigText(),
@@ -195,13 +196,13 @@ public class UploadService extends IntentService {
         sendUploadFinishedBroadcast(remote, uploadPath);
 
         if (result) {
-            mNotifications.showUploadFinishedNotification(notificationId, fileName);
+            mNotifications.showFinishedNotification(notificationId, fileName);
             SyncLog.error(this, getString(R.string.upload_complete), fileName);
         } else if (transferOnWiFiOnly && connectivityChanged) {
             mNotifications.showConnectivityChangedNotification();
             SyncLog.error(this, getString(R.string.upload_cancelled), fileName);
         } else {
-            mNotifications.showUploadFailedNotification(notificationId, fileName);
+            mNotifications.showFailedNotification(notificationId, fileName);
             SyncLog.error(this, getString(R.string.upload_failed), fileName);
         }
     }

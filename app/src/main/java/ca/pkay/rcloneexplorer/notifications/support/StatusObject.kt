@@ -1,4 +1,4 @@
-package ca.pkay.rcloneexplorer.notifications
+package ca.pkay.rcloneexplorer.notifications.support
 
 import android.content.Context
 import android.text.format.Formatter

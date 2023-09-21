@@ -5,7 +5,6 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
@@ -71,7 +70,7 @@ class SyncServiceNotifications(var mContext: Context) {
         taskid: Long
     ) {
         val i = Intent(mContext, SyncService::class.java)
-        i.action = SyncService.TASK_START_ACTION
+        i.action = SyncService.TASK_SYNC_ACTION
         i.putExtra(SyncService.EXTRA_TASK_ID, taskid)
 
         val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, GenericSyncNotification.getFlags())

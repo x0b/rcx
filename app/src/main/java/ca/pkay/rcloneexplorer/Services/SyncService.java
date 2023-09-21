@@ -36,7 +36,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
 import ca.pkay.rcloneexplorer.notifications.ReportNotifications;
-import ca.pkay.rcloneexplorer.notifications.StatusObject;
+import ca.pkay.rcloneexplorer.notifications.support.StatusObject;
 import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.SyncLog;
