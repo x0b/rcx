@@ -33,6 +33,8 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
 
     private var mSelectionChangeListener = SelectionChangedListener { mSelectedProvider = it }
 
+    private var mRootView: View? = null
+
 
     companion object {
         @JvmStatic
@@ -56,6 +58,7 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_config_list, container, false)
         setClickListeners(view)
+        mRootView = view
         return view
     }
 
@@ -79,6 +82,13 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
             mSelectedProvider?.let { it1 -> mProviderSelectedListener!!.onProviderSelected(it1) }
         }
 
+
+        val recyclerView: RecyclerView = view.findViewById(R.id.config_content)
+        recyclerView.adapter = updateList()
+        recyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    fun updateList(): RemoteConfigListItemAdapter {
         var filteredProvider = mProviders
         if(mProviderFilter.isNotBlank()) {
             filteredProvider = filteredProvider.filter {
@@ -87,15 +97,22 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
             }
         }
 
-        val customAdapter = RemoteConfigListItemAdapter(
+        return RemoteConfigListItemAdapter(
             ArrayList(filteredProvider.sortedWith(compareBy { it.name })),
             requireContext(),
             mSelectionChangeListener,
             mPreselection
         )
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.config_content)
-        recyclerView.adapter = customAdapter
-        recyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    public fun setSearchterm (term: String) {
+        mProviderFilter = term
+
+        if(mRootView != null) {
+            val recyclerView: RecyclerView = (mRootView as View).findViewById(R.id.config_content)
+            recyclerView.adapter = updateList()
+            recyclerView.layoutManager = LinearLayoutManager(context)
+        }
     }
 }

@@ -3,6 +3,10 @@ package ca.pkay.rcloneexplorer.RemoteConfig
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -16,6 +20,7 @@ import ca.pkay.rcloneexplorer.rclone.Provider
 import ca.pkay.rcloneexplorer.util.ActivityHelper
 import es.dmoral.toasty.Toasty
 import org.json.JSONException
+
 
 class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
 
@@ -72,6 +77,50 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
                     }
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.remote_config_menu, menu)
+
+        val searchbar = findViewById<SearchView>(R.id.search)
+
+        searchbar.setOnCloseListener {
+            searchbar.visibility = View.GONE
+            return@setOnCloseListener searchbar.isIconified
+        }
+
+        searchbar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String): Boolean {
+                if(isProviderlist()) {
+                    (getCurrentFragment() as ProviderListFragment).setSearchterm(newText)
+                }
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                if(isProviderlist()) {
+                    (getCurrentFragment() as ProviderListFragment).setSearchterm(query)
+                }
+                return true
+            }
+        })
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.app_bar_search -> {
+                val searchbar = findViewById<SearchView>(R.id.search)
+                searchbar.visibility = View.VISIBLE
+                searchbar.requestFocus()
+                searchbar.isFocusable = true
+                searchbar.isIconified = false
+                searchbar.requestFocusFromTouch()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -148,6 +197,13 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
         if (supportActionBar != null) {
             supportActionBar!!.setTitle(R.string.title_activity_remote_config)
         }
+    }
+
+    private fun isProviderlist(): Boolean {
+        if (mFragment is ProviderListFragment) {
+            return true
+        }
+        return false
     }
 
     /**
