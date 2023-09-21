@@ -49,7 +49,7 @@ public class SyncService extends IntentService {
 
     //those Extras do not follow the above schema, because they are exposed to external applications
     //That means shorter values make it easier to use. There is no other technical reason
-    public static final String TASK_START_ACTION = "START_TASK";
+    public static final String TASK_SYNC_ACTION = "START_TASK";
     public static final String TASK_CANCEL_ACTION = "CANCEL_TASK";
     public static final String EXTRA_TASK_ID= "task";
     public static final String EXTRA_TASK_SILENT= "notification";
@@ -128,7 +128,7 @@ public class SyncService extends IntentService {
             discardOfServiceIfRequired();
         }
 
-        if(intent.getAction().equals(TASK_START_ACTION)) {
+        if(intent.getAction().equals(TASK_SYNC_ACTION)) {
             startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC,
                     notificationManager.getPersistentNotification("SyncService").build());
 

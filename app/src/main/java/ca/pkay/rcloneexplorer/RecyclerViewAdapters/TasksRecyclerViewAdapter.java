@@ -2,7 +2,7 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
 import static ca.pkay.rcloneexplorer.Services.SyncService.EXTRA_TASK_ID;
-import static ca.pkay.rcloneexplorer.Services.SyncService.TASK_START_ACTION;
+import static ca.pkay.rcloneexplorer.Services.SyncService.TASK_SYNC_ACTION;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -233,8 +233,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private static void createShortcut(Context c, Task task) {
-        Intent intent = new Intent(TASK_START_ACTION, Uri.EMPTY, c, ShortcutServiceActivity.class);
-        intent.setAction(TASK_START_ACTION);
+        Intent intent = new Intent(TASK_SYNC_ACTION, Uri.EMPTY, c, ShortcutServiceActivity.class);
+        intent.setAction(TASK_SYNC_ACTION);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(EXTRA_TASK_ID, task.getId());
 
