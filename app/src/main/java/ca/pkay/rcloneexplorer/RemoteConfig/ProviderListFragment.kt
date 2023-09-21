@@ -13,6 +13,7 @@ import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.RemoteConfigListItemAdapter
 import ca.pkay.rcloneexplorer.RemoteConfig.ProviderListFragment.SelectionChangedListener
 import ca.pkay.rcloneexplorer.rclone.Provider
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class ProviderListFragment(private val mPreselection: String?) : Fragment() {
@@ -31,9 +32,13 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
     private var mSelectedProvider: Provider? = null
     private var mProviderSelectedListener: ProviderSelectedListener? = null
 
-    private var mSelectionChangeListener = SelectionChangedListener { mSelectedProvider = it }
+    private var mSelectionChangeListener = SelectionChangedListener {
+        mSelectedProvider = it
+        mFab?.visibility = View.VISIBLE
+    }
 
     private var mRootView: View? = null
+    private var mFab: FloatingActionButton? = null
 
 
     companion object {
@@ -57,8 +62,9 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_config_list, container, false)
-        setClickListeners(view)
         mRootView = view
+        mFab = view.findViewById(R.id.next)
+        setClickListeners(view)
         return view
     }
 
@@ -77,11 +83,11 @@ class ProviderListFragment(private val mPreselection: String?) : Fragment() {
     }
 
     private fun setClickListeners(view: View) {
-
-        view.findViewById<View>(R.id.next).setOnClickListener {
-            mSelectedProvider?.let { it1 -> mProviderSelectedListener!!.onProviderSelected(it1) }
+        mFab?.setOnClickListener {
+            if(mSelectedProvider != null) {
+                mProviderSelectedListener?.onProviderSelected(mSelectedProvider!!)
+            }
         }
-
 
         val recyclerView: RecyclerView = view.findViewById(R.id.config_content)
         recyclerView.adapter = updateList()

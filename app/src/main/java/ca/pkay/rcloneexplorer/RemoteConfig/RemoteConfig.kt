@@ -26,6 +26,8 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
 
     private val OUTSTATE_TITLE = "ca.pkay.rcexplorer.remoteConfig.TITLE"
     private var mFragment: Fragment? = null
+    private lateinit var mSearchBar: SearchView
+    private var mSearchIcon: MenuItem? = null
 
     companion object {
         const val CONFIG_EDIT_CODE = 139
@@ -47,6 +49,7 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setDisplayShowHomeEnabled(true)
         }
+
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         if (savedInstanceState != null) {
             mFragment = supportFragmentManager.findFragmentByTag("new config")
@@ -54,17 +57,19 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
             fragmentTransaction.commit()
             val title = savedInstanceState.getString(OUTSTATE_TITLE)
             if (title != null) {
-                supportActionBar!!.setTitle(title)
+                supportActionBar!!.title = title
             }
             return
         }
+
+        mSearchBar = findViewById(R.id.search)
 
         mFragment = newProviderListConfig()
         fragmentTransaction.replace(R.id.flFragment, getCurrentFragment(), "config list")
         fragmentTransaction.commit()
         val shouldEdit = intent.getStringExtra(CONFIG_EDIT_TARGET)
         if (shouldEdit != null) {
-            if (!shouldEdit.isEmpty()) {
+            if (shouldEdit.isNotEmpty()) {
                 val rclone = Rclone(this)
                 val config = rclone.getConfig(intent.getStringExtra(CONFIG_EDIT_TARGET))
                 if (config != null) {
@@ -78,19 +83,13 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
                 }
             }
         }
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.remote_config_menu, menu)
-
-        val searchbar = findViewById<SearchView>(R.id.search)
-
-        searchbar.setOnCloseListener {
+        mSearchBar.setOnCloseListener {
             toggleSearch(false)
-            return@setOnCloseListener searchbar.isIconified
+            return@setOnCloseListener true
         }
 
-        searchbar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        mSearchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 if(isProviderlist()) {
                     (getCurrentFragment() as ProviderListFragment).setSearchterm(newText)
@@ -105,19 +104,26 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
                 return true
             }
         })
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.remote_config_menu, menu)
+        mSearchIcon = menu?.findItem(R.id.app_bar_search);
         return true
     }
 
     private fun toggleSearch(show: Boolean) {
-        val searchbar = findViewById<SearchView>(R.id.search)
         if(show) {
-            searchbar.visibility = View.VISIBLE
-            searchbar.requestFocus()
-            searchbar.isFocusable = true
-            searchbar.isIconified = false
-            searchbar.requestFocusFromTouch()
+            mSearchBar.visibility = View.VISIBLE
+            mSearchBar.requestFocus()
+            mSearchBar.isFocusable = true
+            mSearchBar.isIconified = false
+            mSearchBar.requestFocusFromTouch()
+            mSearchIcon?.isVisible = false
         } else {
-            searchbar.visibility = View.GONE
+            mSearchBar.visibility = View.GONE
+            mSearchIcon?.isVisible = true
         }
     }
 
@@ -151,7 +157,11 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
     }
 
     private fun handleBackAction() {
-        toggleSearch(false)
+        if(mSearchBar.visibility == View.VISIBLE) {
+            toggleSearch(false)
+            return
+        }
+
         if (mFragment is ProviderListFragment) {
             finish()
         } else if (mFragment is DynamicRemoteConfigFragment) {
