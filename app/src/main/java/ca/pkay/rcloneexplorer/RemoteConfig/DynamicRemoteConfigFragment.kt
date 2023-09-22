@@ -37,6 +37,7 @@ import ca.pkay.rcloneexplorer.Rclone
 import ca.pkay.rcloneexplorer.Rclone.RCLONE_CONFIG_NAME_KEY
 import ca.pkay.rcloneexplorer.rclone.Provider
 import ca.pkay.rcloneexplorer.rclone.ProviderOption
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Locale
@@ -51,9 +52,8 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     private var mFormView: ViewGroup? = null
     private var mTitleLabel: TextView? = null
     private var mAuthView: View? = null
-    private var mBackButton: Button? = null
     private var mCancelAuthButton: Button? = null
-    private var mFinishButton: Button? = null
+    private var mFinishButton: FloatingActionButton? = null
     private var mRemoteName: EditText? = null
     private var mProvider: Provider? = null
     private var mShowAdvanced = false
@@ -109,12 +109,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         mRemoteName = view.findViewById(R.id.remote_name)
         mCancelAuthButton = view.findViewById(R.id.cancel_auth)
 
-        mBackButton = view.findViewById(R.id.back)
         mFinishButton = view.findViewById(R.id.finish)
-
-        if(mIsEditTask) {
-            (mBackButton as Button).text = getString(R.string.cancel)
-        }
 
         if(mUseOauth) {
             (mFinishButton as Button).text = getString(R.string.next)
@@ -129,9 +124,6 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         }
 
         setUpForm()
-        mBackButton?.setOnClickListener {
-            cancelCurrentStep()
-        }
         mFinishButton?.setOnClickListener { setUpRemote() }
         mCancelAuthButton?.setOnClickListener {
             mAuthTask?.cancel(true)
