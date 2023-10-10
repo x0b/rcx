@@ -109,9 +109,10 @@
                         android:id="@+id/fromID"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="2dp"
                         android:singleLine="true"
                         android:text="fromid"
-                        android:textColor="@color/textColorTertiary"
+                        android:textColor="@color/textColorHighlight"
                         android:textStyle="italic"
                         tools:ignore="HardcodedText" />
 
@@ -135,10 +136,11 @@
                         android:id="@+id/toID"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="2dp"
                         android:singleLine="true"
                         android:text="toid"
                         android:textAllCaps="false"
-                        android:textColor="@color/textColorTertiary"
+                        android:textColor="@color/textColorHighlight"
                         android:textStyle="italic"
                         tools:ignore="HardcodedText" />
 

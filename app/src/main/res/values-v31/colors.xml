@@ -41,6 +41,7 @@
     <color name="textColorTertiary">@color/md_theme_light_tertiary</color>
     <color name="textColorPrimary">@color/md_theme_light_onPrimary</color>
     <color name="textColorSecondary">@color/md_theme_light_onSecondary</color>
+    <color name="textColorHighlight">@android:color/system_accent1_400</color>
     <color name="cardColor">@color/md_theme_light_primaryContainer</color>
     <color name="iconTint">@color/white</color>
 
