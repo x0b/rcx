@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.databinding.CustomuiCrumbviewBinding
 
 
@@ -74,6 +75,7 @@ class CrumbView : LinearLayout {
         if(mIsActive) {
             binding.title.setTypeface(null, Typeface.BOLD)
             padding = (2 * resources.displayMetrics.density).toInt()
+            binding.root.setBackgroundResource(R.drawable.pill)
         } else {
             binding.title.setTypeface(null, Typeface.NORMAL)
             binding.root.background = null
