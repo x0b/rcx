@@ -61,7 +61,6 @@ class BreadcrumbView : HorizontalScrollView {
     }
 
     fun buildBreadCrumbsFromPath(path: String) {
-        Log.e(TAG, "bbcfp: $path")
         var index = 0
         while (path.indexOf("/", index).also { index = it } > 0) {
             val fullPath = path.substring(0, index)
@@ -90,8 +89,6 @@ class BreadcrumbView : HorizontalScrollView {
     }
 
     fun addCrumb(crumbTitle: String, path: String) {
-        Log.e(TAG, "Add: $crumbTitle $path")
-
         val crumb = CrumbView(context.applicationContext)
         crumb.setTitle(crumbTitle)
         crumb.setPath(path)
@@ -128,7 +125,6 @@ class BreadcrumbView : HorizontalScrollView {
     }
 
     fun removeCrumbsUpTo(path: String) {
-        Log.e(TAG, "Remove Up to: $path")
         if(crumbStack.size >= 1) {
             try{
                 var currentTop = crumbStack.lastOrNull()
