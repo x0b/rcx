@@ -46,6 +46,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="2dp"
         app:sdExpansionMode="top"
+        android:theme="@style/FloatingActionButtonMulti"
         app:sdMainFabOpenedSrc="@drawable/ic_close"
         app:sdMainFabClosedSrc="@drawable/ic_add" />
 
