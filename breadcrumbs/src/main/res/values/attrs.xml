@@ -5,5 +5,6 @@
         <attr name="breadcrumbBackground" format="reference"/>
         <attr name="breadcrumbPadding" format="dimension"/>
         <attr name="breadcrumbColor" format="color"/>
+        <attr name="breadcrumbHighlightColor" format="color"/>
     </declare-styleable>
 </resources>

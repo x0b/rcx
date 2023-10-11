@@ -21,6 +21,7 @@ class BreadcrumbView : HorizontalScrollView {
     private var arrowResourceId = noResource
     private var backgroundResourceId = noResource
     private var colorResourceId = noResource
+    private var highlightColorResourceId = noResource
     private var paddingDP = 0F
 
     companion object {
@@ -53,6 +54,7 @@ class BreadcrumbView : HorizontalScrollView {
         backgroundResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbBackground, noResource)
         paddingDP = typedArray.getDimension(R.styleable.BreadcrumbView_breadcrumbPadding, 0F)
         colorResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbColor, noResource)
+        highlightColorResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbHighlightColor, noResource)
     }
 
 
@@ -101,6 +103,12 @@ class BreadcrumbView : HorizontalScrollView {
         if(colorResourceId != noResource) {
             crumb.setColor(colorResourceId)
         }
+
+        if(highlightColorResourceId != noResource) {
+            crumb.setHighlight(highlightColorResourceId)
+        }
+        crumb.setActive(true)
+        crumb.showArrow(false)
 
         val scale = context.resources.displayMetrics.density
         crumb.setContainerPadding((paddingDP * scale).toInt())
@@ -155,6 +163,8 @@ class BreadcrumbView : HorizontalScrollView {
     private fun setLastCrumbSelected() {
         if(crumbStack.size >= 1) {
             crumbStack.last().setActive(true)
+            crumbStack.last().showArrow(false)
+
         }
     }
 }

@@ -2,8 +2,10 @@ package de.felixnuesse.breadcrumbs
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -22,6 +24,10 @@ class CrumbView : LinearLayout {
 
     private var mShowArrow = false
     private var mIsActive = true
+    private var mUseHighlight = false
+    private var mHighlightColor = 0
+    private var mDefaultTextColor = 0
+    private var mPadding = 0
 
     constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)  {}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)  {}
@@ -49,11 +55,7 @@ class CrumbView : LinearLayout {
 
     fun setActive(isActive: Boolean) {
         mIsActive = isActive
-        if(mIsActive) {
-            binding.title.setTypeface(null, Typeface.BOLD)
-        } else {
-            binding.title.setTypeface(null, Typeface.NORMAL)
-        }
+        updateActiveState()
     }
 
     fun getPath(): String {
@@ -70,7 +72,12 @@ class CrumbView : LinearLayout {
     }
 
     fun setContainerPadding(padding: Int) {
-        binding.root.setPadding(padding,padding, 0, padding)
+        mPadding = padding
+        if(mShowArrow) {
+            binding.root.setPadding(mPadding,mPadding, 0, mPadding)
+        } else {
+            binding.root.setPadding(mPadding,mPadding, mPadding, mPadding)
+        }
     }
 
     fun setColor(resourceId: Int) {
@@ -79,6 +86,27 @@ class CrumbView : LinearLayout {
         binding.arrow.setColorFilter(color)
     }
 
+    fun setHighlight(resourceId: Int) {
+        mUseHighlight = true
+        mDefaultTextColor = binding.title.currentTextColor
+        mHighlightColor = resourceId
+        updateActiveState()
+    }
 
+
+    private fun updateActiveState() {
+        if(mIsActive) {
+            binding.title.setTypeface(null, Typeface.BOLD)
+            if(mUseHighlight) {
+                Log.e("tag", "color was set ${resources.getColor(mHighlightColor).toString()}")
+                binding.title.setTextColor(resources.getColor(mHighlightColor))
+                //binding.title.setTextColor()
+            }
+        } else {
+            binding.title.setTypeface(null, Typeface.NORMAL)
+            binding.title.setTextColor(mDefaultTextColor)
+
+        }
+    }
 
 }
