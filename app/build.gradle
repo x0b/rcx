@@ -171,6 +171,10 @@ dependencies {
     // SAF/WebDAV
     implementation project(':safdav')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
+
+    // Breadcrumbs
+    implementation project(':breadcrumbs')
+
     // Java 8+ library support
     // TODO: replace with coreLibraryDesugar once available
     implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.4'

@@ -31,7 +31,7 @@
             android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/arrow"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:contentDescription="@string/app_icon"

@@ -40,7 +40,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <ca.pkay.rcloneexplorer.BreadcrumbView
+            <de.felixnuesse.breadcrumbs.BreadcrumbView
                 android:id="@+id/breadcrumb_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

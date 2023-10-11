@@ -101,7 +101,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <ca.pkay.rcloneexplorer.BreadcrumbView
+            <de.felixnuesse.breadcrumbs.BreadcrumbView
                 android:id="@+id/breadcrumb_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -111,7 +111,10 @@
                 android:layout_marginBottom="8dp"
                 android:animateLayoutChanges="true"
                 android:scrollbars="none"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:breadcrumbBackground="@drawable/pill"
+                app:breadcrumbPadding="2dp"
+                app:breadcrumbColor="@color/iconTint"/>
         </FrameLayout>
 
         <androidx.appcompat.widget.Toolbar

@@ -65,7 +65,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import ca.pkay.rcloneexplorer.Activities.MainActivity;
-import ca.pkay.rcloneexplorer.BreadcrumbView;
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.Dialogs.Dialogs;
 import ca.pkay.rcloneexplorer.Dialogs.FilePropertiesDialog;
@@ -95,6 +94,7 @@ import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.LargeParcel;
+import de.felixnuesse.breadcrumbs.BreadcrumbView;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;
