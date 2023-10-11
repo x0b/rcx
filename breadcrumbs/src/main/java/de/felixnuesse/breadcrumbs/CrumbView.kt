@@ -98,9 +98,7 @@ class CrumbView : LinearLayout {
         if(mIsActive) {
             binding.title.setTypeface(null, Typeface.BOLD)
             if(mUseHighlight) {
-                Log.e("tag", "color was set ${resources.getColor(mHighlightColor).toString()}")
                 binding.title.setTextColor(resources.getColor(mHighlightColor))
-                //binding.title.setTextColor()
             }
         } else {
             binding.title.setTypeface(null, Typeface.NORMAL)
