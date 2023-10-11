@@ -35,7 +35,7 @@ import ca.pkay.rcloneexplorer.Dialogs.SortDialog;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FilePickerAdapter;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
-import de.felixnuesse.breadcrumbs.BreadcrumbView;
+import de.felixnuesse.ui.BreadcrumbView;
 import es.dmoral.toasty.Toasty;
 
 public class FilePicker extends AppCompatActivity implements FilePickerAdapter.OnClickListener,

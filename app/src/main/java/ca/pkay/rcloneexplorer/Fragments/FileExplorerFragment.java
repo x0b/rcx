@@ -94,7 +94,7 @@ import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.LargeParcel;
-import de.felixnuesse.breadcrumbs.BreadcrumbView;
+import de.felixnuesse.ui.BreadcrumbView;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;

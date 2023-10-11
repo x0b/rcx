@@ -21,4 +21,5 @@
     <dimen name="dialogPadding">2dp</dimen>
 
     <dimen name="settings_inset_item_padding">16dp</dimen>
+    <dimen name="pillCornerRadius">8dp</dimen>
 </resources>

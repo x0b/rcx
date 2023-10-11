@@ -95,27 +95,14 @@
             </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
 
-        <FrameLayout
+        <de.felixnuesse.ui.BreadcrumbView
+            android:id="@+id/breadcrumb_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <de.felixnuesse.breadcrumbs.BreadcrumbView
-                android:id="@+id/breadcrumb_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="8dp"
-                android:animateLayoutChanges="true"
-                android:scrollbars="none"
-                android:visibility="visible"
-                app:breadcrumbBackground="@drawable/pill"
-                app:breadcrumbPadding="2dp"
-                app:breadcrumbColor="@color/iconTint"/>
-        </FrameLayout>
+            android:layout_margin="4dp"
+            android:animateLayoutChanges="true"
+            android:scrollbars="none"
+            android:visibility="visible" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/search_toolbar"

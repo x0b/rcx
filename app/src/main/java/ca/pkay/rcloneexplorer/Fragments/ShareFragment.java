@@ -41,7 +41,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
-import de.felixnuesse.breadcrumbs.BreadcrumbView;
+import de.felixnuesse.ui.BreadcrumbView;
 import es.dmoral.toasty.Toasty;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 

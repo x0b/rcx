@@ -40,6 +40,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -171,9 +175,6 @@ dependencies {
     // SAF/WebDAV
     implementation project(':safdav')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
-
-    // Breadcrumbs
-    implementation project(':breadcrumbs')
 
     // Java 8+ library support
     // TODO: replace with coreLibraryDesugar once available

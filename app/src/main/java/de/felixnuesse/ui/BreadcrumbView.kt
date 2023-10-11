@@ -1,13 +1,12 @@
-package de.felixnuesse.breadcrumbs
+package de.felixnuesse.ui
 
 import android.content.Context
 import android.content.res.Resources.NotFoundException
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
-import de.felixnuesse.breadcrumbs.databinding.BreadcrumbviewBinding
+import ca.pkay.rcloneexplorer.databinding.CustomuiBreadcrumbviewBinding
 
 class BreadcrumbView : HorizontalScrollView {
 
@@ -16,19 +15,7 @@ class BreadcrumbView : HorizontalScrollView {
     private var crumbStack = java.util.ArrayDeque(listOf<CrumbView>())
     private var onClickListener: OnClickListener? = null
 
-    private var binding = BreadcrumbviewBinding.inflate(LayoutInflater.from(context), this, true)
-
-    private var arrowResourceId = noResource
-    private var backgroundResourceId = noResource
-    private var colorResourceId = noResource
-    private var highlightColorResourceId = noResource
-    private var paddingDP = 0F
-
-    companion object {
-        private val TAG = "BreadcrumbView"
-        private val noResource = -1
-    }
-
+    private var binding = CustomuiBreadcrumbviewBinding.inflate(LayoutInflater.from(context), this, true)
 
     private lateinit var mContext: Context
 
@@ -38,25 +25,20 @@ class BreadcrumbView : HorizontalScrollView {
 
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)  {
-        init(context, attrs)
+        init(context)
     }
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)  {
-        init(context, attrs)
+        init(context)
+    }
+    constructor(context: Context) : super(context)  {
+        init(context)
     }
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    private fun init(context: Context) {
         mContext = context
         crumbHolder = binding.crumbHolder
         crumbHolder.removeAllViews()
-
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BreadcrumbView)
-        arrowResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbArrow, noResource)
-        backgroundResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbBackground, noResource)
-        paddingDP = typedArray.getDimension(R.styleable.BreadcrumbView_breadcrumbPadding, 0F)
-        colorResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbColor, noResource)
-        highlightColorResourceId = typedArray.getResourceId(R.styleable.BreadcrumbView_breadcrumbHighlightColor, noResource)
     }
-
 
     fun setOnClickListener(listener: OnClickListener?) {
         onClickListener = listener
@@ -94,25 +76,12 @@ class BreadcrumbView : HorizontalScrollView {
         val crumb = CrumbView(context.applicationContext)
         crumb.setTitle(crumbTitle)
         crumb.setPath(path)
-        if(arrowResourceId != noResource) {
-            crumb.setArrowIcon(arrowResourceId)
-        }
-        if(backgroundResourceId != noResource) {
-            crumb.setBackgroundId(backgroundResourceId)
-        }
-        if(colorResourceId != noResource) {
-            crumb.setColor(colorResourceId)
-        }
-
-        if(highlightColorResourceId != noResource) {
-            crumb.setHighlight(highlightColorResourceId)
-        }
         crumb.setActive(true)
         crumb.showArrow(false)
 
-        val scale = context.resources.displayMetrics.density
-        crumb.setContainerPadding((paddingDP * scale).toInt())
-
+        if (crumbStack.size == 0) {
+            crumb.showHome()
+        }
 
         crumb.setOnClickListener {
             onClickListener?.onBreadCrumbClicked(path)
