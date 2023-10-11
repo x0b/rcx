@@ -1,6 +1,7 @@
 package de.felixnuesse.breadcrumbs
 
 import android.content.Context
+import android.content.res.Resources.NotFoundException
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +13,7 @@ class BreadcrumbView : HorizontalScrollView {
 
 
     private lateinit var crumbHolder: LinearLayout
-    private var crumbList = java.util.ArrayDeque(listOf<CrumbView>())
+    private var crumbStack = java.util.ArrayDeque(listOf<CrumbView>())
     private var onClickListener: OnClickListener? = null
 
     private var binding = BreadcrumbviewBinding.inflate(LayoutInflater.from(context), this, true)
@@ -60,6 +61,7 @@ class BreadcrumbView : HorizontalScrollView {
     }
 
     fun buildBreadCrumbsFromPath(path: String) {
+        Log.e(TAG, "bbcfp: $path")
         var index = 0
         while (path.indexOf("/", index).also { index = it } > 0) {
             val fullPath = path.substring(0, index)
@@ -84,10 +86,11 @@ class BreadcrumbView : HorizontalScrollView {
 
     fun clearCrumbs() {
         crumbHolder.removeAllViews()
-        crumbList.clear()
+        crumbStack.clear()
     }
 
     fun addCrumb(crumbTitle: String, path: String) {
+        Log.e(TAG, "Add: $crumbTitle $path")
 
         val crumb = CrumbView(context.applicationContext)
         crumb.setTitle(crumbTitle)
@@ -106,49 +109,56 @@ class BreadcrumbView : HorizontalScrollView {
         crumb.setContainerPadding((paddingDP * scale).toInt())
 
 
-        crumb.setOnClickListener { onClickListener?.onBreadCrumbClicked(path) }
+        crumb.setOnClickListener {
+            onClickListener?.onBreadCrumbClicked(path)
+            removeCrumbsUpTo(path)
+        }
 
 
-        if (crumbList.size >= 1) {
-            val previousCrumb = crumbList.last()
+        if (crumbStack.size >= 1) {
+            val previousCrumb = crumbStack.last()
             previousCrumb.setActive(false)
             previousCrumb.showArrow(true)
 
         }
 
-        crumbList.add(crumb)
+        crumbStack.add(crumb)
         crumbHolder.addView(crumb)
         crumbHolder.post { smoothScrollTo(crumb.left - 50, 0) }
     }
 
     fun removeCrumbsUpTo(path: String) {
-        if(crumbList.size >= 1) {
-            var currentTop = crumbList.last()
-            if(currentTop.getPath().startsWith(path)) {
-                while (currentTop.getPath() != path) {
+        Log.e(TAG, "Remove Up to: $path")
+        if(crumbStack.size >= 1) {
+            try{
+                var currentTop = crumbStack.lastOrNull()
+                while (currentTop != null) {
+                    if(currentTop.getPath() == path){
+                        setLastCrumbSelected()
+                        return
+                    }
                     crumbHolder.removeView(currentTop)
-                    currentTop = crumbList.pop()
+                    crumbStack.removeLastOccurrence(currentTop)
+                    currentTop = crumbStack.lastOrNull()
                 }
-            } else {
-                Log.w(TAG, "The current breadcrumb path lies outside of: $path")
+            } catch (e: NotFoundException) {
+                setLastCrumbSelected()
+                return
             }
-        } else {
-            Log.w(TAG, "The current breadcrumb path lies outside of: $path")
         }
-        setLastCrumbSelected()
     }
 
     fun removeLastCrumb() {
-        if(crumbList.size >= 1) {
-            val crumb = crumbList.removeLast()
+        if(crumbStack.size >= 1) {
+            val crumb = crumbStack.removeLast()
             crumbHolder.removeView(crumb)
         }
         setLastCrumbSelected()
     }
 
     private fun setLastCrumbSelected() {
-        if(crumbList.size >= 1) {
-            crumbList.last().setActive(true)
+        if(crumbStack.size >= 1) {
+            crumbStack.last().setActive(true)
         }
     }
 }
