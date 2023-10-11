@@ -33,6 +33,11 @@ class CrumbView : LinearLayout {
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)  {}
     constructor(context: Context) : super(context) {}
 
+    init {
+        mDefaultTextColor = binding.title.currentTextColor
+        binding.arrow.setColorFilter(mDefaultTextColor)
+    }
+
     fun setTitle(title: String) {
         mTitle = title
         binding.title.text = mTitle
@@ -88,7 +93,6 @@ class CrumbView : LinearLayout {
 
     fun setHighlight(resourceId: Int) {
         mUseHighlight = true
-        mDefaultTextColor = binding.title.currentTextColor
         mHighlightColor = resourceId
         updateActiveState()
     }
