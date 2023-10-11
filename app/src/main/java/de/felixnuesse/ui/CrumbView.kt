@@ -20,14 +20,17 @@ class CrumbView : LinearLayout {
     private var mShowArrow = false
     private var mIsActive = true
 
+    private var mTextDefaultColor = binding.title.currentTextColor
+
+
     constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)  {}
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)  {}
     constructor(context: Context) : super(context) {}
 
     init {
         binding.icon.visibility = View.GONE
-        binding.arrow.setColorFilter(binding.title.currentTextColor)
-        binding.icon.setColorFilter(binding.title.currentTextColor)
+        binding.arrow.setColorFilter(mTextDefaultColor)
+        binding.icon.setColorFilter(mTextDefaultColor)
     }
 
     fun setTitle(title: String) {
@@ -73,15 +76,19 @@ class CrumbView : LinearLayout {
         var padding = 0
 
         if(mIsActive) {
-            binding.title.setTypeface(null, Typeface.BOLD)
             padding = (2 * resources.displayMetrics.density).toInt()
             binding.root.setBackgroundResource(R.drawable.pill)
+            binding.arrow.setColorFilter(mTextDefaultColor)
+            binding.icon.setColorFilter(mTextDefaultColor)
+            binding.title.setTextColor(mTextDefaultColor)
         } else {
-            binding.title.setTypeface(null, Typeface.NORMAL)
             binding.root.background = null
+            var color = resources.getColor(R.color.textColorHighlight)
+            binding.arrow.setColorFilter(color)
+            binding.icon.setColorFilter(color)
+            binding.title.setTextColor(color)
         }
         params.setMargins(padding, 0, padding, 0)
         binding.title.layoutParams = params
     }
-
 }

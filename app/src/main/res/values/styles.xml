@@ -93,4 +93,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/dialogCornerRadius</item>
     </style>
+    <style name="BreadcrumbText" parent="">
+        <item name="android:textColor">@color/md_theme_light_background</item>
+    </style>
 </resources>
