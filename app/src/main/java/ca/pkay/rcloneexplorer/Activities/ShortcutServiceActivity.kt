@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.Services.SyncService
-import ca.pkay.rcloneexplorer.Services.SyncService.TASK_SYNC_ACTION
+import ca.pkay.rcloneexplorer.Services.SyncService.Companion.TASK_SYNC_ACTION
 
 class ShortcutServiceActivity : AppCompatActivity() {
 

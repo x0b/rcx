@@ -13,15 +13,15 @@ import ca.pkay.rcloneexplorer.R
 class GenericSyncNotification(var mContext: Context) {
 
     fun updateGenericNotification(
-        title: String?,
-        content: String?,
+        title: String,
+        content: String,
         icon: Int,
-        bigTextArray: ArrayList<String?>,
+        bigTextArray: ArrayList<String>,
         percent: Int,
         cls: Class<*>?,
         cancelClass: Class<*>?,
-        channelID: String?
-    ): NotificationCompat.Builder? {
+        channelID: String
+    ): NotificationCompat.Builder {
         val bigText = StringBuilder()
         for (i in bigTextArray.indices) {
             bigText.append(bigTextArray[i])
@@ -36,7 +36,7 @@ class GenericSyncNotification(var mContext: Context) {
 
         return NotificationCompat.Builder(
             mContext,
-            channelID!!
+            channelID
         )
             .setSmallIcon(icon)
             .setContentTitle(title)

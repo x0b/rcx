@@ -122,7 +122,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
 
     public void addTask(Task data) {
         tasks.add(data);
-        notifyDataSetChanged();
+        notifyItemInserted(tasks.size());
     }
 
     public void setList(ArrayList<Task> data) {
@@ -133,6 +133,7 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     private void startTask(Task task){
         Intent intent = SyncService.createInternalStartIntent(context, task.getId());
         context.startService(intent);
+
     }
 
     private void editTask(Task task) {

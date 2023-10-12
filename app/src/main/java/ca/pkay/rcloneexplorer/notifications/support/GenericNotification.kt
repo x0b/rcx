@@ -29,14 +29,14 @@ abstract class GenericNotification(var mContext: Context) {
      * Create initial Notification to be build for the service
      */
     fun createNotification(
-        title: String?,
-        bigTextArray: java.util.ArrayList<String?>?
-    ): NotificationCompat.Builder? {
+        title: String,
+        bigTextArray: java.util.ArrayList<String>
+    ): NotificationCompat.Builder {
         return GenericSyncNotification(mContext).updateGenericNotification(
             title,
             title,
             actionIcon,
-            bigTextArray!!,
+            bigTextArray,
             0,
             serviceClass,
             serviceCancelClass,
@@ -48,25 +48,25 @@ abstract class GenericNotification(var mContext: Context) {
      * Update Service notification
      */
     fun updateNotification(
-        title: String?,
-        content: String?,
-        bigTextArray: java.util.ArrayList<String?>?,
+        title: String,
+        content: String,
+        bigTextArray: java.util.ArrayList<String>,
         percent: Int
     ) {
-        if(content?.isBlank() == true || content == null){
+        if(content.isBlank()){
             return
         }
         var builder = GenericSyncNotification(mContext).updateGenericNotification(
             title,
             content,
             actionIcon,
-            bigTextArray!!,
+            bigTextArray,
             percent,
             serviceClass,
             serviceCancelClass,
             sChannelId
         )
-        builder?.let {
+        builder.let {
             notify(it, persistentId)
         }
     }

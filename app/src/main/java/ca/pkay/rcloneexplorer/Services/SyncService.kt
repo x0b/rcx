@@ -1,424 +1,407 @@
-package ca.pkay.rcloneexplorer.Services;
+package ca.pkay.rcloneexplorer.Services
 
+import android.app.IntentService
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.wifi.WifiManager
+import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
+import ca.pkay.rcloneexplorer.Database.DatabaseHandler
+import ca.pkay.rcloneexplorer.Items.RemoteItem
+import ca.pkay.rcloneexplorer.Items.SyncDirectionObject
+import ca.pkay.rcloneexplorer.Items.Task
+import ca.pkay.rcloneexplorer.Log2File
+import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.Rclone
+import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification
+import ca.pkay.rcloneexplorer.notifications.ReportNotifications
+import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications
+import ca.pkay.rcloneexplorer.notifications.support.StatusObject
+import ca.pkay.rcloneexplorer.util.FLog
+import ca.pkay.rcloneexplorer.util.SyncLog
+import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil
+import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil.Companion.dataConnection
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.InterruptedIOException
+import java.util.Random
 
-import static ca.pkay.rcloneexplorer.Items.SyncDirectionObject.SYNC_LOCAL_TO_REMOTE;
-
-import android.app.IntentService;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.preference.PreferenceManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.util.HashMap;
-import java.util.Random;
-
-import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
-import ca.pkay.rcloneexplorer.Items.RemoteItem;
-import ca.pkay.rcloneexplorer.Items.Task;
-import ca.pkay.rcloneexplorer.Log2File;
-import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Rclone;
-import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification;
-import ca.pkay.rcloneexplorer.notifications.ReportNotifications;
-import ca.pkay.rcloneexplorer.notifications.support.StatusObject;
-import ca.pkay.rcloneexplorer.notifications.SyncServiceNotifications;
-import ca.pkay.rcloneexplorer.util.FLog;
-import ca.pkay.rcloneexplorer.util.SyncLog;
-import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil;
-import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil.Connection;
-
-
-public class SyncService extends IntentService {
-
-
-    //those Extras do not follow the above schema, because they are exposed to external applications
-    //That means shorter values make it easier to use. There is no other technical reason
-    public static final String TASK_SYNC_ACTION = "START_TASK";
-    public static final String TASK_CANCEL_ACTION = "CANCEL_TASK";
-    public static final String EXTRA_TASK_ID= "task";
-    public static final String EXTRA_TASK_SILENT= "notification";
-
-    enum FAILURE_REASON {
-        NONE,
-        NO_UNMETERED,
-        NO_CONNECTION,
-        RCLONE_ERROR
-    }
-    private static final String TAG = "SyncService";
-
-    public static final String REMOTE_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_ARG";
-    public static final String REMOTE_PATH_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_PATH_ARG";
-    public static final String LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG";
-    public static final String SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG";
-    public static final String SHOW_RESULT_NOTIFICATION = "ca.pkay.rcexplorer.SHOW_RESULT_NOTIFICATION";
-    public static final String TASK_NAME = "ca.pkay.rcexplorer.TASK_NAME";
-    public static final String TASK_WIFI_ONLY = "ca.pkay.rcexplorer.TASK_WIFI_ONLY";
-    public static final String TASK_MD5SUM = "ca.pkay.rcexplorer.TASK_MD5SUM";
-
-    private Rclone rclone;
-    private Log2File log2File;
-    private boolean connectivityChanged;
-    SyncServiceNotifications notificationManager = new SyncServiceNotifications(this);
-
-    private static HashMap<Long, Process> mCurrentProcesses = new HashMap();
-
-    public SyncService() {
-        super("ca.pkay.rcexplorer.SYNC_SERCVICE");
+class SyncService : IntentService("ca.pkay.rcexplorer.SYNC_SERCVICE") {
+    internal enum class FAILURE_REASON {
+        NONE, NO_UNMETERED, NO_CONNECTION, RCLONE_ERROR
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        (new GenericSyncNotification(this)).setNotificationChannel(
-                SyncServiceNotifications.CHANNEL_ID,
-                getString(R.string.sync_service_notification_channel_title),
-                getString(R.string.sync_service_notification_channel_description)
-        );
-        (new GenericSyncNotification(this)).setNotificationChannel(
-                SyncServiceNotifications.CHANNEL_SUCCESS_ID,
-                getString(R.string.sync_service_notification_channel_success_title),
-                getString(R.string.sync_service_notification_channel_success_description)
-        );
-        (new GenericSyncNotification(this)).setNotificationChannel(
-                SyncServiceNotifications.CHANNEL_FAIL_ID,
-                getString(R.string.sync_service_notification_channel_fail_title),
-                getString(R.string.sync_service_notification_channel_fail_description)
-        );
-        (new GenericSyncNotification(this)).setNotificationChannel(
-                ReportNotifications.CHANNEL_REPORT_ID,
-                getString(R.string.sync_service_notification_channel_report_title),
-                getString(R.string.sync_service_notification_channel_report_description)
-        );
-        rclone = new Rclone(this);
-        log2File = new Log2File(this);
-        registerBroadcastReceivers();
+    private var rclone: Rclone? = null
+    private var log2File: Log2File? = null
+    private var connectivityChanged = false
+    var notificationManager = SyncServiceNotifications(this)
+    override fun onCreate() {
+        super.onCreate()
+        GenericSyncNotification(this).setNotificationChannel(
+            SyncServiceNotifications.CHANNEL_ID,
+            getString(R.string.sync_service_notification_channel_title),
+            getString(R.string.sync_service_notification_channel_description)
+        )
+        GenericSyncNotification(this).setNotificationChannel(
+            SyncServiceNotifications.CHANNEL_SUCCESS_ID,
+            getString(R.string.sync_service_notification_channel_success_title),
+            getString(R.string.sync_service_notification_channel_success_description)
+        )
+        GenericSyncNotification(this).setNotificationChannel(
+            SyncServiceNotifications.CHANNEL_FAIL_ID,
+            getString(R.string.sync_service_notification_channel_fail_title),
+            getString(R.string.sync_service_notification_channel_fail_description)
+        )
+        GenericSyncNotification(this).setNotificationChannel(
+            ReportNotifications.CHANNEL_REPORT_ID,
+            getString(R.string.sync_service_notification_channel_report_title),
+            getString(R.string.sync_service_notification_channel_report_description)
+        )
+        rclone = Rclone(this)
+        log2File = Log2File(this)
+        registerBroadcastReceivers()
     }
 
-    @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-        Log.e(TAG, "onHandleIntent");
+    override fun onHandleIntent(intent: Intent?) {
+        log("onHandleIntent")
         if (intent == null) {
-            return;
+            return
         }
-        Log.e(TAG, "With Intent: "+intent.getAction());
-
-        if(intent.getAction().equals(TASK_CANCEL_ACTION)) {
-
-            long taskId = intent.getLongExtra(EXTRA_TASK_ID, -1);
-            Log.e(TAG, "With Intent: "+taskId);
-
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-            notificationManagerCompat.cancel((int) taskId);
-            discardOfServiceIfRequired();
+        log("With Intent: " + intent.action)
+        if (intent.action == TASK_CANCEL_ACTION) {
+            val taskId = intent.getLongExtra(EXTRA_TASK_ID, -1)
+            log("With Intent: $taskId")
+            val notificationManagerCompat = NotificationManagerCompat.from(this)
+            notificationManagerCompat.cancel(taskId.toInt())
+            discardOfServiceIfRequired()
         }
-
-        if(intent.getAction().equals(TASK_SYNC_ACTION)) {
-            startForeground(SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC,
-                    notificationManager.getPersistentNotification("SyncService").build());
-
-            InternalTaskItem task = handleTaskStartIntent(intent);
-            notificationManager.setCancelId(task.id);
-            handleTaskNonblocking(task);
+        if (intent.action == TASK_SYNC_ACTION) {
+            startForeground(
+                SyncServiceNotifications.PERSISTENT_NOTIFICATION_ID_FOR_SYNC,
+                notificationManager.getPersistentNotification("SyncService").build()
+            )
+            val task = handleTaskStartIntent(intent)
+            notificationManager.setCancelId(task!!.id!!)
+            handleTaskNonblocking(task)
         }
     }
 
-    private void handleTaskNonblocking(InternalTaskItem internalTask) {
-        if(mCurrentProcesses.get(internalTask.id) != null){
-            FLog.e(TAG, "No identical runs!");
+    private fun handleTaskNonblocking(internalTask: InternalTaskItem?) {
+        if (mCurrentProcesses[internalTask!!.id] != null) {
+            log("No identical runs!")
             SyncLog.error(
-                    this,
-                    getString(R.string.operation_no_identical_title),
-                    getString(R.string.operation_no_identical, internalTask.title)
-            );
+                this,
+                getString(R.string.operation_no_identical_title),
+                getString(R.string.operation_no_identical, internalTask.title)
+            )
             notificationManager.showFailedNotificationOrReport(
-                    getString(R.string.operation_no_identical_title),
-                    getString(R.string.operation_no_identical, internalTask.title),
-                    (int) System.currentTimeMillis(),
-                    internalTask.id);
-            return;
+                getString(R.string.operation_no_identical_title),
+                getString(R.string.operation_no_identical, internalTask.title),
+                System.currentTimeMillis().toInt(),
+                internalTask.id!!
+            )
+            return
         }
-
-        new Thread(() -> handleTask(internalTask)).start();
+        Runnable { handleTask(internalTask) }.run()
     }
 
-
-    private void handleTask(InternalTaskItem internalTask) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
-
-        String title = internalTask.title;
-        FAILURE_REASON failureReason = FAILURE_REASON.NONE;
-        if(internalTask.title.equals("")){
-            title = internalTask.remotePath;
+    private fun handleTask(internalTask: InternalTaskItem?) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false)
+        var title = internalTask!!.title
+        log("Sync: $title")
+        var failureReason = FAILURE_REASON.NONE
+        if (internalTask.title == "") {
+            title = internalTask.remotePath
         }
-
-        int notificationID = (new Random()).nextInt();
-
-        StatusObject statusObject = new StatusObject(this);
-        Connection connection = WifiConnectivitiyUtil.Companion.dataConnection(this.getApplicationContext());
-
-        Process rcloneProcess = null;
-
-        if (internalTask.transferOnWiFiOnly && connection == Connection.METERED) {
-            failureReason = FAILURE_REASON.NO_UNMETERED;
-        } else if (connection == Connection.DISCONNECTED || connection == Connection.NOT_AVAILABLE) {
-            failureReason = FAILURE_REASON.NO_CONNECTION;
+        val notificationID = Random().nextInt()
+        val statusObject = StatusObject(this)
+        val connection = dataConnection(this.applicationContext)
+        var rcloneProcess: Process? = null
+        if (internalTask.transferOnWiFiOnly && connection === WifiConnectivitiyUtil.Connection.METERED) {
+            failureReason = FAILURE_REASON.NO_UNMETERED
+        } else if (connection === WifiConnectivitiyUtil.Connection.DISCONNECTED || connection === WifiConnectivitiyUtil.Connection.NOT_AVAILABLE) {
+            failureReason = FAILURE_REASON.NO_CONNECTION
         } else {
-            rcloneProcess = rclone.sync(internalTask.remoteItem, internalTask.localPath, internalTask.remotePath, internalTask.syncDirection, internalTask.md5sum);
-            mCurrentProcesses.put(internalTask.id,  rcloneProcess);
+            rcloneProcess = rclone!!.sync(
+                internalTask.remoteItem,
+                internalTask.localPath,
+                internalTask.remotePath,
+                internalTask.syncDirection,
+                internalTask.md5sum
+            )
+            mCurrentProcesses[internalTask.id ?: -1] = rcloneProcess
             if (rcloneProcess != null) {
                 try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(rcloneProcess.getErrorStream()));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        boolean isJson = false;
+                    val reader = BufferedReader(InputStreamReader(rcloneProcess.errorStream))
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+
                         try {
-                            JSONObject logline = new JSONObject(line);
-                            isJson = true;
-                        } catch (JSONException e) {}
+                            val logline = JSONObject(line)
 
-                        if(isJson) {
-                            try {
-                                JSONObject logline = new JSONObject(line);
-
-                                //todo: migrate this to StatusObject, so that we can handle everything properly.
-                                if(logline.getString("level").equals("error")){
-                                    if(isLoggingEnable) {
-                                        log2File.log(line);
-                                    }
-                                    statusObject.parseLoglineToStatusObject(logline);
-                                } else if(logline.getString("level").equals("warning")){
-                                    statusObject.parseLoglineToStatusObject(logline);
+                            //todo: migrate this to StatusObject, so that we can handle everything properly.
+                            if (logline.getString("level") == "error") {
+                                if (isLoggingEnable) {
+                                    log2File!!.log(line)
                                 }
-
-                                //Log.e("TAG", logline.toString());
-                                notificationManager.updateSyncNotification(
-                                        title,
-                                        statusObject.getNotificationContent(),
-                                        statusObject.getNotificationBigText(),
-                                        statusObject.getNotificationPercent(),
-                                        notificationID
-                                );
-
-                            } catch (JSONException e) {
-                                FLog.e(TAG, "onHandleIntent: the offending line:", line);
-                                FLog.e(TAG, "onHandleIntent: error reading json", e);
+                                statusObject.parseLoglineToStatusObject(logline)
+                            } else if (logline.getString("level") == "warning") {
+                                statusObject.parseLoglineToStatusObject(logline)
                             }
+
+                            notificationManager.updateSyncNotification(
+                                title?: "",
+                                statusObject.notificationContent,
+                                statusObject.notificationBigText,
+                                statusObject.notificationPercent,
+                                notificationID
+                            )
+                        } catch (e: JSONException) {
+                            FLog.e(TAG, "SyncService-Error: the offending line: $line")
+                            //FLog.e(TAG, "onHandleIntent: error reading json", e)
                         }
                     }
-                } catch (InterruptedIOException e) {
-                    FLog.d(TAG, "onHandleIntent: I/O interrupted, stream closed");
-                } catch (IOException e) {
-                    if (!"Stream closed".equals(e.getMessage())) {
-                        FLog.e(TAG, "onHandleIntent: error reading stdout", e);
-                    }
-                    FLog.e(TAG, "onHandleIntent: error reading stdout", e);
+                } catch (e: InterruptedIOException) {
+                    FLog.e(TAG, "onHandleIntent: I/O interrupted, stream closed", e)
+                } catch (e: IOException) {
+                    FLog.e(TAG, "onHandleIntent: error reading stdout", e)
                 }
-
                 try {
-                    rcloneProcess.waitFor();
-                } catch (InterruptedException e) {
-                    FLog.e(TAG, "onHandleIntent: error waiting for process", e);
+                    rcloneProcess.waitFor()
+                } catch (e: InterruptedException) {
+                    FLog.e(TAG, "onHandleIntent: error waiting for process", e)
                 }
+            } else {
+                log("Sync: No Rclone Process!")
             }
-            sendUploadFinishedBroadcast(internalTask.remoteItem.getName(), internalTask.remotePath);
+            notificationManager.cancelSyncNotification(notificationID)
+            sendUploadFinishedBroadcast(internalTask.remoteItem!!.name, internalTask.remotePath)
         }
+        val notificationId = System.currentTimeMillis().toInt()
+        if (internalTask.silentRun) {
+            if (internalTask.transferOnWiFiOnly && connectivityChanged || rcloneProcess == null || rcloneProcess.exitValue() != 0) {
+                var content = getString(R.string.operation_failed_unknown, title)
+                when (failureReason) {
+                    FAILURE_REASON.NONE -> if (connectivityChanged) {
+                        content = getString(R.string.operation_failed_data_change, title)
+                    }
 
-        int notificationId = (int)System.currentTimeMillis();
+                    FAILURE_REASON.NO_UNMETERED -> content =
+                        getString(R.string.operation_failed_no_unmetered, title)
 
-        if(internalTask.silentRun){
-            if (internalTask.transferOnWiFiOnly && connectivityChanged || (rcloneProcess == null || rcloneProcess.exitValue() != 0)) {
-                String content = getString(R.string.operation_failed_unknown, title);
+                    FAILURE_REASON.NO_CONNECTION -> content =
+                        getString(R.string.operation_failed_no_connection, title)
 
-                switch (failureReason) {
-                    case NONE:
-                        if(connectivityChanged){
-                            content = getString(R.string.operation_failed_data_change, title);
-                        }
-                        break;
-                    case NO_UNMETERED:
-                        content = getString(R.string.operation_failed_no_unmetered, title);
-                        break;
-                    case NO_CONNECTION:
-                        content = getString(R.string.operation_failed_no_connection, title);
-                        break;
+                    FAILURE_REASON.RCLONE_ERROR -> content =
+                        getString(R.string.operation_failed_unknown_rclone_error, title)
                 }
                 //Todo: check if we should also add errors on success
-                statusObject.printErrors();
-                String errors = statusObject.getAllErrorMessages();
-                if(!errors.isEmpty()) {
-                    content += "\n\n\n"+statusObject.getAllErrorMessages();
+                statusObject.printErrors()
+                val errors = statusObject.getAllErrorMessages()
+                if (errors.isNotEmpty()) {
+                    content += """
+                        
+                        
+                        
+                        ${statusObject.getAllErrorMessages()}
+                        """.trimIndent()
                 }
-                SyncLog.error(this, getString(R.string.operation_failed), title+": "+content);
-                notificationManager.showFailedNotificationOrReport(title, content, notificationId, internalTask.id);
-            }else{
-                String message = getResources().getQuantityString(R.plurals.operation_success_description,
-                        statusObject.getTotalTransfers(),
-                        title,
-                        statusObject.getTotalSize(),
-                        statusObject.getTotalTransfers()
-                );
-                if(statusObject.getTotalTransfers() == 0) {
-                    message = getResources().getString(R.string.operation_success_description_zero);
+                SyncLog.error(this, getString(R.string.operation_failed), "$title: $content")
+                notificationManager.showFailedNotificationOrReport(
+                    title!!,
+                    content,
+                    notificationId,
+                    internalTask.id!!
+                )
+            } else {
+                var message = resources.getQuantityString(
+                    R.plurals.operation_success_description,
+                    statusObject.getTotalTransfers(),
+                    title,
+                    statusObject.getTotalSize(),
+                    statusObject.getTotalTransfers()
+                )
+                if (statusObject.getTotalTransfers() == 0) {
+                    message = resources.getString(R.string.operation_success_description_zero)
                 }
-                if(statusObject.getDeletions()>0){
-                    message += "\n" + getString(R.string.operation_success_description_deletions_prefix, statusObject.getDeletions());
+                if (statusObject.getDeletions() > 0) {
+                    message += """
+                        
+                        ${
+                        getString(
+                            R.string.operation_success_description_deletions_prefix,
+                            statusObject.getDeletions()
+                        )
+                    }
+                        """.trimIndent()
                 }
-                SyncLog.info(this, getString(R.string.operation_success, title), message);
-                notificationManager.showSuccessNotificationOrReport(title, message, notificationId, internalTask.id);
+                SyncLog.info(this, getString(R.string.operation_success, title), message)
+                notificationManager.showSuccessNotificationOrReport(
+                    title!!,
+                    message,
+                    notificationId,
+                    internalTask.id!!
+                )
             }
         }
-        mCurrentProcesses.remove(internalTask.id);
-        discardOfServiceIfRequired();
+        mCurrentProcesses.remove(internalTask.id)
+        discardOfServiceIfRequired()
     }
 
-    private void discardOfServiceIfRequired() {
-        if(mCurrentProcesses.isEmpty()){
-            stopForeground(true);
+    private fun discardOfServiceIfRequired() {
+        if (mCurrentProcesses.isEmpty()) {
+            stopForeground(true)
         }
     }
 
-    private InternalTaskItem handleTaskStartIntent(Intent intent) {
-        String action = intent.getAction();
-        if(action == null) {
+    private fun handleTaskStartIntent(intent: Intent): InternalTaskItem? {
+        var action = intent.action
+        if (action == null) {
             // equals might fail otherwise when internal tasks send an intent without action.
-            action = "";
+            action = ""
         }
-        if (action.equals(TASK_SYNC_ACTION)) {
-            DatabaseHandler db = new DatabaseHandler(this);
-            for (Task task: db.getAllTasks()){
-                if(task.getId() == intent.getLongExtra(EXTRA_TASK_ID, -1)){
-                    String path = task.getLocalPath();
-
-                    boolean silentRun = intent.getBooleanExtra(EXTRA_TASK_SILENT, true);
-
-                    RemoteItem remoteItem = new RemoteItem(task.getRemoteId(), task.getRemoteType(), "");
-                    Intent taskIntent = new Intent();
-                    taskIntent.setClass(this.getApplicationContext(), ca.pkay.rcloneexplorer.Services.SyncService.class);
-
-                    taskIntent.putExtra(SyncService.REMOTE_ARG, remoteItem);
-                    taskIntent.putExtra(SyncService.LOCAL_PATH_ARG, path);
-                    taskIntent.putExtra(SyncService.SYNC_DIRECTION_ARG, task.getDirection());
-                    taskIntent.putExtra(SyncService.REMOTE_PATH_ARG, task.getRemotePath());
-                    taskIntent.putExtra(SyncService.TASK_NAME, task.getTitle());
-                    taskIntent.putExtra(EXTRA_TASK_ID, task.getId());
-                    taskIntent.putExtra(SyncService.SHOW_RESULT_NOTIFICATION, silentRun);
-                    taskIntent.putExtra(SyncService.TASK_WIFI_ONLY, task.getWifionly());
-                    taskIntent.putExtra(SyncService.TASK_MD5SUM, task.getMd5sum());
-
-                    return InternalTaskItem.newInstance(taskIntent, this);
+        return if (action == TASK_SYNC_ACTION) {
+            val db = DatabaseHandler(this)
+            for (task in db.allTasks) {
+                if (task.id == intent.getLongExtra(EXTRA_TASK_ID, -1)) {
+                    val path = task.localPath
+                    val silentRun = intent.getBooleanExtra(EXTRA_TASK_SILENT, true)
+                    val remoteItem = RemoteItem(task.remoteId, task.remoteType, "")
+                    val taskIntent = Intent()
+                    taskIntent.setClass(this.applicationContext, SyncService::class.java)
+                    taskIntent.putExtra(REMOTE_ARG, remoteItem)
+                    taskIntent.putExtra(LOCAL_PATH_ARG, path)
+                    taskIntent.putExtra(SYNC_DIRECTION_ARG, task.direction)
+                    taskIntent.putExtra(REMOTE_PATH_ARG, task.remotePath)
+                    taskIntent.putExtra(TASK_NAME, task.title)
+                    taskIntent.putExtra(EXTRA_TASK_ID, task.id)
+                    taskIntent.putExtra(SHOW_RESULT_NOTIFICATION, silentRun)
+                    taskIntent.putExtra(TASK_WIFI_ONLY, task.wifionly)
+                    taskIntent.putExtra(TASK_MD5SUM, task.md5sum)
+                    return InternalTaskItem.newInstance(taskIntent, this)
                 }
             }
-            return null;
+            null
         } else {
-            return InternalTaskItem.newInstance(intent, this);
+            InternalTaskItem.newInstance(intent, this)
         }
     }
 
-
-    public static Intent createInternalStartIntent(Context context, long id) {
-        Intent i = new Intent(context, SyncService.class);
-        i.setAction(TASK_SYNC_ACTION);
-        i.putExtra(EXTRA_TASK_ID, id);
-        return i;
+    private fun registerBroadcastReceivers() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)
+        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter)
     }
 
-    private void registerBroadcastReceivers() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter);
-    }
-
-    private BroadcastReceiver connectivityChangeBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            connectivityChanged = true;
-            stopSelf();
-        }
-    };
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (Process p : mCurrentProcesses.values()) {
-            p.destroy();
+    private val connectivityChangeBroadcastReceiver: BroadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                connectivityChanged = true
+                stopSelf()
+            }
         }
 
-        unregisterReceiver(connectivityChangeBroadcastReceiver);
+    override fun onDestroy() {
+        super.onDestroy()
+        for (p in mCurrentProcesses.values) {
+            p.destroy()
+        }
+        unregisterReceiver(connectivityChangeBroadcastReceiver)
     }
 
-    private void sendUploadFinishedBroadcast(String remote, String path) {
-        Intent intent = new Intent();
-        intent.setAction(getString(R.string.background_service_broadcast));
-        intent.putExtra(getString(R.string.background_service_broadcast_data_remote), remote);
-        intent.putExtra(getString(R.string.background_service_broadcast_data_path), path);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    private fun sendUploadFinishedBroadcast(remote: String, path: String?) {
+        val intent = Intent()
+        intent.action = getString(R.string.background_service_broadcast)
+        intent.putExtra(getString(R.string.background_service_broadcast_data_remote), remote)
+        intent.putExtra(getString(R.string.background_service_broadcast_data_path), path)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
-
 
     /**
      * Okay this is a bit embarrasing. I did not write down WHY i needed this internal class.
      * I assume it was because we have multiple vectors on how this service can be started,
      * and because they use different methods to do stuff, we need to unify it here.
      */
-    private static class InternalTaskItem {
-        public Long id;
-        public RemoteItem remoteItem;
-        public String remotePath;
-        public String localPath;
-        public String title;
-        public int syncDirection = SYNC_LOCAL_TO_REMOTE;
-        public boolean silentRun = true;
-        public boolean md5sum = Task.TASK_MD5SUM_DEFAULT;
+    private class InternalTaskItem {
+        var id: Long? = null
+        var remoteItem: RemoteItem? = null
+        var remotePath: String? = null
+        var localPath: String? = null
+        var title: String? = null
+        var syncDirection = SyncDirectionObject.SYNC_LOCAL_TO_REMOTE
+        var silentRun = true
+        var md5sum = Task.TASK_MD5SUM_DEFAULT
 
         // this should not use the task default. It should fallback to the settings.
         // reason: tasks should not use the settings-setting, but everything else should.
-        public boolean transferOnWiFiOnly = Task.TASK_WIFIONLY_DEFAULT;
+        var transferOnWiFiOnly = Task.TASK_WIFIONLY_DEFAULT
 
-        public static InternalTaskItem newInstance(Intent intent, Context context)
-        {
+        companion object {
+            fun newInstance(intent: Intent, context: Context): InternalTaskItem {
 
-            // todo: define this default value somewhere central. Dont hardcode it.
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean transferOnWiFiOnly = sharedPreferences.getBoolean(context.getString(R.string.pref_key_wifi_only_transfers), false);
-
-            InternalTaskItem itt = new InternalTaskItem();
-            itt.id = intent.getLongExtra(EXTRA_TASK_ID, -1);
-            itt.remoteItem = intent.getParcelableExtra(REMOTE_ARG);
-            itt.remotePath = (String) opt(intent.getStringExtra(REMOTE_PATH_ARG), "");
-            itt.localPath = (String) opt(intent.getStringExtra(LOCAL_PATH_ARG), "");
-            itt.title = (String) opt(intent.getStringExtra(TASK_NAME), "");
-            itt.syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1);
-            itt.silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true);
-            itt.md5sum = intent.getBooleanExtra(TASK_MD5SUM, Task.TASK_MD5SUM_DEFAULT);
-            itt.transferOnWiFiOnly = intent.getBooleanExtra(TASK_WIFI_ONLY, transferOnWiFiOnly);
-
-            return itt;
-        }
-
-        private static Object opt(Object preferred, @NonNull Object alternate){
-            if(preferred != null) {
-                return preferred;
+                // todo: define this default value somewhere central. Dont hardcode it.
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                val transferOnWiFiOnly = sharedPreferences.getBoolean(
+                    context.getString(R.string.pref_key_wifi_only_transfers),
+                    false
+                )
+                val itt = InternalTaskItem()
+                itt.id = intent.getLongExtra(EXTRA_TASK_ID, -1)
+                itt.remoteItem = intent.getParcelableExtra(REMOTE_ARG)
+                itt.remotePath = opt(intent.getStringExtra(REMOTE_PATH_ARG), "") as String
+                itt.localPath = opt(intent.getStringExtra(LOCAL_PATH_ARG), "") as String
+                itt.title = opt(intent.getStringExtra(TASK_NAME), "") as String
+                itt.syncDirection = intent.getIntExtra(SYNC_DIRECTION_ARG, 1)
+                itt.silentRun = intent.getBooleanExtra(SHOW_RESULT_NOTIFICATION, true)
+                itt.md5sum = intent.getBooleanExtra(TASK_MD5SUM, Task.TASK_MD5SUM_DEFAULT)
+                itt.transferOnWiFiOnly = intent.getBooleanExtra(TASK_WIFI_ONLY, transferOnWiFiOnly)
+                return itt
             }
-            return alternate;
-        }
 
+            private fun opt(preferred: Any?, alternate: Any): Any {
+                return preferred ?: alternate
+            }
+        }
     }
 
+    private fun log(message: String) {
+        FLog.e(TAG, "SyncService: $message")
+    }
+
+    private fun logD(message: String) {
+        FLog.d(TAG, "SyncService: $message")
+    }
+
+    companion object {
+        //those Extras do not follow the above schema, because they are exposed to external applications
+        //That means shorter values make it easier to use. There is no other technical reason
+        const val TASK_SYNC_ACTION = "START_TASK"
+        const val TASK_CANCEL_ACTION = "CANCEL_TASK"
+        const val EXTRA_TASK_ID = "task"
+        const val EXTRA_TASK_SILENT = "notification"
+        private const val TAG = "SyncService"
+        const val REMOTE_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_ARG"
+        const val REMOTE_PATH_ARG = "ca.pkay.rcexplorer.SYNC_SERVICE_REMOTE_PATH_ARG"
+        const val LOCAL_PATH_ARG = "ca.pkay.rcexplorer.SYNC_LOCAL_PATH_ARG"
+        const val SYNC_DIRECTION_ARG = "ca.pkay.rcexplorer.SYNC_DIRECTION_ARG"
+        const val SHOW_RESULT_NOTIFICATION = "ca.pkay.rcexplorer.SHOW_RESULT_NOTIFICATION"
+        const val TASK_NAME = "ca.pkay.rcexplorer.TASK_NAME"
+        const val TASK_WIFI_ONLY = "ca.pkay.rcexplorer.TASK_WIFI_ONLY"
+        const val TASK_MD5SUM = "ca.pkay.rcexplorer.TASK_MD5SUM"
+        private val mCurrentProcesses: HashMap<Long, Process> = HashMap()
+        @JvmStatic
+        fun createInternalStartIntent(context: Context?, id: Long): Intent {
+            val i = Intent(context, SyncService::class.java)
+            i.action = TASK_SYNC_ACTION
+            i.putExtra(EXTRA_TASK_ID, id)
+            return i
+        }
+    }
 }

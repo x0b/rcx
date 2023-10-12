@@ -44,7 +44,7 @@ class SyncServiceNotifications(var mContext: Context) {
 
     fun showFailedNotificationOrReport(
         title: String,
-        content: String?,
+        content: String,
         notificationId: Int,
         taskid: Long
     ) {
@@ -57,15 +57,15 @@ class SyncServiceNotifications(var mContext: Context) {
         if(mReportManager.getFailures()<=1) {
             showFailedNotification(content, notificationId, taskid)
             mReportManager.lastFailedNotification(notificationId)
-            mReportManager.addToFailureReport(title, content?: "")
+            mReportManager.addToFailureReport(title, content)
         } else {
             mReportManager.cancelLastFailedNotification()
-            mReportManager.showFailReport(title, content?: "")
+            mReportManager.showFailReport(title, content)
         }
     }
 
     fun showFailedNotification(
-        content: String?,
+        content: String,
         notificationId: Int,
         taskid: Long
     ) {
@@ -95,7 +95,7 @@ class SyncServiceNotifications(var mContext: Context) {
 
     fun showSuccessNotificationOrReport(
         title: String,
-        content: String?,
+        content: String,
         notificationId: Int,
         taskid: Long
     ) {
@@ -114,7 +114,7 @@ class SyncServiceNotifications(var mContext: Context) {
             mReportManager.showSuccessReport(title, content?: "")
         }
     }
-    fun showSuccessNotification(title: String, content: String?, notificationId: Int) {
+    fun showSuccessNotification(title: String, content: String, notificationId: Int) {
         val builder = NotificationCompat.Builder(mContext, CHANNEL_SUCCESS_ID)
             .setSmallIcon(R.drawable.ic_twotone_cloud_done_24)
             .setContentTitle(mContext.getString(R.string.operation_success, title))
@@ -129,7 +129,7 @@ class SyncServiceNotifications(var mContext: Context) {
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(notificationId, builder.build())
     }
-    fun getPersistentNotification(title: String?): NotificationCompat.Builder {
+    fun getPersistentNotification(title: String): NotificationCompat.Builder {
 
         var flags = GenericSyncNotification.getFlags()
 
@@ -146,9 +146,9 @@ class SyncServiceNotifications(var mContext: Context) {
 
     @Deprecated("Use with specific notification id")
     fun updateSyncNotification(
-        title: String?,
-        content: String?,
-        bigTextArray: ArrayList<String?>?,
+        title: String,
+        content: String,
+        bigTextArray: ArrayList<String>,
         percent: Int
     ) {
         updateSyncNotification(
@@ -161,20 +161,20 @@ class SyncServiceNotifications(var mContext: Context) {
     }
 
     fun updateSyncNotification(
-        title: String?,
-        content: String?,
-        bigTextArray: ArrayList<String?>?,
+        title: String,
+        content: String,
+        bigTextArray: ArrayList<String>,
         percent: Int,
         notificationId: Int
     ) {
-        if(content?.isBlank() == true || content == null){
+        if(content.isBlank()){
             return
         }
         val builder = GenericSyncNotification(mContext).updateGenericNotification(
             mContext.getString(R.string.syncing_service, title),
             content,
             R.drawable.ic_twotone_rounded_cloud_sync_24,
-            bigTextArray!!,
+            bigTextArray,
             percent,
             SyncService::class.java,
             SyncCancelAction::class.java,
@@ -192,8 +192,8 @@ class SyncServiceNotifications(var mContext: Context) {
                     (FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
                 )
 
-            builder?.clearActions()
-            builder?.addAction(
+            builder.clearActions()
+            builder.addAction(
                     R.drawable.ic_cancel_download,
                     mContext.getString(R.string.cancel),
                     cancelPendingIntent
@@ -201,6 +201,11 @@ class SyncServiceNotifications(var mContext: Context) {
         }
 
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
-        notificationManagerCompat.notify(notificationId, builder!!.build())
+        notificationManagerCompat.notify(notificationId, builder.build())
+    }
+
+    fun cancelSyncNotification(notificationId: Int) {
+        val notificationManagerCompat = NotificationManagerCompat.from(mContext)
+        notificationManagerCompat.cancel(notificationId)
     }
 }
