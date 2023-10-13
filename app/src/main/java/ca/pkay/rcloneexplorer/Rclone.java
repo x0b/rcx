@@ -58,7 +58,6 @@ import io.github.x0b.safdav.file.SafConstants;
 public class Rclone {
 
     private static final String TAG = "Rclone";
-    private static final Boolean DEBUG_MODE = true; // limits bandwith, so that test-syncs are taking a while
     public static final int SYNC_DIRECTION_LOCAL_TO_REMOTE = 1;
     public static final int SYNC_DIRECTION_REMOTE_TO_LOCAL = 2;
     public static final int SERVE_PROTOCOL_HTTP = 1;
@@ -676,11 +675,6 @@ public class Rclone {
 
         if(useMD5Sum){
             defaultParameter.add("--checksum");
-        }
-
-        if(DEBUG_MODE){
-            defaultParameter.add("--bwlimit");
-            defaultParameter.add("500");
         }
 
         if (syncDirection == SyncDirectionObject.SYNC_LOCAL_TO_REMOTE) {
