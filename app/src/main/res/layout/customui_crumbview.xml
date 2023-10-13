@@ -12,8 +12,8 @@
         android:layout_width="20dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="2dp"
-        android:layout_marginStart="2dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
         android:layout_weight="1"
         android:src="@drawable/twotone_home_24" />
 
@@ -24,13 +24,14 @@
         android:layout_height="match_parent"
         android:ellipsize="end"
         android:gravity="center_vertical"
-        android:maxWidth="120dp"
         android:singleLine="true"
         android:text="TextView" />
 
     <ImageView
         android:id="@+id/arrow"
-        android:layout_width="wrap_content"
+        android:layout_width="20dp"
         android:layout_height="match_parent"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:src="@drawable/ic_arrow_right" />
 </LinearLayout>

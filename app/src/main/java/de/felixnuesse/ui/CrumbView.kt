@@ -1,7 +1,6 @@
 package de.felixnuesse.ui
 
 import android.content.Context
-import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -56,6 +55,7 @@ class CrumbView : LinearLayout {
 
     fun showHome() {
         binding.icon.visibility = View.VISIBLE
+        updateActiveState()
     }
 
     fun setActive(isActive: Boolean) {
@@ -69,20 +69,17 @@ class CrumbView : LinearLayout {
 
 
     private fun updateActiveState() {
-        val params = LayoutParams(
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.WRAP_CONTENT
-        )
 
-        var padding = 0
+        var textFieldPadding = 0
 
         if(mIsActive) {
-            padding = (2 * resources.displayMetrics.density).toInt()
             binding.root.setBackgroundResource(R.drawable.pill)
             binding.arrow.setColorFilter(mTextDefaultColor)
             binding.icon.setColorFilter(mTextDefaultColor)
             binding.title.setTextColor(mTextDefaultColor)
-            TooltipCompat.setTooltipText(binding.root, mPath);
+            TooltipCompat.setTooltipText(binding.root, mPath)
+            binding.title.maxWidth = getPixelFromDp(99999) // allow it as big as possible
+            textFieldPadding = getPixelFromDp(8)
         } else {
             binding.root.background = null
             var color = resources.getColor(R.color.textColorHighlight)
@@ -90,8 +87,18 @@ class CrumbView : LinearLayout {
             binding.icon.setColorFilter(color)
             binding.title.setTextColor(color)
             TooltipCompat.setTooltipText(binding.root, null)
+            binding.title.maxWidth = getPixelFromDp(90)
         }
-        params.setMargins(padding, 0, padding, 0)
-        binding.title.layoutParams = params
+
+        if(binding.icon.visibility == View.VISIBLE) {
+            binding.title.setPadding(0, 0, 0, 0)
+        } else {
+            binding.title.setPadding(textFieldPadding, 0, textFieldPadding, 0)
+        }
+
+    }
+
+    private fun getPixelFromDp(dp: Int ): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 }
