@@ -19,6 +19,7 @@ public class Exporter {
         JSONObject main = new JSONObject();
         JSONArray tasks = new JSONArray();
 
+        // todo: Use Serializable
         for(Task task : dbHandler.getAllTasks()){
             JSONObject taskObject = new JSONObject();
             taskObject.put("id", task.getId());

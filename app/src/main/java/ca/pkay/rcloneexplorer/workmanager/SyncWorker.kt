@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.hasKeyWithValueOfType
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler
 import ca.pkay.rcloneexplorer.Items.RemoteItem
 import ca.pkay.rcloneexplorer.Items.Task
@@ -23,6 +24,7 @@ import ca.pkay.rcloneexplorer.notifications.support.StatusObject
 import ca.pkay.rcloneexplorer.util.FLog
 import ca.pkay.rcloneexplorer.util.SyncLog
 import ca.pkay.rcloneexplorer.util.WifiConnectivitiyUtil
+import kotlinx.serialization.json.Json
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -35,8 +37,18 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
     companion object {
         const val TASK_ID = "TASK_ID"
+        const val TASK_EPHEMERAL = "TASK_EPHEMERAL"
         private const val TAG = "SyncWorker"
+
+        //those Extras do not follow the above schema, because they are exposed to external applications
+        //That means shorter values make it easier to use. There is no other technical reason
+        const val TASK_SYNC_ACTION = "START_TASK"
+        const val TASK_CANCEL_ACTION = "CANCEL_TASK"
+        const val EXTRA_TASK_ID = "task"
+        const val EXTRA_TASK_SILENT = "notification"
     }
+
+
 
     internal enum class FAILURE_REASON {
         NONE, NO_UNMETERED, NO_CONNECTION, RCLONE_ERROR, CONNECTIVITY_CHANGED, CANCELLED
@@ -74,14 +86,26 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         prepareNotifications()
         registerBroadcastReceivers()
 
-        val id = inputData.getLong(TASK_ID, -1)
-        if(id == -1L) {
-            return Result.failure()
+        var ephemeralTask: Task? = null
+
+        if(inputData.hasKeyWithValueOfType<Long>(TASK_ID)){
+            val id = inputData.getLong(TASK_ID, -1)
+            mDatabase.getTask(id)
         }
 
-        var task = mDatabase.getTask(id)
-        if (task != null) {
-            mTask = task
+        if(inputData.hasKeyWithValueOfType<String>(TASK_EPHEMERAL)){
+            val taskString = inputData.getString(TASK_EPHEMERAL) ?: ""
+            if(taskString.isNotEmpty()) {
+                try {
+                    ephemeralTask = Json.decodeFromString<Task>(taskString)
+                } catch (e: Exception) {
+                    log("Could not deserialize")
+                }
+            }
+        }
+
+        if (ephemeralTask != null) {
+            mTask = ephemeralTask
             handleTask()
             postSync()
         } else {
@@ -170,7 +194,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e)
             }
             try {
-                sRcloneProcess!!.waitFor()
+                localProcess.waitFor()
             } catch (e: InterruptedException) {
                 FLog.e(TAG, "onHandleIntent: error waiting for process", e)
             }
@@ -239,8 +263,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         mNotificationManager.showSuccessNotificationOrReport(
             mTitle,
             message,
-            notificationId,
-            mTask.id
+            notificationId
         )
     }
 

@@ -5,31 +5,53 @@ import android.util.Log
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import ca.pkay.rcloneexplorer.Items.Task
 import ca.pkay.rcloneexplorer.Items.Trigger
+import java.util.Random
 
 class SyncManager(private var mContext: Context) {
 
 
-    public fun work(trigger: Trigger) {
+    fun queue(trigger: Trigger) {
+        queue(trigger.whatToTrigger)
+    }
 
+    fun queue(task: Task) {
+        queue(task.id)
+    }
+
+    fun queue(taskID: Long) {
         val uploadWorkRequest = OneTimeWorkRequestBuilder<SyncWorker>()
 
         val data = Data.Builder()
-        data.putLong(SyncWorker.TASK_ID, trigger.whatToTrigger)
+        data.putLong(SyncWorker.TASK_ID, taskID)
 
         uploadWorkRequest.setInputData(data.build())
-        uploadWorkRequest.addTag(trigger.whatToTrigger.toString())
-        var b = uploadWorkRequest.build()
+        uploadWorkRequest.addTag(taskID.toString())
+        work(uploadWorkRequest.build())
+    }
 
-        WorkManager
-            .getInstance(mContext)
-            .enqueue(b)
+    fun queueEphemeral(task: Task) {
 
+        task.id = Random().nextLong()
+        val uploadWorkRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+
+        val data = Data.Builder()
+        data.putString(SyncWorker.TASK_EPHEMERAL, task.asJSON())
+
+        uploadWorkRequest.setInputData(data.build())
+        uploadWorkRequest.addTag(task.id.toString())
+        work(uploadWorkRequest.build())
+    }
+
+    private fun work(request: WorkRequest) {
+        WorkManager.getInstance(mContext)
+            .enqueue(request)
     }
 
     fun cancel() {
-        WorkManager
-            .getInstance(mContext)
+        WorkManager.getInstance(mContext)
             .cancelAllWork()
     }
     fun cancel(tag: String) {

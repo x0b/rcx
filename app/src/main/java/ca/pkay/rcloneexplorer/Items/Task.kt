@@ -1,6 +1,11 @@
 package ca.pkay.rcloneexplorer.Items
 
-class Task(var id: Long) {
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+@Serializable
+data class Task(var id: Long) {
     var title = ""
     var remoteId = ""
     var remoteType = 0
@@ -28,5 +33,9 @@ class Task(var id: Long) {
 
         const val TASK_MD5SUM_DEFAULT = false
         const val TASK_WIFIONLY_DEFAULT = false
+    }
+
+    fun asJSON(): String {
+        return Json.encodeToString(this)
     }
 }

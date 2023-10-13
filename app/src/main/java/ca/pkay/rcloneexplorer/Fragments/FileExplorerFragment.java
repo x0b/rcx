@@ -81,6 +81,7 @@ import ca.pkay.rcloneexplorer.Items.DirectoryObject;
 import ca.pkay.rcloneexplorer.Items.FileItem;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
+import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.RecyclerViewAdapters.FileExplorerRecyclerViewAdapter;
@@ -88,12 +89,12 @@ import ca.pkay.rcloneexplorer.Services.DeleteService;
 import ca.pkay.rcloneexplorer.Services.DownloadService;
 import ca.pkay.rcloneexplorer.Services.MoveService;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
-import ca.pkay.rcloneexplorer.Services.SyncService;
 import ca.pkay.rcloneexplorer.Services.ThumbnailsLoadingService;
 import ca.pkay.rcloneexplorer.Services.UploadService;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.LargeParcel;
+import ca.pkay.rcloneexplorer.workmanager.SyncManager;
 import de.felixnuesse.ui.BreadcrumbView;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Collectors;
@@ -574,12 +575,14 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             downloadList.clear();
         } else if (requestCode == FILE_PICKER_SYNC_RESULT && resultCode == FragmentActivity.RESULT_OK) {
             String path = data.getStringExtra(FilePicker.FILE_PICKER_RESULT);
-            Intent intent = new Intent(getContext(), SyncService.class);
-            intent.putExtra(SyncService.REMOTE_ARG, remote);
-            intent.putExtra(SyncService.LOCAL_PATH_ARG, path);
-            intent.putExtra(SyncService.SYNC_DIRECTION_ARG, syncDirection);
-            intent.putExtra(SyncService.REMOTE_PATH_ARG, syncRemotePath);
-            tryStartService(context, intent);
+
+            Task ephemeralTask = new Task(-1);
+            ephemeralTask.setRemoteId(remote.getName());
+            ephemeralTask.setLocalPath(path);
+            ephemeralTask.setDirection(syncDirection);
+            ephemeralTask.setRemotePath(syncRemotePath);
+            (new SyncManager(this.context)).queueEphemeral(ephemeralTask);
+
         } else if (requestCode == STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(getContext(), StreamingService.class);
             context.stopService(serveIntent);

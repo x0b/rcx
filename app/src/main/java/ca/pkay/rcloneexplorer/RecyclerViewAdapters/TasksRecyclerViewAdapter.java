@@ -1,8 +1,8 @@
 package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 
-import static ca.pkay.rcloneexplorer.Services.SyncService.EXTRA_TASK_ID;
-import static ca.pkay.rcloneexplorer.Services.SyncService.TASK_SYNC_ACTION;
+import static ca.pkay.rcloneexplorer.workmanager.SyncWorker.EXTRA_TASK_ID;
+import static ca.pkay.rcloneexplorer.workmanager.SyncWorker.TASK_SYNC_ACTION;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -36,7 +36,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.Items.SyncDirectionObject;
 import ca.pkay.rcloneexplorer.Items.Task;
 import ca.pkay.rcloneexplorer.R;
-import ca.pkay.rcloneexplorer.Services.SyncService;
+import ca.pkay.rcloneexplorer.workmanager.SyncManager;
 import es.dmoral.toasty.Toasty;
 
 public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>{
@@ -131,9 +131,8 @@ public class TasksRecyclerViewAdapter extends RecyclerView.Adapter<TasksRecycler
     }
 
     private void startTask(Task task){
-        Intent intent = SyncService.createInternalStartIntent(context, task.getId());
-        context.startService(intent);
-
+        SyncManager sm = new SyncManager(context);
+        sm.queue(task);
     }
 
     private void editTask(Task task) {

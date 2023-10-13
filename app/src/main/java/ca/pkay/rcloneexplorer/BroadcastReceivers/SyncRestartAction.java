@@ -8,11 +8,11 @@ import android.content.Intent;
 
 import ca.pkay.rcloneexplorer.workmanager.SyncManager;
 
-public class SyncCancelAction extends BroadcastReceiver {
+public class SyncRestartAction extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         SyncManager sm = new SyncManager(context);
-        sm.cancel(String.valueOf(intent.getLongExtra(EXTRA_TASK_ID, -1)));
+        sm.queue(intent.getLongExtra(EXTRA_TASK_ID, -1));
     }
 }

@@ -9,8 +9,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
+import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncRestartAction
 import ca.pkay.rcloneexplorer.R
-import ca.pkay.rcloneexplorer.Services.SyncService
+import ca.pkay.rcloneexplorer.workmanager.SyncWorker
+import ca.pkay.rcloneexplorer.workmanager.SyncWorker.Companion.EXTRA_TASK_ID
 
 class SyncServiceNotifications(var mContext: Context) {
 
@@ -69,9 +71,8 @@ class SyncServiceNotifications(var mContext: Context) {
         notificationId: Int,
         taskid: Long
     ) {
-        val i = Intent(mContext, SyncService::class.java)
-        i.action = SyncService.TASK_SYNC_ACTION
-        i.putExtra(SyncService.EXTRA_TASK_ID, taskid)
+        val i = Intent(mContext, SyncRestartAction::class.java)
+        i.putExtra(EXTRA_TASK_ID, taskid)
 
         val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, GenericSyncNotification.getFlags())
         val builder = NotificationCompat.Builder(mContext, CHANNEL_FAIL_ID)
@@ -96,8 +97,7 @@ class SyncServiceNotifications(var mContext: Context) {
     fun showSuccessNotificationOrReport(
         title: String,
         content: String,
-        notificationId: Int,
-        taskid: Long
+        notificationId: Int
     ) {
 
         if(!useReports()){
@@ -108,10 +108,10 @@ class SyncServiceNotifications(var mContext: Context) {
         if(mReportManager.getSucesses()<=1) {
             showSuccessNotification(title, content, notificationId)
             mReportManager.lastSuccededNotification(notificationId)
-            mReportManager.addToSuccessReport(title, content?: "")
+            mReportManager.addToSuccessReport(title, content)
         } else {
             mReportManager.cancelLastSuccededNotification()
-            mReportManager.showSuccessReport(title, content?: "")
+            mReportManager.showSuccessReport(title, content)
         }
     }
     fun showSuccessNotification(title: String, content: String, notificationId: Int) {
@@ -129,20 +129,6 @@ class SyncServiceNotifications(var mContext: Context) {
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.notify(notificationId, builder.build())
     }
-    fun getPersistentNotification(title: String): NotificationCompat.Builder {
-
-        var flags = GenericSyncNotification.getFlags()
-
-        val foregroundIntent = Intent(mContext, SyncService::class.java)
-        val pendingIntent =
-            PendingIntent.getActivity(mContext, 0, foregroundIntent, flags)
-        return NotificationCompat.Builder(mContext, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_twotone_rounded_cloud_sync_24)
-            .setContentTitle(mContext.getString(R.string.syncing_service, title))
-            .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-    }
-
 
     @Deprecated("Use with specific notification id")
     fun updateSyncNotification(
@@ -176,14 +162,14 @@ class SyncServiceNotifications(var mContext: Context) {
             R.drawable.ic_twotone_rounded_cloud_sync_24,
             bigTextArray,
             percent,
-            SyncService::class.java,
+            SyncWorker::class.java,
             SyncCancelAction::class.java,
             CHANNEL_ID
         )
 
         if(mCancelId != CANCEL_ID_NOTSET) {
             val cancelIntent = Intent(mContext, SyncCancelAction::class.java)
-            cancelIntent.putExtra(SyncService.EXTRA_TASK_ID, mCancelId)
+            cancelIntent.putExtra(EXTRA_TASK_ID, mCancelId)
             val cancelPendingIntent =
                 PendingIntent.getBroadcast(
                     mContext,

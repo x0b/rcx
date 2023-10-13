@@ -147,7 +147,7 @@ public class TriggerService extends Service {
 
 
         SyncManager sm = new SyncManager(this.context);
-        sm.work(trigger);
+        sm.queue(trigger);
     }
 
     private PendingIntent getIntent(long triggerId){
