@@ -24,7 +24,7 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     - name: Set up Go 1.21
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v4
       with:
         go-version: 1.21
       id: go
@@ -36,32 +36,32 @@ jobs:
     - name: Build app
       run: ./gradlew assembleOssDebug
     - name: Upload APK (arm)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: arm.apk
-        path: app/build/outputs/apk/oss/debug/app-oss-armeabi-v7a-debug.apk
+        path: app/build/outputs/apk/oss/debug/roundsync_v*-oss-armeabi-v7a-debug.apk
         retention-days: 3
     - name: Upload APK (arm64)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: arm64.apk
-        path: app/build/outputs/apk/oss/debug/app-oss-arm64-v8a-debug.apk
+        path: app/build/outputs/apk/oss/debug/roundsync_v*-oss-arm64-v8a-debug
         retention-days: 3
     - name: Upload APK (x86)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: x86.apk
-        path: app/build/outputs/apk/oss/debug/app-oss-x86-debug.apk
+        path: app/build/outputs/apk/oss/debug/roundsync_v*-oss-x86-debug.apk
         retention-days: 3
     - name: Upload APK (arm)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: x64.apk
-        path: app/build/outputs/apk/oss/debug/app-oss-x86_64-debug.apk
+        path: app/build/outputs/apk/oss/debug/roundsync_v*-oss-x86_64-debug.apk
         retention-days: 3
     - name: Upload APK (universal)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: universal.apk
-        path: app/build/outputs/apk/oss/debug/app-oss-universal-debug.apk
+        path: app/build/outputs/apk/oss/debug/roundsync_v*-oss-universal-debug.apk
         retention-days: 14
