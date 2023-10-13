@@ -22,6 +22,7 @@ import ca.pkay.rcloneexplorer.BroadcastReceivers.TriggerReciever;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.workmanager.SyncManager;
 
 public class TriggerService extends Service {
 
@@ -141,8 +142,12 @@ public class TriggerService extends Service {
             return;
         }
 
-        Intent i = SyncService.createInternalStartIntent(this, trigger.getWhatToTrigger());
-        context.startService(i);
+        //Intent i = SyncService.createInternalStartIntent(this, trigger.getWhatToTrigger());
+        //context.startService(i);
+
+
+        SyncManager sm = new SyncManager(this.context);
+        sm.work(trigger);
     }
 
     private PendingIntent getIntent(long triggerId){

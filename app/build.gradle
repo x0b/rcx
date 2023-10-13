@@ -162,6 +162,7 @@ dependencies {
 
     // Thumbnails
     implementation 'com.github.bumptech.glide:glide:4.14.2'
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     // REST Client
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
