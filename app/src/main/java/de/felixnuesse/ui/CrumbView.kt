@@ -91,7 +91,7 @@ class CrumbView : LinearLayout {
         }
 
         if(binding.icon.visibility == View.VISIBLE) {
-            binding.title.setPadding(0, 0, 0, 0)
+            binding.title.setPadding(0, 0, textFieldPadding, 0)
         } else {
             binding.title.setPadding(textFieldPadding, 0, textFieldPadding, 0)
         }
