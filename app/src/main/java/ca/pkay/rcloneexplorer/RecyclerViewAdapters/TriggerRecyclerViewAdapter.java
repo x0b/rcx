@@ -82,7 +82,7 @@ public class TriggerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         final Trigger selectedTrigger = triggers.get(position);
 
-        Task task = (new DatabaseHandler(context)).getTask(selectedTrigger.getWhatToTrigger());
+        Task task = (new DatabaseHandler(context)).getTask(selectedTrigger.getTriggerTarget());
         String targetTaskTitle = "ERR: NOTFOUND";
         if(task != null){ targetTaskTitle = task.getTitle(); }
 

@@ -195,7 +195,7 @@ class TriggerActivity : AppCompatActivity() {
 
         mTargetDropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, pos: Int, id: Long) {
-                mTrigger.whatToTrigger = mTaskList[pos].id
+                mTrigger.triggerTarget = mTaskList[pos].id
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -258,7 +258,7 @@ class TriggerActivity : AppCompatActivity() {
 
         //Todo properly populate the fields
         for (task in mTaskList) {
-            if (task.id == mTrigger.whatToTrigger) {
+            if (task.id == mTrigger.triggerTarget) {
                 mTargetDropdown.setSelection(mTaskList.indexOf(task))
             }
         }

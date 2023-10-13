@@ -3,14 +3,17 @@ package ca.pkay.rcloneexplorer.Items
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNames
+import org.json.JSONObject
 
 @Serializable
 data class Trigger(var id: Long) {
+    // Alternatives are kept for backwards compatibility with old, manual parser
     var title = ""
-    var isEnabled = true
-    var weekdays: Byte = 0b01111111 //treat as binary, so that each digit represents an boolean.
+    @JsonNames("enabled") var isEnabled = true
+    private var weekdays: Byte = 0b01111111 //treat as binary, so that each digit represents an boolean.
     var time = 0 //in seconds since 00:00
-    var whatToTrigger = 0L
+    @JsonNames("target", "whatToTrigger") var triggerTarget = 0L
     var type = TRIGGER_TYPE_SCHEDULE
 
 
@@ -38,6 +41,11 @@ data class Trigger(var id: Long) {
         }
     }
 
+
+    fun getWeekdays(): Int {
+        return weekdays.toInt()
+    }
+
     fun setWeekdays(weekdays: Byte) {
         this.weekdays = weekdays
     }
@@ -49,7 +57,7 @@ data class Trigger(var id: Long) {
                 ", isEnabled=" + isEnabled +
                 ", weekdays=" + weekdays +
                 ", time=" + time +
-                ", whatToTrigger=" + whatToTrigger +
+                ", whatToTrigger=" + triggerTarget +
                 ", type=" + type +
                 '}'
     }
@@ -58,9 +66,10 @@ data class Trigger(var id: Long) {
         return String.format("%8s", Integer.toBinaryString(i.toInt() and 0xFF)).replace(' ', '0')
     }
 
-    fun asJSON(): String {
-        return Json.encodeToString(this)
+    fun asJSON(): JSONObject {
+        return JSONObject(Json.encodeToString(this))
     }
+
 
     companion object {
         const val TABLE_NAME = "trigger_table"
@@ -84,5 +93,10 @@ data class Trigger(var id: Long) {
         const val TRIGGER_DAY_FRI = 4
         const val TRIGGER_DAY_SAT = 5
         const val TRIGGER_DAY_SUN = 6
+
+        fun fromString(json: String): Trigger {
+            return Json.decodeFromString(json)
+        }
+
     }
 }

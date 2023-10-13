@@ -14,7 +14,7 @@ class SyncManager(private var mContext: Context) {
 
 
     fun queue(trigger: Trigger) {
-        queue(trigger.whatToTrigger)
+        queue(trigger.triggerTarget)
     }
 
     fun queue(task: Task) {
@@ -38,7 +38,7 @@ class SyncManager(private var mContext: Context) {
         val uploadWorkRequest = OneTimeWorkRequestBuilder<SyncWorker>()
 
         val data = Data.Builder()
-        data.putString(SyncWorker.TASK_EPHEMERAL, task.asJSON())
+        data.putString(SyncWorker.TASK_EPHEMERAL, task.asJSON().toString())
 
         uploadWorkRequest.setInputData(data.build())
         uploadWorkRequest.addTag(task.id.toString())

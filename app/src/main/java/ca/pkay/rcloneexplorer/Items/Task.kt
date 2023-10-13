@@ -3,15 +3,18 @@ package ca.pkay.rcloneexplorer.Items
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNames
+import org.json.JSONObject
 
 @Serializable
 data class Task(var id: Long) {
-    var title = ""
+    // Alternatives are kept for backwards compatibility with old, manual parser
+    @JsonNames("name") var title = ""
     var remoteId = ""
     var remoteType = 0
     var remotePath = ""
     var localPath = ""
-    var direction = 0
+    @JsonNames("syncDirection") var direction = 0
     var md5sum = TASK_MD5SUM_DEFAULT
     var wifionly = TASK_WIFIONLY_DEFAULT
 
@@ -33,9 +36,13 @@ data class Task(var id: Long) {
 
         const val TASK_MD5SUM_DEFAULT = false
         const val TASK_WIFIONLY_DEFAULT = false
+
+        fun fromString(json: String): Task {
+            return Json.decodeFromString(json)
+        }
     }
 
-    fun asJSON(): String {
-        return Json.encodeToString(this)
+    fun asJSON(): JSONObject {
+        return JSONObject(Json.encodeToString(this))
     }
 }

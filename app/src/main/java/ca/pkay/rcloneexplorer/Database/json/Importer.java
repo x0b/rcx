@@ -32,13 +32,7 @@ public class Importer {
         JSONArray array = reader.getJSONArray("trigger");
         for (int i = 0; i < array.length(); i++) {
             JSONObject triggerObject = array.getJSONObject(i);
-            Trigger trigger = new Trigger(triggerObject.getLong("id"));
-            trigger.setTitle(triggerObject.getString("title"));
-            trigger.setTime(triggerObject.getInt("time"));
-            trigger.setEnabled(triggerObject.getBoolean("enabled"));
-            trigger.setWeekdays((byte) triggerObject.getInt("weekdays"));
-            trigger.setWhatToTrigger(triggerObject.getLong("target"));
-            result.add(trigger);
+            result.add(Trigger.Companion.fromString(triggerObject.toString()));
         }
         return result;
     }
@@ -49,16 +43,7 @@ public class Importer {
         JSONArray array = reader.getJSONArray("tasks");
         for (int i = 0; i < array.length(); i++) {
             JSONObject taskObject = array.getJSONObject(i);
-            Task task = new Task(taskObject.getLong("id"));
-            task.setTitle(taskObject.getString("name"));
-            task.setRemoteId(taskObject.getString("remoteId"));
-            task.setRemotePath(taskObject.getString("remotePath"));
-            task.setRemoteType(taskObject.getInt("remoteType"));
-            task.setLocalPath(taskObject.getString("localPath"));
-            task.setDirection(taskObject.getInt("syncDirection"));
-            task.setMd5sum(taskObject.optBoolean("md5sum", Task.TASK_MD5SUM_DEFAULT));
-            task.setMd5sum(taskObject.optBoolean("wifionly", Task.TASK_WIFIONLY_DEFAULT));
-            result.add(task);
+            result.add(Task.Companion.fromString(taskObject.toString()));
         }
         return result;
     }

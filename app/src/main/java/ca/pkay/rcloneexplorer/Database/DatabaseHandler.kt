@@ -252,8 +252,8 @@ class DatabaseHandler(context: Context?) :
         values.put(Trigger.COLUMN_NAME_TITLE, t.title)
         values.put(Trigger.COLUMN_NAME_ENABLED, t.isEnabled)
         values.put(Trigger.COLUMN_NAME_TIME, t.time)
-        values.put(Trigger.COLUMN_NAME_WEEKDAY, t.weekdays)
-        values.put(Trigger.COLUMN_NAME_TARGET, t.whatToTrigger)
+        values.put(Trigger.COLUMN_NAME_WEEKDAY, t.getWeekdays())
+        values.put(Trigger.COLUMN_NAME_TARGET, t.triggerTarget)
         values.put(Trigger.COLUMN_NAME_TYPE, t.type)
         return values
     }
@@ -276,7 +276,7 @@ class DatabaseHandler(context: Context?) :
         trigger.time = cursor.getInt(3)
         val weekdays = cursor.getInt(4)
         trigger.setWeekdays(weekdays.toByte())
-        trigger.whatToTrigger = cursor.getLong(5)
+        trigger.triggerTarget = cursor.getLong(5)
         trigger.type = cursor.getInt(6)
         return trigger
     }
