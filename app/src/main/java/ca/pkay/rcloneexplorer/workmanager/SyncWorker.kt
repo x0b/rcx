@@ -160,16 +160,16 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
             try {
                 val reader = BufferedReader(InputStreamReader(localProcess.errorStream))
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-
+                val iterator = reader.lineSequence().iterator()
+                while(iterator.hasNext()) {
+                    val line = iterator.next()
                     try {
                         val logline = JSONObject(line)
 
                         //todo: migrate this to StatusObject, so that we can handle everything properly.
                         if (logline.getString("level") == "error") {
                             if (sIsLoggingEnabled) {
-                                log2File!!.log(line)
+                                log2File?.log(line)
                             }
                             statusObject.parseLoglineToStatusObject(logline)
                         } else if (logline.getString("level") == "warning") {
@@ -238,6 +238,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
 
     private fun showSuccessNotification(notificationId: Int) {
+        //Todo: Show sync-errors in notification. Also see line 169
         var message = mContext.resources.getQuantityString(
             R.plurals.operation_success_description,
             statusObject.getTotalTransfers(),
