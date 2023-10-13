@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
+import androidx.appcompat.widget.TooltipCompat
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.databinding.CustomuiCrumbviewBinding
 
@@ -81,12 +82,14 @@ class CrumbView : LinearLayout {
             binding.arrow.setColorFilter(mTextDefaultColor)
             binding.icon.setColorFilter(mTextDefaultColor)
             binding.title.setTextColor(mTextDefaultColor)
+            TooltipCompat.setTooltipText(binding.root, mPath);
         } else {
             binding.root.background = null
             var color = resources.getColor(R.color.textColorHighlight)
             binding.arrow.setColorFilter(color)
             binding.icon.setColorFilter(color)
             binding.title.setTextColor(color)
+            TooltipCompat.setTooltipText(binding.root, null)
         }
         params.setMargins(padding, 0, padding, 0)
         binding.title.layoutParams = params

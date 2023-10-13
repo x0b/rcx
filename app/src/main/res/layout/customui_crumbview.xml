@@ -19,10 +19,13 @@
 
     <TextView
         android:id="@+id/title"
+        style="@style/BreadcrumbText"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:ellipsize="end"
         android:gravity="center_vertical"
-        style="@style/BreadcrumbText"
+        android:maxWidth="120dp"
+        android:singleLine="true"
         android:text="TextView" />
 
     <ImageView
