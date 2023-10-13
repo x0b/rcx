@@ -31,6 +31,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.io.InterruptedIOException
 import java.util.Random
+import kotlin.concurrent.thread
 
 class SyncService : IntentService("ca.pkay.rcexplorer.SYNC_SERCVICE") {
     internal enum class FAILURE_REASON {
@@ -108,7 +109,11 @@ class SyncService : IntentService("ca.pkay.rcexplorer.SYNC_SERCVICE") {
             )
             return
         }
-        Runnable { handleTask(internalTask) }.run()
+
+        thread(start = true, isDaemon = false) {
+            handleTask(internalTask)
+        }
+
     }
 
     private fun handleTask(internalTask: InternalTaskItem?) {
