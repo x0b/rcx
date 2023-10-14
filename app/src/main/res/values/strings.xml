@@ -192,6 +192,7 @@
     <string name="operation_failed_data_change">Couldn\'t sync %1$s due to mobile data sync being disabled on your device</string>
     <string name="operation_failed_unknown_rclone_error">%1$s could not be synchronized due to an unknown rclone-error</string>
     <string name="operation_failed_cancelled">%1$s was cancelled</string>
+    <string name="operation_failed_notask">There was no task to start!</string>
     <string name="moving_service">Moving Service</string>
     <string name="delete_service">Delete Service</string>
     <string name="syncing_service">Syncing %1$s</string>

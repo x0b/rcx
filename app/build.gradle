@@ -6,7 +6,7 @@ apply plugin: 'kotlinx-serialization'
 tasks.whenTaskAdded { task ->
     // Build rclone beforehand.
     if (task.name.startsWith('compile')) {
-        task.dependsOn(':rclone:buildAll')
+        //task.dependsOn(':rclone:buildAll')
     }
 }
 
@@ -48,9 +48,13 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+            //manifestPlaceholders = [
+            //        appIcon: "@mipmap/ic_launcher_debug",
+            //        appIconRound: "@mipmap/ic_launcher_debug_round"
+            //]
             manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher_debug",
-                    appIconRound: "@mipmap/ic_launcher_debug_round"
+                    appIcon: "@mipmap/ic_launcher",
+                    appIconRound: "@mipmap/ic_launcher_round"
             ]
         }
         release {
@@ -119,12 +123,7 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-DEBUG"
-            resValue("string", "app_name", "RS Debug")
-            resValue("string", "app_short_name", "RS Debug")
-        }
+
     }
 
     lint {
