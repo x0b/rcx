@@ -27,7 +27,7 @@ android {
         targetSdkVersion 33
         versionCode 290 // last digit is reserved for ABI, only ever end on 0!
         versionName '2.3.0'
-        resourceConfigurations += ['en', 'de']
+        resourceConfigurations += ['en', 'de', 'zh-rCN']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"c03129b6-b09f-9cb4-8fcd-7f143b8f94ef\""
         buildConfigField "java.lang.String", "VCP_AUTHORITY", "\"" + applicationId + ".vcp\"";
