@@ -51,7 +51,6 @@ class OnboardingActivity : AppIntro2() {
                 } else {
                     false
                 }
-
             } else {
                 return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
             }
@@ -205,15 +204,12 @@ class OnboardingActivity : AppIntro2() {
     }
 
     override fun onCanRequestNextPage(): Boolean {
-        if(!isStorageSlide && !isAlarmSlide) {
-            return super.onCanRequestNextPage()
-        }
 
-        if(storageGranted) {
+        if(isStorageSlide && storageGranted) {
             return true
         }
 
-        if (alarmRequested) {
+        if (isAlarmSlide && alarmRequested) {
             return true
         }
 
@@ -232,7 +228,8 @@ class OnboardingActivity : AppIntro2() {
             }
             requestAlarmPermission()
         }
-        return false
+
+        return super.onCanRequestNextPage()
     }
 
     override fun attachBaseContext(newBase: Context) {
