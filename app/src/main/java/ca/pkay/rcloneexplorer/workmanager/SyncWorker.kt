@@ -73,6 +73,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
     private val statusObject = StatusObject(mContext)
     private var failureReason = FAILURE_REASON.NO_FAILURE
     private var silentRun = false
+    private val ongoingNotificationID = Random().nextInt()
 
 
     // Task
@@ -202,6 +203,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
     }
 
     private fun postSync() {
+        log("postSync: $mTitle")
         if (silentRun) {
             return
         }

@@ -51,7 +51,7 @@ class OnboardingActivity : AppIntro2() {
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     alarmManager.canScheduleExactAlarms()
                 } else {
-                    true
+                    false
                 }
 
             } else {
@@ -206,11 +206,9 @@ class OnboardingActivity : AppIntro2() {
     }
 
     override fun onCanRequestNextPage(): Boolean {
-        Log.e("TAG", "is 11")
         if(!isStorageSlide && !isAlarmSlide) {
             return super.onCanRequestNextPage()
         }
-
 
         if(storageRequested) {
             return true
@@ -228,18 +226,13 @@ class OnboardingActivity : AppIntro2() {
             tryGrantingAllStorageAccess()
         }
 
-
         if(isAlarmSlide) {
-            Log.e("TAG", "is alarmslide")
             if(checkGenericPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)){
-                Log.e("TAG", "has need perm")
                 alarmRequested = true
                 return true
             }
             requestAlarmPermission()
         }
-
-        Log.e("TAG", "is uuhhm")
         return false
     }
 

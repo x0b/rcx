@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.Activities;
 
+import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
 import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
 
 import android.Manifest;

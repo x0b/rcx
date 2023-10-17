@@ -6,7 +6,7 @@ apply plugin: 'kotlinx-serialization'
 tasks.whenTaskAdded { task ->
     // Build rclone beforehand.
     if (task.name.startsWith('compile')) {
-        //task.dependsOn(':rclone:buildAll')
+        task.dependsOn(':rclone:buildAll')
     }
 }
 
@@ -23,8 +23,8 @@ android {
         vectorDrawables.generatedDensities = []
         applicationId 'de.felixnuesse.extract'
         minSdkVersion 23
-        compileSdk 33
-        targetSdkVersion 33
+        compileSdk 34
+        targetSdkVersion 34
         versionCode 290 // last digit is reserved for ABI, only ever end on 0!
         versionName '2.3.0'
         resourceConfigurations += ['en', 'de']
@@ -48,13 +48,9 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
-            //manifestPlaceholders = [
-            //        appIcon: "@mipmap/ic_launcher_debug",
-            //        appIconRound: "@mipmap/ic_launcher_debug_round"
-            //]
             manifestPlaceholders = [
-                    appIcon: "@mipmap/ic_launcher",
-                    appIconRound: "@mipmap/ic_launcher_round"
+                    appIcon: "@mipmap/ic_launcher_debug",
+                    appIconRound: "@mipmap/ic_launcher_debug_round"
             ]
         }
         release {
