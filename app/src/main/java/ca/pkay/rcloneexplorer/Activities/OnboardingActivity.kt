@@ -64,6 +64,7 @@ class OnboardingActivity : AppIntro2() {
     private var isStorageSlide = false
     private var isAlarmSlide = false
     private var storageRequested = false
+    private var storageGranted = false
     private var alarmRequested = false
 
     private var color = R.color.intro_color1
@@ -208,7 +209,7 @@ class OnboardingActivity : AppIntro2() {
             return super.onCanRequestNextPage()
         }
 
-        if(storageRequested) {
+        if(storageGranted) {
             return true
         }
 
@@ -218,7 +219,7 @@ class OnboardingActivity : AppIntro2() {
 
         if(isStorageSlide) {
             if(checkExternalStorageManagerPermission()){
-                storageRequested = true
+                storageGranted = true
                 return true
             }
             tryGrantingAllStorageAccess()
@@ -246,42 +247,27 @@ class OnboardingActivity : AppIntro2() {
         finish()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        handleStorageRequestResult(requestCode)
-
-    }
-
-    fun handleStorageRequestResult(requestCode: Int) {
-        if (requestCode == REQ_ALL_FILES_ACCESS) {
-            if(checkExternalStorageManagerPermission()){
-                Toasty.success(this, getString(R.string.intro_manage_external_storage_granted), Toast.LENGTH_SHORT, true).show()
-                goToNextSlide()
-            } else {
-                Toasty.info(this, getString(R.string.intro_manage_external_storage_failed), Toast.LENGTH_LONG, true).show()
-            }
-            storageRequested = true
-        }
-    }
-
-
     private fun tryGrantingAllStorageAccess() {
+        if(storageRequested) {
+            return
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
             intent.data = Uri.fromParts(
                 "package",
                 BuildConfig.APPLICATION_ID,
                 null
             )
-            ActivityHelper.tryStartActivityForResult(this, intent,
-                REQ_ALL_FILES_ACCESS
-            )
+            ActivityHelper.tryStartActivityForResult(this, intent, REQ_ALL_FILES_ACCESS)
         } else {
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 REQ_ALL_FILES_ACCESS
             )
         }
+        storageRequested = true
     }
 
     private fun checkExternalStorageManagerPermission(): Boolean  {
@@ -292,7 +278,29 @@ class OnboardingActivity : AppIntro2() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if(isStorageSlide) {
+            if(checkExternalStorageManagerPermission()){
+                Toasty.success(this, getString(R.string.intro_manage_external_storage_granted), Toast.LENGTH_SHORT, true).show()
+                storageGranted = true
+                goToNextSlide()
+            } else {
+                Toasty.info(this, getString(R.string.intro_manage_external_storage_failed), Toast.LENGTH_LONG, true).show()
+                storageRequested = false
+            }
+        }
+
+        if(isAlarmSlide) {
+
+        }
+    }
+
     private fun requestAlarmPermission(){
+        if (alarmRequested) {
+            return
+        }
         startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
     }
 
