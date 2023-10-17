@@ -50,8 +50,6 @@ class SyncServiceNotifications(var mContext: Context) {
         notificationId: Int,
         taskid: Long
     ) {
-
-
         if(!useReports()){
             showFailedNotification(content, notificationId, taskid)
             return
@@ -89,10 +87,53 @@ class SyncServiceNotifications(var mContext: Context) {
                 mContext.getString(R.string.retry_failed_sync),
                 retryPendingIntent
             )
-        val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(notificationId, builder.build())
+        show(notificationId, builder)
+    }
+    fun showCancelledNotificationOrReport(
+        content: String,
+        notificationId: Int,
+        taskid: Long) {
+
+        if(!useReports()){
+            showCancelledNotification(content, notificationId, taskid)
+            return
+        }
+        var title = mContext.getString(R.string.operation_failed_cancelled)
+        if(mReportManager.getFailures()<=1) {
+            showCancelledNotification(content, notificationId, taskid)
+            mReportManager.lastFailedNotification(notificationId)
+            mReportManager.addToFailureReport(title, content)
+        } else {
+            mReportManager.cancelLastFailedNotification()
+            mReportManager.showFailReport(title, content)
+        }
     }
 
+    fun showCancelledNotification(
+        content: String,
+        notificationId: Int,
+        taskid: Long
+    ) {
+        val i = Intent(mContext, SyncRestartAction::class.java)
+        i.putExtra(EXTRA_TASK_ID, taskid)
+
+        val retryPendingIntent = PendingIntent.getService(mContext, taskid.toInt(), i, GenericSyncNotification.getFlags())
+        val builder = NotificationCompat.Builder(mContext, CHANNEL_FAIL_ID)
+            .setSmallIcon(R.drawable.ic_twotone_cloud_error_24)
+            .setContentTitle(mContext.getString(R.string.operation_failed_cancelled))
+            .setContentText(content)
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(content)
+            )
+            .setGroup(OPERATION_FAILED_GROUP)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .addAction(
+                R.drawable.ic_refresh,
+                mContext.getString(R.string.retry_failed_sync),
+                retryPendingIntent
+            )
+        show(notificationId, builder)
+    }
 
     fun showSuccessNotificationOrReport(
         title: String,
@@ -126,8 +167,7 @@ class SyncServiceNotifications(var mContext: Context) {
             )
             .setGroup(OPERATION_SUCCESS_GROUP)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-        val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(notificationId, builder.build())
+        show(notificationId, builder)
     }
 
     @Deprecated("Use with specific notification id")
@@ -185,13 +225,16 @@ class SyncServiceNotifications(var mContext: Context) {
                     cancelPendingIntent
                 )
         }
-
-        val notificationManagerCompat = NotificationManagerCompat.from(mContext)
-        notificationManagerCompat.notify(notificationId, builder.build())
+        show(notificationId, builder)
     }
 
     fun cancelSyncNotification(notificationId: Int) {
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
         notificationManagerCompat.cancel(notificationId)
+    }
+
+    fun show(notificationId: Int, builder: NotificationCompat.Builder) {
+        val notificationManager = NotificationManagerCompat.from(mContext)
+        notificationManager.notify(notificationId, builder.build())
     }
 }

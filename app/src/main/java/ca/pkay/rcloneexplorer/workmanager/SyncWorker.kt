@@ -72,6 +72,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
     private var sRcloneProcess: Process? = null
     private val statusObject = StatusObject(mContext)
     private var failureReason = FAILURE_REASON.NO_FAILURE
+    private var endNotificationAlreadyPosted = false
     private var silentRun = false
     private val ongoingNotificationID = Random().nextInt()
 
@@ -108,9 +109,9 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         if (ephemeralTask != null) {
             mTask = ephemeralTask
             handleTask()
-            //postSync()
+            postSync()
         } else {
-            //postSync()
+            postSync()
             return Result.failure()
         }
 
@@ -120,7 +121,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
     override fun onStopped() {
         super.onStopped()
-        log("Stopped worker!")
+        SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_sync_cancelled))
         failureReason = FAILURE_REASON.CANCELLED
         finishWork()
     }
@@ -154,6 +155,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
     private fun handleSync(title: String) {
         val notificationID = Random().nextInt()
+        SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_start_sync))
         if (sRcloneProcess != null) {
             val localProcess = sRcloneProcess!!
             try {
@@ -163,7 +165,6 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                     val line = iterator.next()
                     try {
                         val logline = JSONObject(line)
-
                         //todo: migrate this to StatusObject, so that we can handle everything properly.
                         if (logline.getString("level") == "error") {
                             if (sIsLoggingEnabled) {
@@ -203,7 +204,9 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
     }
 
     private fun postSync() {
-        log("postSync: $mTitle")
+        if (endNotificationAlreadyPosted) {
+            return
+        }
         if (silentRun) {
             return
         }
@@ -217,7 +220,9 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                 return
             }
             FAILURE_REASON.CANCELLED -> {
-                content = mContext.getString(R.string.operation_failed_cancelled, mTitle)
+                showCancelledNotification(notificationId)
+                endNotificationAlreadyPosted = true
+                return
             }
             FAILURE_REASON.NO_TASK -> {
                 content = getString(R.string.operation_failed_notask)
@@ -236,8 +241,17 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
             }
         }
         showFailNotification(notificationId, content)
+        endNotificationAlreadyPosted = true
     }
 
+    private fun showCancelledNotification(notificationId: Int) {
+        SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_failed_cancelled))
+        mNotificationManager.showCancelledNotificationOrReport(
+            mTitle,
+            notificationId,
+            mTask.id
+        )
+    }
 
     private fun showSuccessNotification(notificationId: Int) {
         //Todo: Show sync-errors in notification. Also see line 169
@@ -270,7 +284,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         )
     }
 
-    private fun showFailNotification(notificationId: Int, content: String) {
+    private fun showFailNotification(notificationId: Int, content: String, wasCancelled: Boolean = false) {
         var text = content
         //Todo: check if we should also add errors on success
         statusObject.printErrors()
@@ -283,7 +297,12 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                         ${statusObject.getAllErrorMessages()}
                         """.trimIndent()
         }
-        SyncLog.error(mContext, getString(R.string.operation_failed), "$mTitle: $text")
+
+        var notifyTitle = mContext.getString(R.string.operation_failed)
+        if (wasCancelled) {
+            notifyTitle = mContext.getString(R.string.operation_failed_cancelled)
+        }
+        SyncLog.error(mContext, notifyTitle, "$mTitle: $text")
         mNotificationManager.showFailedNotificationOrReport(
             mTitle,
             text,
