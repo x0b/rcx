@@ -119,7 +119,12 @@ android {
     }
 
     buildTypes {
-
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
+            resValue("string", "app_name", "RS Debug")
+            resValue("string", "app_short_name", "RS Debug")
+        }
     }
 
     lint {
