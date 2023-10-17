@@ -122,7 +122,6 @@
     <string name="smashicons" translatable="false">Smashicons</string>
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
-    <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
     <string name="intro_welcome_title">Welcome!</string>
     <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more questions, visit github.com/newhinton/Round-Sync.</string>
     <string name="intro_storage_title">Storage access</string>
@@ -526,4 +525,8 @@
     <string name="dynamic_config_suffixselector_value_hint">Value</string>
     <string name="operation_no_identical_title">Sync aborted</string>
     <string name="operation_no_identical">You cannot run the same task in parallel: %s</string>
+    <string name="intro_permission_changed_title">Permissions required!</string>
+    <string name="intro_permission_changed_description">Sorry, to disturb you, but we need to quickly update the permissions granted to us. This allows the best possible experience!</string>
+    <string name="intro_alarms_title">Alarms!</string>
+    <string name="intro_alarms_description">We need to be able to set alarms to schedule sync\'s. Dont worry, we will never ring your phone!</string>
 </resources>

@@ -115,14 +115,11 @@ public class MainActivity extends AppCompatActivity
 
         ActivityHelper.applyTheme(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            checkNotificationPermission();
+        if(!OnboardingActivity.Companion.hasAllRequiredPermissions(this)) {
+            startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
-            startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
-        }
 
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
@@ -570,14 +567,6 @@ public class MainActivity extends AppCompatActivity
             if (refresh.isRequired()) {
                 refresh.execute();
             }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    public void checkNotificationPermission() {
-        String postNotifications = Manifest.permission.POST_NOTIFICATIONS;
-        if(ContextCompat.checkSelfPermission(this,  postNotifications) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {postNotifications}, REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS );
         }
     }
 
