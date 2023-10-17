@@ -15,9 +15,7 @@ import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BuildConfig
@@ -68,6 +66,8 @@ class OnboardingActivity : AppIntro2() {
     private var storageRequested = false
     private var alarmRequested = false
 
+    private var color = R.color.intro_color1
+
 
     private var welcomeSlide = 0
     private var permissionChangedSlide = 0
@@ -101,8 +101,9 @@ class OnboardingActivity : AppIntro2() {
                     title = getString(R.string.intro_welcome_title),
                     description = getString(R.string.intro_welcome_description),
                     imageDrawable = R.drawable.undraw_hello,
-                    backgroundColor = resources.getColor(R.color.intro_color1),
+                    backgroundColor = resources.getColor(color),
                 ))
+            switchColor()
             welcomeSlide = maxSlideId
             maxSlideId++
 
@@ -111,9 +112,9 @@ class OnboardingActivity : AppIntro2() {
                     title = getString(R.string.intro_community_title),
                     description = getString(R.string.intro_community_description),
                     imageDrawable = R.drawable.undraw_the_world_is_mine,
-                    backgroundColor = resources.getColor(R.color.intro_color2)
+                    backgroundColor = resources.getColor(color)
                     ))
-
+            switchColor()
             communitySlide = maxSlideId
             maxSlideId++
         } else {
@@ -122,9 +123,9 @@ class OnboardingActivity : AppIntro2() {
                     title = getString(R.string.intro_permission_changed_title),
                     description = getString(R.string.intro_permission_changed_description),
                     imageDrawable = R.drawable.undraw_the_world_is_mine,
-                    backgroundColor = resources.getColor(R.color.intro_color2)
+                    backgroundColor = resources.getColor(color)
                     ))
-
+            switchColor()
             permissionChangedSlide = maxSlideId
             maxSlideId++
         }
@@ -136,9 +137,9 @@ class OnboardingActivity : AppIntro2() {
                     title = getString(R.string.intro_storage_title),
                     description = getString(R.string.intro_storage_description),
                     imageDrawable = R.drawable.ic_intro_storage,
-                    backgroundColor = resources.getColor(R.color.intro_color1),
+                    backgroundColor = resources.getColor(color),
                 ))
-
+            switchColor()
             storageSlide = maxSlideId
             maxSlideId++
         }
@@ -150,9 +151,9 @@ class OnboardingActivity : AppIntro2() {
                         title = getString(R.string.intro_notifications_title),
                         description = getString(R.string.intro_notifications_description),
                         imageDrawable = R.drawable.undraw_post_online,
-                        backgroundColor = resources.getColor(R.color.intro_color2),
+                        backgroundColor = resources.getColor(color),
                     ))
-
+                switchColor()
                 notificationSlide = maxSlideId
                 maxSlideId++
                 askForPermissions(
@@ -169,9 +170,9 @@ class OnboardingActivity : AppIntro2() {
                         title = getString(R.string.intro_alarms_title),
                         description = getString(R.string.intro_alarms_description),
                         imageDrawable = R.drawable.undraw_post_online,
-                        backgroundColor = resources.getColor(R.color.intro_color2),
+                        backgroundColor = resources.getColor(color),
                     ))
-
+                switchColor()
                 alarmSlide = maxSlideId
                 maxSlideId++
             }
@@ -182,15 +183,12 @@ class OnboardingActivity : AppIntro2() {
                 title = getString(R.string.intro_success),
                 description = getString(R.string.intro_successful_setup),
                 imageDrawable = R.drawable.undraw_sync,
-                backgroundColor = resources.getColor(R.color.intro_color1),
+                backgroundColor = resources.getColor(color),
             ))
-
+        switchColor()
         successSlide = maxSlideId
         maxSlideId++
     }
-
-
-
 
     override fun onPageSelected(position: Int) {
         if(storageSlide != 0) {
@@ -296,5 +294,13 @@ class OnboardingActivity : AppIntro2() {
 
     private fun requestAlarmPermission(){
         startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+    }
+
+    private fun switchColor() {
+        if(color == R.color.intro_color1) {
+            color = R.color.intro_color2
+        } else {
+            color = R.color.intro_color1
+        }
     }
 }
