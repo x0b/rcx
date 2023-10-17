@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity
 
         if(!OnboardingActivity.Companion.hasAllRequiredPermissions(this)) {
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
+            finish();
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
