@@ -17,6 +17,12 @@ class PermissionManager(private var mContext: Context) {
 
     companion object {
         private const val REQ_ALL_FILES_ACCESS = 3101
+
+        fun getNotificationSettingsIntent(context: Context): Intent {
+            return Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
     }
 
     fun hasAllRequiredPermissions(): Boolean {

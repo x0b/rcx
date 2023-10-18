@@ -36,10 +36,7 @@ class PermissionFragment : Fragment() {
             mPermissionManager.requestStorage(this.requireActivity())
         }
         binding.buttonNotifications.setOnClickListener {
-            val settingsIntent: Intent = Intent(ACTION_APP_NOTIFICATION_SETTINGS)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .putExtra(EXTRA_APP_PACKAGE, requireContext().packageName)
-            startActivity(settingsIntent)
+            startActivity(PermissionManager.getNotificationSettingsIntent(requireContext()))
         }
     }
 
@@ -62,7 +59,7 @@ class PermissionFragment : Fragment() {
         if(mPermissionManager.grantedStorage() &&
             mPermissionManager.grantedNotifications() &&
             mPermissionManager.grantedStorage()) {
-            (requireActivity() as MainActivity).startRemotesFragment()
+            //(requireActivity() as MainActivity).startRemotesFragment()
         }
     }
 

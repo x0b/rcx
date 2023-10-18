@@ -2,19 +2,22 @@ package ca.pkay.rcloneexplorer.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.util.PermissionManager
+
 
 class AppErrorNotificationManager(var mContext: Context) {
 
     companion object {
         private const val APP_ERROR_CHANNEL_ID =
             "ca.pkay.rcloneexplorer.notifications.AppErrorNotificationManager"
-        private const val APP_ERROR_ID =
-            "ca.pkay.rcloneexplorer.notifications.AppErrorNotificationManager"
+        private const val APP_ERROR_ID = 51913
     }
 
     init {
@@ -36,24 +39,26 @@ class AppErrorNotificationManager(var mContext: Context) {
     }
 
     fun showNotification() {
-        val b = NotificationCompat.Builder(
+
+
+        /*val contentIntent = PendingIntent.getActivity(
             mContext,
-            APP_ERROR_CHANNEL_ID
-        )
+            APP_ERROR_ID,
+            PermissionManager.getNotificationSettingsIntent(mContext), FLAG_IMMUTABLE
+        )*/
+
+        val b = NotificationCompat.Builder(mContext, APP_ERROR_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_twotone_error_24)
-            .setContentTitle("title")
-            .setContentText("content")
-            //.setContentIntent(pendingIntent)
-            //.setStyle(NotificationCompat.BigTextStyle().bigText(bigText.toString()))
-            //.addAction(
-            //    R.drawable.ic_cancel_download,
-            //    mContext.getString(R.string.cancel),
-            //   cancelPendingIntent
-            //)
+            .setContentTitle(mContext.getString(R.string.app_error_notification_alarmpermission_missing))
+            .setContentText(mContext.getString(R.string.app_error_notification_alarmpermission_missing_description))
+            /*.addAction(
+                R.drawable.ic_cancel_download,
+                mContext.getString(R.string.cancel),
+                contentIntent
+            )*/
             .setOnlyAlertOnce(true)
-        //.setProgress(100, percent, false)
 
         val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(1134, b.build())
+        notificationManager.notify(APP_ERROR_ID, b.build())
     }
 }

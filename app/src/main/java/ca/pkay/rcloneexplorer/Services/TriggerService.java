@@ -92,10 +92,7 @@ public class TriggerService extends Service {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean allowWhileIdle = sharedPreferences.getBoolean(context.getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
 
-            Log.e("TAG", "1111");
             if((new PermissionManager(context)).grantedAlarms()) {
-                Log.e("TAG", "granted");
-
                 if (allowWhileIdle) {
                     am.setExactAndAllowWhileIdle(
                             AlarmManager.RTC_WAKEUP,
@@ -110,7 +107,6 @@ public class TriggerService extends Service {
                     );
                 }
             } else {
-                Log.e("TAG", "not granted");
                 new AppErrorNotificationManager(context).showNotification();
             }
         }
