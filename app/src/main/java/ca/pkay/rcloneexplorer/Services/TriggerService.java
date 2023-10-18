@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.Services;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -22,6 +24,8 @@ import ca.pkay.rcloneexplorer.BroadcastReceivers.TriggerReciever;
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler;
 import ca.pkay.rcloneexplorer.Items.Trigger;
 import ca.pkay.rcloneexplorer.R;
+import ca.pkay.rcloneexplorer.notifications.AppErrorNotificationManager;
+import ca.pkay.rcloneexplorer.util.PermissionManager;
 import ca.pkay.rcloneexplorer.workmanager.SyncManager;
 
 public class TriggerService extends Service {
@@ -87,18 +91,27 @@ public class TriggerService extends Service {
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             boolean allowWhileIdle = sharedPreferences.getBoolean(context.getString(R.string.shared_preferences_allow_sync_trigger_while_idle), false);
-            if (allowWhileIdle) {
-                am.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        timeToTrigger,
-                        pi
-                );
+
+            Log.e("TAG", "1111");
+            if((new PermissionManager(context)).grantedAlarms()) {
+                Log.e("TAG", "granted");
+
+                if (allowWhileIdle) {
+                    am.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            timeToTrigger,
+                            pi
+                    );
+                } else {
+                    am.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            timeToTrigger,
+                            pi
+                    );
+                }
             } else {
-                am.setExact(
-                        AlarmManager.RTC_WAKEUP,
-                        timeToTrigger,
-                        pi
-                );
+                Log.e("TAG", "not granted");
+                new AppErrorNotificationManager(context).showNotification();
             }
         }
     }

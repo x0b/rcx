@@ -532,4 +532,6 @@
     <string name="operation_sync_cancelled">Sync was cancelled</string>
     <string name="intro_notifications_denied">You wont get notifications.</string>
     <string name="intro_alarms_denied">We can\'t schedule alarms now.</string>
+    <string name="app_error_notification_channel_name">App Errors</string>
+    <string name="app_error_notification_channel_description">Errors that are specific to this app and its permissions will be shown via this channel</string>
 </resources>
