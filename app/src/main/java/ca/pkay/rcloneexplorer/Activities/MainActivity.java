@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS = 63;
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
-    private static final int ONBOARDING_REQUEST = 93;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         ActivityHelper.applyTheme(this);
 
         if(!(new PermissionManager(this)).hasAllRequiredPermissions()) {
-            startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
+            startActivity(new Intent(this, OnboardingActivity.class));
             finish();
         }
 
@@ -205,7 +204,7 @@ public class MainActivity extends AppCompatActivity
             startRemotesFragment();
         }
 
-        if(intent.getAction().equals(MAIN_ACTIVITY_START_LOG)){
+        if(MAIN_ACTIVITY_START_LOG.equals(intent.getAction())){
             startLogFragment();
         }
 
@@ -217,7 +216,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
+        if(MAIN_ACTIVITY_START_LOG.equals(getIntent().getAction())){
             startLogFragment();
             navigationView.setCheckedItem(R.id.nav_logs);
         }
@@ -275,8 +274,6 @@ public class MainActivity extends AppCompatActivity
                     Toasty.error(this, getString(R.string.error_exporting_config_file), Toast.LENGTH_SHORT, true).show();
                 }
             }
-        } else if (requestCode == ONBOARDING_REQUEST) {
-            startRemotesFragment();
         } else if (requestCode == FileExplorerFragment.STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(this, StreamingService.class);
             context.stopService(serveIntent);

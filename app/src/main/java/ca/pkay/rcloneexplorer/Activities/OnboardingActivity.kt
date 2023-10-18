@@ -226,6 +226,7 @@ class OnboardingActivity : AppIntro2() {
             .edit()
             .putBoolean(intro_v1_12_0_completed, true)
             .apply()
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
@@ -286,7 +287,6 @@ class OnboardingActivity : AppIntro2() {
     override fun onUserDeniedPermission(permissionName: String) {
         super.onUserDeniedPermission(permissionName)
         denied(permissionName)
-
     }
 
     override fun onUserDisabledPermission(permissionName: String) {
