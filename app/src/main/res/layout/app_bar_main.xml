@@ -67,7 +67,8 @@
                                 android:imeOptions="actionSearch"
                                 android:inputType="text"
                                 android:lines="1"
-                                android:textColor="@color/white" />
+                                android:textColor="@color/white"
+                                android:importantForAutofill="no" />
 
                             <ImageButton
                                 android:id="@+id/search_clear"
