@@ -51,6 +51,12 @@ class OnboardingActivity : AppIntro2() {
                 } else {
                     false
                 }
+            } else if(permission == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    Environment.isExternalStorageManager()
+                } else {
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                }
             } else {
                 return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
             }
@@ -65,6 +71,7 @@ class OnboardingActivity : AppIntro2() {
     private var storageRequested = false
     private var storageGranted = false
     private var alarmRequested = false
+    private var alarmGranted = false
 
     private var color = R.color.intro_color1
 
@@ -122,7 +129,7 @@ class OnboardingActivity : AppIntro2() {
                 AppIntroFragment.newInstance(
                     title = getString(R.string.intro_permission_changed_title),
                     description = getString(R.string.intro_permission_changed_description),
-                    imageDrawable = R.drawable.undraw_the_world_is_mine,
+                    imageDrawable = R.drawable.undraw_completion,
                     backgroundColor = resources.getColor(color)
                     ))
             switchColor()
@@ -131,7 +138,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
 
-        if(!checkExternalStorageManagerPermission()) {
+        if(!checkGenericPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             addSlide(
                 AppIntroFragment.newInstance(
                     title = getString(R.string.intro_storage_title),
@@ -169,7 +176,7 @@ class OnboardingActivity : AppIntro2() {
                     AppIntroFragment.newInstance(
                         title = getString(R.string.intro_alarms_title),
                         description = getString(R.string.intro_alarms_description),
-                        imageDrawable = R.drawable.undraw_post_online,
+                        imageDrawable = R.drawable.undraw_time_management,
                         backgroundColor = resources.getColor(color),
                     ))
                 switchColor()
@@ -209,21 +216,21 @@ class OnboardingActivity : AppIntro2() {
             return true
         }
 
-        if (isAlarmSlide && alarmRequested) {
+        if (isAlarmSlide && alarmGranted) {
             return true
         }
 
         if(isStorageSlide) {
-            if(checkExternalStorageManagerPermission()){
+            if(checkGenericPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
                 storageGranted = true
                 return true
             }
-            tryGrantingAllStorageAccess()
+            requestStoragePermission()
         }
 
         if(isAlarmSlide) {
             if(checkGenericPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)){
-                alarmRequested = true
+                alarmGranted = true
                 return true
             }
             requestAlarmPermission()
@@ -244,13 +251,12 @@ class OnboardingActivity : AppIntro2() {
         finish()
     }
 
-    private fun tryGrantingAllStorageAccess() {
+    private fun requestStoragePermission() {
         if(storageRequested) {
             return
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
             intent.data = Uri.fromParts(
                 "package",
@@ -267,38 +273,58 @@ class OnboardingActivity : AppIntro2() {
         storageRequested = true
     }
 
-    private fun checkExternalStorageManagerPermission(): Boolean  {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Environment.isExternalStorageManager()
-        } else {
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    private fun requestAlarmPermission(){
+        if (alarmRequested) {
+            return
         }
+        startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+        alarmRequested = true
     }
 
     override fun onResume() {
         super.onResume()
 
         if(isStorageSlide) {
-            if(checkExternalStorageManagerPermission()){
-                Toasty.success(this, getString(R.string.intro_manage_external_storage_granted), Toast.LENGTH_SHORT, true).show()
+            if(checkGenericPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
                 storageGranted = true
                 goToNextSlide()
             } else {
-                Toasty.info(this, getString(R.string.intro_manage_external_storage_failed), Toast.LENGTH_LONG, true).show()
+                denied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 storageRequested = false
             }
         }
 
         if(isAlarmSlide) {
-
+            if(checkGenericPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)){
+                alarmGranted = true
+                goToNextSlide()
+            } else {
+                denied(Manifest.permission.SCHEDULE_EXACT_ALARM)
+                alarmRequested = false
+            }
         }
     }
 
-    private fun requestAlarmPermission(){
-        if (alarmRequested) {
-            return
+    override fun onUserDeniedPermission(permissionName: String) {
+        super.onUserDeniedPermission(permissionName)
+        denied(permissionName)
+
+    }
+
+    override fun onUserDisabledPermission(permissionName: String) {
+        super.onUserDisabledPermission(permissionName)
+        denied(permissionName)
+    }
+    private fun denied(permissionName: String){
+        if(permissionName == Manifest.permission.POST_NOTIFICATIONS) {
+            Toasty.info(this, getString(R.string.intro_notifications_denied), Toast.LENGTH_SHORT, true).show()
         }
-        startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+        if(permissionName == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+            Toasty.info(this, getString(R.string.intro_write_external_storage_denied), Toast.LENGTH_LONG, true).show()
+        }
+        //if(permissionName == Manifest.permission.SCHEDULE_EXACT_ALARM) {
+        //    Toasty.info(this, getString(R.string.intro_alarms_denied), Toast.LENGTH_SHORT, true).show()
+        //}
     }
 
     private fun switchColor() {
