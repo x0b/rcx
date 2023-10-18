@@ -83,6 +83,7 @@ import ca.pkay.rcloneexplorer.Services.TriggerService;
 import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.PermissionManager;
 import ca.pkay.rcloneexplorer.util.SharedPreferencesUtil;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Stream;
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity
 
         ActivityHelper.applyTheme(this);
 
-        if(!OnboardingActivity.Companion.hasAllRequiredPermissions(this)) {
+        if(!(new PermissionManager(this)).hasAllRequiredPermissions()) {
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
             finish();
         }

@@ -22,6 +22,10 @@ import ca.pkay.rcloneexplorer.BuildConfig
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.RuntimeConfiguration
 import ca.pkay.rcloneexplorer.util.ActivityHelper
+import ca.pkay.rcloneexplorer.util.PermissionManager
+import ca.pkay.rcloneexplorer.util.PermissionManager.Companion.PERM_ALARMS
+import ca.pkay.rcloneexplorer.util.PermissionManager.Companion.PERM_NOTIFICATIONS
+import ca.pkay.rcloneexplorer.util.PermissionManager.Companion.PERM_STORAGE
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
 import es.dmoral.toasty.Toasty
@@ -33,38 +37,11 @@ class OnboardingActivity : AppIntro2() {
         private const val REQ_ALL_FILES_ACCESS = 3101
 
         private const val intro_v1_12_0_completed = "intro_v1_12_0_completed";
-        public fun hasAllRequiredPermissions(context: Context): Boolean {
-            if(!checkGenericPermission(context, Manifest.permission.POST_NOTIFICATIONS)) {
-                return false
-            }
-            if(!checkGenericPermission(context, Manifest.permission.SCHEDULE_EXACT_ALARM)) {
-                return false
-            }
-            return true
-        }
-
-        private fun checkGenericPermission(context: Context, permission: String): Boolean {
-            if(permission == Manifest.permission.SCHEDULE_EXACT_ALARM) {
-                val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    alarmManager.canScheduleExactAlarms()
-                } else {
-                    false
-                }
-            } else if(permission == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    Environment.isExternalStorageManager()
-                } else {
-                    ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                }
-            } else {
-                return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
-            }
-        }
     }
 
 
-    private lateinit var mPreferences: SharedPreferences;
+    private lateinit var mPreferences: SharedPreferences
+    private lateinit var mPermissions: PermissionManager
 
     private var isStorageSlide = false
     private var isAlarmSlide = false
@@ -93,6 +70,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        mPermissions = PermissionManager(this)
         isWizardMode = true
         isColorTransitionsEnabled = true
 
@@ -138,7 +116,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
 
-        if(!checkGenericPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if(!mPermissions.checkGenericPermission(PERM_STORAGE)) {
             addSlide(
                 AppIntroFragment.newInstance(
                     title = getString(R.string.intro_storage_title),
@@ -152,7 +130,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if(!checkGenericPermission(this, Manifest.permission.POST_NOTIFICATIONS)) {
+            if(!mPermissions.checkGenericPermission(PERM_NOTIFICATIONS)) {
                 addSlide(
                     AppIntroFragment.newInstance(
                         title = getString(R.string.intro_notifications_title),
@@ -171,7 +149,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if(!checkGenericPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)) {
+            if(!mPermissions.checkGenericPermission(PermissionManager.PERM_ALARMS)) {
                 addSlide(
                     AppIntroFragment.newInstance(
                         title = getString(R.string.intro_alarms_title),
@@ -221,7 +199,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if(isStorageSlide) {
-            if(checkGenericPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            if(mPermissions.checkGenericPermission(PERM_STORAGE)){
                 storageGranted = true
                 return true
             }
@@ -229,7 +207,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if(isAlarmSlide) {
-            if(checkGenericPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)){
+            if(mPermissions.checkGenericPermission(PERM_ALARMS)){
                 alarmGranted = true
                 return true
             }
@@ -285,7 +263,7 @@ class OnboardingActivity : AppIntro2() {
         super.onResume()
 
         if(isStorageSlide) {
-            if(checkGenericPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            if(mPermissions.checkGenericPermission(PERM_STORAGE)){
                 storageGranted = true
                 goToNextSlide()
             } else {
@@ -295,7 +273,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if(isAlarmSlide) {
-            if(checkGenericPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)){
+            if(mPermissions.checkGenericPermission(PERM_ALARMS)){
                 alarmGranted = true
                 goToNextSlide()
             } else {
