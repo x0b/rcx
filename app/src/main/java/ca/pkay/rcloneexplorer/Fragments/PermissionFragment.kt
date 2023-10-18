@@ -59,7 +59,7 @@ class PermissionFragment : Fragment() {
         if(mPermissionManager.grantedStorage() &&
             mPermissionManager.grantedNotifications() &&
             mPermissionManager.grantedStorage()) {
-            //(requireActivity() as MainActivity).startRemotesFragment()
+            (requireActivity() as MainActivity).startRemotesFragment()
         }
     }
 
