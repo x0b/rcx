@@ -138,6 +138,9 @@
     <string name="operation_failed">Synchronisation fehlgeschlagen</string>
     <string name="operation_failed_unknown">%1$s schlug aufgrund eines unbekannten Fehlers fehl.</string>
     <string name="operation_failed_data_change">Wir konnten %1$s nicht synchronisieren da die Internetverbindung geändert worden ist und Mobile Daten nicht erlaubt sind.</string>
+    <string name="operation_failed_unknown_rclone_error">%1$s konnte wegen eines unbekannten Rclone-Fehlers nicht synchronisiert werden</string>
+    <string name="operation_failed_cancelled">Sync wurde abgebrochen</string>
+    <string name="operation_failed_notask">Es gab keine Aufgabe zum Starten!</string>
     <string name="moving_service">Verschieben-Dienst</string>
     <string name="delete_service">Lösch-Dienst</string>
     <string name="syncing_service">Synchronisiere %1$s</string>
@@ -411,6 +414,7 @@
     <string name="task_hint_wifi_ignore_defaults">Wenn eingeschaltet überschreibt diese die globale Einstellung bezüglich des Datentransfers über WLan</string>
     <string name="task_hint_md5checksum">Dies nutzt Prüfsummen anstelle der Dateigröße. Das kann länger dauern und mehr Batterie verbrauchen.</string>
     <string name="shortcut_start_service">Startete Sync</string>
+    <string name="shortcut_missing_id">Konnte Sync nicht starten</string>
     <string name="task_copy_suffix">(Kopie)</string>
     <string name="trigger_copy_suffix">(Kopie)</string>
     <string name="trigger_label_weekdays">Wochentage</string>
@@ -444,7 +448,6 @@
     <string name="description_sync_direction_copy_tolocal">Kopiere neue oder geänderte Dateien vom entfernten Speicher zum lokalen Speicher. Dateien werden nicht gelöscht, bestehende Dateien auf dem lokalen Speicher können überschrieben werden.</string>
     <string name="description_sync_direction_sync_bidirectional">Stellt sicher das lokaler und entfernter Speicher identisch sind. Dateien werden gelöscht, geupdated und erstellt nach Bedarf.</string>
     <string name="intro_success">Erfolg!</string>
-    <string name="intro_manage_external_storage_granted">Dateizugriff erlaubt!</string>
     <string name="dynamic_config_unknown_error">Der Anbieter ist unbekannt!</string>
     <string name="toggle_advanced_options">Erweiterte Optionen umschalten</string>
     <string name="intro_notifications_description">Wir wollen dir beim Sync den Sync-Fortschritt anzeigen, bitte erlaube uns dir Benachrichtigungen anzuzeigen. Wir werden dich nicht zuspammen!</string>
@@ -452,4 +455,31 @@
     <string name="notification_reports">Erstelle Berichte für Syncronisationen. Dies ersetzt einzelne Benachrichtigungen für Syncs durch eine Zusammenfassung.</string>
     <string name="back">Zurück</string>
     <string name="save">Speichern</string>
+    <string name="dynamic_config_suffixselector_suffix_hint">Größen-Suffix</string>
+    <string name="dynamic_config_suffixselector_value_hint">Wert</string>
+    <string name="operation_no_identical_title">Sync abgebrochen</string>
+    <string name="operation_no_identical">Du kannst eine Aufgabe nicht mehrmals gleichzeitig starten: %s</string>
+    <string name="intro_permission_changed_title">Berechtigungen benötigt!</string>
+    <string name="intro_permission_changed_description">Entschuldigung, aber wir müssen nur kurz die Berechtigungen aktualisieren.</string>
+    <string name="intro_alarms_title">Alarme!</string>
+    <string name="intro_alarms_description">Wir möchten in der Lage sein Alarme einzurichten um Synchronisationen zu starten. Keine Sorge, wir klingeln nicht durch!</string>
+    <string name="operation_start_sync">Synchronisazion gestartet!</string>
+    <string name="operation_sync_cancelled">Synchronisazion gestoppt!</string>
+    <string name="intro_notifications_denied">Wir benachrichtigen dich nicht.</string>
+    <string name="intro_alarms_denied">Wir können jetzt keine Alarme einrichten</string>
+    <string name="app_error_notification_channel_name">App-Fehler</string>
+    <string name="app_error_notification_channel_description">Fehler die spezifisch für diese App sind erscheinen in diesem Kanal</string>
+    <string name="permissionFragment">Berechtigungen</string>
+    <string name="permissions_notifications_label">Benachrichtigungen</string>
+    <string name="permissions_notifications_description">Benachrichtigungen sind nützlich darin dich über den Zustand der App zu informieren. Du solltest sie einschalten, sodass du immer informiert bist!</string>
+    <string name="permissions_alarms_label">Alarme</string>
+    <string name="permissions_alarms_description">Wir müssen Alarme und Wecker anlegen, sodass die Synchronisationen pünktlich starten. Wenn diese Berechtigungen nicht gegeben ist, werden Synchronisationen nicht funktionieren.</string>
+    <string name="permissions_storage_label">Speicher</string>
+    <string name="permissions_storage_description">Diese Berechtigung erlaubt es uns deine Dateien zu verwalten. Auch ohne kannst du weiterhin auf die entfernten Speicher zugreifen, wir empfehlen aber dies trotzdem zu erlauben.</string>
+    <string name="permissions_button_request">Erlaube!</string>
+    <string name="app_error_notification_alarmpermission_missing">Alarm und Wecker-Berechtigung fehlt</string>
+    <string name="app_error_notification_alarmpermission_missing_description">Bitte erlaube uns Alarme festzulegen. Ohne diese Berechtigung werden Synchronisationen nicht starten!</string>
+    <string name="breadcrumb_home_description">Remote-Startpunkt</string>
+    <string name="breadcrumb_next_description">Nächster Breadcrumb-Pfeil-Indikator</string>
+    <string name="remote_creation_next_step">Nächster Schritt</string>
 </resources>

@@ -1,10 +1,14 @@
 package ca.pkay.rcloneexplorer.notifications.support
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.notifications.AppErrorNotificationManager
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification
+import ca.pkay.rcloneexplorer.util.PermissionManager
 
 abstract class GenericNotification(var mContext: Context) {
 
@@ -132,8 +136,14 @@ abstract class GenericNotification(var mContext: Context) {
         notificationManagerCompat.cancel(this.persistentId)
     }
 
+    @SuppressLint("MissingPermission")
     private fun notify(builder: NotificationCompat.Builder, id: Int) {
         val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(id, builder.build())
+
+        if(PermissionManager(mContext).grantedNotifications()) {
+            notificationManager.notify(id, builder.build())
+        } else {
+            Log.e("GenericNotification", "We dont have Notification Permission!")
+        }
     }
 }

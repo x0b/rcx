@@ -1,15 +1,18 @@
 package ca.pkay.rcloneexplorer.notifications
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.util.PermissionManager
+import ca.pkay.rcloneexplorer.util.SyncLog
 
 
 class AppErrorNotificationManager(var mContext: Context) {
@@ -38,6 +41,7 @@ class AppErrorNotificationManager(var mContext: Context) {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun showNotification() {
 
 
@@ -59,6 +63,11 @@ class AppErrorNotificationManager(var mContext: Context) {
             .setOnlyAlertOnce(true)
 
         val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(APP_ERROR_ID, b.build())
+
+        if(PermissionManager(mContext).grantedNotifications()) {
+            notificationManager.notify(APP_ERROR_ID, b.build())
+        } else {
+            Log.e("AppErrorNotificationManager", "We dont have Notification Permission!")
+        }
     }
 }

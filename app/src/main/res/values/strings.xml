@@ -544,4 +544,7 @@
     <string name="permissions_button_request">Request!</string>
     <string name="app_error_notification_alarmpermission_missing">Alarm Scheduling Permission missing</string>
     <string name="app_error_notification_alarmpermission_missing_description">Please grant this permission to allow schedules to be started. Without it, syncs wont run!</string>
+    <string name="breadcrumb_home_description">Remote-Root</string>
+    <string name="breadcrumb_next_description">Next breadcrumb arrow indicator</string>
+    <string name="remote_creation_next_step">Next Step</string>
 </resources>
