@@ -70,6 +70,7 @@ import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.LogFragment;
+import ca.pkay.rcloneexplorer.Fragments.PermissionFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Fragments.TriggerFragment;
@@ -209,6 +210,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         pinRemotesToDrawer();
+        updatePermissionFragmentVisibility();
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();
     }
@@ -216,6 +218,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        updatePermissionFragmentVisibility();
         if(MAIN_ACTIVITY_START_LOG.equals(getIntent().getAction())){
             startLogFragment();
             navigationView.setCheckedItem(R.id.nav_logs);
@@ -360,6 +363,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_tasks:
             case R.id.nav_trigger:
             case R.id.nav_logs:
+            case R.id.nav_permissions:
                 SharedPreferencesUtil.Companion.setLastOpenFragment(this, id);
                 break;
             case R.id.nav_settings:
@@ -407,6 +411,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_logs:
                 startLogFragment();
                 break;
+            case R.id.nav_permissions:
+                startPermissionFragment();
+                break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
@@ -429,6 +436,10 @@ public class MainActivity extends AppCompatActivity
 
     private void startLogFragment() {
         startFragment(LogFragment.newInstance());
+    }
+
+    private void startPermissionFragment() {
+        startFragment(PermissionFragment.Companion.newInstance());
     }
 
     private void startFragment(Fragment fragmentToStart) {
@@ -474,7 +485,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void startRemotesFragment() {
+    public void startRemotesFragment() {
         fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -568,6 +579,16 @@ public class MainActivity extends AppCompatActivity
                 refresh.execute();
             }
         }
+    }
+
+    private void updatePermissionFragmentVisibility() {
+        Menu navMenu = navigationView.getMenu();
+        if((new PermissionManager(this).hasAllPermissions())) {
+            navMenu.findItem(R.id.nav_permissions).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_permissions).setVisible(true);
+        }
+
     }
 
     @Override

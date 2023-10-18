@@ -31,8 +31,6 @@ import es.dmoral.toasty.Toasty
 class OnboardingActivity : AppIntro2() {
 
     companion object {
-        private const val REQ_ALL_FILES_ACCESS = 3101
-
         private const val intro_v1_12_0_completed = "intro_v1_12_0_completed";
     }
 
@@ -234,21 +232,7 @@ class OnboardingActivity : AppIntro2() {
         if(storageRequested) {
             return
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            intent.data = Uri.fromParts(
-                "package",
-                BuildConfig.APPLICATION_ID,
-                null
-            )
-            ActivityHelper.tryStartActivityForResult(this, intent, REQ_ALL_FILES_ACCESS)
-        } else {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                REQ_ALL_FILES_ACCESS
-            )
-        }
+        mPermissions.requestStorage(this)
         storageRequested = true
     }
 
@@ -256,7 +240,7 @@ class OnboardingActivity : AppIntro2() {
         if (alarmRequested) {
             return
         }
-        startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+        mPermissions.requestAlarms()
         alarmRequested = true
     }
 

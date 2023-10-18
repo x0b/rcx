@@ -1,28 +1,40 @@
 package ca.pkay.rcloneexplorer.util
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import androidx.annotation.RequiresApi
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
+import ca.pkay.rcloneexplorer.BuildConfig
 
-class PermissionManager(var mContext: Context) {
+class PermissionManager(private var mContext: Context) {
 
+    companion object {
+        private const val REQ_ALL_FILES_ACCESS = 3101
+    }
 
     fun hasAllRequiredPermissions(): Boolean {
-        //if(!checkGenericPermission(context, PERM_NOTIFICATIONS)) {
-        //    return false
-        //}
-        //if(!checkGenericPermission(context, PERM_ALARMS)) {
-        //    return false
-        //}
         if(!grantedStorage()) {
             return false
         }
         return true
+    }
+
+    fun hasAllPermissions(): Boolean {
+        if(!grantedNotifications()) {
+            return false
+        }
+        if(!grantedAlarms()) {
+            return false
+        }
+
+        return hasAllRequiredPermissions()
     }
 
     fun grantedAlarms(): Boolean {
@@ -47,5 +59,28 @@ class PermissionManager(var mContext: Context) {
         } else {
             true
         }
+    }
+
+    fun requestStorage(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.data = Uri.fromParts(
+                "package",
+                BuildConfig.APPLICATION_ID,
+                null
+            )
+            ActivityHelper.tryStartActivityForResult(activity, intent,
+                REQ_ALL_FILES_ACCESS
+            )
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQ_ALL_FILES_ACCESS
+            )
+        }
+    }
+
+    fun requestAlarms() {
+        mContext.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
     }
 }

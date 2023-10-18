@@ -534,4 +534,12 @@
     <string name="intro_alarms_denied">We can\'t schedule alarms now.</string>
     <string name="app_error_notification_channel_name">App Errors</string>
     <string name="app_error_notification_channel_description">Errors that are specific to this app and its permissions will be shown via this channel</string>
+    <string name="permissionFragment">Permissions</string>
+    <string name="permissions_notifications_label">Notifications</string>
+    <string name="permissions_notifications_description">Notifications are useful in conveying errors and the state of the app. You should consider enabling them, so that we can inform you about any issues.</string>
+    <string name="permissions_alarms_label">Alarms</string>
+    <string name="permissions_alarms_description">We need to schedule alarms so that your synchronizations are running on time. If this permission is not granted, your syncs wont start at all.</string>
+    <string name="permissions_storage_label">Storage</string>
+    <string name="permissions_storage_description">This permission is required to access your local device. While you can still access remotes, it is highly recommended to allow access to your device.</string>
+    <string name="permissions_button_request">Request!</string>
 </resources>
