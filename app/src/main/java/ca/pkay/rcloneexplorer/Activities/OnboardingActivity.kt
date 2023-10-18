@@ -201,6 +201,8 @@ class OnboardingActivity : AppIntro2() {
                 return true
             }
             requestStoragePermission()
+            // dont allow slide to continue, this is a hard requirement
+            return false
         }
 
         if(isAlarmSlide) {
@@ -209,6 +211,7 @@ class OnboardingActivity : AppIntro2() {
                 return true
             }
             requestAlarmPermission()
+            return false
         }
 
         return super.onCanRequestNextPage()
@@ -276,7 +279,7 @@ class OnboardingActivity : AppIntro2() {
                 goToNextSlide()
             } else {
                 denied(Manifest.permission.SCHEDULE_EXACT_ALARM)
-                alarmRequested = false
+                // allow slide to continue
             }
         }
     }
