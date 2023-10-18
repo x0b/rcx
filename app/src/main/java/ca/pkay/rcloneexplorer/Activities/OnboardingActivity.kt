@@ -23,9 +23,6 @@ import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.RuntimeConfiguration
 import ca.pkay.rcloneexplorer.util.ActivityHelper
 import ca.pkay.rcloneexplorer.util.PermissionManager
-import ca.pkay.rcloneexplorer.util.PermissionManager.Companion.PERM_ALARMS
-import ca.pkay.rcloneexplorer.util.PermissionManager.Companion.PERM_NOTIFICATIONS
-import ca.pkay.rcloneexplorer.util.PermissionManager.Companion.PERM_STORAGE
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
 import es.dmoral.toasty.Toasty
@@ -116,7 +113,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
 
-        if(!mPermissions.checkGenericPermission(PERM_STORAGE)) {
+        if(!mPermissions.grantedStorage()) {
             addSlide(
                 AppIntroFragment.newInstance(
                     title = getString(R.string.intro_storage_title),
@@ -130,7 +127,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if(!mPermissions.checkGenericPermission(PERM_NOTIFICATIONS)) {
+            if(!mPermissions.grantedNotifications()) {
                 addSlide(
                     AppIntroFragment.newInstance(
                         title = getString(R.string.intro_notifications_title),
@@ -149,7 +146,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if(!mPermissions.checkGenericPermission(PermissionManager.PERM_ALARMS)) {
+            if(!mPermissions.grantedAlarms()) {
                 addSlide(
                     AppIntroFragment.newInstance(
                         title = getString(R.string.intro_alarms_title),
@@ -199,7 +196,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if(isStorageSlide) {
-            if(mPermissions.checkGenericPermission(PERM_STORAGE)){
+            if(mPermissions.grantedStorage()){
                 storageGranted = true
                 return true
             }
@@ -207,7 +204,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if(isAlarmSlide) {
-            if(mPermissions.checkGenericPermission(PERM_ALARMS)){
+            if(mPermissions.grantedAlarms()){
                 alarmGranted = true
                 return true
             }
@@ -264,7 +261,7 @@ class OnboardingActivity : AppIntro2() {
         super.onResume()
 
         if(isStorageSlide) {
-            if(mPermissions.checkGenericPermission(PERM_STORAGE)){
+            if(mPermissions.grantedStorage()){
                 storageGranted = true
                 goToNextSlide()
             } else {
@@ -274,7 +271,7 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if(isAlarmSlide) {
-            if(mPermissions.checkGenericPermission(PERM_ALARMS)){
+            if(mPermissions.grantedAlarms()){
                 alarmGranted = true
                 goToNextSlide()
             } else {
