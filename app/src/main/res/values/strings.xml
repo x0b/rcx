@@ -122,11 +122,10 @@
     <string name="smashicons" translatable="false">Smashicons</string>
     <string name="from">from</string>
     <string name="flaticon" translatable="false">Flaticon</string>
-    <string name="pref_key_intro_v1_12_0" translatable="false">intro_v1_12_0_completed</string>
     <string name="intro_welcome_title">Welcome!</string>
     <string name="intro_welcome_description">Round Sync is a file management tool that can handle files stored on your device or in the cloud. For more questions, visit github.com/newhinton/Round-Sync.</string>
     <string name="intro_storage_title">Storage access</string>
-    <string name="intro_storage_description">Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application may not work properly.</string>
+    <string name="intro_storage_description">Round Sync relies on rclone and needs your permission to access all files. Please grant storage access when prompted, otherwise the application will not work properly.</string>
     <string name="intro_community_title">Community</string>
     <string name="intro_community_description">Round Sync is a community driven project. To contribute and improve the application, you can enable anonymous bug reporting. For more information, please visit felixnuesse.de/privacy-roundsync.</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
@@ -191,7 +190,8 @@
     <string name="operation_failed_no_connection">Couldn\'t sync %1$s because network was unavailable</string>
     <string name="operation_failed_data_change">Couldn\'t sync %1$s due to mobile data sync being disabled on your device</string>
     <string name="operation_failed_unknown_rclone_error">%1$s could not be synchronized due to an unknown rclone-error</string>
-    <string name="operation_failed_cancelled">%1$s was cancelled</string>
+    <string name="operation_failed_cancelled">Sync was cancelled</string>
+    <string name="operation_failed_notask">There was no task to start!</string>
     <string name="moving_service">Moving Service</string>
     <string name="delete_service">Delete Service</string>
     <string name="syncing_service">Syncing %1$s</string>
@@ -486,8 +486,7 @@
     <string name="description_sync_direction_sync_bidirectional">Make sure local and remote storage have the same files by transferring, downloading, and deleting files as needed to maintain an identical folder structure.</string>
     <string name="intro_success">Success!</string>
     <string name="intro_successful_setup">You are now ready to start!</string>
-    <string name="intro_manage_external_storage_granted">File access permission granted!</string>
-    <string name="intro_manage_external_storage_failed">File access permission not granted</string>
+    <string name="intro_write_external_storage_denied">File access permission not granted</string>
     <string name="status_offendingfile">"The offending File: "</string>
     <string name="use_md5checksum">Use md5 checksum</string>
     <string name="task_hint_wifi_ignore_defaults">If enabled, this setting overrides the global setting to only transfer files over Wi-Fi</string>
@@ -525,4 +524,27 @@
     <string name="dynamic_config_suffixselector_value_hint">Value</string>
     <string name="operation_no_identical_title">Sync aborted</string>
     <string name="operation_no_identical">You cannot run the same task in parallel: %s</string>
+    <string name="intro_permission_changed_title">Permissions required!</string>
+    <string name="intro_permission_changed_description">Sorry, to disturb you, but we need to quickly update the permissions granted to us. This allows the best possible experience!</string>
+    <string name="intro_alarms_title">Alarms!</string>
+    <string name="intro_alarms_description">We need to be able to set alarms to schedule sync\'s. Dont worry, we will never ring your phone!</string>
+    <string name="operation_start_sync">Started Sync</string>
+    <string name="operation_sync_cancelled">Sync was cancelled</string>
+    <string name="intro_notifications_denied">You wont get notifications.</string>
+    <string name="intro_alarms_denied">We can\'t schedule alarms now.</string>
+    <string name="app_error_notification_channel_name">App Errors</string>
+    <string name="app_error_notification_channel_description">Errors that are specific to this app and its permissions will be shown via this channel</string>
+    <string name="permissionFragment">Permissions</string>
+    <string name="permissions_notifications_label">Notifications</string>
+    <string name="permissions_notifications_description">Notifications are useful in conveying errors and the state of the app. You should consider enabling them, so that we can inform you about any issues.</string>
+    <string name="permissions_alarms_label">Alarms</string>
+    <string name="permissions_alarms_description">We need to schedule alarms so that your synchronizations are running on time. If this permission is not granted, your syncs wont start at all.</string>
+    <string name="permissions_storage_label">Storage</string>
+    <string name="permissions_storage_description">This permission is required to access your local device. While you can still access remotes, it is highly recommended to allow access to your device.</string>
+    <string name="permissions_button_request">Request!</string>
+    <string name="app_error_notification_alarmpermission_missing">Alarm Scheduling Permission missing</string>
+    <string name="app_error_notification_alarmpermission_missing_description">Please grant this permission to allow schedules to be started. Without it, syncs wont run!</string>
+    <string name="breadcrumb_home_description">Remote-Root</string>
+    <string name="breadcrumb_next_description">Next breadcrumb arrow indicator</string>
+    <string name="remote_creation_next_step">Next Step</string>
 </resources>

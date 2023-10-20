@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.Activities;
 
+import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
 import static ca.pkay.rcloneexplorer.util.ActivityHelper.tryStartActivityForResult;
 
 import android.Manifest;
@@ -69,6 +70,7 @@ import ca.pkay.rcloneexplorer.Dialogs.InputDialog;
 import ca.pkay.rcloneexplorer.Dialogs.LoadingDialog;
 import ca.pkay.rcloneexplorer.Fragments.FileExplorerFragment;
 import ca.pkay.rcloneexplorer.Fragments.LogFragment;
+import ca.pkay.rcloneexplorer.Fragments.PermissionFragment;
 import ca.pkay.rcloneexplorer.Fragments.RemotesFragment;
 import ca.pkay.rcloneexplorer.Fragments.TasksFragment;
 import ca.pkay.rcloneexplorer.Fragments.TriggerFragment;
@@ -82,6 +84,7 @@ import ca.pkay.rcloneexplorer.Services.TriggerService;
 import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
 import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.PermissionManager;
 import ca.pkay.rcloneexplorer.util.SharedPreferencesUtil;
 import es.dmoral.toasty.Toasty;
 import java9.util.stream.Stream;
@@ -99,7 +102,6 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS = 63;
     private static final int SETTINGS_CODE = 71; // code when coming back from settings
     private static final int WRITE_REQUEST_CODE = 81; // code when exporting config
-    private static final int ONBOARDING_REQUEST = 93;
     private final String FILE_EXPLORER_FRAGMENT_TAG = "ca.pkay.rcexplorer.MAIN_ACTIVITY_FILE_EXPLORER_TAG";
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -115,14 +117,12 @@ public class MainActivity extends AppCompatActivity
 
         ActivityHelper.applyTheme(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            checkNotificationPermission();
+        if(!(new PermissionManager(this)).hasAllRequiredPermissions()) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+            finish();
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
-            startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
-        }
 
         context = this;
         drawerPinnedRemoteIds = new HashMap<>();
@@ -205,11 +205,12 @@ public class MainActivity extends AppCompatActivity
             startRemotesFragment();
         }
 
-        if(intent.getAction().equals(MAIN_ACTIVITY_START_LOG)){
+        if(MAIN_ACTIVITY_START_LOG.equals(intent.getAction())){
             startLogFragment();
         }
 
         pinRemotesToDrawer();
+        updatePermissionFragmentVisibility();
         TriggerService triggerService = new TriggerService(context);
         triggerService.queueTrigger();
     }
@@ -217,7 +218,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(getIntent().getAction().equals(MAIN_ACTIVITY_START_LOG)){
+        updatePermissionFragmentVisibility();
+        if(MAIN_ACTIVITY_START_LOG.equals(getIntent().getAction())){
             startLogFragment();
             navigationView.setCheckedItem(R.id.nav_logs);
         }
@@ -275,8 +277,6 @@ public class MainActivity extends AppCompatActivity
                     Toasty.error(this, getString(R.string.error_exporting_config_file), Toast.LENGTH_SHORT, true).show();
                 }
             }
-        } else if (requestCode == ONBOARDING_REQUEST) {
-            startRemotesFragment();
         } else if (requestCode == FileExplorerFragment.STREAMING_INTENT_RESULT) {
             Intent serveIntent = new Intent(this, StreamingService.class);
             context.stopService(serveIntent);
@@ -363,6 +363,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_tasks:
             case R.id.nav_trigger:
             case R.id.nav_logs:
+            case R.id.nav_permissions:
                 SharedPreferencesUtil.Companion.setLastOpenFragment(this, id);
                 break;
             case R.id.nav_settings:
@@ -410,6 +411,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_logs:
                 startLogFragment();
                 break;
+            case R.id.nav_permissions:
+                startPermissionFragment();
+                break;
             case R.id.nav_settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
@@ -432,6 +436,10 @@ public class MainActivity extends AppCompatActivity
 
     private void startLogFragment() {
         startFragment(LogFragment.newInstance());
+    }
+
+    private void startPermissionFragment() {
+        startFragment(PermissionFragment.Companion.newInstance());
     }
 
     private void startFragment(Fragment fragmentToStart) {
@@ -477,7 +485,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void startRemotesFragment() {
+    public void startRemotesFragment() {
         fragment = RemotesFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -573,12 +581,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    public void checkNotificationPermission() {
-        String postNotifications = Manifest.permission.POST_NOTIFICATIONS;
-        if(ContextCompat.checkSelfPermission(this,  postNotifications) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {postNotifications}, REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS );
+    private void updatePermissionFragmentVisibility() {
+        Menu navMenu = navigationView.getMenu();
+        if((new PermissionManager(this).hasAllPermissions())) {
+            navMenu.findItem(R.id.nav_permissions).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_permissions).setVisible(true);
         }
+
     }
 
     @Override

@@ -66,12 +66,8 @@ class GenericSyncNotification(var mContext: Context) {
     }
 
     companion object {
-        public fun  getFlags(): Int {
-            var flags = 0
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                flags = FLAG_IMMUTABLE
-            }
-            return flags
+        fun  getFlags(): Int {
+            return FLAG_IMMUTABLE
         }
     }
 }

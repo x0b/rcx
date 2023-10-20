@@ -153,6 +153,7 @@ class RemoteConfig : AppCompatActivity(), ProviderSelectedListener {
     }
 
     override fun onBackPressed() {
+        super.onBackPressed()
         handleBackAction()
     }
 
