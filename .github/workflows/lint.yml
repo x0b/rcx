@@ -21,4 +21,4 @@ jobs:
           distribution: 'temurin'
           cache: gradle
       - name: Build app
-        run: ./gradlew lint
+        run: ./gradlew lint -x :rclone:buildAll
