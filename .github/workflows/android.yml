@@ -2,8 +2,8 @@ name: Android CI
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 22 * * *' # run at 0:00 GMT+2
+#  schedule:
+#    - cron: '0 22 * * *' # run at 0:00 GMT+2
 
 jobs:
   hasChanged:
