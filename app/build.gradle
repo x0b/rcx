@@ -129,10 +129,15 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        abortOnError = true
+
     }
+
+    lintOptions {
+        abortOnError true
+    }
+
     namespace 'ca.pkay.rcloneexplorer'
-
-
 }
 
 repositories {

@@ -7,7 +7,8 @@ on:
   pull_request:
     branches-ignore:
       - 'master'
-
+  schedule:
+    - cron: '0 22 * * *' # run at 0:00 GMT+2
 
 jobs:
   checkLint:
@@ -22,3 +23,9 @@ jobs:
           cache: gradle
       - name: Build app
         run: ./gradlew lint -x :rclone:buildAll
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: Lint Reports
+          path: app/build/reports/
+          retention-days: 30
