@@ -431,8 +431,6 @@
     <string name="description_sync_direction_sync_bidirectional">通过根据需要传输、下载和删除文件来确保本地和远端存储具有相同的文件，以保持相同的文件夹结构。</string>
     <string name="intro_success">成功！</string>
     <string name="intro_successful_setup">准备就绪，可以开始了！</string>
-    <string name="intro_manage_external_storage_granted">已授予文件访问权限！</string>
-    <string name="intro_manage_external_storage_failed">未授予文件访问权限</string>
     <string name="status_offendingfile">"有问题的文件: "</string>
     <string name="use_md5checksum">使用 md5 校验和</string>
     <string name="task_hint_wifi_ignore_defaults">如果启用，此设置将覆盖全局设置，仅通过Wi-Fi传输文件</string>
