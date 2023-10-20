@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new feature or enhancement for extRact
+about: Suggest a new feature or enhancement for Round Sync
 title: ''
 labels: ''
 assignees: ''
@@ -19,7 +19,7 @@ assignees: ''
  - [ ] The feature already exists in rclone (on your PC or in Termux)
  - [ ] I am prepared to help make this feature
 
-#### What version of extRact are you using (About -> App version)?
+#### What version of Round Sync are you using (About -> App version)?
 
 
 
@@ -27,5 +27,5 @@ assignees: ''
 <!-- describe your goals or problems, save the solution for the next question -->
 
 
-#### What should extRact be able to do differently to help with this problem?
+#### What should Round Sync be able to do differently to help with this problem?
 <!-- describe your ideas: how would you solve this problem?  -->

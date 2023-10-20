@@ -32,7 +32,7 @@ jobs:
         yes | sudo "${ANDROID_HOME}/tools/bin/sdkmanager" --licenses
         sudo "${ANDROID_HOME}/tools/bin/sdkmanager" "ndk;${NDK_VERSION}"
     - name: Build app
-      run: ./gradlew assembleOssDebug
+      run: ./gradlew assembleOssRelease
     - name: Upload APK (arm)
       uses: actions/upload-artifact@v3
       with:
