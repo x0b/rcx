@@ -25,5 +25,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Lint Reports
-          path: **/build/reports/
+          path: ~/**/build/reports/
           retention-days: 30
