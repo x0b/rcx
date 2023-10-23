@@ -68,12 +68,18 @@
             </intent-filter>
         </provider>
 
-        <service android:name=".Services.DownloadService" />
-        <service android:name=".Services.UploadService" />
-        <service android:name=".Services.StreamingService" />
-        <service android:name=".Services.ThumbnailsLoadingService" />
-        <service android:name=".Services.DeleteService" />
-        <service android:name=".Services.MoveService" />
+        <service android:name=".Services.DownloadService"
+            android:foregroundServiceType="dataSync" />
+        <service android:name=".Services.UploadService"
+            android:foregroundServiceType="dataSync" />
+        <service android:name=".Services.StreamingService"
+            android:foregroundServiceType="dataSync" />
+        <service android:name=".Services.ThumbnailsLoadingService"
+            android:foregroundServiceType="dataSync" />
+        <service android:name=".Services.DeleteService"
+            android:foregroundServiceType="dataSync" />
+        <service android:name=".Services.MoveService"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".Services.TriggerService"
             android:foregroundServiceType="dataSync"
