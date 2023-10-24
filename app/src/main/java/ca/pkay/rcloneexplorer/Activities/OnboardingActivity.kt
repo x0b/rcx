@@ -15,7 +15,7 @@ import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BuildConfig
@@ -62,6 +62,7 @@ class OnboardingActivity : AppIntro2() {
         setImmersiveMode()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this)
