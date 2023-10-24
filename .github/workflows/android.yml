@@ -6,15 +6,15 @@ on:
 #    - cron: '0 22 * * *' # run at 0:00 GMT+2
 
 jobs:
-  hasChanged:
-    continue-on-error: true
-    name: Verify that changes have occured in the last 24h
-    if: ${{ github.event_name == 'schedule' }}
-    run: test -z $(git rev-list --after="24 hours" ${{ github.sha }}) && echo "::set-output name=hasChanged::false"
+#  hasChanged:
+#    continue-on-error: true
+#    name: Verify that changes have occured in the last 24h
+#    if: ${{ github.event_name == 'schedule' }}
+#    run: test -z $(git rev-list --after="24 hours" ${{ github.sha }}) && echo "::set-output name=hasChanged::false"
 
   createArtifacts:
-    needs: hasChanged
-    if: ${{ needs.hasChanged.outputs.hasChanged != 'false' }}
+#    needs: hasChanged
+#    if: ${{ needs.hasChanged.outputs.hasChanged != 'false' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

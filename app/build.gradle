@@ -133,10 +133,6 @@ android {
 
     }
 
-    lintOptions {
-        abortOnError true
-    }
-
     namespace 'ca.pkay.rcloneexplorer'
 }
 
