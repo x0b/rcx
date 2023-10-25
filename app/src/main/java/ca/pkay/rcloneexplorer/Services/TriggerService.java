@@ -62,6 +62,7 @@ public class TriggerService extends Service {
 
     }
 
+    @SuppressLint("ScheduleExactAlarm") // this is caught by the PermissionManager itself
     private void queueSingleScheduleTrigger(Trigger trigger){
         if(trigger.isEnabled()){
             Calendar calendar = Calendar.getInstance();

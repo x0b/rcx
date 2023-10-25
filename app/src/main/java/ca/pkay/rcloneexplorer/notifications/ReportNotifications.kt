@@ -16,6 +16,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import ca.pkay.rcloneexplorer.BroadcastReceivers.ClearReportBroadcastReciever
 import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.util.NotificationUtils
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -99,7 +100,7 @@ class ReportNotifications(var mContext: Context) {
 
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.cancel(NOTIFICATION_ID_SUCESS_REPORT)
-        notificationManager.notify(NOTIFICATION_ID_SUCESS_REPORT, builder.build())
+        NotificationUtils.createNotification(mContext, NOTIFICATION_ID_SUCESS_REPORT, builder.build())
     }
 
 
@@ -154,7 +155,7 @@ class ReportNotifications(var mContext: Context) {
 
         val notificationManager = NotificationManagerCompat.from(mContext)
         notificationManager.cancel(NOTIFICATION_ID_FAIL_REPORT)
-        notificationManager.notify(NOTIFICATION_ID_FAIL_REPORT, builder.build())
+        NotificationUtils.createNotification(mContext, NOTIFICATION_ID_FAIL_REPORT, builder.build())
     }
 
 

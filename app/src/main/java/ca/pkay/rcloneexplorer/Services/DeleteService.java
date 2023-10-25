@@ -19,6 +19,7 @@ import ca.pkay.rcloneexplorer.Items.RemoteItem;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.Rclone;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.NotificationUtils;
 
 public class DeleteService extends IntentService {
 
@@ -131,8 +132,7 @@ public class DeleteService extends IntentService {
                 .setGroup(OPERATION_FAILED_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(notificationId, builder.build());
+        NotificationUtils.createNotification(this, notificationId,  builder.build());
 
     }
 
@@ -148,21 +148,15 @@ public class DeleteService extends IntentService {
                         .setAutoCancel(true)
                         .build();
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(OPERATION_FAILED_NOTIFICATION_ID, summaryNotification);
+        NotificationUtils.createNotification(this, OPERATION_FAILED_NOTIFICATION_ID, summaryNotification);
     }
 
     private void setNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription(getString(R.string.background_service_notification_channel_description));
-            // Register the channel with the system
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
+        NotificationUtils.createNotificationChannel(this,
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_LOW,
+                getString(R.string.background_service_notification_channel_description)
+        );
     }
 }

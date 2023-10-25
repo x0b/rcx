@@ -33,6 +33,7 @@ import java.util.Arrays;
 import ca.pkay.rcloneexplorer.BuildConfig;
 import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.util.FLog;
+import ca.pkay.rcloneexplorer.util.NotificationUtils;
 import ca.pkay.rcloneexplorer.util.Rfc3339Deserializer;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,6 +41,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
+//TODO: Either remove this, or make it work
 public class PackageUpdate {
 
     private static final String TAG = "PackageUpdate";
@@ -73,7 +76,7 @@ public class PackageUpdate {
                 }
                 Intent releasePage = new Intent(Intent.ACTION_VIEW, uri);
                 releasePage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PendingIntent releasePagePendingIntent = PendingIntent.getActivity(context, 0, releasePage, 0);
+                PendingIntent releasePagePendingIntent = PendingIntent.getActivity(context, 0, releasePage, PendingIntent.FLAG_IMMUTABLE);
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_refresh)
@@ -81,23 +84,13 @@ public class PackageUpdate {
                         .setPriority(NotificationCompat.PRIORITY_LOW)
                         .setContentIntent(releasePagePendingIntent)
                         .setAutoCancel(true);
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                notificationManager.notify(NOTIFICATION_ID, builder.build());
+
+
+                NotificationUtils.createNotificationChannel(context, CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW, CHANNEL_DESCRIPTION);
+                NotificationUtils.createNotification(context, NOTIFICATION_ID, builder.build());
             }
         }
     }
-
-    private void setNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription(CHANNEL_DESCRIPTION);
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-    }
-
     public void checkForUpdate(boolean force) {
         // only check if not disabled
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
