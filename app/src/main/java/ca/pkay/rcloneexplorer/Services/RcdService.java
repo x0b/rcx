@@ -26,6 +26,7 @@ import ca.pkay.rcloneexplorer.R;
 import ca.pkay.rcloneexplorer.RcloneRcd;
 import ca.pkay.rcloneexplorer.util.FLog;
 import ca.pkay.rcloneexplorer.util.FlagsUtil;
+import ca.pkay.rcloneexplorer.util.NotificationUtils;
 
 
 public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
@@ -117,8 +118,7 @@ public class RcdService extends Service implements RcloneRcd.JobsUpdateHandler {
             builder.setOngoing(true).setProgress(100, 25, true);
         }
 
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.notify(PERSISTENT_NOTIFICATION_ID, builder.build());
+        NotificationUtils.createNotification(this, PERSISTENT_NOTIFICATION_ID, builder.build());
     }
 
     public RcloneRcd.JobStatusHandler manageJob() {

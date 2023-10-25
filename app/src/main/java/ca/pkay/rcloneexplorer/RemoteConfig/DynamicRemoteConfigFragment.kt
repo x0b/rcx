@@ -71,6 +71,23 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             this.mIsEditTask = true
             mOptionMap = optionMap
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (context == null) {
+            return
+        }
+        setHasOptionsMenu(true)
+        mContext = context as Context
+
+        rclone = Rclone(this.context)
+        mProvider = rclone!!.getProvider(mProviderTitle)
+        if(mProvider == null) {
+            Log.e(this::class.java.simpleName, "Unknown Provider: $mProviderTitle")
+            Toast.makeText(this.mContext, R.string.dynamic_config_unknown_error, Toast.LENGTH_LONG).show()
+            requireActivity().finish()
+        }
 
         this.mUseOauth = when (mProvider?.name) {
             "box",
@@ -83,16 +100,6 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             -> true
             else -> false
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (context == null) {
-            return
-        }
-        setHasOptionsMenu(true)
-        mContext = context as Context
-        rclone = Rclone(context)
 
     }
 
@@ -112,15 +119,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
         mFinishButton = view.findViewById(R.id.finish)
 
         if(mUseOauth) {
-            (mFinishButton as Button).text = getString(R.string.next)
-        }
-
-        rclone = Rclone(this.context)
-        mProvider = rclone!!.getProvider(mProviderTitle)
-        if(mProvider == null) {
-            Log.e(this::class.java.simpleName, "Unknown Provider: $mProviderTitle")
-            Toast.makeText(this.mContext, R.string.dynamic_config_unknown_error, Toast.LENGTH_LONG).show()
-            requireActivity().finish()
+            (mFinishButton as FloatingActionButton).contentDescription = getString(R.string.next)
         }
 
         setUpForm()
@@ -509,7 +508,6 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
     }
 
     private fun setUpRemote() {
-        Log.e("TAG", "LOG")
 
         val options = java.util.ArrayList<String>()
         val name: String = mRemoteName?.text.toString()

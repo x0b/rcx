@@ -25,14 +25,13 @@
 
 
 
-    <!-- Layot Styles _____ Begin -->
+    <!-- Layout Styles _____ Begin -->
     <!-- Card Styles need to be applied to the card directly.-->
     <style name="MainViewToolbar">
         <item name="cardBackgroundColor">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:tint">?attr/colorOnSecondary</item>
         <item name="tint">?attr/colorOnSecondary</item>
-        <item name="android:iconTint">?attr/colorOnSecondary</item>
         <item name="iconTint">?attr/colorOnSecondary</item>
         <item name="actionMenuTextColor">?attr/colorOnSecondary</item>
         <item name="android:actionMenuTextColor">?attr/colorOnSecondary</item>

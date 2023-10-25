@@ -41,11 +41,10 @@ import ca.pkay.rcloneexplorer.util.ActivityHelper;
 import ca.pkay.rcloneexplorer.util.FLog;
 import es.dmoral.toasty.Toasty;
 
-public class SharingActivity extends AppCompatActivity implements   ShareRemotesFragment.OnRemoteClickListener,
-                                                                    ShareFragment.OnShareDestinationSelected {
+public class SharingActivity extends AppCompatActivity implements ShareRemotesFragment.OnRemoteClickListener,
+        ShareFragment.OnShareDestinationSelected {
 
     private static final String TAG = "SharingActivity";
-    private boolean isDarkTheme;
     private Fragment fragment;
     private ArrayList<String> uploadList;
     private boolean isDataReady;
@@ -59,7 +58,6 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityHelper.applyTheme(this);
-        isDarkTheme = ActivityHelper.isDarkTheme(this);
         setContentView(R.layout.activity_sharing);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -266,9 +264,12 @@ public class SharingActivity extends AppCompatActivity implements   ShareRemotes
             String[] projection = {OpenableColumns.DISPLAY_NAME};
             try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
                 if (null != cursor && cursor.moveToFirst()) {
-                    String name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                    if (null != name) {
-                        return name;
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if(index>=0) {
+                        String name = cursor.getString(index);
+                        if (null != name) {
+                            return name;
+                        }
                     }
                 }
             }

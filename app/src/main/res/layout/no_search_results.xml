@@ -17,23 +17,30 @@
         <FrameLayout
             android:id="@+id/graphic"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/textView8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
-                android:tint="@color/cardColor"
+                android:contentDescription="@string/content_description_circle"
                 android:src="@drawable/ic_circle"
-                android:contentDescription="@string/content_description_circle"/>
+                app:tint="@color/cardColor" />
+
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_search"
-                android:tint="@color/iconTint"
                 android:layout_gravity="center"
-                android:contentDescription="@string/no_search_results" />
+                android:contentDescription="@string/no_search_results"
+                android:src="@drawable/ic_search"
+                app:tint="@color/iconTint" />
         </FrameLayout>
 
         <TextView
+            android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"

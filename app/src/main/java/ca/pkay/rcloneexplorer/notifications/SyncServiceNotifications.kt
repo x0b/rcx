@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncRestartAction
 import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.util.NotificationUtils
 import ca.pkay.rcloneexplorer.workmanager.SyncWorker
 import ca.pkay.rcloneexplorer.workmanager.SyncWorker.Companion.EXTRA_TASK_ID
 
@@ -87,7 +88,7 @@ class SyncServiceNotifications(var mContext: Context) {
                 mContext.getString(R.string.retry_failed_sync),
                 retryPendingIntent
             )
-        show(notificationId, builder)
+        NotificationUtils.createNotification(mContext, notificationId, builder.build())
     }
     fun showCancelledNotificationOrReport(
         content: String,
@@ -132,7 +133,7 @@ class SyncServiceNotifications(var mContext: Context) {
                 mContext.getString(R.string.retry_failed_sync),
                 retryPendingIntent
             )
-        show(notificationId, builder)
+        NotificationUtils.createNotification(mContext, notificationId, builder.build())
     }
 
     fun showSuccessNotificationOrReport(
@@ -167,7 +168,7 @@ class SyncServiceNotifications(var mContext: Context) {
             )
             .setGroup(OPERATION_SUCCESS_GROUP)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-        show(notificationId, builder)
+        NotificationUtils.createNotification(mContext, notificationId, builder.build())
     }
 
     @Deprecated("Use with specific notification id")
@@ -225,16 +226,11 @@ class SyncServiceNotifications(var mContext: Context) {
                     cancelPendingIntent
                 )
         }
-        show(notificationId, builder)
+        NotificationUtils.createNotification(mContext, notificationId, builder.build())
     }
 
     fun cancelSyncNotification(notificationId: Int) {
         val notificationManagerCompat = NotificationManagerCompat.from(mContext)
         notificationManagerCompat.cancel(notificationId)
-    }
-
-    fun show(notificationId: Int, builder: NotificationCompat.Builder) {
-        val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(notificationId, builder.build())
     }
 }
