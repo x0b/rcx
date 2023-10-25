@@ -22,6 +22,7 @@ jobs:
       - name: Build app
         run: ./gradlew lint -x :rclone:buildAll
       - name: Upload Reports
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: Lint Reports
