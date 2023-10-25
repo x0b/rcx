@@ -242,6 +242,7 @@ public class FileAccessSettingsFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @SuppressLint("WrongConstant") // i am not sure why the flags are not recognized, so we ignore it
     private void onTreeResult(int resultCode, Intent data) {
         if (Activity.RESULT_OK == resultCode) {
             Uri uri = data.getData();
@@ -249,8 +250,7 @@ public class FileAccessSettingsFragment extends Fragment {
                 Toasty.error(context, getString(R.string.saf_uri_permission_error), Toast.LENGTH_LONG, true).show();
                 return;
             }
-            final int takeFlags = data.getFlags()
-                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            int takeFlags = data.getFlags();
             ContentResolver contentResolver = context.getContentResolver();
             for (UriPermission uriPermission : contentResolver.getPersistedUriPermissions()) {
                 if (uri.toString().startsWith(uriPermission.getUri().toString())) {
@@ -263,7 +263,10 @@ public class FileAccessSettingsFragment extends Fragment {
                 String msg = "Third party providers are not tested well, proceed with caution.";
                 Toasty.warning(context, msg, Toast.LENGTH_LONG, true).show();
             }
-            contentResolver.takePersistableUriPermission(uri, takeFlags);
+            contentResolver.takePersistableUriPermission(
+                    uri,
+                    (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION) & takeFlags
+            );
             permissionList.updatePermissions(context.getContentResolver().getPersistedUriPermissions());
             Toasty.normal(context, getString(R.string.saf_uri_permission_added), Toast.LENGTH_SHORT).show();
 
