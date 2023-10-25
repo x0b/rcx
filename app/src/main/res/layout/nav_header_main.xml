@@ -39,7 +39,7 @@
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             app:srcCompat="@drawable/appicon"
             app:iconTint="@color/md_theme_dark_onPrimary"
-            android:tint="@color/md_theme_dark_onPrimary" />
+            app:tint="@color/md_theme_dark_onPrimary" />
     </LinearLayout>
 
     <TextView

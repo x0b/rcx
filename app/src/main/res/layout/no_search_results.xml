@@ -28,7 +28,7 @@
                 android:layout_height="140dp"
                 android:contentDescription="@string/content_description_circle"
                 android:src="@drawable/ic_circle"
-                android:tint="@color/cardColor" />
+                app:tint="@color/cardColor" />
 
             <ImageView
                 android:layout_width="80dp"
@@ -36,7 +36,7 @@
                 android:layout_gravity="center"
                 android:contentDescription="@string/no_search_results"
                 android:src="@drawable/ic_search"
-                android:tint="@color/iconTint" />
+                app:tint="@color/iconTint" />
         </FrameLayout>
 
         <TextView

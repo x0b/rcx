@@ -28,7 +28,7 @@
                 android:contentDescription="@string/no_tasks_warning"
                 android:padding="24dp"
                 android:src="@drawable/ic_info_outline"
-                android:tint="@color/cardColor" />
+                app:tint="@color/cardColor" />
 
             <TextView
                 android:id="@+id/textView"
