@@ -22,4 +22,7 @@
 
     <dimen name="settings_inset_item_padding">16dp</dimen>
     <dimen name="pillCornerRadius">8dp</dimen>
+
+    <dimen name="settingsIconSize">38dp</dimen>
+    <dimen name="settingsIconMargin">16dp</dimen>
 </resources>
