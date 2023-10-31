@@ -1,37 +1,36 @@
 package ca.pkay.rcloneexplorer.Activities
 
 import android.Manifest
-import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
-import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
-import ca.pkay.rcloneexplorer.BuildConfig
 import ca.pkay.rcloneexplorer.R
 import ca.pkay.rcloneexplorer.RuntimeConfiguration
-import ca.pkay.rcloneexplorer.util.ActivityHelper
 import ca.pkay.rcloneexplorer.util.PermissionManager
 import com.github.appintro.AppIntro2
-import com.github.appintro.AppIntroFragment
+import de.felixnuesse.extract.onboarding.IdentifiableAppIntroFragment
 import es.dmoral.toasty.Toasty
 
 
 class OnboardingActivity : AppIntro2() {
 
     companion object {
-        private const val intro_v1_12_0_completed = "intro_v1_12_0_completed";
+        private const val intro_v1_12_0_completed = "intro_v1_12_0_completed2"
+
+        private const val SLIDE_ID_WELCOME = "SLIDE_ID_WELCOME"
+        private const val SLIDE_ID_COMMUNITY = "SLIDE_ID_COMMUNITY"
+        private const val SLIDE_ID_PERMCHANGE = "SLIDE_ID_PERMCHANGE"
+        private const val SLIDE_ID_STORAGE = "SLIDE_ID_STORAGE"
+        private const val SLIDE_ID_NOTIFICATIONS = "SLIDE_ID_NOTIFICATIONS"
+        private const val SLIDE_ID_ALARMS = "SLIDE_ID_ALARMS"
+        private const val SLIDE_ID_SUCCESS = "SLIDE_ID_SUCCESS"
     }
 
 
@@ -40,6 +39,7 @@ class OnboardingActivity : AppIntro2() {
 
     private var isStorageSlide = false
     private var isAlarmSlide = false
+
     private var storageRequested = false
     private var storageGranted = false
     private var alarmRequested = false
@@ -78,33 +78,36 @@ class OnboardingActivity : AppIntro2() {
 
         if (!mPreferences.getBoolean(intro_v1_12_0_completed, false)) {
             addSlide(
-                AppIntroFragment.newInstance(
+                IdentifiableAppIntroFragment.createInstance(
                     title = getString(R.string.intro_welcome_title),
                     description = getString(R.string.intro_welcome_description),
                     imageDrawable = R.drawable.undraw_hello,
-                    backgroundColor = resources.getColor(color),
+                    backgroundColorRes = color,
+                    id = SLIDE_ID_WELCOME
                 ))
             switchColor()
             welcomeSlide = maxSlideId
             maxSlideId++
 
             addSlide(
-                AppIntroFragment.newInstance(
+                IdentifiableAppIntroFragment.createInstance(
                     title = getString(R.string.intro_community_title),
                     description = getString(R.string.intro_community_description),
                     imageDrawable = R.drawable.undraw_the_world_is_mine,
-                    backgroundColor = resources.getColor(color)
+                    backgroundColorRes = color,
+                    id = SLIDE_ID_COMMUNITY
                     ))
             switchColor()
             communitySlide = maxSlideId
             maxSlideId++
         } else {
             addSlide(
-                AppIntroFragment.newInstance(
+                IdentifiableAppIntroFragment.createInstance(
                     title = getString(R.string.intro_permission_changed_title),
                     description = getString(R.string.intro_permission_changed_description),
                     imageDrawable = R.drawable.undraw_completion,
-                    backgroundColor = resources.getColor(color)
+                    backgroundColorRes = color,
+                    id = SLIDE_ID_PERMCHANGE
                     ))
             switchColor()
             permissionChangedSlide = maxSlideId
@@ -114,11 +117,12 @@ class OnboardingActivity : AppIntro2() {
 
         if(!mPermissions.grantedStorage()) {
             addSlide(
-                AppIntroFragment.newInstance(
+                IdentifiableAppIntroFragment.createInstance(
                     title = getString(R.string.intro_storage_title),
                     description = getString(R.string.intro_storage_description),
                     imageDrawable = R.drawable.ic_intro_storage,
-                    backgroundColor = resources.getColor(color),
+                    backgroundColorRes = color,
+                    id = SLIDE_ID_STORAGE
                 ))
             switchColor()
             storageSlide = maxSlideId
@@ -128,11 +132,12 @@ class OnboardingActivity : AppIntro2() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if(!mPermissions.grantedNotifications()) {
                 addSlide(
-                    AppIntroFragment.newInstance(
+                    IdentifiableAppIntroFragment.createInstance(
                         title = getString(R.string.intro_notifications_title),
                         description = getString(R.string.intro_notifications_description),
                         imageDrawable = R.drawable.undraw_post_online,
-                        backgroundColor = resources.getColor(color),
+                        backgroundColorRes = color,
+                        id = SLIDE_ID_NOTIFICATIONS
                     ))
                 switchColor()
                 notificationSlide = maxSlideId
@@ -147,11 +152,12 @@ class OnboardingActivity : AppIntro2() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if(!mPermissions.grantedAlarms()) {
                 addSlide(
-                    AppIntroFragment.newInstance(
+                    IdentifiableAppIntroFragment.createInstance(
                         title = getString(R.string.intro_alarms_title),
                         description = getString(R.string.intro_alarms_description),
                         imageDrawable = R.drawable.undraw_time_management,
-                        backgroundColor = resources.getColor(color),
+                        backgroundColorRes = color,
+                        id = SLIDE_ID_ALARMS
                     ))
                 switchColor()
                 alarmSlide = maxSlideId
@@ -160,18 +166,42 @@ class OnboardingActivity : AppIntro2() {
         }
 
         addSlide(
-            AppIntroFragment.newInstance(
+            IdentifiableAppIntroFragment.createInstance(
                 title = getString(R.string.intro_success),
                 description = getString(R.string.intro_successful_setup),
                 imageDrawable = R.drawable.undraw_sync,
-                backgroundColor = resources.getColor(color),
+                backgroundColorRes = color,
+                id = SLIDE_ID_SUCCESS
             ))
         switchColor()
         successSlide = maxSlideId
         maxSlideId++
     }
 
+    override fun onSlideChanged(oldFragment: Fragment?, newFragment: Fragment?) {
+        super.onSlideChanged(oldFragment, newFragment)
+
+        isStorageSlide = false
+        isAlarmSlide = false
+
+        if(isFragment(newFragment, SLIDE_ID_STORAGE)){
+            isStorageSlide = true
+        }
+
+        if(isFragment(newFragment, SLIDE_ID_ALARMS)){
+            isAlarmSlide = true
+        }
+    }
+
+    private fun isFragment(newFragment: Fragment?, slideIdStorage: String): Boolean {
+        if(newFragment is IdentifiableAppIntroFragment) {
+            return newFragment.slideId == slideIdStorage
+        }
+        return false
+    }
+
     override fun onPageSelected(position: Int) {
+
         if(storageSlide != 0) {
             isStorageSlide = position+1 == storageSlide
         } else {
@@ -296,5 +326,7 @@ class OnboardingActivity : AppIntro2() {
         } else {
             color = R.color.intro_color1
         }
+
+
     }
 }
