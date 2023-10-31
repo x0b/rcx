@@ -2,14 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 
-
-tasks.whenTaskAdded { task ->
-    // Build rclone beforehand.
-    if (task.name.startsWith('compile')) {
-        task.dependsOn(':rclone:buildAll')
-    }
-}
-
 android {
     signingConfigs {
         release {
@@ -26,7 +18,7 @@ android {
         compileSdk 34
         targetSdkVersion 34
         versionCode 320 // last digit is reserved for ABI, only ever end on 0!
-        versionName '2.4.2'
+        versionName '2.4.2-alpha2'
         resourceConfigurations += ['en', 'de', 'zh-rCN']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "java.lang.String", "CLI", System.getenv('RCX_BUILD_CLI') ? System.getenv('RCX_BUILD_CLI') : "\"c03129b6-b09f-9cb4-8fcd-7f143b8f94ef\""
@@ -132,6 +124,10 @@ android {
         abortOnError = true
         warning 'MissingTranslation'
 
+    }
+
+    gradle.projectsEvaluated {
+        preBuild.dependsOn(':rclone:buildAll')
     }
 
     namespace 'ca.pkay.rcloneexplorer'
