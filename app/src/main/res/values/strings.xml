@@ -547,4 +547,9 @@
     <string name="breadcrumb_home_description">Remote-Root</string>
     <string name="breadcrumb_next_description">Next breadcrumb arrow indicator</string>
     <string name="remote_creation_next_step">Next Step</string>
+    <string name="generalSettingsDescription">Language, Network and Previews</string>
+    <string name="fileAccessSettingsDescription">Control integration with other apps and storage</string>
+    <string name="theminSettingsDescription">Change the appearance</string>
+    <string name="notificationSettingsDescription">Control more precisely on when you get notified</string>
+    <string name="loggingSettingsDescription">Gather more insight when this app misbehaves</string>
 </resources>

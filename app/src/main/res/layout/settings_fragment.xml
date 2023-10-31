@@ -31,11 +31,11 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@tools:sample/avatars"
-                android:tint="#C71414"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle" />
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#C71414" />
 
             <ImageView
                 android:id="@+id/general_Settings_icon"
@@ -43,11 +43,11 @@
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:contentDescription="@string/general_settings_icon_content_description"
                 android:src="@drawable/ic_settings"
-                android:tint="@color/iconTint"
                 app:layout_constraintBottom_toBottomOf="@+id/general_Settings_icon_background"
                 app:layout_constraintEnd_toEndOf="@+id/general_Settings_icon_background"
                 app:layout_constraintStart_toStartOf="@+id/general_Settings_icon_background"
-                app:layout_constraintTop_toTopOf="@+id/general_Settings_icon_background" />
+                app:layout_constraintTop_toTopOf="@+id/general_Settings_icon_background"
+                app:tint="@color/iconTint" />
 
             <TextView
                 android:id="@+id/generalTitle"
@@ -63,7 +63,7 @@
                 android:id="@+id/generalSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/generalSettingsDescription"
                 app:layout_constraintStart_toStartOf="@+id/generalTitle"
                 app:layout_constraintTop_toBottomOf="@+id/generalTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -84,11 +84,11 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@tools:sample/avatars"
-                android:tint="#3584D8"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle" />
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#3584D8" />
 
             <ImageView
                 android:id="@+id/file_access_settings_icon"
@@ -96,11 +96,11 @@
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:contentDescription="@string/file_access_settings_icon_content_description"
                 android:src="@drawable/ic_file_black"
-                android:tint="@color/iconTint"
                 app:layout_constraintBottom_toBottomOf="@+id/file_access_settings_icon_background"
                 app:layout_constraintEnd_toEndOf="@+id/file_access_settings_icon_background"
                 app:layout_constraintStart_toStartOf="@+id/file_access_settings_icon_background"
-                app:layout_constraintTop_toTopOf="@+id/file_access_settings_icon_background" />
+                app:layout_constraintTop_toTopOf="@+id/file_access_settings_icon_background"
+                app:tint="@color/iconTint" />
 
             <TextView
                 android:id="@+id/fileAccessTitle"
@@ -116,7 +116,7 @@
                 android:id="@+id/fileAccessDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/fileAccessSettingsDescription"
                 app:layout_constraintStart_toStartOf="@+id/fileAccessTitle"
                 app:layout_constraintTop_toBottomOf="@+id/fileAccessTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -136,11 +136,11 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@tools:sample/avatars"
-                android:tint="#43AB3B"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle" />
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#43AB3B" />
 
             <ImageView
                 android:id="@+id/look_and_feel_settings_icon"
@@ -148,11 +148,11 @@
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:contentDescription="@string/look_and_feel_settings_icon_content_description"
                 android:src="@drawable/ic_look_and_feel"
-                android:tint="@color/iconTint"
                 app:layout_constraintBottom_toBottomOf="@+id/themingIconBackground"
                 app:layout_constraintEnd_toEndOf="@+id/themingIconBackground"
                 app:layout_constraintStart_toStartOf="@+id/themingIconBackground"
-                app:layout_constraintTop_toTopOf="@+id/themingIconBackground" />
+                app:layout_constraintTop_toTopOf="@+id/themingIconBackground"
+                app:tint="@color/iconTint" />
 
             <TextView
                 android:id="@+id/themingTitle"
@@ -168,7 +168,7 @@
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/theminSettingsDescription"
                 app:layout_constraintStart_toStartOf="@+id/themingTitle"
                 app:layout_constraintTop_toBottomOf="@+id/themingTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -188,11 +188,11 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@tools:sample/avatars"
-                android:tint="#E59308"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle" />
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#E59308" />
 
             <ImageView
                 android:id="@+id/notificationIcon"
@@ -200,11 +200,11 @@
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:contentDescription="@string/notification_settings_icon_content_description"
                 android:src="@drawable/ic_notifications"
-                android:tint="@color/iconTint"
                 app:layout_constraintBottom_toBottomOf="@+id/notificationIconBackground"
                 app:layout_constraintEnd_toEndOf="@+id/notificationIconBackground"
                 app:layout_constraintStart_toStartOf="@+id/notificationIconBackground"
-                app:layout_constraintTop_toTopOf="@+id/notificationIconBackground" />
+                app:layout_constraintTop_toTopOf="@+id/notificationIconBackground"
+                app:tint="@color/iconTint" />
 
             <TextView
                 android:id="@+id/notificationTitle"
@@ -220,7 +220,7 @@
                 android:id="@+id/notificationDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/notificationSettingsDescription"
                 app:layout_constraintStart_toStartOf="@+id/notificationTitle"
                 app:layout_constraintTop_toBottomOf="@+id/notificationTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -240,11 +240,11 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@tools:sample/avatars"
-                android:tint="#32D6E5"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle" />
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#32D6E5" />
 
             <ImageView
                 android:id="@+id/loggingSettingsIcon"
@@ -252,11 +252,11 @@
                 android:layout_height="@dimen/settings_icon_image_size"
                 android:contentDescription="@string/logging_settings_icon_content_description"
                 android:src="@drawable/ic_file_alert"
-                android:tint="@color/iconTint"
                 app:layout_constraintBottom_toBottomOf="@+id/loggingSettingsIconBackground"
                 app:layout_constraintEnd_toEndOf="@+id/loggingSettingsIconBackground"
                 app:layout_constraintStart_toStartOf="@+id/loggingSettingsIconBackground"
-                app:layout_constraintTop_toTopOf="@+id/loggingSettingsIconBackground" />
+                app:layout_constraintTop_toTopOf="@+id/loggingSettingsIconBackground"
+                app:tint="@color/iconTint" />
 
             <TextView
                 android:id="@+id/loggingTitle"
@@ -272,7 +272,7 @@
                 android:id="@+id/loggingDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/loggingSettingsDescription"
                 app:layout_constraintStart_toStartOf="@+id/loggingTitle"
                 app:layout_constraintTop_toBottomOf="@+id/loggingTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
