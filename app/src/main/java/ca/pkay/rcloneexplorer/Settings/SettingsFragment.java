@@ -1,15 +1,18 @@
 package ca.pkay.rcloneexplorer.Settings;
 
+import static ca.pkay.rcloneexplorer.Activities.MainActivity.MAIN_ACTIVITY_START_EXPORT;
+import static ca.pkay.rcloneexplorer.Activities.MainActivity.MAIN_ACTIVITY_START_IMPORT;
+
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import ca.pkay.rcloneexplorer.Activities.MainActivity;
 import ca.pkay.rcloneexplorer.R;
 
 public class SettingsFragment extends Fragment {
@@ -77,5 +80,20 @@ public class SettingsFragment extends Fragment {
         view.findViewById(R.id.notification_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(NOTIFICATION_SETTINGS));
 
         view.findViewById(R.id.file_access_settings).setOnClickListener(v -> clickListener.onSettingCategoryClicked(FILE_ACCESS_SETTINGS));
+
+        view.findViewById(R.id.importSettings).setOnClickListener(v -> startActivity(getImportIntent()));
+        view.findViewById(R.id.exportSettings).setOnClickListener(v -> startActivity(getExportIntent()));
+    }
+
+    private Intent getImportIntent() {
+        Intent i = new Intent(this.getContext(), MainActivity.class);
+        i.setAction(MAIN_ACTIVITY_START_IMPORT);
+        return i;
+    }
+
+    private Intent getExportIntent() {
+        Intent i = new Intent(this.getContext(), MainActivity.class);
+        i.setAction(MAIN_ACTIVITY_START_EXPORT);
+        return i;
     }
 }

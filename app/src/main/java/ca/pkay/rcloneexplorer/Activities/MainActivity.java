@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
     public static final String MAIN_ACTIVITY_START_LOG = "MAIN_ACTIVITY_START_LOG";
+    public static final String MAIN_ACTIVITY_START_IMPORT = "MAIN_ACTIVITY_START_IMPORT";
+    public static final String MAIN_ACTIVITY_START_EXPORT = "MAIN_ACTIVITY_START_EXPORT";
     private static final int READ_REQUEST_CODE = 42; // code when opening rclone config file
     private static final int REQUEST_PERMISSION_CODE = 62; // code when requesting permissions
     private static final int REQUEST_PERMISSION_CODE_POST_NOTIFICATIONS = 63;
@@ -208,6 +210,26 @@ public class MainActivity extends AppCompatActivity
         if(MAIN_ACTIVITY_START_LOG.equals(intent.getAction())){
             startLogFragment();
         }
+
+        //todo: Migrate import and export out of the main activity
+        if(MAIN_ACTIVITY_START_IMPORT.equals(intent.getAction())){
+            startConfigImportFlow();
+        }
+
+        //todo: Migrate import and export out of the main activity
+        if(MAIN_ACTIVITY_START_EXPORT.equals(intent.getAction())){
+            startConfigExportFlow();
+        }
+
+        findViewById(R.id.navAbout).setOnClickListener(v -> {
+            Intent aboutIntent = new Intent(this, AboutActivity.class);
+            startActivity(aboutIntent);
+        });
+
+        findViewById(R.id.navSettings).setOnClickListener(v -> {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
+        });
 
         pinRemotesToDrawer();
         updatePermissionFragmentVisibility();
@@ -366,8 +388,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_permissions:
                 SharedPreferencesUtil.Companion.setLastOpenFragment(this, id);
                 break;
-            case R.id.nav_settings:
-            case R.id.nav_about:
             case R.id.nav_import:
             case R.id.nav_export:
                 SharedPreferencesUtil.Companion.setLastOpenFragment(this, R.id.nav_remotes);
@@ -385,23 +405,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_remotes:
                 startRemotesFragment();
                 break;
-            case R.id.nav_import:
-                Uri configUri;
-                if (rclone.isConfigFileCreated()) {
-                    warnUserAboutOverwritingConfiguration();
-                } else if(null != (configUri = rclone.searchExternalConfig())) {
-                    askUseExternalConfig(configUri);
-                } else {
-                    importConfigFile();
-                }
-                break;
-            case R.id.nav_export:
-                if (rclone.isConfigFileCreated()) {
-                    exportConfigFile();
-                } else {
-                    Toasty.info(this,  getString(R.string.no_config_found), Toast.LENGTH_SHORT, true).show();
-                }
-                break;
             case R.id.nav_tasks:
                 startTasksFragment();
                 break;
@@ -414,17 +417,27 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_permissions:
                 startPermissionFragment();
                 break;
-            case R.id.nav_settings:
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                tryStartActivityForResult(this, settingsIntent, SETTINGS_CODE);
-                break;
-            case R.id.nav_about:
-                Intent aboutIntent = new Intent(this, AboutActivity.class);
-                startActivity(aboutIntent);
-                break;
         }
     }
 
+    private void startConfigExportFlow() {
+        if (rclone.isConfigFileCreated()) {
+            exportConfigFile();
+        } else {
+            Toasty.info(this,  getString(R.string.no_config_found), Toast.LENGTH_SHORT, true).show();
+        }
+    }
+
+    private void startConfigImportFlow() {
+        Uri configUri;
+        if (rclone.isConfigFileCreated()) {
+            warnUserAboutOverwritingConfiguration();
+        } else if(null != (configUri = rclone.searchExternalConfig())) {
+            askUseExternalConfig(configUri);
+        } else {
+            importConfigFile();
+        }
+    }
 
     private void startTasksFragment(){
         startFragment(TasksFragment.newInstance());

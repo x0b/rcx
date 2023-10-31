@@ -45,14 +45,15 @@
     </item>
 
     <item
-        android:title="@string/nav_header_options_header"
+        android:checkableBehavior="single"
         android:orderInCategory="2"
-        android:checkableBehavior="single">
+        android:title="@string/nav_header_options_header"
+        android:visible="false">
         <menu>
             <group
                 android:id="@+id/nav_bottom"
-                android:orderInCategory="2"
                 android:checkableBehavior="none"
+                android:orderInCategory="2"
                 android:title="@string/settings">
                 <item
                     android:id="@+id/nav_import"

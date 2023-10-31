@@ -273,5 +273,107 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/importSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
+
+            <ImageView
+                android:id="@+id/importSettingsIconBackground"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#2A9702" />
+
+            <ImageView
+                android:id="@+id/importSettingsIcon"
+                android:layout_width="@dimen/settings_icon_image_size"
+                android:layout_height="@dimen/settings_icon_image_size"
+                android:contentDescription="@string/logging_settings_icon_content_description"
+                android:src="@drawable/ic_import"
+                app:layout_constraintBottom_toBottomOf="@+id/importSettingsIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/importSettingsIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/importSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/importSettingsIconBackground"
+                app:tint="@color/iconTint" />
+
+            <TextView
+                android:id="@+id/importTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/export_rclone_config"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/importSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/importSettingsIconBackground" />
+
+            <TextView
+                android:id="@+id/importDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loggingSettingsDescription"
+                app:layout_constraintStart_toStartOf="@+id/importTitle"
+                app:layout_constraintTop_toBottomOf="@+id/importTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/exportSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
+
+            <ImageView
+                android:id="@+id/exportSettingsIconBackground"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#2A9702" />
+
+            <ImageView
+                android:id="@+id/exportSettingsIcon"
+                android:layout_width="@dimen/settings_icon_image_size"
+                android:layout_height="@dimen/settings_icon_image_size"
+                android:contentDescription="@string/logging_settings_icon_content_description"
+                android:src="@drawable/ic_export"
+                app:layout_constraintBottom_toBottomOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/exportSettingsIconBackground"
+                app:tint="@color/iconTint" />
+
+            <TextView
+                android:id="@+id/exportTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/export_rclone_config"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/exportSettingsIconBackground" />
+
+            <TextView
+                android:id="@+id/exportDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loggingSettingsDescription"
+                app:layout_constraintStart_toStartOf="@+id/exportTitle"
+                app:layout_constraintTop_toBottomOf="@+id/exportTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </LinearLayout>
 </ScrollView>
