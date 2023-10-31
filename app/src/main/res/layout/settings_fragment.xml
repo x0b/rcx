@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -16,140 +17,266 @@
         android:paddingEnd="@dimen/settings_padding_ends"
         android:paddingBottom="16dp">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/general_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/settings_padding_topbottom"
-            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
+
+            <ImageView
+                android:id="@+id/general_Settings_icon_background"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@tools:sample/avatars"
+                android:tint="#C71414"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle" />
 
             <ImageView
                 android:id="@+id/general_Settings_icon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
-                android:layout_centerVertical="true"
+                android:contentDescription="@string/general_settings_icon_content_description"
                 android:src="@drawable/ic_settings"
-                android:contentDescription="@string/general_settings_icon_content_description" />
+                android:tint="@color/iconTint"
+                app:layout_constraintBottom_toBottomOf="@+id/general_Settings_icon_background"
+                app:layout_constraintEnd_toEndOf="@+id/general_Settings_icon_background"
+                app:layout_constraintStart_toStartOf="@+id/general_Settings_icon_background"
+                app:layout_constraintTop_toTopOf="@+id/general_Settings_icon_background" />
 
             <TextView
+                android:id="@+id/generalTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/general_Settings_icon"
-                android:paddingStart="32dp"
-                android:paddingEnd="0dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/settings_header_general"
                 android:textStyle="bold"
-                android:text="@string/settings_header_general"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-                android:id="@+id/file_access_settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/settings_padding_topbottom"
-                android:paddingBottom="@dimen/settings_padding_topbottom"
-                android:clickable="true"
-                android:focusable="true" >
-
-            <ImageView
-                    android:id="@+id/file_access_settings_icon"
-                    android:layout_width="@dimen/settings_icon_image_size"
-                    android:layout_height="@dimen/settings_icon_image_size"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_file_black"
-                    android:contentDescription="@string/file_access_settings_icon_content_description" />
+                app:layout_constraintStart_toEndOf="@+id/general_Settings_icon_background"
+                app:layout_constraintTop_toTopOf="@+id/general_Settings_icon_background" />
 
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/file_access_settings_icon"
-                    android:paddingStart="32dp"
-                    android:paddingEnd="0dp"
-                    android:textStyle="bold"
-                    android:text="@string/file_access"/>
-        </RelativeLayout>
+                android:id="@+id/generalSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="@+id/generalTitle"
+                app:layout_constraintTop_toBottomOf="@+id/generalTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <RelativeLayout
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/file_access_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
+
+            <ImageView
+                android:id="@+id/file_access_settings_icon_background"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@tools:sample/avatars"
+                android:tint="#3584D8"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle" />
+
+            <ImageView
+                android:id="@+id/file_access_settings_icon"
+                android:layout_width="@dimen/settings_icon_image_size"
+                android:layout_height="@dimen/settings_icon_image_size"
+                android:contentDescription="@string/file_access_settings_icon_content_description"
+                android:src="@drawable/ic_file_black"
+                android:tint="@color/iconTint"
+                app:layout_constraintBottom_toBottomOf="@+id/file_access_settings_icon_background"
+                app:layout_constraintEnd_toEndOf="@+id/file_access_settings_icon_background"
+                app:layout_constraintStart_toStartOf="@+id/file_access_settings_icon_background"
+                app:layout_constraintTop_toTopOf="@+id/file_access_settings_icon_background" />
+
+            <TextView
+                android:id="@+id/fileAccessTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/file_access"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/file_access_settings_icon_background"
+                app:layout_constraintTop_toTopOf="@+id/file_access_settings_icon_background" />
+
+            <TextView
+                android:id="@+id/fileAccessDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="@+id/fileAccessTitle"
+                app:layout_constraintTop_toBottomOf="@+id/fileAccessTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/look_and_feel_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/settings_padding_topbottom"
-            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true" >
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
+
+            <ImageView
+                android:id="@+id/themingIconBackground"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@tools:sample/avatars"
+                android:tint="#43AB3B"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle" />
 
             <ImageView
                 android:id="@+id/look_and_feel_settings_icon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
-                android:layout_centerVertical="true"
+                android:contentDescription="@string/look_and_feel_settings_icon_content_description"
                 android:src="@drawable/ic_look_and_feel"
-                android:contentDescription="@string/look_and_feel_settings_icon_content_description" />
+                android:tint="@color/iconTint"
+                app:layout_constraintBottom_toBottomOf="@+id/themingIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/themingIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/themingIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/themingIconBackground" />
 
             <TextView
+                android:id="@+id/themingTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/look_and_feel_settings_icon"
-                android:paddingStart="32dp"
-                android:paddingEnd="0dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/look_and_feel"
                 android:textStyle="bold"
-                android:text="@string/look_and_feel"/>
-        </RelativeLayout>
+                app:layout_constraintStart_toEndOf="@+id/themingIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/themingIconBackground" />
 
-        <RelativeLayout
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="@+id/themingTitle"
+                app:layout_constraintTop_toBottomOf="@+id/themingTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/notification_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/settings_padding_topbottom"
-            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true" >
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
 
             <ImageView
-                android:id="@+id/notification_settings_icon"
+                android:id="@+id/notificationIconBackground"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@tools:sample/avatars"
+                android:tint="#E59308"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle" />
+
+            <ImageView
+                android:id="@+id/notificationIcon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
-                android:layout_centerVertical="true"
+                android:contentDescription="@string/notification_settings_icon_content_description"
                 android:src="@drawable/ic_notifications"
-                android:contentDescription="@string/notification_settings_icon_content_description" />
+                android:tint="@color/iconTint"
+                app:layout_constraintBottom_toBottomOf="@+id/notificationIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/notificationIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/notificationIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/notificationIconBackground" />
 
             <TextView
+                android:id="@+id/notificationTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/notification_settings_icon"
-                android:paddingStart="32dp"
-                android:paddingEnd="0dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/notifications_pref_title"
                 android:textStyle="bold"
-                android:text="@string/notifications_pref_title"/>
-        </RelativeLayout>
+                app:layout_constraintStart_toEndOf="@+id/notificationIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/notificationIconBackground" />
 
-        <RelativeLayout
+            <TextView
+                android:id="@+id/notificationDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="@+id/notificationTitle"
+                app:layout_constraintTop_toBottomOf="@+id/notificationTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/logging_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/settings_padding_topbottom"
-            android:paddingBottom="@dimen/settings_padding_topbottom"
             android:clickable="true"
-            android:focusable="true" >
+            android:focusable="true"
+            android:paddingTop="@dimen/settings_padding_topbottom"
+            android:paddingBottom="@dimen/settings_padding_topbottom">
 
             <ImageView
-                android:id="@+id/logging_settings_icon"
+                android:id="@+id/loggingSettingsIconBackground"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@tools:sample/avatars"
+                android:tint="#32D6E5"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle" />
+
+            <ImageView
+                android:id="@+id/loggingSettingsIcon"
                 android:layout_width="@dimen/settings_icon_image_size"
                 android:layout_height="@dimen/settings_icon_image_size"
-                android:layout_centerVertical="true"
+                android:contentDescription="@string/logging_settings_icon_content_description"
                 android:src="@drawable/ic_file_alert"
-                android:contentDescription="@string/logging_settings_icon_content_description" />
+                android:tint="@color/iconTint"
+                app:layout_constraintBottom_toBottomOf="@+id/loggingSettingsIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/loggingSettingsIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/loggingSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/loggingSettingsIconBackground" />
 
             <TextView
+                android:id="@+id/loggingTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/logging_settings_icon"
-                android:paddingStart="32dp"
-                android:paddingEnd="0dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/logging_settings_header"
                 android:textStyle="bold"
-                android:text="@string/logging_settings_header"/>
-        </RelativeLayout>
+                app:layout_constraintStart_toEndOf="@+id/loggingSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/loggingSettingsIconBackground" />
+
+            <TextView
+                android:id="@+id/loggingDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="@+id/loggingTitle"
+                app:layout_constraintTop_toBottomOf="@+id/loggingTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </LinearLayout>
 </ScrollView>
