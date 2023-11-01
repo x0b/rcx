@@ -122,6 +122,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
     override fun onStopped() {
         super.onStopped()
         SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_sync_cancelled))
+        SyncLog.info(mContext, mTitle, statusObject.toString())
         failureReason = FAILURE_REASON.CANCELLED
         finishWork()
     }
@@ -276,7 +277,15 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
             }
                         """.trimIndent()
         }
+
         SyncLog.info(mContext, mContext.getString(R.string.operation_success, mTitle), message)
+
+        message += """
+                        
+        Est. Speed: ${statusObject.getEstimatedAverageSpeed()}
+        Avg. Speed: ${statusObject.getLastItemAverageSpeed()}
+                        """.trimIndent()
+
         mNotificationManager.showSuccessNotificationOrReport(
             mTitle,
             message,

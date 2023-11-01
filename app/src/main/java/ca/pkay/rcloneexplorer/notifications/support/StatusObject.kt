@@ -17,9 +17,26 @@ class StatusObject(var mContext: Context){
     var mStats = JSONObject()
     var mLogline = JSONObject()
 
+    var estimatedAverageSpeed = 0L
+    var lastItemAverageSpeed = 0L
 
     fun getSpeed(): String {
         return Formatter.formatFileSize(mContext, mStats.optLong("speed", 0)) + "/s"
+    }
+
+    /**
+     * This function is off by a bit. Afaik rclone calculates the average speed per file,
+     * while we calculate the average speed overall. This means this estimate is likely a bit lower
+     * than the real world speeds.
+     * It also includes the time rclone requires to check the file after transfer, so it does not
+     * reflect actual network speeds.
+     */
+    fun getEstimatedAverageSpeed(): String {
+        return Formatter.formatFileSize(mContext, estimatedAverageSpeed) + "/s"
+    }
+
+    fun getLastItemAverageSpeed(): String {
+        return Formatter.formatFileSize(mContext, lastItemAverageSpeed) + "/s"
     }
 
     fun getSize(): String {
@@ -106,6 +123,17 @@ class StatusObject(var mContext: Context){
                 return
             }
 
+            if(mStats.has("transferring")) {
+                val transferring = mStats.getJSONArray("transferring").getJSONObject(0)
+                lastItemAverageSpeed = transferring.optLong("speedAvg", 0)
+
+                val divisor = mStats.getInt("elapsedTime")
+                estimatedAverageSpeed = if(divisor != 0) {
+                    mStats.optLong("bytes", 0) / divisor
+                } else {
+                    0
+                }
+            }
 
             val speed = getSpeed()
             val size = getSize()
@@ -209,7 +237,7 @@ class StatusObject(var mContext: Context){
     }
 
     override fun toString(): String {
-        return "StatusObject(getSpeed=${getSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()}, getErrorMessage=${getErrorMessage()}, getDeletions=${getDeletions()})"
+        return "StatusObject(getPercentage=${getPercentage()}, getSpeed=${getSpeed()}, getEstimatedAverageSpeed=${getEstimatedAverageSpeed()}, getLastItemAverageSpeed=${getLastItemAverageSpeed()}, getSize=${getSize()}, getTotalSize=${getTotalSize()}, getTransfers=${getTransfers()}, getTotalTransfers=${getTotalTransfers()}, getErrorMessage=${getErrorMessage()}, getDeletions=${getDeletions()})"
     }
 
 
