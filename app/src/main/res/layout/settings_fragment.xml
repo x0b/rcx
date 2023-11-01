@@ -245,6 +245,119 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/importSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/importSettingsIconBackground"
+                android:layout_width="@dimen/settingsIconSize"
+                android:layout_height="@dimen/settingsIconSize"
+                android:layout_margin="@dimen/settingsIconMargin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#2A9702" />
+
+            <ImageView
+                android:id="@+id/importSettingsIcon"
+                android:layout_width="@dimen/settings_icon_image_size"
+                android:layout_height="@dimen/settings_icon_image_size"
+                android:contentDescription="@string/import_settings_icon_content_description"
+                android:src="@drawable/ic_import"
+                app:layout_constraintBottom_toBottomOf="@+id/importSettingsIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/importSettingsIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/importSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/importSettingsIconBackground"
+                app:tint="@color/iconTint" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/settingsIconMargin"
+                android:layout_marginEnd="@dimen/settingsIconMargin"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/importSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/importTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/import_rclone_config"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/importDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/importSettingsDescription" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/exportSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/exportSettingsIconBackground"
+                android:layout_width="@dimen/settingsIconSize"
+                android:layout_height="@dimen/settingsIconSize"
+                android:layout_margin="@dimen/settingsIconMargin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/shape_circle"
+                app:tint="#2A9702" />
+
+            <ImageView
+                android:id="@+id/exportSettingsIcon"
+                android:layout_width="@dimen/settings_icon_image_size"
+                android:layout_height="@dimen/settings_icon_image_size"
+                android:contentDescription="@string/export_settings_icon_content_description"
+                android:src="@drawable/ic_export"
+                app:layout_constraintBottom_toBottomOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintEnd_toEndOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintStart_toStartOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="@+id/exportSettingsIconBackground"
+                app:tint="@color/iconTint" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/settingsIconMargin"
+                android:layout_marginEnd="@dimen/settingsIconMargin"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/exportSettingsIconBackground"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/exportTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/export_rclone_config"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/exportDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exportSettingsDescription" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/logging_settings"
@@ -302,122 +415,5 @@
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/importSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:id="@+id/importSettingsIconBackground"
-                android:layout_width="@dimen/settingsIconSize"
-                android:layout_height="@dimen/settingsIconSize"
-                android:layout_margin="@dimen/settingsIconMargin"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle"
-                app:tint="#2A9702" />
-
-            <ImageView
-                android:id="@+id/importSettingsIcon"
-                android:layout_width="@dimen/settings_icon_image_size"
-                android:layout_height="@dimen/settings_icon_image_size"
-                android:contentDescription="@string/logging_settings_icon_content_description"
-                android:src="@drawable/ic_import"
-                app:layout_constraintBottom_toBottomOf="@+id/importSettingsIconBackground"
-                app:layout_constraintEnd_toEndOf="@+id/importSettingsIconBackground"
-                app:layout_constraintStart_toStartOf="@+id/importSettingsIconBackground"
-                app:layout_constraintTop_toTopOf="@+id/importSettingsIconBackground"
-                app:tint="@color/iconTint" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/settingsIconMargin"
-                android:layout_marginEnd="@dimen/settingsIconMargin"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/importSettingsIconBackground"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/importTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/export_rclone_config"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/importDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/loggingSettingsDescription" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/exportSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:id="@+id/exportSettingsIconBackground"
-                android:layout_width="@dimen/settingsIconSize"
-                android:layout_height="@dimen/settingsIconSize"
-                android:layout_margin="@dimen/settingsIconMargin"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/shape_circle"
-                app:tint="#2A9702" />
-
-            <ImageView
-                android:id="@+id/exportSettingsIcon"
-                android:layout_width="@dimen/settings_icon_image_size"
-                android:layout_height="@dimen/settings_icon_image_size"
-                android:contentDescription="@string/logging_settings_icon_content_description"
-                android:src="@drawable/ic_export"
-                app:layout_constraintBottom_toBottomOf="@+id/exportSettingsIconBackground"
-                app:layout_constraintEnd_toEndOf="@+id/exportSettingsIconBackground"
-                app:layout_constraintStart_toStartOf="@+id/exportSettingsIconBackground"
-                app:layout_constraintTop_toTopOf="@+id/exportSettingsIconBackground"
-                app:tint="@color/iconTint" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/settingsIconMargin"
-                android:layout_marginEnd="@dimen/settingsIconMargin"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/exportSettingsIconBackground"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/exportTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/export_rclone_config"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/exportDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/loggingSettingsDescription" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </LinearLayout>
 </ScrollView>
