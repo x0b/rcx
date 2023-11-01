@@ -23,9 +23,11 @@ public class FileItem implements Parcelable {
     private String humanReadableModTime;
     private String formattedModTime;
     private boolean isDir;
+
+    private boolean startAtRoot;
     private static final Rfc3339Parser rfc3339Parser = new Rfc3339Strict();
 
-    public FileItem(RemoteItem remote, String path, String name, long size, String modTime, String mimeType, boolean isDir) {
+    public FileItem(RemoteItem remote, String path, String name, long size, String modTime, String mimeType, boolean isDir, boolean startAtRoot) {
         this.remote = remote;
         this.path = path;
         this.name = name;
@@ -40,6 +42,7 @@ public class FileItem implements Parcelable {
         this.formattedModTime = modTimeToFormattedTime(this.modTime);
         this.mimeType = getMimeType(mimeType, path);
         this.isDir = isDir;
+        this.startAtRoot = startAtRoot;
     }
 
     protected FileItem(Parcel in) {
@@ -53,6 +56,7 @@ public class FileItem implements Parcelable {
         formattedModTime = in.readString();
         mimeType = in.readString();
         isDir = in.readByte() != 0;
+        startAtRoot = in.readByte() != 0;
     }
 
     public static final Creator<FileItem> CREATOR = new Creator<FileItem>() {
@@ -71,6 +75,9 @@ public class FileItem implements Parcelable {
         return remote;
     }
     public String getPath() {
+        if(startAtRoot && !path.startsWith("/")) {
+            return "/"+path;
+        }
         return path;
     }
 
@@ -149,7 +156,7 @@ public class FileItem implements Parcelable {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof FileItem && ((FileItem) obj).getRemote().equals(this.remote) && ((FileItem) obj).getPath().equals(this.path) && ((FileItem) obj).getName().equals(this.name);
+        return obj instanceof FileItem && ((FileItem) obj).getRemote().equals(this.remote) && ((FileItem) obj).getPath().equals(this.getPath()) && ((FileItem) obj).getName().equals(this.name);
     }
 
     @Override
@@ -169,5 +176,6 @@ public class FileItem implements Parcelable {
         dest.writeString(formattedModTime);
         dest.writeString(mimeType);
         dest.writeByte((byte) (isDir ? 1 : 0));
+        dest.writeByte((byte) (startAtRoot ? 1 : 0));
     }
 }

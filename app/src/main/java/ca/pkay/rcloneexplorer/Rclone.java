@@ -304,7 +304,7 @@ public class Rclone {
                     }
                 }
 
-                FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, mimeType, fileIsDir);
+                FileItem fileItem = new FileItem(remote, filePath, fileName, fileSize, fileModTime, mimeType, fileIsDir, startAtRoot);
                 fileItemList.add(fileItem);
             } catch (JSONException e) {
                 FLog.e(TAG, "getDirectoryContent: Could not decode JSON", e);
