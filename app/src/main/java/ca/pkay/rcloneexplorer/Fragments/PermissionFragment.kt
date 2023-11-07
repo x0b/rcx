@@ -1,10 +1,6 @@
 package ca.pkay.rcloneexplorer.Fragments
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS
-import android.provider.Settings.EXTRA_APP_PACKAGE
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +34,9 @@ class PermissionFragment : Fragment() {
         binding.buttonNotifications.setOnClickListener {
             startActivity(PermissionManager.getNotificationSettingsIntent(requireContext()))
         }
+        binding.buttonBatteryOptimizations.setOnClickListener {
+            mPermissionManager.requestBatteryOptimizationException()
+        }
     }
 
     override fun onResume() {
@@ -55,9 +54,13 @@ class PermissionFragment : Fragment() {
         if(mPermissionManager.grantedNotifications()) {
             binding.cardNotifications.visibility = View.GONE
         }
+        if(mPermissionManager.grantedBatteryOptimizationExemption()) {
+            binding.cardBatteryOptimizations.visibility = View.GONE
+        }
 
         if(mPermissionManager.grantedStorage() &&
             mPermissionManager.grantedNotifications() &&
+            mPermissionManager.grantedBatteryOptimizationExemption() &&
             mPermissionManager.grantedStorage()) {
             (requireActivity() as MainActivity).startRemotesFragment()
         }

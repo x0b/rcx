@@ -29,6 +29,7 @@ class OnboardingActivity : AppIntro2() {
         private const val SLIDE_ID_PERMCHANGE = "SLIDE_ID_PERMCHANGE"
         private const val SLIDE_ID_STORAGE = "SLIDE_ID_STORAGE"
         private const val SLIDE_ID_NOTIFICATIONS = "SLIDE_ID_NOTIFICATIONS"
+        private const val SLIDE_ID_BATTERY_OPTIMIZATION = "SLIDE_ID_BATTERY_OPTIMIZATION"
         private const val SLIDE_ID_ALARMS = "SLIDE_ID_ALARMS"
         private const val SLIDE_ID_SUCCESS = "SLIDE_ID_SUCCESS"
     }
@@ -39,11 +40,14 @@ class OnboardingActivity : AppIntro2() {
 
     private var isStorageSlide = false
     private var isAlarmSlide = false
+    private var isBatteryOptimizationSlide = false
 
     private var storageRequested = false
     private var storageGranted = false
     private var alarmRequested = false
     private var alarmGranted = false
+    private var batteryOptimizationsRequested = false
+    private var batteryOptimizationsGranted = false
 
     private var color = R.color.intro_color1
 
@@ -53,6 +57,7 @@ class OnboardingActivity : AppIntro2() {
     private var communitySlide = 0
     private var storageSlide = 0
     private var notificationSlide = 0
+    private var batterySlide = 0
     private var alarmSlide = 0
     private var successSlide = 0
 
@@ -149,6 +154,7 @@ class OnboardingActivity : AppIntro2() {
             }
         }
 
+        //Todo: Check if that build version check can be removed because mPermissions checks it
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if(!mPermissions.grantedAlarms()) {
                 addSlide(
@@ -163,6 +169,20 @@ class OnboardingActivity : AppIntro2() {
                 alarmSlide = maxSlideId
                 maxSlideId++
             }
+        }
+
+        if(!mPermissions.grantedBatteryOptimizationExemption()) {
+            addSlide(
+                IdentifiableAppIntroFragment.createInstance(
+                    title = getString(R.string.intro_battery_optimizations_title),
+                    description = getString(R.string.intro_battery_optimizations_description),
+                    imageDrawable = R.drawable.undraw_electricity,
+                    backgroundColorRes = color,
+                    id = SLIDE_ID_BATTERY_OPTIMIZATION
+                ))
+            switchColor()
+            batterySlide = maxSlideId
+            maxSlideId++
         }
 
         addSlide(
@@ -183,6 +203,7 @@ class OnboardingActivity : AppIntro2() {
 
         isStorageSlide = false
         isAlarmSlide = false
+        isBatteryOptimizationSlide = false
 
         if(isFragment(newFragment, SLIDE_ID_STORAGE)){
             isStorageSlide = true
@@ -190,6 +211,10 @@ class OnboardingActivity : AppIntro2() {
 
         if(isFragment(newFragment, SLIDE_ID_ALARMS)){
             isAlarmSlide = true
+        }
+
+        if(isFragment(newFragment, SLIDE_ID_BATTERY_OPTIMIZATION)){
+            isBatteryOptimizationSlide = true
         }
     }
 
@@ -202,15 +227,22 @@ class OnboardingActivity : AppIntro2() {
 
     override fun onPageSelected(position: Int) {
 
-        if(storageSlide != 0) {
-            isStorageSlide = position+1 == storageSlide
+        isStorageSlide = if(storageSlide != 0) {
+            position+1 == storageSlide
         } else {
-            isStorageSlide = false
+            false
         }
-        if(alarmSlide != 0) {
-            isAlarmSlide = position+1 == alarmSlide
+
+        isAlarmSlide = if(alarmSlide != 0) {
+            position+1 == alarmSlide
         } else {
-            isAlarmSlide = false
+            false
+        }
+
+        isBatteryOptimizationSlide = if(batterySlide != 0) {
+            position+1 == batterySlide
+        } else {
+            false
         }
     }
 
@@ -221,6 +253,10 @@ class OnboardingActivity : AppIntro2() {
         }
 
         if (isAlarmSlide && alarmGranted) {
+            return true
+        }
+
+        if (isBatteryOptimizationSlide && batteryOptimizationsGranted) {
             return true
         }
 
@@ -240,6 +276,15 @@ class OnboardingActivity : AppIntro2() {
                 return true
             }
             requestAlarmPermission()
+            return false
+        }
+
+        if(isBatteryOptimizationSlide) {
+            if(mPermissions.grantedBatteryOptimizationExemption()){
+                batteryOptimizationsGranted = true
+                return true
+            }
+            requestOptimizationExemption()
             return false
         }
 
@@ -275,6 +320,14 @@ class OnboardingActivity : AppIntro2() {
         alarmRequested = true
     }
 
+    private fun requestOptimizationExemption(){
+        if (batteryOptimizationsRequested) {
+            return
+        }
+        mPermissions.requestBatteryOptimizationException()
+        batteryOptimizationsRequested = true
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -296,6 +349,14 @@ class OnboardingActivity : AppIntro2() {
                 denied(Manifest.permission.SCHEDULE_EXACT_ALARM)
                 // allow slide to continue
             }
+        }
+
+        if(isBatteryOptimizationSlide) {
+            if(mPermissions.grantedBatteryOptimizationExemption()){
+                batteryOptimizationsGranted = true
+                goToNextSlide()
+            }
+            // allow slide to continue
         }
     }
 

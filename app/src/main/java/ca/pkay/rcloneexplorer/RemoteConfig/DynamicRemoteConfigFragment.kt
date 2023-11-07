@@ -440,7 +440,6 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
 
         val editText = TextInputEditText(textinput.context)
         editText.setPadding(padding)
-
         //@ManualTheming
         editText.setTextColor(convertAttributeToColor(R.attr.colorOnSecondaryContainer))
         editText.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -456,6 +455,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 mOptionMap[option] = s.toString()
+                Log.e(TAG, "text len: ${s.length} $s")
             }
             override fun afterTextChanged(s: Editable) {}
         })
@@ -522,7 +522,7 @@ class DynamicRemoteConfigFragment(private val mProviderTitle: String, private va
             }
         }
         for ((key, value) in mOptionMap) {
-            Log.e("TAG", "key: $key value: $value")
+            Log.e("TAG", "key: $key value: $value (${value.length})")
             options.add(key)
             options.add(value)
         }

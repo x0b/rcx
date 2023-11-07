@@ -4,14 +4,18 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlarmManager
 import android.content.Context
+import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
 import ca.pkay.rcloneexplorer.BuildConfig
+
 
 class PermissionManager(private var mContext: Context) {
 
@@ -52,6 +56,13 @@ class PermissionManager(private var mContext: Context) {
         }
     }
 
+
+
+    fun grantedBatteryOptimizationExemption(): Boolean {
+        val powerManger = mContext.getSystemService(POWER_SERVICE) as PowerManager
+        return powerManger.isIgnoringBatteryOptimizations(mContext.packageName)
+    }
+
     fun grantedStorage(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Environment.isExternalStorageManager()
@@ -87,6 +98,14 @@ class PermissionManager(private var mContext: Context) {
     }
 
     fun requestAlarms() {
-        mContext.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+        intent.data = Uri.parse("package:" + mContext.packageName)
+        mContext.startActivity(intent)
+    }
+
+    fun requestBatteryOptimizationException() {
+        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        intent.data = Uri.parse("package:" + mContext.packageName)
+        mContext.startActivity(intent)
     }
 }
