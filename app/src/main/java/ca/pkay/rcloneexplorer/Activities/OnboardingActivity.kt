@@ -22,7 +22,7 @@ import es.dmoral.toasty.Toasty
 class OnboardingActivity : AppIntro2() {
 
     companion object {
-        private const val intro_v1_12_0_completed = "intro_v1_12_0_completed2"
+        private const val intro_v1_12_0_completed = "intro_v1_12_0_completed"
 
         private const val SLIDE_ID_WELCOME = "SLIDE_ID_WELCOME"
         private const val SLIDE_ID_COMMUNITY = "SLIDE_ID_COMMUNITY"
