@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -412,10 +411,6 @@ public class Rclone {
             FLog.e("rclone", "Error executing rclone!" +e.getMessage());
             throw new IOException("Error executing rclone!" +e.getMessage());
         }
-
-        for (String t:command) {
-            Log.e("TAG", "opt2: "+t);
-        }
         return Runtime.getRuntime().exec(command, env);
     }
 
@@ -500,10 +495,6 @@ public class Rclone {
         System.arraycopy(command, 0, commandWithOptions, 0, command.length);
 
         System.arraycopy(opt, 0, commandWithOptions, command.length, opt.length);
-
-        for (String t:commandWithOptions) {
-            Log.e("TAG", "opt: "+t);
-        }
 
         try {
             return getRuntimeProcess(commandWithOptions);
