@@ -60,6 +60,7 @@ freeline_project_description.json
 # Generated artifacts (apks, libraries) just slow down cloning and can be recreated from source
 # anyways.
 release/
+debug/
 
 .idea/encodings.xml
 .idea/caches/build_file_checksums.ser
