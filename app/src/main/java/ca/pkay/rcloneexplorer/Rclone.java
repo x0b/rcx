@@ -480,12 +480,16 @@ public class Rclone {
 
     @Nullable
     public Process configCreate(List<String> options) {
+        // https://rclone.org/commands/rclone_config_create/
+        // See the NB-comment why we need to pass --obscure.
+        // Otherwise long passwords fail.
+        options.add("--obscure");
         return config("create" , options);
     }
 
     @Nullable
     public Process configUpdate(List<String> options) {
-        return config("create" , options);
+        return configCreate(options);
     }
     
     public Process config(String task, List<String> options) {
