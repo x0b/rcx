@@ -85,53 +85,47 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
 
     override suspend fun doWork(): Result {
-        return try {
-            prepareNotifications()
-            registerBroadcastReceivers()
+        prepareNotifications()
+        registerBroadcastReceivers()
 
-            updateForegroundNotification(mNotificationManager.updateSyncNotification(
-                mTitle,
-                mTitle,
-                ArrayList(),
-                0,
-                ongoingNotificationID
-            ))
+        updateForegroundNotification(mNotificationManager.updateSyncNotification(
+            mTitle,
+            mTitle,
+            ArrayList(),
+            0,
+            ongoingNotificationID
+        ))
 
 
-            var ephemeralTask: Task? = null
+        var ephemeralTask: Task? = null
 
-            if(inputData.keyValueMap.containsKey(TASK_ID)){
-                val id = inputData.getLong(TASK_ID, -1)
-                ephemeralTask = mDatabase.getTask(id)
-            }
+        if(inputData.keyValueMap.containsKey(TASK_ID)){
+            val id = inputData.getLong(TASK_ID, -1)
+            ephemeralTask = mDatabase.getTask(id)
+        }
 
-            if(inputData.keyValueMap.containsKey(TASK_EPHEMERAL)){
-                val taskString = inputData.getString(TASK_EPHEMERAL) ?: ""
-                if(taskString.isNotEmpty()) {
-                    try {
-                        ephemeralTask = Json.decodeFromString<Task>(taskString)
-                    } catch (e: Exception) {
-                        log("Could not deserialize")
-                    }
+        if(inputData.keyValueMap.containsKey(TASK_EPHEMERAL)){
+            val taskString = inputData.getString(TASK_EPHEMERAL) ?: ""
+            if(taskString.isNotEmpty()) {
+                try {
+                    ephemeralTask = Json.decodeFromString<Task>(taskString)
+                } catch (e: Exception) {
+                    log("Could not deserialize")
                 }
             }
+        }
 
-            if (ephemeralTask != null) {
-                mTask = ephemeralTask
-                handleTask()
-                postSync()
-            } else {
-                postSync()
-                return Result.failure()
-            }
-
-            // Indicate whether the work finished successfully with the Result
-            return Result.success()
-        } catch (e: CancellationException) {
-            Log.e(TAG, "cancel")
-            // here clean up
+        if (ephemeralTask != null) {
+            mTask = ephemeralTask
+            handleTask()
+            postSync()
+        } else {
+            postSync()
             return Result.failure()
         }
+
+        // Indicate whether the work finished successfully with the Result
+        return Result.success()
     }
 
     fun onStop() {
