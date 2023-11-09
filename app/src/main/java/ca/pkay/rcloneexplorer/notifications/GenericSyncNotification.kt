@@ -19,7 +19,7 @@ class GenericSyncNotification(var mContext: Context) {
         bigTextArray: ArrayList<String>,
         percent: Int,
         cls: Class<*>?,
-        cancelClass: Class<*>?,
+        cancelIntent: PendingIntent?,
         channelID: String
     ): NotificationCompat.Builder {
         val bigText = StringBuilder()
@@ -31,10 +31,9 @@ class GenericSyncNotification(var mContext: Context) {
         }
         val foregroundIntent = Intent(mContext, cls)
         val pendingIntent = PendingIntent.getActivity(mContext, 0, foregroundIntent, FLAG_IMMUTABLE)
-        val cancelIntent = Intent(mContext, cancelClass)
-        val cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, FLAG_IMMUTABLE)
 
-        return NotificationCompat.Builder(
+
+        val notificationBuilder = NotificationCompat.Builder(
             mContext,
             channelID
         )
@@ -43,14 +42,20 @@ class GenericSyncNotification(var mContext: Context) {
             .setContentText(content)
             .setContentIntent(pendingIntent)
             .setStyle(NotificationCompat.BigTextStyle().bigText(bigText.toString()))
-            .addAction(
-                R.drawable.ic_cancel_download,
-                mContext.getString(R.string.cancel),
-                cancelPendingIntent
-            )
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOnlyAlertOnce(true)
             .setProgress(100, percent, false)
+
+        if(cancelIntent != null) {
+            notificationBuilder.addAction(
+                R.drawable.ic_cancel_download,
+                mContext.getString(R.string.cancel),
+                cancelIntent
+            )
+        }
+        return notificationBuilder
+
+
     }
 
     fun setNotificationChannel(channelID: String, channelName: String, description: String) {

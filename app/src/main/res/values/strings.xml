@@ -560,4 +560,5 @@
     <string name="intro_battery_optimizations_description">If this app is optimized for battery savings, syncs might not run on time. Please grant us an exception if you need syncs to be on time!</string>
     <string name="permissions_batteryoptimizations_label">Battery Optimizations</string>
     <string name="permissions_batteryoptimizations_description">If the device is asleep, your tasks might be delayed when this permission is not granted.</string>
+    <string name="sync_service_notification_startingsync">Starting Sync...</string>
 </resources>

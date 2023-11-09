@@ -1,5 +1,6 @@
 package ca.pkay.rcloneexplorer.workmanager
 
+import android.app.Notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,9 +9,8 @@ import android.net.wifi.WifiManager
 import androidx.annotation.StringRes
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import androidx.work.hasKeyWithValueOfType
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler
 import ca.pkay.rcloneexplorer.Items.RemoteItem
 import ca.pkay.rcloneexplorer.Items.Task
@@ -32,8 +32,9 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.io.InterruptedIOException
 import java.util.Random
+import java.util.concurrent.CancellationException
 
-class SyncWorker (private var mContext: Context, workerParams: WorkerParameters): Worker(mContext, workerParams) {
+class SyncWorker (private var mContext: Context, workerParams: WorkerParameters): CoroutineWorker(mContext, workerParams) {
 
     companion object {
         const val TASK_ID = "TASK_ID"
@@ -79,48 +80,61 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
     // Task
     private lateinit var mTask: Task
-    private var mTitle: String = ""
+    private var mTitle: String = mContext.getString(R.string.sync_service_notification_startingsync)
 
 
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
+        return try {
+            prepareNotifications()
+            registerBroadcastReceivers()
 
-        prepareNotifications()
-        registerBroadcastReceivers()
+            updateForegroundNotification(mNotificationManager.updateSyncNotification(
+                mTitle,
+                mTitle,
+                ArrayList(),
+                0,
+                ongoingNotificationID
+            ))
 
-        var ephemeralTask: Task? = null
 
-        if(inputData.keyValueMap.containsKey(TASK_ID)){
-            val id = inputData.getLong(TASK_ID, -1)
-            ephemeralTask = mDatabase.getTask(id)
-        }
+            var ephemeralTask: Task? = null
 
-        if(inputData.keyValueMap.containsKey(TASK_EPHEMERAL)){
-            val taskString = inputData.getString(TASK_EPHEMERAL) ?: ""
-            if(taskString.isNotEmpty()) {
-                try {
-                    ephemeralTask = Json.decodeFromString<Task>(taskString)
-                } catch (e: Exception) {
-                    log("Could not deserialize")
+            if(inputData.keyValueMap.containsKey(TASK_ID)){
+                val id = inputData.getLong(TASK_ID, -1)
+                ephemeralTask = mDatabase.getTask(id)
+            }
+
+            if(inputData.keyValueMap.containsKey(TASK_EPHEMERAL)){
+                val taskString = inputData.getString(TASK_EPHEMERAL) ?: ""
+                if(taskString.isNotEmpty()) {
+                    try {
+                        ephemeralTask = Json.decodeFromString<Task>(taskString)
+                    } catch (e: Exception) {
+                        log("Could not deserialize")
+                    }
                 }
             }
-        }
 
-        if (ephemeralTask != null) {
-            mTask = ephemeralTask
-            handleTask()
-            postSync()
-        } else {
-            postSync()
+            if (ephemeralTask != null) {
+                mTask = ephemeralTask
+                handleTask()
+                postSync()
+            } else {
+                postSync()
+                return Result.failure()
+            }
+
+            // Indicate whether the work finished successfully with the Result
+            return Result.success()
+        } catch (e: CancellationException) {
+            Log.e(TAG, "cancel")
+            // here clean up
             return Result.failure()
         }
-
-        // Indicate whether the work finished successfully with the Result
-        return Result.success()
     }
 
-    override fun onStopped() {
-        super.onStopped()
+    fun onStop() {
         SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_sync_cancelled))
         SyncLog.info(mContext, mTitle, statusObject.toString())
         failureReason = FAILURE_REASON.CANCELLED
@@ -135,7 +149,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
     private fun handleTask() {
         mTitle = mTask.title
-        mNotificationManager.setCancelId(mTask.id)
+        mNotificationManager.setCancelId(id)
         val remoteItem = RemoteItem(mTask.remoteId, mTask.remoteType, "")
 
         if (mTask.title == "") {
@@ -155,14 +169,17 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
     }
 
     private fun handleSync(title: String) {
-        val notificationID = Random().nextInt()
         SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_start_sync))
         if (sRcloneProcess != null) {
-            val localProcess = sRcloneProcess!!
+            val localProcessReference = sRcloneProcess!!
             try {
-                val reader = BufferedReader(InputStreamReader(localProcess.errorStream))
+                val reader = BufferedReader(InputStreamReader(localProcessReference.errorStream))
                 val iterator = reader.lineSequence().iterator()
                 while(iterator.hasNext()) {
+                   if(isStopped) {
+                       onStop()
+                       break
+                   }
                     val line = iterator.next()
                     try {
                         val logline = JSONObject(line)
@@ -181,7 +198,7 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                             statusObject.notificationContent,
                             statusObject.notificationBigText,
                             statusObject.notificationPercent,
-                            notificationID
+                            ongoingNotificationID
                         )
                     } catch (e: JSONException) {
                         FLog.e(TAG, "SyncService-Error: the offending line: $line")
@@ -194,14 +211,14 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                 FLog.e(TAG, "onHandleIntent: error reading stdout", e)
             }
             try {
-                localProcess.waitFor()
+                localProcessReference.waitFor()
             } catch (e: InterruptedException) {
                 FLog.e(TAG, "onHandleIntent: error waiting for process", e)
             }
         } else {
             log("Sync: No Rclone Process!")
         }
-        mNotificationManager.cancelSyncNotification(notificationID)
+        mNotificationManager.cancelSyncNotification(ongoingNotificationID)
     }
 
     private fun postSync() {
@@ -365,6 +382,13 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         intent.putExtra(getString(R.string.background_service_broadcast_data_path), path)
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
     }
+
+    // Creates an instance of ForegroundInfo which can be used to update the
+    // ongoing notification.
+    private suspend fun updateForegroundNotification(notification: Notification?) {
+      //  notification?.let { setForeground(ForegroundInfo(ongoingNotificationID, it, FOREGROUND_SERVICE_TYPE_DATA_SYNC)) }
+    }
+
 
     private fun log(message: String) {
         FLog.e(TAG, "SyncWorker: $message")

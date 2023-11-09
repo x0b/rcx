@@ -92,12 +92,17 @@
             android:name=".Services.ReportService"
             android:foregroundServiceType="dataSync" />
 
+        <service android:name=".workmanager.SyncManager"
+            android:foregroundServiceType="dataSync" />
+
+        <service android:name=".workmanager.SyncWorker"
+            android:foregroundServiceType="dataSync" />
+
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
         <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
         <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
         <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
-        <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
         <receiver android:name=".Services.RcdService$RcdServiceAction" />
         <receiver android:name=".Services.ReportService$StopCollectionReceiver" />
         <receiver

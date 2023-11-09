@@ -1,12 +1,13 @@
 package ca.pkay.rcloneexplorer.notifications.support
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import ca.pkay.rcloneexplorer.R
-import ca.pkay.rcloneexplorer.notifications.AppErrorNotificationManager
 import ca.pkay.rcloneexplorer.notifications.GenericSyncNotification
 import ca.pkay.rcloneexplorer.util.PermissionManager
 
@@ -36,6 +37,10 @@ abstract class GenericNotification(var mContext: Context) {
         title: String,
         bigTextArray: java.util.ArrayList<String>
     ): NotificationCompat.Builder {
+
+        val cancelIntent = Intent(mContext, serviceCancelClass)
+        val cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+
         return GenericSyncNotification(mContext).updateGenericNotification(
             title,
             title,
@@ -43,7 +48,7 @@ abstract class GenericNotification(var mContext: Context) {
             bigTextArray,
             0,
             serviceClass,
-            serviceCancelClass,
+            cancelPendingIntent,
             sChannelId
         )
     }
@@ -60,6 +65,10 @@ abstract class GenericNotification(var mContext: Context) {
         if(content.isBlank()){
             return
         }
+
+        val cancelIntent = Intent(mContext, serviceCancelClass)
+        val cancelPendingIntent = PendingIntent.getBroadcast(mContext, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+
         var builder = GenericSyncNotification(mContext).updateGenericNotification(
             title,
             content,
@@ -67,7 +76,7 @@ abstract class GenericNotification(var mContext: Context) {
             bigTextArray,
             percent,
             serviceClass,
-            serviceCancelClass,
+            cancelPendingIntent,
             sChannelId
         )
         builder.let {

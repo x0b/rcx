@@ -1,19 +1,20 @@
 package ca.pkay.rcloneexplorer.notifications
 
+import android.app.Notification
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
-import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncCancelAction
+import androidx.work.WorkManager
 import ca.pkay.rcloneexplorer.BroadcastReceivers.SyncRestartAction
 import ca.pkay.rcloneexplorer.R
+import ca.pkay.rcloneexplorer.util.FLog
 import ca.pkay.rcloneexplorer.util.NotificationUtils
 import ca.pkay.rcloneexplorer.workmanager.SyncWorker
 import ca.pkay.rcloneexplorer.workmanager.SyncWorker.Companion.EXTRA_TASK_ID
+import java.util.UUID
 
 class SyncServiceNotifications(var mContext: Context) {
 
@@ -25,7 +26,8 @@ class SyncServiceNotifications(var mContext: Context) {
 
 
         const val PERSISTENT_NOTIFICATION_ID_FOR_SYNC = 162
-        const val CANCEL_ID_NOTSET = -1L
+        const val CANCEL_ID_NOTSET = "CANCEL_ID_NOTSET"
+        const val TAG = "SyncServiceNotifications"
 
     }
 
@@ -34,9 +36,11 @@ class SyncServiceNotifications(var mContext: Context) {
     private val OPERATION_FAILED_GROUP = "ca.pkay.rcexplorer.OPERATION_FAILED_GROUP"
     private val OPERATION_SUCCESS_GROUP = "ca.pkay.rcexplorer.OPERATION_SUCCESS_GROUP"
 
-    private var mCancelId: Long = CANCEL_ID_NOTSET
 
-    public fun setCancelId(id: Long) {
+    private var mCancelUnsetId: UUID = UUID.randomUUID()
+    private var mCancelId: UUID = mCancelUnsetId
+
+    fun setCancelId(id: UUID) {
         mCancelId = id
     }
 
@@ -177,8 +181,8 @@ class SyncServiceNotifications(var mContext: Context) {
         content: String,
         bigTextArray: ArrayList<String>,
         percent: Int
-    ) {
-        updateSyncNotification(
+    ): Notification? {
+        return updateSyncNotification(
             title,
             content,
             bigTextArray,
@@ -193,10 +197,12 @@ class SyncServiceNotifications(var mContext: Context) {
         bigTextArray: ArrayList<String>,
         percent: Int,
         notificationId: Int
-    ) {
+    ): Notification? {
         if(content.isBlank()){
-            return
+            FLog.e(TAG, "Missing notification content!")
+            return null
         }
+
         val builder = GenericSyncNotification(mContext).updateGenericNotification(
             mContext.getString(R.string.syncing_service, title),
             content,
@@ -204,29 +210,26 @@ class SyncServiceNotifications(var mContext: Context) {
             bigTextArray,
             percent,
             SyncWorker::class.java,
-            SyncCancelAction::class.java,
+            null,
             CHANNEL_ID
         )
 
-        if(mCancelId != CANCEL_ID_NOTSET) {
-            val cancelIntent = Intent(mContext, SyncCancelAction::class.java)
-            cancelIntent.putExtra(EXTRA_TASK_ID, mCancelId)
-            val cancelPendingIntent =
-                PendingIntent.getBroadcast(
-                    mContext,
-                    0,
-                    cancelIntent,
-                    (FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
-                )
+        if(mCancelId != mCancelUnsetId) {
+
+            val intent = WorkManager.getInstance(mContext)
+                .createCancelPendingIntent(mCancelId)
 
             builder.clearActions()
             builder.addAction(
-                    R.drawable.ic_cancel_download,
-                    mContext.getString(R.string.cancel),
-                    cancelPendingIntent
-                )
+                R.drawable.ic_cancel_download,
+                mContext.getString(R.string.cancel),
+                intent
+            )
         }
-        NotificationUtils.createNotification(mContext, notificationId, builder.build())
+
+        val notification = builder.build()
+        NotificationUtils.createNotification(mContext, notificationId, notification)
+        return notification
     }
 
     fun cancelSyncNotification(notificationId: Int) {
