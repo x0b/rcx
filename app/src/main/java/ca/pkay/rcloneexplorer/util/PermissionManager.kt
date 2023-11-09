@@ -43,6 +43,9 @@ class PermissionManager(private var mContext: Context) {
         if(!grantedAlarms()) {
             return false
         }
+        if(!grantedBatteryOptimizationExemption()) {
+            return false
+        }
 
         return hasAllRequiredPermissions()
     }
