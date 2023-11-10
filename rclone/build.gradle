@@ -206,6 +206,7 @@ task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
         logger.error("The requred go version is: ${GO_REQ_VERSION}")
         logger.error( "You are running: ${goVersionOutput}")
     }
+    println "You are building rclone v${RCLONE_VERSION}"
 
     commandLine 'go', 'get', '-v', '-d', "${RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
