@@ -180,17 +180,6 @@ task createRcloneModule(type: Exec) {
 }
 
 task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
-
-    /*def parsedJson = new JsonSlurper().parseText(new URL( 'https://api.github.com/repos/rclone/rclone/releases/latest' ).text)
-    def latestRclone = parsedJson.tag_name
-
-    if ("v"+RCLONE_VERSION == latestRclone) {
-        println "You are building the latest version: ${RCLONE_VERSION}"
-    } else {
-        logger.error("The latest Rclone version is: ${parsedJson.tag_name}")
-        logger.error( "You are building: ${RCLONE_VERSION}")
-    }*/
-
     workingDir CACHE_PATH
     environment 'GOPATH', GOPATH
 
