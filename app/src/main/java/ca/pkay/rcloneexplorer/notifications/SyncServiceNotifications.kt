@@ -227,9 +227,7 @@ class SyncServiceNotifications(var mContext: Context) {
             )
         }
 
-        val notification = builder.build()
-        NotificationUtils.createNotification(mContext, notificationId, notification)
-        return notification
+        return builder.build()
     }
 
     fun cancelSyncNotification(notificationId: Int) {

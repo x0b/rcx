@@ -92,6 +92,11 @@
             android:name=".Services.ReportService"
             android:foregroundServiceType="dataSync" />
 
+        <!-- This is a default service required for any and all Workers. Do not remove.-->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync" />
+
         <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
         <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
         <receiver android:name=".BroadcastReceivers.ServeCancelAction" />

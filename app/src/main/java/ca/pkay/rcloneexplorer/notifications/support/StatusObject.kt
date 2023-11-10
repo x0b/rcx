@@ -273,7 +273,7 @@ class StatusObject(var mContext: Context){
             )
         )
 
-        val secondsText = String.format(
+        var secondsText = String.format(
             mContext.resources.getQuantityString(R.plurals.modern_prettyprint_duration_s,
                 seconds,
                 seconds
@@ -298,6 +298,11 @@ class StatusObject(var mContext: Context){
             minutesText = ""
         }
 
-        return "$daysText$hoursText$minutesText$secondsText"
+        //if the time is longer than an hour, dont show seconds
+        return if (60*60 < secondDuration) {
+            "$daysText$hoursText$minutesText"
+        } else {
+            "$daysText$hoursText$minutesText$secondsText"
+        }
     }
 }

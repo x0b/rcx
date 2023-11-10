@@ -5,11 +5,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.net.wifi.WifiManager
 import androidx.annotation.StringRes
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
-import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import ca.pkay.rcloneexplorer.Database.DatabaseHandler
 import ca.pkay.rcloneexplorer.Items.RemoteItem
@@ -32,9 +34,8 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.io.InterruptedIOException
 import java.util.Random
-import java.util.concurrent.CancellationException
 
-class SyncWorker (private var mContext: Context, workerParams: WorkerParameters): CoroutineWorker(mContext, workerParams) {
+class SyncWorker (private var mContext: Context, workerParams: WorkerParameters): Worker(mContext, workerParams) {
 
     companion object {
         const val TASK_ID = "TASK_ID"
@@ -84,7 +85,8 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
 
 
-    override suspend fun doWork(): Result {
+    override fun doWork(): Result {
+
         prepareNotifications()
         registerBroadcastReceivers()
 
@@ -128,7 +130,8 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
         return Result.success()
     }
 
-    fun onStop() {
+    override fun onStopped() {
+        super.onStopped()
         SyncLog.info(mContext, mTitle, mContext.getString(R.string.operation_sync_cancelled))
         SyncLog.info(mContext, mTitle, statusObject.toString())
         failureReason = FAILURE_REASON.CANCELLED
@@ -170,10 +173,6 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                 val reader = BufferedReader(InputStreamReader(localProcessReference.errorStream))
                 val iterator = reader.lineSequence().iterator()
                 while(iterator.hasNext()) {
-                   if(isStopped) {
-                       onStop()
-                       break
-                   }
                     val line = iterator.next()
                     try {
                         val logline = JSONObject(line)
@@ -187,13 +186,13 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                             statusObject.parseLoglineToStatusObject(logline)
                         }
 
-                        mNotificationManager.updateSyncNotification(
+                        updateForegroundNotification(mNotificationManager.updateSyncNotification(
                             title,
                             statusObject.notificationContent,
                             statusObject.notificationBigText,
                             statusObject.notificationPercent,
                             ongoingNotificationID
-                        )
+                        ))
                     } catch (e: JSONException) {
                         FLog.e(TAG, "SyncService-Error: the offending line: $line")
                         //FLog.e(TAG, "onHandleIntent: error reading json", e)
@@ -289,19 +288,18 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
                         """.trimIndent()
         }
 
-        SyncLog.info(mContext, mContext.getString(R.string.operation_success, mTitle), message)
+        mNotificationManager.showSuccessNotificationOrReport(
+            mTitle,
+            message,
+            notificationId
+        )
 
         message += """
                         
         Est. Speed: ${statusObject.getEstimatedAverageSpeed()}
         Avg. Speed: ${statusObject.getLastItemAverageSpeed()}
                         """.trimIndent()
-
-        mNotificationManager.showSuccessNotificationOrReport(
-            mTitle,
-            message,
-            notificationId
-        )
+        SyncLog.info(mContext, mContext.getString(R.string.operation_success, mTitle), message)
     }
 
     private fun showFailNotification(notificationId: Int, content: String, wasCancelled: Boolean = false) {
@@ -379,8 +377,10 @@ class SyncWorker (private var mContext: Context, workerParams: WorkerParameters)
 
     // Creates an instance of ForegroundInfo which can be used to update the
     // ongoing notification.
-    private suspend fun updateForegroundNotification(notification: Notification?) {
-      //  notification?.let { setForeground(ForegroundInfo(ongoingNotificationID, it, FOREGROUND_SERVICE_TYPE_DATA_SYNC)) }
+    private fun updateForegroundNotification(notification: Notification?) {
+        notification?.let {
+            setForegroundAsync(ForegroundInfo(ongoingNotificationID, it, FOREGROUND_SERVICE_TYPE_DATA_SYNC))
+        }
     }
 
 
