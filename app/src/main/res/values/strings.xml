@@ -26,7 +26,7 @@
     <string name="star_on_github">Star on GitHub</string>
     <string name="report_a_bug">Report a bug</string>
     <string name="author">Original Author</string>
-    <string name="author_name" translatable="false">Patryk Kaczmarkiewicz</string>
+    <string name="author_name" translatable="false">Patryk Kaczmarkiewicz &lt;github.com/patrykcoding&gt;</string>
     <string name="follow_on_github">Follow on GitHub</string>
     <string name="maintainer">Maintainer</string>
     <string name="maintainer_name" translatable="false">Felix Nüsse &lt;github.com/newhinton&gt;</string>
@@ -46,7 +46,7 @@
     <string name="app_icon">App Icon</string>
     <string name="github_app_url" translatable="false">https://github.com/newhinton/Round-Sync</string>
     <string name="github_issue_url" translatable="false">https://github.com/newhinton/Round-Sync/issues/new/choose</string>
-    <string name="github_author_url" translatable="false">https://github.com/kaczmarkiewiczp</string>
+    <string name="github_author_url" translatable="false">https://github.com/patrykcoding</string>
     <string name="github_maintainer_url" translatable="false">https://github.com/newhinton</string>
     <string name="replace_config_file_question">Replace the current configuration file?</string>
     <string name="config_file_lost_statement">Your current configuration will be lost</string>
