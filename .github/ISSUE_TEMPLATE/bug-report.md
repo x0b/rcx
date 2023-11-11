@@ -39,7 +39,11 @@ Please also enable rclone logging (Settings > Logging > Log Rclone errors). You'
 
 
 #### What is your configuration (`rclone.conf`)?
-<!-- REDACT any pass =, token =, key =, secret = etc. before posting!  -->
+<!-- REDACT any pass =, token =, key =, secret = etc. before posting!                   -->
+<!-- You can get that file by exporting your configuration.                             -->
+<!--        v2.2.2: Open the navigation drawer, click export                            -->
+<!--        later version: Open the navigation drawer, click settings, click export     -->
+<!--        Now, open the zip-file, read the rclone.conf and upload the redacted content-->
 
 #### Does the same issue also occur when using the same configuration on a PC or in Termux?
 <!-- Export your configuration and test if the problem also happens elsewhere. -->
