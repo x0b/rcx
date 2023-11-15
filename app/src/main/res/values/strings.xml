@@ -166,7 +166,6 @@
     <string name="pref_locale_dlg_title">Select Language</string>
     <string name="pref_locale_restart_notice">Changing the language will take effect after restarting the app</string>
     <string name="pref_key_locale" translatable="false">locale</string>
-    <string name="pref_locale_not_set">Use default language</string>
     <string name="use_logs">Log rclone errors</string>
     <string name="use_logs_summary">Error logs will be saved to a local file at \'Android/data/de.felixnuesse.extract/files/logs\'</string>
     <string name="notifications_pref_title">Notifications</string>

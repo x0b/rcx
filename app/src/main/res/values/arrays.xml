@@ -6,11 +6,11 @@
         <item>socks5</item>
     </array>
 
-    <array name="locales">
+    <string-array name="locales">
         <item>en-US</item>
         <item>de-DE</item>
         <item>zh-CN</item>
-    </array>
+    </string-array>
 
     <string-array name="triggerTypeItems">
         <item>@string/trigger_type_schedule</item>
