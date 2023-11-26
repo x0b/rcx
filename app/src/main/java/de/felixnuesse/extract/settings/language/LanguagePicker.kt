@@ -50,7 +50,7 @@ class LanguagePicker(private val mContext: Context) {
 
     private val supportedAdapterLocales: ArrayList<LocaleAdapter>
         get() {
-        var adapterLocales = arrayListOf<LocaleAdapter>()
+            var adapterLocales = arrayListOf<LocaleAdapter>()
             supportedLocales.forEach {
             adapterLocales.add(LocaleAdapter(it))
         }
