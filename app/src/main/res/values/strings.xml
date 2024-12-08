@@ -462,7 +462,7 @@
     <string name="pref_saf_virtual_content_provider_summary">EXPERIMENTAL: Allows you to grant other apps access to rclone remotes</string>
     <string name="pref_saf_vcp_local_pretend_enable">Declare as local provider</string>
     <string name="pref_saf_vcp_local_pretend_summary">Some apps (e.g. Google docs) otherwise can\'t access files</string>
-    <string name="pref_saf_vcp_grant_all_enable">All any app to access your remotes</string>
+    <string name="pref_saf_vcp_grant_all_enable">Allow any app to access your remotes</string>
     <string name="pref_saf_vcp_grant_all_summary">WARNING: This will allow any app to read and write any path on any configured remote.</string>
     <string name="saf_uri_permission_added">Storage added</string>
     <string name="saf_uri_permission_cancelled">Permission Cancelled</string>
