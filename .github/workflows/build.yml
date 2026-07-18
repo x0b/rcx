@@ -1,0 +1,113 @@
+name: Build and Release APK
+# Documented Signing Steps:
+# To use the Signed Release option, you need to add the following secrets to your GitHub repository:
+# 1. SIGNING_KEY: The Base64 encoded string of your .keystore or .jks file.
+#    You can generate this string by running: base64 -w 0 your-keystore.jks (or base64 -b 0 on macOS).
+# 2. ALIAS: The alias of the key in your keystore.
+# 3. KEYSTORE_PASSWORD: The password of your keystore.
+# 4. KEY_PASSWORD: The password of your private key.
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release'
+        required: true
+        default: 'v1.15'
+      build_release:
+        description: 'Build a signed release APK?'
+        required: true
+        type: boolean
+        default: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'gradle'
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+        cache: false
+    - name: Install Android SDK Components
+      run: |
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653" "build-tools;35.0.0"
+    - name: Build Rclone Native Library
+      run: ./gradlew rclone:buildArm64
+    - name: Build Release App APKs
+      run: ./gradlew assembleOssRelease
+    - name: Process, Sign and Verify APKs
+      env:
+        SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY }}
+        ALIAS: ${{ secrets.ALIAS }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        BUILD_RELEASE: ${{ github.event.inputs.build_release }}
+      run: |
+        BUILD_TOOLS_DIR=$(ls -d $ANDROID_SDK_ROOT/build-tools/*/ | tail -1)
+        ZIPALIGN="${BUILD_TOOLS_DIR}zipalign"
+        APKSIGNER="${BUILD_TOOLS_DIR}apksigner"
+
+        APK_DIR="app/build/outputs/apk/oss/release"
+
+        if [ "$BUILD_RELEASE" = "true" ]; then
+          echo "Signing release APKs..."
+          # Write the signing key base64 to a temporary keystore file
+          echo "$SIGNING_KEY_BASE64" | base64 -d > release.keystore
+
+          # Zipalign and sign the Arm64 APK
+          $ZIPALIGN -v -f 4 "$APK_DIR/app-oss-arm64-v8a-release-unsigned.apk" arm64-aligned.apk
+          $APKSIGNER sign --ks release.keystore \
+            --ks-key-alias "$ALIAS" \
+            --ks-pass pass:"$KEYSTORE_PASSWORD" \
+            --key-pass pass:"$KEY_PASSWORD" \
+            --out app-oss-arm64-v8a-release-signed.apk \
+            arm64-aligned.apk
+
+          # Zipalign and sign the Universal APK
+          $ZIPALIGN -v -f 4 "$APK_DIR/app-oss-universal-release-unsigned.apk" universal-aligned.apk
+          $APKSIGNER sign --ks release.keystore \
+            --ks-key-alias "$ALIAS" \
+            --ks-pass pass:"$KEYSTORE_PASSWORD" \
+            --key-pass pass:"$KEY_PASSWORD" \
+            --out app-oss-universal-release-signed.apk \
+            universal-aligned.apk
+
+          # Verify signatures
+          $APKSIGNER verify app-oss-arm64-v8a-release-signed.apk
+          $APKSIGNER verify app-oss-universal-release-signed.apk
+
+          # Clean up temporary keystore and aligned files
+          rm -f release.keystore arm64-aligned.apk universal-aligned.apk
+
+          echo "APK_FILES=app-oss-arm64-v8a-release-signed.apk app-oss-universal-release-signed.apk" >> $GITHUB_ENV
+        else
+          echo "Preparing unsigned release APKs..."
+          cp "$APK_DIR/app-oss-arm64-v8a-release-unsigned.apk" app-oss-arm64-v8a-release-unsigned.apk
+          cp "$APK_DIR/app-oss-universal-release-unsigned.apk" app-oss-universal-release-unsigned.apk
+
+          echo "APK_FILES=app-oss-arm64-v8a-release-unsigned.apk app-oss-universal-release-unsigned.apk" >> $GITHUB_ENV
+        fi
+    - name: Create Release and Upload APKs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG_NAME: ${{ github.event.inputs.tag_name }}
+      run: |
+        if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+          echo "Release already exists. Uploading/clobbering assets..."
+          gh release upload "$TAG_NAME" $APK_FILES --clobber
+        else
+          echo "Creating new release..."
+          gh release create "$TAG_NAME" \
+            --title "Release $TAG_NAME" \
+            --notes "Release $TAG_NAME" \
+            $APK_FILES
+        fi
