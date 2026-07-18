@@ -47,22 +47,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintVertical_weight="3"
-            app:layout_constraintBottom_toTopOf="@+id/switch_err_logs"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/img_slide_main"
             android:text="@string/intro_community_description"/>
-
-    <Switch
-            android:text="@string/intro_community_switch"
-            android:checked="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AppIntroDefaultText"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_contribute_logs"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/switch_err_logs"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

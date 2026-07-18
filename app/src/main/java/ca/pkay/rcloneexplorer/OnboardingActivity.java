@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -84,24 +83,6 @@ public class OnboardingActivity extends AppIntro {
     @Override
     protected void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
         super.onSlideChanged(oldFragment, newFragment);
-        if (null == newFragment || null == newFragment.getTag() || null == newFragment.getView()) {
-            return;
-        }
-        if (newFragment.getTag().endsWith(":2")) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            Switch crashLoggingSwitch = newFragment.getView().findViewById(R.id.switch_err_logs);
-            if (crashLoggingSwitch == null) {
-                return;
-            }
-            crashLoggingSwitch.setChecked(preferences.getBoolean(
-                    getString(R.string.pref_key_crash_reports),
-                    getResources().getBoolean(R.bool.default_crash_log_enable)));
-            crashLoggingSwitch.setOnCheckedChangeListener((btn, checked) ->
-                 PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putBoolean(getString(R.string.pref_key_crash_reports), checked)
-                    .apply());
-        }
     }
 
     @Override

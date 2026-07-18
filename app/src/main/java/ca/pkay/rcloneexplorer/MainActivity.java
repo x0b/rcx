@@ -49,7 +49,6 @@ import ca.pkay.rcloneexplorer.RemoteConfig.RemoteConfigHelper;
 import ca.pkay.rcloneexplorer.Services.StreamingService;
 import ca.pkay.rcloneexplorer.Settings.SettingsActivity;
 import ca.pkay.rcloneexplorer.pkg.PackageUpdate;
-import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
 import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
@@ -102,13 +101,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableCrashReports = sharedPreferences.getBoolean(
-                getString(R.string.pref_key_crash_reports),
-                getResources().getBoolean(R.bool.default_crash_log_enable));
-        if (enableCrashReports) {
-            CrashLogger.initCrashLogging(this);
-        }
-
         if (!sharedPreferences.getBoolean(getString(R.string.pref_key_intro_v1_12_0), false)) {
             startActivityForResult(new Intent(this, OnboardingActivity.class), ONBOARDING_REQUEST);
         }

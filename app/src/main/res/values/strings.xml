@@ -149,8 +149,7 @@
     <string name="intro_storage_title">Storage access required</string>
     <string name="intro_storage_description">RCX uses rclone, and we need your permission to access files. First, please allow storage access.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">RCX is developed by and for the community. Please contribute by allowing anonymous error reports. See x0b.github.io/rcx-privacy for details.</string>
-    <string name="intro_community_switch">Contribute error reports</string>
+    <string name="intro_community_description">RCX is developed by and for the community. This privacy-focused fork does not collect crash reports or any telemetry — all logging stays on your device. See x0b.github.io/rcx-privacy for details.</string>
     <string name="pref_key_stream_max" translatable="false">pref_key_stream_max</string>
     <string name="pref_key_logs" translatable="false">pref_key_logs</string>
     <string name="pref_key_color_primary" translatable="false">pref_key_color_primary</string>
@@ -159,7 +158,6 @@
     <string name="pref_key_wrap_filenames" translatable="false">pref_key_wrap_filenames</string>
     <string name="pref_key_app_updates" translatable="false">pref_key_app_updates</string>
     <string name="pref_key_app_updates_beta" translatable="false">pref_key_app_updates_beta</string>
-    <string name="pref_key_crash_reports" translatable="false">pref_key_crash_reports</string>
     <string name="pref_key_show_thumbnails" translatable="false">pref_key_show_thumbnails</string>
     <string name="pref_key_thumbnail_size_limit" translatable="false">thumbnail_max_size</string>
     <string name="pref_key_wifi_only_transfers" translatable="false">pref_key_wifi_only_transfers</string>
@@ -368,10 +366,8 @@
     <string name="selected_cache_expiry">Cache expiry time: %1$s</string>
     <string name="cache_size">Cache size</string>
     <string name="selected_cache_size">Cache size: %1$s</string>
-    <string name="send_anonymous_crash_reports">Send anonymous crash reports</string>
-    <string name="pref_crash_report_summary">Help the developers by sending error and crash reports. See https://x0b.github.io/rcx-privacy. \nID: %1$s.</string>
-    <string name="pref_send_test_report_title">Send Test Report</string>
-    <string name="pref_send_test_report_summary">Sends a test report to the crash logger</string>
+    <string name="pref_send_test_report_title">Write test log entry</string>
+    <string name="pref_send_test_report_summary">Writes a test entry to the local Android log (visible via adb logcat or the in-app log collector)</string>
     <string name="pin_to_the_top">Pin to the top</string>
     <string name="unpin_from_the_top">Unpin</string>
     <string name="pin_to_drawer">Pin to drawer</string>

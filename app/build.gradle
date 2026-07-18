@@ -143,12 +143,6 @@ dependencies {
     // Markdown
     implementation 'org.markdownj:markdownj-core:0.4'
 
-    // Appcenter (sourced from own sdk fork to ensure control).
-    // Note: the x0b fork has only published up to 4.1.1 on JitPack.
-    def appCenterSdkVersion = '4.1.1'
-    implementation "com.github.x0b.appcenter-sdk-android:appcenter-analytics:${appCenterSdkVersion}"
-    implementation "com.github.x0b.appcenter-sdk-android:appcenter-crashes:${appCenterSdkVersion}"
-
     // Thumbnails
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'

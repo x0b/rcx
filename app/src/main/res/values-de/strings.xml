@@ -308,9 +308,8 @@
     <string name="selected_cache_expiry">Cache-Ablaufzeit: %1$s</string>
     <string name="cache_size">Cache-Größe</string>
     <string name="selected_cache_size">Cache-Größe: %1$s</string>
-    <string name="send_anonymous_crash_reports">Anonyme Absturzberichte senden</string>
-    <string name="pref_send_test_report_title">Test-Fehlerbericht senden</string>
-    <string name="pref_send_test_report_summary">Testet die Fehlerberichterstattung</string>
+    <string name="pref_send_test_report_title">Test-Log-Eintrag schreiben</string>
+    <string name="pref_send_test_report_summary">Schreibt einen Test-Eintrag ins lokale Android-Log (sichtbar via adb logcat oder den In-App-Log-Collector)</string>
     <string name="pin_to_the_top">Oben anheften</string>
     <string name="unpin_from_the_top">Nicht mehr anheften</string>
     <string name="pin_to_drawer">Im Menü anheften</string>
@@ -426,7 +425,6 @@
     <string name="rcd_service_notification_channel_description">Hintergrunddienst</string>
     <string name="serve_dialog_remote_notice_enabled">Der aktuelle Ordner wird im Netzwerk sichtbar (für TVs, Media Player)</string>
     <string name="serve_dialog_remote_notice_disabled">Datein sind nur für andere Apps auf diesem Gerät sichtbar.</string>
-    <string name="pref_crash_report_summary">Hilf uns bei der Weiterenwicklung, indem du automatisch Fehlerberichte sendest. Details unter https://x0b.github.io/rcx-privacy. \nID: %1$s.</string>
     <string name="report_collection_title">Fehlerbericht</string>
     <string name="report_collection_collecting">Erfasse Daten für Fehlerbericht</string>
     <string name="report_collection_stop_collection">Erfassung beenden</string>
@@ -437,8 +435,7 @@
     <string name="intro_storage_title">Speicherzugriff</string>
     <string name="intro_storage_description">RCX baut auf rclone auf und benötigt deine Zustimmung zum Dateizugriff. Stimme also im nächsten Schritt zu, damit wir deine Daten verwalten können.</string>
     <string name="intro_community_title">Community</string>
-    <string name="intro_community_description">RCX wird von und für seine Community entwickelt. Hilf mit, indem du automatisch Fehlerberichte sendest. Auf x0b.github.io/rcx-privacy erfährst du mehr.</string>
-    <string name="intro_community_switch">Fehlerberichte senden</string>
+    <string name="intro_community_description">RCX wird von und für seine Community entwickelt. Diese datenschutzfreundliche Fork sammelt keine Absturzberichte oder Telemetrie — alle Logs bleiben auf deinem Gerät. Details unter x0b.github.io/rcx-privacy.</string>
     <string name="pref_send_sigquit_title">Debug: Mit SIGQUIT beenden</string>
     <string name="pref_send_sigquit_summary">Alle rclone-Prozesse mit kill -SIGQUIT beenden. Rclone-Protokollierung muss aktiviert sein.</string>
     <string name="abi_not_supported_arm_downgrade">Diese RCX-Version wird nicht unterstützt. Eventuell funktioniert die armeabi-v7a-APK von github.com/x0b/rcx."</string>

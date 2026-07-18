@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="default_thumbnail_size_limit">20971520</integer>
-    <bool name="default_crash_log_enable">true</bool>
 </resources>
