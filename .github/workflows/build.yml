@@ -12,7 +12,7 @@ on:
       tag_name:
         description: 'Tag name for the release'
         required: true
-        default: 'v1.15'
+        default: 'v1.0.0'
       build_release:
         description: 'Build a signed release APK?'
         required: true
