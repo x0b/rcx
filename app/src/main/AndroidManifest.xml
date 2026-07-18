@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="ca.pkay.rcloneexplorer">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature android:name="android.software.leanback" android:required="false"/>
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- MANAGE_EXTERNAL_STORAGE is a special access permission, granted via
+         system settings. WRITE_EXTERNAL_STORAGE is a no-op on API 30+ but
+         still useful on API 24-29 to write to public folders. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-            android:networkSecurityConfig="@xml/network_security_config"
-            android:requestLegacyExternalStorage="true"
-            android:extractNativeLibs="true"
-            tools:ignore="GoogleAppIndexingWarning"
-            tools:targetApi="29">
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="31">
 
         <activity android:name=".OnboardingActivity"
-            android:theme="@style/OnboardingTheme">
-        </activity>
+            android:theme="@style/OnboardingTheme"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_short_name"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -43,42 +50,80 @@
         </activity>
 
         <provider
-                android:name=".VirtualContentProvider"
-                android:authorities="${applicationId}.vcp"
-                android:exported="true"
-                android:grantUriPermissions="true"
-                android:permission="android.permission.MANAGE_DOCUMENTS">
+            android:name=".VirtualContentProvider"
+            android:authorities="${applicationId}.vcp"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
             <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/virtual_content_provider_paths"/>
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/virtual_content_provider_paths" />
 
             <intent-filter>
-                <action android:name="android.content.action.DOCUMENTS_PROVIDER"/>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
 
-        <service android:name=".Services.DownloadService" />
-        <service android:name=".Services.UploadService" />
-        <service android:name=".Services.StreamingService" />
-        <service android:name=".Services.ThumbnailsLoadingService" />
-        <service android:name=".Services.DeleteService" />
-        <service android:name=".Services.MoveService" />
-        <service android:name=".Services.SyncService" />
         <service
-                android:name=".Services.RcdService"
-                android:foregroundServiceType="dataSync"/>
+            android:name=".Services.DownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".Services.UploadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".Services.StreamingService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".Services.ThumbnailsLoadingService"
+            android:exported="false" />
+        <service
+            android:name=".Services.DeleteService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".Services.MoveService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".Services.SyncService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".Services.RcdService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".Services.ReportService"
+            android:exported="false"
             android:foregroundServiceType="dataSync" />
 
-        <receiver android:name=".BroadcastReceivers.DownloadCancelAction" />
-        <receiver android:name=".BroadcastReceivers.UploadCancelAction" />
-        <receiver android:name=".BroadcastReceivers.ServeCancelAction" />
-        <receiver android:name=".BroadcastReceivers.DeleteCancelAction" />
-        <receiver android:name=".BroadcastReceivers.MoveCancelAction" />
-        <receiver android:name=".BroadcastReceivers.SyncCancelAction" />
-        <receiver android:name=".Services.RcdService$RcdServiceAction"/>
-        <receiver android:name=".Services.ReportService$StopCollectionReceiver" />
+        <receiver
+            android:name=".BroadcastReceivers.DownloadCancelAction"
+            android:exported="false" />
+        <receiver
+            android:name=".BroadcastReceivers.UploadCancelAction"
+            android:exported="false" />
+        <receiver
+            android:name=".BroadcastReceivers.ServeCancelAction"
+            android:exported="false" />
+        <receiver
+            android:name=".BroadcastReceivers.DeleteCancelAction"
+            android:exported="false" />
+        <receiver
+            android:name=".BroadcastReceivers.MoveCancelAction"
+            android:exported="false" />
+        <receiver
+            android:name=".BroadcastReceivers.SyncCancelAction"
+            android:exported="false" />
+        <receiver
+            android:name=".Services.RcdService$RcdServiceAction"
+            android:exported="false" />
+        <receiver
+            android:name=".Services.ReportService$StopCollectionReceiver"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -93,28 +138,32 @@
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ChangelogActivity"
             android:label="@string/title_activity_changelog"
             android:parentActivityName=".AboutActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ContributorActivity"
             android:label="@string/title_activity_contributors"
             android:parentActivityName=".AboutActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AboutLibsActivity"
             android:label="@string/credits_libraries"
             android:parentActivityName=".AboutActivity"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-                android:name=".Settings.SettingsActivity"
-                android:label="@string/title_activity_settings"
-                android:theme="@style/AppTheme.NoActionBar"
-                tools:ignore="InnerclassSeparator"
-                android:exported="false">
+            android:name=".Settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false"
+            tools:ignore="InnerclassSeparator">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
             </intent-filter>
@@ -122,7 +171,8 @@
         <activity
             android:name=".SharingActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -156,10 +206,12 @@
         </activity>
         <activity
             android:name=".FilePicker"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
         <activity
             android:name=".RemoteConfig.RemoteConfig"
             android:label="@string/title_activity_remote_config"
+            android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
 
     </application>

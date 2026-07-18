@@ -7,10 +7,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.MoveCancelAction;
@@ -64,10 +66,10 @@ public class MoveService extends IntentService {
         String content = moveItem.getName();
 
         Intent foregroundIntent = new Intent(this, MoveService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Intent cancelIntent = new Intent(this, MoveCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
@@ -77,7 +79,7 @@ public class MoveService extends IntentService {
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        startForeground(PERSISTENT_NOTIFICATION_ID_FOR_MOVE, builder.build());
+        ServiceCompat.startForeground(this, PERSISTENT_NOTIFICATION_ID_FOR_MOVE, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
 
         currentProcess = rclone.moveTo(remote, moveItem, moveDestPath);
         if (currentProcess != null) {

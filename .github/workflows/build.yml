@@ -39,8 +39,10 @@ jobs:
         cache: false
     - name: Install Android SDK Components
       run: |
-        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653" "build-tools;35.0.0"
+        echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "ndk;30.0.15729638" "build-tools;36.0.0" "platforms;android-36"
     - name: Build Rclone Native Library
+      env:
+        ANDROID_NDK_HOME: ${{ env.ANDROID_SDK_ROOT }}/ndk/30.0.15729638
       run: ./gradlew rclone:buildArm64
     - name: Build Release App APKs
       run: ./gradlew assembleOssRelease

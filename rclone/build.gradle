@@ -1,30 +1,25 @@
-// This is the rclone build script. It can build rclone binaries for any target
-// architecture on any target architecture.
+// This is the rclone build script. It builds the rclone shared library for
+// Android using the Go toolchain and the Android NDK cross-compiler.
 //
 // Supported Android targets:
-//  - arm-v8a (64 bit arm)
-//  - arm-v7a (32 bit arm7)
-//  - x86 (32 bit)
-//  - x64 (64 bit)
+//  - arm64-v8a (64-bit ARM, the only ABI shipped by this fork)
 //
 // Supported host systems:
-//  - linux x64
-//  - mac os x64
-//  - windows x64
-//  - windows x86 (with NDK 21b installed)
+//  - linux x86_64
+//  - mac os x86_64 / arm64
+//  - windows x86_64
 //
-// Prerequisits:
-//  - go 1.14 - go 1.16
-//  - ndk
+// Prerequisites:
+//  - go 1.23+
+//  - Android NDK (version matched to app/build.gradle)
 
 // Rclone version - any git reference (tag, branch, hash) should work
-def buildTag = 'v1.55.1'
-ext.ndkVersion = '22.1.7171670'
+def buildTag = 'v1.74.4'
+ext.ndkVersion = '30.0.15729638'
 
 //
 // DO NOT EDIT ANYTHING BELOW
 //
-import java.io.ByteArrayOutputStream
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.util.Properties
@@ -35,56 +30,61 @@ def configureNdk() {
 
     def os = ''
     if (osName.contains('windows')) {
-        if(osArch.equals('amd64')) {
+        if (osArch.equals('amd64') || osArch.equals('x86_64')) {
             os = "windows-x86_64"
-        } else if (osArch.equals('x86')) {
-            // NDK has dropped x86 windows support in NDK 21 and greater. This
-            // may break at for any reason when the golang tolchain is
-            // upgraded.
-            os = "windows"
-            ext.ndkVersion = '20.1.5948944'
+        } else {
+            throw new GradleException("Windows on ${osArch} is not supported")
         }
     } else if (osName.contains("linux")) {
         os = "linux-x86_64"
     } else if (osName.contains('mac')) {
+        // Apple Silicon Macs use darwin-x86_64 via Rosetta, native arm64 not
+        // shipped by the NDK.
         os = "darwin-x86_64"
     } else {
         throw new GradleException("OS=${osName}/ARCH=${osArch} not supported")
     }
 
-    // locate NDK
-    def androidNdkHome = System.getenv('ANDROID_NDK_HOME')
-    def androidHome = System.getenv('ANDROID_HOME')
-    def ndkBasePath
-    if (androidHome != null) {
-        def canonicalPath = Paths.get(androidHome, 'ndk', ext.ndkVersion)
-        def bundlePath = Paths.get(androidHome, 'ndk-bundle')
-        if (Files.exists(canonicalPath) && checkNdk(canonicalPath)) {
-            ndkBasePath = canonicalPath;
-        } else if (Files.exists(bundlePath) && checkNdk(bundlePath)) {
-            ndkBasePath = bundlePath;
+    // locate NDK: prefer ANDROID_NDK_HOME, then $ANDROID_HOME/ndk/<version>,
+    // then the Studio-default local SDK location.
+    def candidates = []
+    def envNdk = System.getenv('ANDROID_NDK_HOME')
+    if (envNdk != null) candidates << Paths.get(envNdk)
+    def envHome = System.getenv('ANDROID_HOME')
+    if (envHome != null) candidates << Paths.get(envHome, 'ndk', ext.ndkVersion)
+    def localHome = Paths.get(System.getProperty('user.home'), 'AppData', 'Local', 'Android', 'Sdk')
+    if (Files.exists(localHome)) candidates << localHome.resolve(Paths.get('ndk', ext.ndkVersion))
+    def envSdkRoot = System.getenv('ANDROID_SDK_ROOT')
+    if (envSdkRoot != null) candidates << Paths.get(envSdkRoot, 'ndk', ext.ndkVersion)
+
+    def ndkBasePath = null
+    for (c in candidates) {
+        if (Files.exists(c) && checkNdk(c)) {
+            ndkBasePath = c
+            break
         }
-    } else if (androidNdkHome != null && checkNdk(androidNdkHome)) {
-        ndkBasePath = Paths.get(androidNdkHome)
     }
 
     if (ndkBasePath == null) {
-        throw GradleException("NDK ${ext.ndkVersion} not found")
+        throw new GradleException("NDK ${ext.ndkVersion} not found. Tried: ${candidates}")
     }
 
+    println "rclone: using NDK at ${ndkBasePath}"
     return ndkBasePath.resolve(Paths.get('toolchains', 'llvm', 'prebuilt', os, 'bin'))
 }
 
 def checkNdk(ndkBasePath) {
     def propertiesPath = ndkBasePath.resolve('source.properties')
+    if (!Files.exists(propertiesPath)) return false
     def ndkProperties = new Properties()
     ndkProperties.load(file(propertiesPath).newReader())
-    return ndkProperties['Pkg.Revision'] == ext.ndkVersion
+    def revision = ndkProperties['Pkg.Revision']
+    return revision != null && revision.startsWith(ext.ndkVersion)
 }
 
 def configureGo() {
-    def localGo = Paths.get('golang/go/bin/go')
-    return Files.exists(localGo) ? localGo : 'go'
+    def localGo = Paths.get('golang', 'go', 'bin', 'go' + (System.properties['os.name'].toLowerCase().contains('windows') ? '.exe' : ''))
+    return Files.exists(localGo) ? localGo.toAbsolutePath().toString() : 'go'
 }
 
 def repository = 'github.com/rclone/rclone'
@@ -95,111 +95,57 @@ def appLibPath = Paths.get(projectDir.absolutePath, '../app/lib').toAbsolutePath
 def ndkPrefix = configureNdk()
 def goBinary = configureGo()
 
+def rcloneSourceDir = Paths.get(goPath, 'pkg', 'mod', 'github.com', 'rclone', "rclone@${buildTag}".toString()).toFile()
 
 task fetchRclone(type: Exec) {
-    mkdir "gopath"
+    doFirst {
+        mkdir "gopath"
+    }
     environment 'GOPATH', goPath
-    environment "GO111MODULE", "on"
-    commandLine 'go', 'get', '-d', repositoryRef
-
-    ignoreExitValue true
-    errorOutput = new ByteArrayOutputStream()
+    environment 'GO111MODULE', 'on'
+    // rclone v1.74+ uses a Go module; `go mod download` is the supported way
+    // to fetch the source for a given version into $GOPATH/pkg/mod.
+    workingDir projectDir
+    commandLine goBinary, 'mod', 'download', repositoryRef
     doLast {
-        if (execResult.getExitValue() != 0) {
-            throw new GradleException("Error running go get: \n${errorOutput.toString()}")
-        }
+        println "rclone: source at ${rcloneSourceDir}"
     }
 }
 
 task cleanNative {
-    enabled = false
+    enabled = true
     doLast {
-        delete "${appLibPath}/armeabi-v7a/librclone.so"
         delete "${appLibPath}/arm64-v8a/librclone.so"
-        delete "${appLibPath}/x86/librclone.so"
-        delete "${appLibPath}/x86_64/librclone.so"
-    }
-}
-
-task buildArm(type: Exec) {
-    dependsOn fetchRclone
-    environment 'GOPATH', goPath
-    def crossCompiler = ndkPrefix.resolve('armv7a-linux-androideabi21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', 'arm'
-    environment 'GOARM', '7'
-    environment 'CGO_ENABLED', '1'
-    environment 'CGO_LDFLAGS', "-fuse-ld=lld -s"
-    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
-    def artifactTarget = "${appLibPath}/armeabi-v7a/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
-
-    ignoreExitValue true
-    errorOutput = new ByteArrayOutputStream()
-    doLast {
-        if (execResult.getExitValue() != 0) {
-            throw new GradleException("Error running go build: \n${errorOutput.toString()}")
-        }
     }
 }
 
 task buildArm64(type: Exec) {
     dependsOn fetchRclone
     environment 'GOPATH', goPath
-    def crossCompiler = ndkPrefix.resolve('aarch64-linux-android21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
+    def crossCompiler = ndkPrefix.resolve('aarch64-linux-android24-clang')
+    environment 'CC', crossCompiler.toString()
+    environment 'CC_FOR_TARGET', crossCompiler.toString()
     environment 'GOOS', 'android'
     environment 'GOARCH', 'arm64'
     environment 'CGO_ENABLED', '1'
     environment 'CGO_LDFLAGS', "-fuse-ld=lld -s"
-    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
+    environment 'GOFLAGS', '-mod=mod'
+    workingDir rcloneSourceDir
     def artifactTarget = "${appLibPath}/arm64-v8a/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'}
-
-task buildx86(type: Exec) {
-    dependsOn fetchRclone
-    environment 'GOPATH', goPath
-    def crossCompiler = ndkPrefix.resolve('i686-linux-android21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', '386'
-    environment 'CGO_ENABLED', '1'
-    environment 'CGO_LDFLAGS', "-fuse-ld=lld -s"
-    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
-    def artifactTarget = "${appLibPath}/x86/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
-}
-
-task buildx64(type: Exec) {
-    dependsOn fetchRclone
-    environment 'GOPATH', goPath
-    def crossCompiler = ndkPrefix.resolve('x86_64-linux-android21-clang')
-    environment 'CC', crossCompiler
-    environment 'CC_FOR_TARGET', crossCompiler
-    environment 'GOOS', 'android'
-    environment 'GOARCH', 'amd64'
-    environment 'CGO_ENABLED', '1'
-    environment 'CGO_LDFLAGS', "-fuse-ld=lld -s"
-    workingDir Paths.get(goPath, "pkg/mod/${repositoryRef}".split('/'))
-    def artifactTarget = "${appLibPath}/x86_64/librclone.so"
-    commandLine 'go', 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
+    doFirst { new File(artifactTarget).parentFile.mkdirs() }
+    commandLine goBinary, 'build', '-v', '-tags', 'android noselfupdate', '-trimpath', '-ldflags', ldflags, '-o', artifactTarget, '.'
+    doLast {
+        println "rclone: built ${artifactTarget}"
+    }
 }
 
 task buildNative {
-    dependsOn fetchRclone
-    dependsOn buildArm
     dependsOn buildArm64
-    dependsOn buildx86
-    dependsOn buildx64
 }
 
 task prepareKotlinBuildScriptModel {
     // ignore, does not build from kotlin sources
 }
 
-buildNative.mustRunAfter(buildArm, buildArm64, buildx86, buildx64)
+buildNative.mustRunAfter(buildArm64)
 defaultTasks 'buildNative'

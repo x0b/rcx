@@ -53,7 +53,7 @@ import ca.pkay.rcloneexplorer.util.CrashLogger;
 import ca.pkay.rcloneexplorer.util.FLog;
 import com.google.android.material.navigation.NavigationView;
 import es.dmoral.toasty.Toasty;
-import java9.util.stream.Stream;
+import java.util.stream.Stream;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -494,6 +494,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void requestPermissions() {
+        // Android 13+ requires runtime POST_NOTIFICATIONS permission for
+        // foreground service notifications to be visible.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
         boolean refreshLocalAliases = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(getString(R.string.pref_key_refresh_local_aliases), true);
         if (refreshLocalAliases) {

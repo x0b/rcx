@@ -6,10 +6,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.net.Uri;
 import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 
 import ca.pkay.rcloneexplorer.BroadcastReceivers.ServeCancelAction;
 import ca.pkay.rcloneexplorer.Items.RemoteItem;
@@ -68,10 +70,10 @@ public class StreamingService extends IntentService {
         final String authenticationPassword = intent.getStringExtra(AUTHENTICATION_PASSWORD);
 
         Intent foregroundIntent = new Intent(this, StreamingService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Intent cancelIntent = new Intent(this, ServeCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_streaming)
@@ -84,12 +86,12 @@ public class StreamingService extends IntentService {
             Uri uri = Uri.parse("http://127.0.0.1:" + port);
             Intent webPageIntent = new Intent(Intent.ACTION_VIEW, uri);
             webPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent webPagePendingIntent = PendingIntent.getActivity(this, 0, webPageIntent, 0);
+            PendingIntent webPagePendingIntent = PendingIntent.getActivity(this, 0, webPageIntent, PendingIntent.FLAG_IMMUTABLE);
             builder.setContentIntent(webPagePendingIntent);
             builder.setContentText(getString(R.string.streaming_service_notification_content, port));
         }
 
-        startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
+        ServiceCompat.startForeground(this, PERSISTENT_NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
 
         switch (protocol) {
             case SERVE_FTP:

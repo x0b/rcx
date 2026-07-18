@@ -18,7 +18,7 @@ import ca.pkay.rcloneexplorer.R;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java9.util.stream.IntStream;
+import java.util.stream.IntStream;
 
 public class RemotesConfigList extends Fragment {
 

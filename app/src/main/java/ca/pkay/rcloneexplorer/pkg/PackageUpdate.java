@@ -73,7 +73,7 @@ public class PackageUpdate {
                 }
                 Intent releasePage = new Intent(Intent.ACTION_VIEW, uri);
                 releasePage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PendingIntent releasePagePendingIntent = PendingIntent.getActivity(context, 0, releasePage, 0);
+                PendingIntent releasePagePendingIntent = PendingIntent.getActivity(context, 0, releasePage, PendingIntent.FLAG_IMMUTABLE);
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_refresh)

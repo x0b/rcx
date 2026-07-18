@@ -10,12 +10,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ServiceInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.ServiceCompat;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
@@ -94,10 +97,10 @@ public class DownloadService extends IntentService {
         Boolean isLoggingEnable = sharedPreferences.getBoolean(getString(R.string.pref_key_logs), false);
         
         Intent foregroundIntent = new Intent(this, DownloadService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Intent cancelIntent = new Intent(this, DownloadCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
@@ -106,7 +109,7 @@ public class DownloadService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_cancel_download, getString(R.string.cancel), cancelPendingIntent);
 
-        startForeground(PERSISTENT_NOTIFICATION_ID, builder.build());
+        ServiceCompat.startForeground(this, PERSISTENT_NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
 
         currentProcess = rclone.downloadFile(remote, downloadItem, downloadPath);
 
@@ -169,7 +172,7 @@ public class DownloadService extends IntentService {
     private void registerBroadcastReceivers() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-        registerReceiver(connectivityChangeBroadcastReceiver, intentFilter);
+        ContextCompat.registerReceiver(this, connectivityChangeBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_EXPORTED);
     }
 
     private BroadcastReceiver connectivityChangeBroadcastReceiver = new BroadcastReceiver() {
@@ -214,10 +217,10 @@ public class DownloadService extends IntentService {
         }
 
         Intent foregroundIntent = new Intent(this, DownloadService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, foregroundIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Intent cancelIntent = new Intent(this, DownloadCancelAction.class);
-        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, 0);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(this, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
