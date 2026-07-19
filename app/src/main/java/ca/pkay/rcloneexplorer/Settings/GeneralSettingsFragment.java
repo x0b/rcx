@@ -450,36 +450,49 @@ public class GeneralSettingsFragment extends Fragment {
         }
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        final EditText thumbnailSizeEdit = new EditText(context);
-        thumbnailSizeEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        long size = pref.getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
+        long current = pref.getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
                 getResources().getInteger(R.integer.default_thumbnail_size_limit));
-        thumbnailSizeEdit.setText(String.valueOf(size / (1024 * 1024d)));
+
+        final long[] presetBytes = {
+                0L,
+                5L * 1024 * 1024,
+                10L * 1024 * 1024,
+                25L * 1024 * 1024,
+                50L * 1024 * 1024,
+                100L * 1024 * 1024,
+                250L * 1024 * 1024,
+                500L * 1024 * 1024,
+        };
+        final String[] labels = {
+                getString(R.string.pref_thumbnails_size_off),
+                "5 MB",
+                "10 MB",
+                "25 MB",
+                "50 MB",
+                "100 MB",
+                "250 MB",
+                "500 MB",
+        };
+        int initialSelection = 1;
+        for (int i = 0; i < presetBytes.length; i++) {
+            if (presetBytes[i] == current) {
+                initialSelection = i;
+                break;
+            }
+        }
 
         builder.setTitle(R.string.pref_thumbnails_dlg_title);
-        builder.setView(thumbnailSizeEdit);
-
+        final int[] userSelected = new int[]{initialSelection};
+        builder.setSingleChoiceItems(labels, initialSelection, (dialog, which) -> userSelected[0] = which);
         builder.setNegativeButton(R.string.cancel, null);
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
-            String sizeString = thumbnailSizeEdit.getText().toString();
-            long size1;
-            double sizeMb;
-            try {
-                sizeMb = Double.parseDouble(sizeString);
-            } catch (NumberFormatException e) {
-                FLog.e(TAG, "showThumbnailSizeDialog: invalid size", e);
-                return;
-            }
-            // Clamp to 0-500 MB. 0 disables thumbnails.
-            if (sizeMb < 0) sizeMb = 0;
-            if (sizeMb > 500) sizeMb = 500;
-            size1 = (long)(sizeMb * 1024 * 1024);
-            pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size1).apply();
-            if(null != thumbnailSizeSummary) {
-                if (sizeMb == 0) {
+            long chosen = presetBytes[userSelected[0]];
+            pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), chosen).apply();
+            if (null != thumbnailSizeSummary) {
+                if (chosen == 0L) {
                     thumbnailSizeSummary.setText(R.string.pref_thumbnails_size_off);
                 } else {
-                    thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
+                    thumbnailSizeSummary.setText(getString(R.string.pref_thumbnails_size_summary, chosen / (1024 * 1024d)));
                 }
             }
         });

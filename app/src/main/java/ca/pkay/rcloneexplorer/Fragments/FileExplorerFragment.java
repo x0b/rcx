@@ -769,13 +769,13 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     conn.setConnectTimeout(500);
                     conn.setReadTimeout(500);
                     conn.setRequestMethod("HEAD");
-                    conn.getResponseCode();
+                    int code = conn.getResponseCode();
                     conn.disconnect();
-                    android.util.Log.i(TAG, "waitForServeReady: serve is ready after " + (i + 1) + " polls");
+                    android.util.Log.i(TAG, "waitForServeReady: serve ready (HTTP " + code + ") after " + (i + 1) + " polls");
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
                             if (recyclerViewAdapter != null) {
-                                recyclerViewAdapter.notifyDataSetChanged();
+                                recyclerViewAdapter.setServeReady(true);
                             }
                         });
                     }
@@ -786,6 +786,15 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 try { Thread.sleep(500); } catch (InterruptedException e) { return; }
             }
             android.util.Log.w(TAG, "waitForServeReady: serve did not respond after 15s");
+            // Even if the poll failed, allow loads to attempt (they may still
+            // succeed if the serve started between polls).
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    if (recyclerViewAdapter != null) {
+                        recyclerViewAdapter.setServeReady(true);
+                    }
+                });
+            }
         }, "thumb-serve-poll").start();
     }
 

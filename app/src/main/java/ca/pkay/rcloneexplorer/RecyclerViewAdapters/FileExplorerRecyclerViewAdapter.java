@@ -68,6 +68,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private boolean isInSearchMode;
     private boolean canSelect;
     private boolean showThumbnails;
+    private boolean serveReady;
     private int cardColor;
     private boolean optionsDisabled;
     private boolean wrapFileNames;
@@ -261,8 +262,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private void bindThumbnail(@NonNull ViewHolder holder, FileItem item) {
         String mimeType = item.getMimeType();
         boolean isImage = mimeType != null && mimeType.startsWith("image/");
-        // Fallback: also detect video by file extension, since S3 and other
-        // remotes may return wrong/empty MimeType metadata.
         boolean isVideo = (mimeType != null && mimeType.startsWith("video/"))
                 || isVideoByExtension(item.getName());
         if (!(isImage || isVideo) || item.getSize() > sizeLimit || sizeLimit == 0) {
@@ -271,6 +270,17 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             return;
         }
         boolean localLoad = item.getRemote().getType() == RemoteItem.SAFW;
+
+        // For remote loads, defer until the rclone serve is ready. Show the
+        // spinner so the user knows a thumbnail is pending. When the serve
+        // becomes ready, setServeReady(true) triggers notifyDataSetChanged()
+        // which re-binds and starts the actual load.
+        if (!localLoad && !serveReady) {
+            showLoading(holder, true);
+            holder.fileIcon.setImageResource(R.drawable.ic_file);
+            return;
+        }
+
         RequestOptions glideOption = new RequestOptions()
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -599,6 +609,19 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     public void showThumbnails(boolean showThumbnails) {
         this.showThumbnails = showThumbnails;
+    }
+
+    /**
+     * Called by the fragment once the local rclone serve confirms it's
+     * ready to accept HTTP requests. Until this is set, thumbnail loads are
+     * deferred (spinner shows, but no network request is made) to avoid a
+     * storm of timeouts during the 2-5 second serve startup window.
+     */
+    public void setServeReady(boolean ready) {
+        this.serveReady = ready;
+        if (ready) {
+            notifyDataSetChanged();
+        }
     }
 
     public List<FileItem> getCurrentContent() {
