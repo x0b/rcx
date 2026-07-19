@@ -127,10 +127,25 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        // When the ViewHolder scrolls off-screen and is recycled, cancel any
+        // in-flight Glide request so we don't keep fetching files the user
+        // can no longer see. This is the cornerstone of lazy loading.
+        Glide.with(holder.itemView).clear(holder.fileIcon);
+        holder.thumbnailProgress.setVisibility(View.GONE);
+        super.onViewRecycled(holder);
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final FileItem item = files.get(position);
 
         holder.fileItem = item;
+        // Cancel any in-flight thumbnail request from a previous bind of this
+        // recycled ViewHolder before we touch the ImageView. This prevents
+        // stale callbacks from clobbering the new bind.
+        Glide.with(holder.itemView).clear(holder.fileIcon);
+
         if (item.isDir()) {
             holder.dirIcon.setVisibility(View.VISIBLE);
             holder.fileIcon.setVisibility(View.GONE);
@@ -275,17 +290,26 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         String hiddenPath = serverParams[0];
         int serverPort = Integer.parseInt(serverParams[1]);
         String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
-        Glide.with(context)
+        FLog.v(TAG, "bindRemoteImage: url=%s", url);
+        // Glide.with(holder.itemView) ties the request to this ViewHolder's
+        // lifecycle: when the ViewHolder is recycled or detached, Glide
+        // automatically cancels the in-flight request - which means we never
+        // keep fetching files that have scrolled off-screen. Combined with
+        // Glide's memory + disk cache (DiskCacheStrategy.ALL), this gives
+        // proper lazy loading: only visible items are fetched, and once
+        // fetched they're cached for subsequent rebinds.
+        Glide.with(holder.itemView)
                 .load(new PersistentGlideUrl(url))
                 .apply(glideOption)
-                .thumbnail(0.1f)
                 .listener(new SimpleRequestListener<android.graphics.drawable.Drawable>() {
                     @Override
                     public void onResourceReady() {
+                        FLog.v(TAG, "bindRemoteImage: loaded %s", url);
                         showLoading(holder, false);
                     }
                     @Override
                     public void onLoadFailed() {
+                        FLog.w(TAG, "bindRemoteImage: FAILED %s", url);
                         showLoading(holder, false);
                     }
                 })
@@ -295,10 +319,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private void bindSafImage(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
         try {
             Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/' + item.getPath());
-            Glide.with(context)
+            FLog.v(TAG, "bindSafImage: uri=%s", contentUri);
+            Glide.with(holder.itemView)
                     .load(contentUri)
                     .apply(glideOption)
-                    .thumbnail(0.1f)
                     .listener(new SimpleRequestListener<android.graphics.drawable.Drawable>() {
                         @Override
                         public void onResourceReady() {
@@ -306,6 +330,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                         }
                         @Override
                         public void onLoadFailed() {
+                            FLog.w(TAG, "bindSafImage: FAILED %s", contentUri);
                             showLoading(holder, false);
                         }
                     })
