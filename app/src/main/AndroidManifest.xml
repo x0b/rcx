@@ -78,7 +78,8 @@
             android:foregroundServiceType="dataSync" />
         <service
             android:name=".Services.ThumbnailsLoadingService"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".Services.DeleteService"
             android:exported="false"

@@ -99,6 +99,7 @@ import java.util.Stack;
 
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivity;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartActivityForResult;
+import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartForegroundService;
 import static ca.pkay.rcloneexplorer.ActivityHelper.tryStartService;
 
 public class FileExplorerFragment extends Fragment implements   FileExplorerRecyclerViewAdapter.OnClickListener,
@@ -236,9 +237,19 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         isDarkTheme = sharedPreferences.getBoolean(getString(R.string.pref_key_dark_theme), false);
         goToDefaultSet = sharedPreferences.getBoolean(getString(R.string.pref_key_go_to_default_set), false);
         String wrapFilenamesKey = getString(R.string.pref_key_wrap_filenames);
+        String showThumbnailsKey = getString(R.string.pref_key_show_thumbnails);
+        String thumbnailSizeKey = getString(R.string.pref_key_thumbnail_size_limit);
         prefChangeListener = (pref, key) -> {
             if (key.equals(wrapFilenamesKey) && recyclerViewAdapter != null) {
                 recyclerViewAdapter.setWrapFileNames(pref.getBoolean(wrapFilenamesKey, true));
+            } else if (key.equals(showThumbnailsKey)) {
+                boolean enabled = pref.getBoolean(showThumbnailsKey, false);
+                onShowThumbnailsChanged(enabled);
+            } else if (key.equals(thumbnailSizeKey)) {
+                if (recyclerViewAdapter != null) {
+                    recyclerViewAdapter.refreshSizeLimit();
+                    recyclerViewAdapter.notifyDataSetChanged();
+                }
             }
         };
         sharedPreferences.registerOnSharedPreferenceChangeListener(prefChangeListener);
@@ -739,8 +750,33 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
         serveIntent.putExtra(ThumbnailsLoadingService.HIDDEN_PATH, thumbnailServerAuth);
         serveIntent.putExtra(ThumbnailsLoadingService.SERVER_PORT, thumbnailServerPort);
-        tryStartService(context, serveIntent);
+        tryStartForegroundService(context, serveIntent);
         isThumbnailsServiceRunning = true;
+    }
+
+    /**
+     * Reacts to the user toggling the "Show thumbnails" preference while the
+     * fragment is alive, so the change takes effect immediately without
+     * requiring the user to re-navigate into the remote.
+     */
+    private void onShowThumbnailsChanged(boolean enabled) {
+        showThumbnails = enabled;
+        if (enabled) {
+            if (!isThumbnailsServiceRunning && RemoteItem.SAFW != remote.getType()) {
+                initializeThumbnailParams();
+                startThumbnailService();
+            }
+        } else {
+            if (isThumbnailsServiceRunning && context != null) {
+                Intent stopIntent = new Intent(context, ThumbnailsLoadingService.class);
+                context.stopService(stopIntent);
+                isThumbnailsServiceRunning = false;
+            }
+        }
+        if (recyclerViewAdapter != null) {
+            recyclerViewAdapter.showThumbnails(enabled);
+            recyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initializeThumbnailParams() {

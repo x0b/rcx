@@ -2,16 +2,23 @@ package ca.pkay.rcloneexplorer.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
+import android.util.LruCache;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.pkay.rcloneexplorer.Items.FileItem;
@@ -21,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 
 import ca.pkay.rcloneexplorer.util.FLog;
 import io.github.x0b.safdav.SafAccessProvider;
@@ -30,15 +38,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "FileExplorerRVA";
+    private static final int THUMBNAIL_CACHE_ENTRIES = 64;
+    private static final long SIZE_LIMIT_UNLIMITED = Long.MAX_VALUE;
+
     private List<FileItem> files;
-    private int selectionColor;
-    private View emptyView;
-    private View noSearchResultsView;
-    private OnClickListener listener;
+    private final int selectionColor;
+    private final View emptyView;
+    private final View noSearchResultsView;
+    private final OnClickListener listener;
     private boolean isInSelectMode;
     private List<FileItem> selectedItems;
     private boolean isInMoveMode;
@@ -48,8 +61,19 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private int cardColor;
     private boolean optionsDisabled;
     private boolean wrapFileNames;
-    private Context context;
+    private final Context context;
     private long sizeLimit;
+
+    /** Small in-memory LRU cache for video frame bitmaps (per remote URL). */
+    private final LruCache<String, Bitmap> videoFrameCache =
+            new LruCache<String, Bitmap>(THUMBNAIL_CACHE_ENTRIES) {
+                @Override
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getByteCount() / 1024 == 0 ? 1 : value.getByteCount() / 1024;
+                }
+            };
+    private final ExecutorService videoFrameExecutor = Executors.newFixedThreadPool(2);
+    private final Handler mainThread = new Handler(Looper.getMainLooper());
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -81,9 +105,18 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
         selectionColor = typedValue.data;
         optionsDisabled = false;
-        sizeLimit = PreferenceManager.getDefaultSharedPreferences(context)
-                .getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
-                        context.getResources().getInteger(R.integer.default_thumbnail_size_limit));
+        sizeLimit = readSizeLimit(context);
+    }
+
+    private static long readSizeLimit(@NonNull Context ctx) {
+        return PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getLong(ctx.getString(R.string.pref_key_thumbnail_size_limit),
+                        ctx.getResources().getInteger(R.integer.default_thumbnail_size_limit));
+    }
+
+    /** Re-reads the cache size pref from disk. Call after the user changes the setting. */
+    public void refreshSizeLimit() {
+        sizeLimit = readSizeLimit(context);
     }
 
     @NonNull
@@ -103,6 +136,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileIcon.setVisibility(View.GONE);
             holder.fileSize.setVisibility(View.GONE);
             holder.interpunct.setVisibility(View.GONE);
+            holder.thumbnailProgress.setVisibility(View.GONE);
         } else {
             holder.fileIcon.setVisibility(View.VISIBLE);
             holder.dirIcon.setVisibility(View.GONE);
@@ -112,30 +146,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
 
         if (showThumbnails && !item.isDir()) {
-            String server = "http://127.0.0.1:29179/";
-            boolean localLoad = item.getRemote().getType() == RemoteItem.SAFW;
-            String mimeType = item.getMimeType();
-            if ((mimeType.startsWith("image/") || mimeType.startsWith("video/")) && item.getSize() <= sizeLimit) {
-                RequestOptions glideOption = new RequestOptions()
-                        .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.drawable.ic_file);
-                if(localLoad) {
-                    bindSafFile(holder, item, glideOption);
-                } else {
-                    String[] serverParams = listener.getThumbnailServerParams();
-                    String hiddenPath = serverParams[0];
-                    int serverPort = Integer.parseInt(serverParams[1]);
-                    String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
-                    Glide
-                            .with(context)
-                            .load(new PersistentGlideUrl(url))
-                            .apply(glideOption)
-                            .thumbnail(0.1f)
-                            .into(holder.fileIcon);
-                }
-
-            } else {
+            bindThumbnail(holder, item);
+        } else {
+            holder.thumbnailProgress.setVisibility(View.GONE);
+            if (!item.isDir()) {
                 holder.fileIcon.setImageResource(R.drawable.ic_file);
             }
         }
@@ -147,7 +161,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             holder.fileModTime.setVisibility(View.VISIBLE);
             holder.fileModTime.setText(item.getHumanReadableModTime());
         }
-        
+
         holder.fileName.setText(item.getName());
 
         if (isInSelectMode) {
@@ -209,19 +223,183 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         });
     }
 
-    private void bindSafFile(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
+    /**
+     * Loads a thumbnail for an image or video file. Images go through Glide
+     * (HTTP via the local rclone serve). Videos use
+     * {@link MediaMetadataRetriever} on a background thread, since Glide
+     * cannot extract frames from remote HTTP sources.
+     */
+    private void bindThumbnail(@NonNull ViewHolder holder, FileItem item) {
+        String mimeType = item.getMimeType();
+        boolean isImage = mimeType != null && mimeType.startsWith("image/");
+        boolean isVideo = mimeType != null && mimeType.startsWith("video/");
+        if (!(isImage || isVideo) || item.getSize() > sizeLimit || sizeLimit == 0) {
+            holder.thumbnailProgress.setVisibility(View.GONE);
+            holder.fileIcon.setImageResource(R.drawable.ic_file);
+            return;
+        }
+        boolean localLoad = item.getRemote().getType() == RemoteItem.SAFW;
+        RequestOptions glideOption = new RequestOptions()
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_file);
+
+        if (isImage) {
+            showLoading(holder, true);
+            if (localLoad) {
+                bindSafImage(holder, item, glideOption);
+            } else {
+                bindRemoteImage(holder, item, glideOption);
+            }
+        } else { // video
+            // Check cache first
+            String cacheKey = videoCacheKey(item, localLoad);
+            Bitmap cached = videoFrameCache.get(cacheKey);
+            if (cached != null) {
+                showLoading(holder, false);
+                holder.fileIcon.setImageBitmap(cached);
+                return;
+            }
+            showLoading(holder, true);
+            holder.fileIcon.setImageResource(R.drawable.ic_file);
+            if (localLoad) {
+                bindSafVideo(holder, item, cacheKey);
+            } else {
+                bindRemoteVideo(holder, item, cacheKey);
+            }
+        }
+    }
+
+    private void bindRemoteImage(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
+        String[] serverParams = listener.getThumbnailServerParams();
+        String hiddenPath = serverParams[0];
+        int serverPort = Integer.parseInt(serverParams[1]);
+        String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
+        Glide.with(context)
+                .load(new PersistentGlideUrl(url))
+                .apply(glideOption)
+                .thumbnail(0.1f)
+                .listener(new SimpleRequestListener<android.graphics.drawable.Drawable>() {
+                    @Override
+                    public void onResourceReady() {
+                        showLoading(holder, false);
+                    }
+                    @Override
+                    public void onLoadFailed() {
+                        showLoading(holder, false);
+                    }
+                })
+                .into(holder.fileIcon);
+    }
+
+    private void bindSafImage(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
         try {
-            Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/'+ item.getPath());
-            Glide
-                    .with(context)
+            Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/' + item.getPath());
+            Glide.with(context)
                     .load(contentUri)
                     .apply(glideOption)
                     .thumbnail(0.1f)
+                    .listener(new SimpleRequestListener<android.graphics.drawable.Drawable>() {
+                        @Override
+                        public void onResourceReady() {
+                            showLoading(holder, false);
+                        }
+                        @Override
+                        public void onLoadFailed() {
+                            showLoading(holder, false);
+                        }
+                    })
                     .into(holder.fileIcon);
         } catch (FileAccessError e) {
-            FLog.e(TAG, "onBindViewHolder: SAF error", e);
+            FLog.e(TAG, "onBindViewHolder: SAF image error", e);
+            showLoading(holder, false);
             holder.fileIcon.setImageResource(R.drawable.ic_file);
         }
+    }
+
+    private void bindSafVideo(@NonNull ViewHolder holder, FileItem item, String cacheKey) {
+        try {
+            Uri contentUri = SafAccessProvider.getDirectServer(context).getDocumentUri('/' + item.getPath());
+            extractVideoFrame(contentUri.toString(), true, cacheKey, bitmap ->
+                    applyVideoBitmap(holder, bitmap));
+        } catch (FileAccessError e) {
+            FLog.e(TAG, "bindSafVideo: SAF error", e);
+            showLoading(holder, false);
+            holder.fileIcon.setImageResource(R.drawable.ic_file);
+        }
+    }
+
+    private void bindRemoteVideo(@NonNull ViewHolder holder, FileItem item, String cacheKey) {
+        String[] serverParams = listener.getThumbnailServerParams();
+        String hiddenPath = serverParams[0];
+        int serverPort = Integer.parseInt(serverParams[1]);
+        String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
+        extractVideoFrame(url, false, cacheKey, bitmap ->
+                applyVideoBitmap(holder, bitmap));
+    }
+
+    private void applyVideoBitmap(@NonNull ViewHolder holder, @Nullable Bitmap bitmap) {
+        mainThread.post(() -> {
+            showLoading(holder, false);
+            if (bitmap != null) {
+                holder.fileIcon.setImageBitmap(bitmap);
+            } else {
+                holder.fileIcon.setImageResource(R.drawable.ic_file);
+            }
+        });
+    }
+
+    /**
+     * Runs {@link MediaMetadataRetriever} on a background thread to extract a
+     * representative frame for the given URL or content URI. Caches the
+     * result so subsequent binds for the same item are instant.
+     */
+    private void extractVideoFrame(String source, boolean isContent, String cacheKey,
+                                   VideoFrameCallback callback) {
+        videoFrameExecutor.execute(() -> {
+            Bitmap cached = videoFrameCache.get(cacheKey);
+            if (cached != null) {
+                callback.onFrame(cached);
+                return;
+            }
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            Bitmap frame = null;
+            try {
+                if (isContent) {
+                    retriever.setDataSource(context, Uri.parse(source));
+                } else {
+                    // HTTP path; works against the local rclone serve
+                    retriever.setDataSource(source, new java.util.HashMap<>());
+                }
+                frame = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            } catch (RuntimeException e) {
+                FLog.w(TAG, "extractVideoFrame: failed for %s: %s", source, e.toString());
+            } finally {
+                try {
+                    retriever.release();
+                } catch (Exception ignored) {
+                    // release() may throw IOException on some API levels; ignore.
+                }
+            }
+            if (frame != null) {
+                videoFrameCache.put(cacheKey, frame);
+            }
+            callback.onFrame(frame);
+        });
+    }
+
+    private String videoCacheKey(FileItem item, boolean localLoad) {
+        return (localLoad ? "saf:" : "http:") + item.getRemote().getName() + ':' + item.getPath();
+    }
+
+    private void showLoading(@NonNull ViewHolder holder, boolean loading) {
+        holder.thumbnailProgress.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
+    private void bindSafFile(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
+        // Legacy entry point kept for API compatibility - not used after the
+        // image/video split above. Image path is the same as bindSafImage.
+        bindSafImage(holder, item, glideOption);
     }
 
     private static class PersistentGlideUrl extends GlideUrl {
@@ -240,6 +418,35 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 return super.getCacheKey();
             }
         }
+    }
+
+    private interface VideoFrameCallback {
+        void onFrame(@Nullable Bitmap bitmap);
+    }
+
+    /**
+     * Minimal Glide RequestListener that only forwards success/failure to
+     * drive the loading-spinner visibility. Subclasses override only what
+     * they need; the rest stays as a no-op default.
+     */
+    private abstract static class SimpleRequestListener<R>
+            implements com.bumptech.glide.request.RequestListener<R> {
+        @Override
+        public boolean onLoadFailed(@Nullable com.bumptech.glide.load.engine.GlideException e,
+                                    Object model, Target<R> target,
+                                    boolean isFirstResource) {
+            onLoadFailed();
+            return false;
+        }
+        @Override
+        public boolean onResourceReady(R resource, Object model, Target<R> target,
+                                       com.bumptech.glide.load.DataSource dataSource,
+                                       boolean isFirstResource) {
+            onResourceReady();
+            return false;
+        }
+        public abstract void onResourceReady();
+        public abstract void onLoadFailed();
     }
 
     @Override
@@ -465,6 +672,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         public final TextView fileSize;
         public final TextView interpunct;
         public final ImageButton fileOptions;
+        public final ProgressBar thumbnailProgress;
         public FileItem fileItem;
 
         ViewHolder(View itemView) {
@@ -478,7 +686,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             this.fileSize = view.findViewById(R.id.file_size);
             this.fileOptions = view.findViewById(R.id.file_options);
             this.interpunct = view.findViewById(R.id.interpunct);
+            this.thumbnailProgress = view.findViewById(R.id.thumbnail_progress);
         }
     }
 }
-

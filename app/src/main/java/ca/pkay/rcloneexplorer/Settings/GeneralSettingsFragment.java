@@ -150,8 +150,15 @@ public class GeneralSettingsFragment extends Fragment {
         }
         long thumbnailSizeLimit = sharedPreferences.getLong(getString(R.string.pref_key_thumbnail_size_limit),
                 getResources().getInteger(R.integer.default_thumbnail_size_limit));
-        thumbnailSizeSummary.setText(getString(R.string.pref_thumbnails_size_summary,
-                thumbnailSizeLimit / (1024 * 1024d)));
+        String summaryText;
+        if (thumbnailSizeLimit == 0L) {
+            summaryText = getString(R.string.pref_thumbnails_size_off);
+        } else if (thumbnailSizeLimit == Long.MAX_VALUE) {
+            summaryText = getString(R.string.pref_thumbnails_size_unlimited);
+        } else {
+            summaryText = getString(R.string.pref_thumbnails_size_summary, thumbnailSizeLimit / (1024 * 1024d));
+        }
+        thumbnailSizeSummary.setText(summaryText);
         if(showThumbnails) {
             thumbnailSizeElement.setVisibility(View.VISIBLE);
         }
@@ -446,30 +453,59 @@ public class GeneralSettingsFragment extends Fragment {
         }
 
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        final EditText thumbnailSizeEdit = new EditText(context);
-        thumbnailSizeEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        long size = pref.getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
+        long current = pref.getLong(context.getString(R.string.pref_key_thumbnail_size_limit),
                 getResources().getInteger(R.integer.default_thumbnail_size_limit));
-        thumbnailSizeEdit.setText(String.valueOf(size / (1024 * 1024d)));
+
+        // Index 0 = "Off (0 MB)" - no thumbnails despite toggle on.
+        // Index 1..7 = preset MB sizes.
+        // Index 8 = "Unlimited" - load thumbnails for any file size.
+        final long[] presetBytes = {
+                0L,
+                5L * 1024 * 1024,
+                10L * 1024 * 1024,
+                25L * 1024 * 1024,
+                50L * 1024 * 1024,
+                100L * 1024 * 1024,
+                250L * 1024 * 1024,
+                500L * 1024 * 1024,
+                Long.MAX_VALUE,
+        };
+        final String[] labels = {
+                getString(R.string.pref_thumbnails_size_off),
+                "5 MB",
+                "10 MB",
+                "25 MB",
+                "50 MB",
+                "100 MB",
+                "250 MB",
+                "500 MB",
+                getString(R.string.pref_thumbnails_size_unlimited),
+        };
+        int initialSelection = 1; // default to 5 MB if nothing matches
+        for (int i = 0; i < presetBytes.length; i++) {
+            if (presetBytes[i] == current) {
+                initialSelection = i;
+                break;
+            }
+        }
 
         builder.setTitle(R.string.pref_thumbnails_dlg_title);
-        builder.setView(thumbnailSizeEdit);
-
+        final int[] userSelected = new int[]{initialSelection};
+        builder.setSingleChoiceItems(labels, initialSelection, (dialog, which) -> userSelected[0] = which);
         builder.setNegativeButton(R.string.cancel, null);
         builder.setPositiveButton(R.string.select, (dialog, which) -> {
-            String sizeString = thumbnailSizeEdit.getText().toString();
-            long size1;
-            double sizeMb;
-            try {
-                sizeMb = Double.parseDouble(sizeString);
-                size1 = (long)(sizeMb * 1024 * 1024);
-            } catch (NumberFormatException e) {
-                FLog.e(TAG, "showThumbnailSizeDialog: invalid size", e);
-                return;
-            }
-            pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), size1).apply();
-            if(null != thumbnailSizeSummary) {
-                thumbnailSizeSummary.setText(getResources().getString(R.string.pref_thumbnails_size_summary, sizeMb));
+            long chosen = presetBytes[userSelected[0]];
+            pref.edit().putLong(getString(R.string.pref_key_thumbnail_size_limit), chosen).apply();
+            if (null != thumbnailSizeSummary) {
+                String summaryText;
+                if (chosen == 0L) {
+                    summaryText = labels[0];
+                } else if (chosen == Long.MAX_VALUE) {
+                    summaryText = labels[labels.length - 1];
+                } else {
+                    summaryText = getString(R.string.pref_thumbnails_size_summary, chosen / (1024 * 1024d));
+                }
+                thumbnailSizeSummary.setText(summaryText);
             }
         });
 

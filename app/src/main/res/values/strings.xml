@@ -382,8 +382,12 @@
     <string name="experimental_features">Experimental Features</string>
     <string name="show_thumbnails">Show thumbnails</string>
     <string name="pref_thumbnails_size_title">Max. file size for thumbnails</string>
-    <string name="pref_thumbnails_dlg_title">Size limit (MB)</string>
+    <string name="pref_thumbnails_dlg_title">Thumbnail size limit</string>
     <string name="pref_thumbnails_size_summary">%1$.1f MB</string>
+    <string name="pref_thumbnails_size_off">Off (no thumbnails)</string>
+    <string name="pref_thumbnails_size_unlimited">No limit</string>
+    <string name="thumbnail_service_notification_title">Loading thumbnails</string>
+    <string name="thumbnail_service_notification_content">Serving remote content for previews over local HTTP</string>
     <string name="generate_password_title">Generate Password</string>
     <string name="set_password_button">Set Password</string>
     <string name="generate_password">Generate</string>

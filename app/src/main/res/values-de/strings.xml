@@ -317,8 +317,12 @@
     <string name="experimental_features">Experimentelle Funktionen</string>
     <string name="show_thumbnails">Bildervorschau anzeigen</string>
     <string name="pref_thumbnails_size_title">Max. Dateigröße für Bildvorschau</string>
-    <string name="pref_thumbnails_dlg_title">Größenlimit (MB)</string>
+    <string name="pref_thumbnails_dlg_title">Vorschaugrößen-Limit</string>
     <string name="pref_thumbnails_size_summary">%1$.1f MB</string>
+    <string name="pref_thumbnails_size_off">Aus (keine Vorschauen)</string>
+    <string name="pref_thumbnails_size_unlimited">Kein Limit</string>
+    <string name="thumbnail_service_notification_title">Lade Vorschaubilder</string>
+    <string name="thumbnail_service_notification_content">Remote-Inhalte werden für Vorschauen über lokales HTTP bereitgestellt</string>
     <string name="generate_password_title">Passwort erzeugen</string>
     <string name="set_password_button">Passwort festlegen</string>
     <string name="generate_password">Generieren</string>

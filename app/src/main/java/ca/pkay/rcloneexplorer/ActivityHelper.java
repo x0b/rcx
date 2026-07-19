@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -85,6 +86,28 @@ public class ActivityHelper {
             context.startService(intent);
         } catch (IllegalStateException e) {
             FLog.e(TAG, "Host context state is invalid, not starting service", e);
+        }
+    }
+
+    /**
+     * Starts a foreground service. On Android 8+ the service must call
+     * {@code startForeground(...)} within ~5 seconds. Use this for services
+     * that legitimately need to keep running while the user is in the app
+     * (e.g. the thumbnail HTTP server).
+     */
+    public static void tryStartForegroundService(@NonNull Context context, @NonNull Intent intent) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } catch (IllegalStateException e) {
+            FLog.e(TAG, "Host context state is invalid, not starting foreground service", e);
+        } catch (SecurityException e) {
+            // Foreground service start restrictions on Android 12+ if app is
+            // in a restricted background state. Logged but not fatal.
+            FLog.e(TAG, "Cannot start foreground service from current state", e);
         }
     }
 
