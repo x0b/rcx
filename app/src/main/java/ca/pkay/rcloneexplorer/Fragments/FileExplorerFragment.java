@@ -763,7 +763,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private void waitForServeReady() {
         new Thread(() -> {
             String url = "http://127.0.0.1:" + thumbnailServerPort + "/";
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 30; i++) {
                 try {
                     java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
                     conn.setConnectTimeout(500);
@@ -771,7 +771,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                     conn.setRequestMethod("HEAD");
                     conn.getResponseCode();
                     conn.disconnect();
-                    FLog.d(TAG, "waitForServeReady: serve is ready after %d polls", i + 1);
+                    android.util.Log.i(TAG, "waitForServeReady: serve is ready after " + (i + 1) + " polls");
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
                             if (recyclerViewAdapter != null) {
@@ -785,7 +785,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                 }
                 try { Thread.sleep(500); } catch (InterruptedException e) { return; }
             }
-            FLog.w(TAG, "waitForServeReady: serve did not respond after 10s");
+            android.util.Log.w(TAG, "waitForServeReady: serve did not respond after 15s");
         }, "thumb-serve-poll").start();
     }
 

@@ -261,7 +261,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private void bindThumbnail(@NonNull ViewHolder holder, FileItem item) {
         String mimeType = item.getMimeType();
         boolean isImage = mimeType != null && mimeType.startsWith("image/");
-        boolean isVideo = mimeType != null && mimeType.startsWith("video/");
+        // Fallback: also detect video by file extension, since S3 and other
+        // remotes may return wrong/empty MimeType metadata.
+        boolean isVideo = (mimeType != null && mimeType.startsWith("video/"))
+                || isVideoByExtension(item.getName());
         if (!(isImage || isVideo) || item.getSize() > sizeLimit || sizeLimit == 0) {
             holder.thumbnailProgress.setVisibility(View.GONE);
             holder.fileIcon.setImageResource(R.drawable.ic_file);
@@ -278,7 +281,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             if (localLoad) {
                 bindSafImage(holder, item, glideOption);
             } else {
-                bindRemoteImage(holder, item, glideOption);
+                bindRemoteImage(holder, item, glideOption, 0);
             }
         } else { // video
             // Check cache first
@@ -294,30 +297,51 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             if (localLoad) {
                 bindSafVideo(holder, item, cacheKey);
             } else {
-                bindRemoteVideo(holder, item, cacheKey);
+                bindRemoteVideo(holder, item, cacheKey, 0);
             }
         }
     }
 
-    private void bindRemoteImage(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption) {
+    private static boolean isVideoByExtension(String name) {
+        if (name == null) return false;
+        int dot = name.lastIndexOf('.');
+        if (dot < 0) return false;
+        String ext = name.substring(dot + 1).toLowerCase();
+        switch (ext) {
+            case "mp4": case "mkv": case "avi": case "mov": case "wmv":
+            case "flv": case "webm": case "m4v": case "3gp": case "mpeg":
+            case "mpg": case "ts": case "m2ts":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void bindRemoteImage(@NonNull ViewHolder holder, FileItem item, RequestOptions glideOption, int retryCount) {
         String[] serverParams = listener.getThumbnailServerParams();
         String hiddenPath = serverParams[0];
         int serverPort = Integer.parseInt(serverParams[1]);
         String url = buildServeUrl(serverPort, hiddenPath, item.getPath());
-        FLog.v(TAG, "bindRemoteImage: url=%s", url);
+        FLog.v(TAG, "bindRemoteImage: url=%s retry=%d", url, retryCount);
         Glide.with(holder.itemView)
                 .load(new PersistentGlideUrl(url))
                 .apply(glideOption)
                 .listener(new SimpleRequestListener<android.graphics.drawable.Drawable>() {
                     @Override
                     public void onResourceReady() {
-                        FLog.v(TAG, "bindRemoteImage: loaded %s", url);
                         showLoading(holder, false);
                     }
                     @Override
                     public void onLoadFailed() {
-                        FLog.w(TAG, "bindRemoteImage: FAILED %s", url);
-                        showLoading(holder, false);
+                        // The rclone serve can take 2-5 seconds to become
+                        // ready. Retry up to 4 times with a 2s delay instead
+                        // of immediately giving up and showing the file icon.
+                        if (retryCount < 4) {
+                            mainThread.postDelayed(() ->
+                                    bindRemoteImage(holder, item, glideOption, retryCount + 1), 2000);
+                        } else {
+                            showLoading(holder, false);
+                        }
                     }
                 })
                 .into(holder.fileIcon);
@@ -361,13 +385,22 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         }
     }
 
-    private void bindRemoteVideo(@NonNull ViewHolder holder, FileItem item, String cacheKey) {
+    private void bindRemoteVideo(@NonNull ViewHolder holder, FileItem item, String cacheKey, int retryCount) {
         String[] serverParams = listener.getThumbnailServerParams();
         String hiddenPath = serverParams[0];
         int serverPort = Integer.parseInt(serverParams[1]);
         String url = buildServeUrl(serverPort, hiddenPath, item.getPath());
-        extractVideoFrame(url, false, cacheKey, bitmap ->
-                applyVideoBitmap(holder, bitmap));
+        extractVideoFrame(url, false, cacheKey, bitmap -> {
+            if (bitmap != null) {
+                applyVideoBitmap(holder, bitmap);
+            } else if (retryCount < 3) {
+                // Serve not ready yet; retry after 2s
+                mainThread.postDelayed(() ->
+                        bindRemoteVideo(holder, item, cacheKey, retryCount + 1), 2000);
+            } else {
+                applyVideoBitmap(holder, null);
+            }
+        });
     }
 
     private void applyVideoBitmap(@NonNull ViewHolder holder, @Nullable Bitmap bitmap) {
