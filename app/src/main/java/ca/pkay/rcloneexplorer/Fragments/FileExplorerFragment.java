@@ -164,6 +164,7 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
     private boolean is720dp;
     private boolean showThumbnails;
     private boolean isThumbnailsServiceRunning;
+    private volatile boolean isPollingServe;
     private boolean startAtRoot;
     private boolean goToDefaultSet;
     private Context context;
@@ -746,6 +747,12 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             // safdav also serves files for thumbnails
             return;
         }
+        if (isThumbnailsServiceRunning) {
+            // Already running — don't start a second serve on the same port.
+            // This prevents "bind: address already in use" when onCreateView
+            // and onStart both call this method.
+            return;
+        }
         Intent serveIntent = new Intent(getContext(), ThumbnailsLoadingService.class);
         serveIntent.putExtra(ThumbnailsLoadingService.REMOTE_ARG, remote);
         serveIntent.putExtra(ThumbnailsLoadingService.HIDDEN_PATH, thumbnailServerAuth);
@@ -761,6 +768,10 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
      * second chance to load. The serve typically takes 1–3 seconds to start.
      */
     private void waitForServeReady() {
+        if (isPollingServe) {
+            return;
+        }
+        isPollingServe = true;
         new Thread(() -> {
             String url = "http://127.0.0.1:" + thumbnailServerPort + "/";
             for (int i = 0; i < 30; i++) {
@@ -779,22 +790,18 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
                             }
                         });
                     }
+                    isPollingServe = false;
                     return;
                 } catch (Exception e) {
                     // serve not ready yet
                 }
-                try { Thread.sleep(500); } catch (InterruptedException e) { return; }
+                try { Thread.sleep(500); } catch (InterruptedException e) { isPollingServe = false; return; }
             }
             android.util.Log.w(TAG, "waitForServeReady: serve did not respond after 15s");
-            // Even if the poll failed, allow loads to attempt (they may still
-            // succeed if the serve started between polls).
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    if (recyclerViewAdapter != null) {
-                        recyclerViewAdapter.setServeReady(true);
-                    }
-                });
-            }
+            // Don't set serveReady=true as a fallback — if the serve didn't
+            // start, attempting loads will just produce ConnectExceptions.
+            // The user can re-navigate to retry.
+            isPollingServe = false;
         }, "thumb-serve-poll").start();
     }
 
@@ -1197,6 +1204,11 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
             Intent intent = new Intent(context, ThumbnailsLoadingService.class);
             context.stopService(intent);
             isThumbnailsServiceRunning = false;
+        }
+        // Reset the serve-ready flag so the adapter doesn't try to load
+        // against a dead serve when the fragment restarts.
+        if (recyclerViewAdapter != null) {
+            recyclerViewAdapter.setServeReady(false);
         }
 
         LocalBroadcastManager.getInstance(context).unregisterReceiver(backgroundTaskBroadcastReceiver);

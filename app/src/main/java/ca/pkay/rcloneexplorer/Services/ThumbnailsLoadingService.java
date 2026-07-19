@@ -81,26 +81,37 @@ public class ThumbnailsLoadingService extends Service {
     }
 
     private void runServe(RemoteItem remote, String hiddenPath, int serverPort) {
+        android.util.Log.i(TAG, "runServe: starting rclone serve on port " + serverPort + " for remote " + remote.getName());
         try {
             process = rclone.serve(Rclone.SERVE_PROTOCOL_HTTP, serverPort, false, null, null, remote, "", hiddenPath);
         } catch (Throwable t) {
-            FLog.e(TAG, "runServe: failed to start rclone serve", t);
+            android.util.Log.e(TAG, "runServe: failed to start rclone serve: " + t.getMessage(), t);
             stopForegroundAndExit();
             return;
         }
         if (process == null) {
-            FLog.w(TAG, "runServe: rclone.serve() returned null");
+            android.util.Log.e(TAG, "runServe: rclone.serve() returned null");
             stopForegroundAndExit();
             return;
         }
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.pref_key_logs), false)) {
-            new Thread(() -> rclone.logErrorOutput(process), "rclone-serve-err").start();
-        }
+        // Always log rclone stderr to help diagnose serve failures
+        new Thread(() -> {
+            try {
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(process.getErrorStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    android.util.Log.w(TAG, "rclone: " + line);
+                }
+            } catch (Exception e) {
+                android.util.Log.w(TAG, "rclone stderr reader stopped: " + e.getMessage());
+            }
+        }, "rclone-serve-err").start();
         try {
-            process.waitFor();
+            int exitCode = process.waitFor();
+            android.util.Log.w(TAG, "runServe: rclone process exited with code " + exitCode);
         } catch (InterruptedException e) {
-            FLog.e(TAG, "runServe: interrupted while waiting for rclone", e);
+            android.util.Log.w(TAG, "runServe: interrupted");
             Thread.currentThread().interrupt();
         } finally {
             stopForegroundAndExit();

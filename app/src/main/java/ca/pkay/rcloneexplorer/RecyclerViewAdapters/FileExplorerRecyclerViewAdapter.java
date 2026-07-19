@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.LruCache;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +37,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -53,9 +50,8 @@ import okhttp3.Response;
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "FileExplorerRVA";
-    private static final int THUMBNAIL_CACHE_ENTRIES = 64;
     private static final long SIZE_LIMIT_UNLIMITED = Long.MAX_VALUE;
-    private static final int VIDEO_PEEK_BYTES = 2 * 1024 * 1024; // 2 MB chunk for frame extraction
+    private static final int VIDEO_PEEK_BYTES = 10 * 1024 * 1024; // 10 MB chunk for frame extraction
 
     private List<FileItem> files;
     private final int selectionColor;
@@ -75,14 +71,6 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     private final Context context;
     private long sizeLimit;
 
-    /** Small in-memory LRU cache for video frame bitmaps (per remote URL). */
-    private final LruCache<String, Bitmap> videoFrameCache =
-            new LruCache<String, Bitmap>(THUMBNAIL_CACHE_ENTRIES) {
-                @Override
-                protected int sizeOf(String key, Bitmap value) {
-                    return value.getByteCount() / 1024 == 0 ? 1 : value.getByteCount() / 1024;
-                }
-            };
     private final ExecutorService videoFrameExecutor = Executors.newFixedThreadPool(2);
     private final Handler mainThread = new Handler(Looper.getMainLooper());
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -294,13 +282,17 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 bindRemoteImage(holder, item, glideOption, 0);
             }
         } else { // video
-            // Check cache first
             String cacheKey = videoCacheKey(item, localLoad);
-            Bitmap cached = videoFrameCache.get(cacheKey);
-            if (cached != null) {
-                showLoading(holder, false);
-                holder.fileIcon.setImageBitmap(cached);
-                return;
+            // Check disk cache first
+            File cachedFile = getVideoCacheFile(cacheKey);
+            if (cachedFile != null && cachedFile.exists()) {
+                Bitmap cached = decodeBitmapFromFile(cachedFile);
+                if (cached != null) {
+                    showLoading(holder, false);
+                    holder.fileIcon.setImageBitmap(cached);
+                    return;
+                }
+                cachedFile.delete();
             }
             showLoading(holder, true);
             holder.fileIcon.setImageResource(R.drawable.ic_file);
@@ -332,9 +324,12 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         String hiddenPath = serverParams[0];
         int serverPort = Integer.parseInt(serverParams[1]);
         String url = buildServeUrl(serverPort, hiddenPath, item.getPath());
-        FLog.v(TAG, "bindRemoteImage: url=%s retry=%d", url, retryCount);
+        // Use a stable cache key that doesn't change when the port or auth
+        // token changes between fragment restarts. This way Glide's disk
+        // cache persists across navigations.
+        String cacheKey = item.getRemote().getName() + ":" + item.getPath();
         Glide.with(holder.itemView)
-                .load(new PersistentGlideUrl(url))
+                .load(new PersistentGlideUrl(url, cacheKey))
                 .apply(glideOption)
                 .listener(new SimpleRequestListener<android.graphics.drawable.Drawable>() {
                     @Override
@@ -449,26 +444,72 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
      * {@code setDataSource(path)} is used on the local file — this is far more
      * reliable than {@code setDataSource(httpUrl)} which fails on non-ASCII
      * filenames and has a 30-second internal timeout.
+     * Extracted frames are cached to disk so they persist across fragment
+     * restarts.
      */
     private void extractVideoFrame(String source, boolean isContent, String cacheKey,
                                    VideoFrameCallback callback) {
-        videoFrameExecutor.execute(() -> {
-            Bitmap cached = videoFrameCache.get(cacheKey);
-            if (cached != null) {
-                callback.onFrame(cached);
-                return;
-            }
-            Bitmap frame;
-            if (isContent) {
-                frame = extractFrameFromContent(source);
-            } else {
-                frame = extractFrameFromHttp(source);
-            }
-            if (frame != null) {
-                videoFrameCache.put(cacheKey, frame);
-            }
-            callback.onFrame(frame);
-        });
+        // Check disk cache first
+        File cachedFile = getVideoCacheFile(cacheKey);
+        if (cachedFile != null && cachedFile.exists()) {
+            videoFrameExecutor.execute(() -> {
+                Bitmap cached = decodeBitmapFromFile(cachedFile);
+                if (cached != null) {
+                    callback.onFrame(cached);
+                    return;
+                }
+                // Cache file corrupt, delete and re-extract
+                cachedFile.delete();
+                doExtractVideoFrame(source, isContent, cacheKey, callback);
+            });
+            return;
+        }
+        videoFrameExecutor.execute(() -> doExtractVideoFrame(source, isContent, cacheKey, callback));
+    }
+
+    private void doExtractVideoFrame(String source, boolean isContent, String cacheKey,
+                                     VideoFrameCallback callback) {
+        Bitmap frame;
+        if (isContent) {
+            frame = extractFrameFromContent(source);
+        } else {
+            frame = extractFrameFromHttp(source);
+        }
+        if (frame != null) {
+            // Save to disk cache
+            saveBitmapToCache(frame, cacheKey);
+        }
+        callback.onFrame(frame);
+    }
+
+    private File getVideoCacheFile(String cacheKey) {
+        try {
+            File cacheDir = new File(context.getCacheDir(), "video_thumbs");
+            if (!cacheDir.exists()) cacheDir.mkdirs();
+            // Use a hash of the cache key as filename to avoid path issues
+            String fileName = Integer.toHexString(cacheKey.hashCode()) + ".png";
+            return new File(cacheDir, fileName);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void saveBitmapToCache(Bitmap bitmap, String cacheKey) {
+        File file = getVideoCacheFile(cacheKey);
+        if (file == null) return;
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (IOException e) {
+            FLog.w(TAG, "saveBitmapToCache: failed: %s", e.toString());
+        }
+    }
+
+    private Bitmap decodeBitmapFromFile(File file) {
+        try {
+            return android.graphics.BitmapFactory.decodeFile(file.getAbsolutePath());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private Bitmap extractFrameFromContent(String source) {
@@ -549,19 +590,16 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
 
     private static class PersistentGlideUrl extends GlideUrl {
 
-        public PersistentGlideUrl(String url) {
+        private final String cacheKey;
+
+        public PersistentGlideUrl(String url, String cacheKey) {
             super(url);
+            this.cacheKey = cacheKey;
         }
 
         @Override
         public String getCacheKey() {
-            try {
-                URL url = super.toURL();
-                String path = url.getPath();
-                return path.substring(path.indexOf('/', 1));
-            } catch (MalformedURLException e) {
-                return super.getCacheKey();
-            }
+            return cacheKey;
         }
     }
 
