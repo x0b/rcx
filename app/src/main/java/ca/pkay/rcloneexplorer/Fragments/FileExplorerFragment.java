@@ -752,6 +752,41 @@ public class FileExplorerFragment extends Fragment implements   FileExplorerRecy
         serveIntent.putExtra(ThumbnailsLoadingService.SERVER_PORT, thumbnailServerPort);
         tryStartForegroundService(context, serveIntent);
         isThumbnailsServiceRunning = true;
+        waitForServeReady();
+    }
+
+    /**
+     * Polls the local rclone serve until it responds, then triggers a data
+     * refresh so thumbnails that failed during the startup window get a
+     * second chance to load. The serve typically takes 1–3 seconds to start.
+     */
+    private void waitForServeReady() {
+        new Thread(() -> {
+            String url = "http://127.0.0.1:" + thumbnailServerPort + "/";
+            for (int i = 0; i < 20; i++) {
+                try {
+                    java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+                    conn.setConnectTimeout(500);
+                    conn.setReadTimeout(500);
+                    conn.setRequestMethod("HEAD");
+                    conn.getResponseCode();
+                    conn.disconnect();
+                    FLog.d(TAG, "waitForServeReady: serve is ready after %d polls", i + 1);
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            if (recyclerViewAdapter != null) {
+                                recyclerViewAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                    return;
+                } catch (Exception e) {
+                    // serve not ready yet
+                }
+                try { Thread.sleep(500); } catch (InterruptedException e) { return; }
+            }
+            FLog.w(TAG, "waitForServeReady: serve did not respond after 10s");
+        }, "thumb-serve-poll").start();
     }
 
     /**

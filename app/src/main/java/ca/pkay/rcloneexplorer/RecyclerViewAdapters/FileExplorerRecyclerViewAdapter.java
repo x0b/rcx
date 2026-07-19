@@ -34,18 +34,28 @@ import ca.pkay.rcloneexplorer.util.FLog;
 import io.github.x0b.safdav.SafAccessProvider;
 import io.github.x0b.safdav.file.FileAccessError;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileExplorerRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "FileExplorerRVA";
     private static final int THUMBNAIL_CACHE_ENTRIES = 64;
     private static final long SIZE_LIMIT_UNLIMITED = Long.MAX_VALUE;
+    private static final int VIDEO_PEEK_BYTES = 2 * 1024 * 1024; // 2 MB chunk for frame extraction
 
     private List<FileItem> files;
     private final int selectionColor;
@@ -74,6 +84,10 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
             };
     private final ExecutorService videoFrameExecutor = Executors.newFixedThreadPool(2);
     private final Handler mainThread = new Handler(Looper.getMainLooper());
+    private final OkHttpClient httpClient = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .build();
 
     public interface OnClickListener {
         void onFileClicked(FileItem fileItem);
@@ -289,15 +303,8 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         String[] serverParams = listener.getThumbnailServerParams();
         String hiddenPath = serverParams[0];
         int serverPort = Integer.parseInt(serverParams[1]);
-        String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
+        String url = buildServeUrl(serverPort, hiddenPath, item.getPath());
         FLog.v(TAG, "bindRemoteImage: url=%s", url);
-        // Glide.with(holder.itemView) ties the request to this ViewHolder's
-        // lifecycle: when the ViewHolder is recycled or detached, Glide
-        // automatically cancels the in-flight request - which means we never
-        // keep fetching files that have scrolled off-screen. Combined with
-        // Glide's memory + disk cache (DiskCacheStrategy.ALL), this gives
-        // proper lazy loading: only visible items are fetched, and once
-        // fetched they're cached for subsequent rebinds.
         Glide.with(holder.itemView)
                 .load(new PersistentGlideUrl(url))
                 .apply(glideOption)
@@ -358,7 +365,7 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
         String[] serverParams = listener.getThumbnailServerParams();
         String hiddenPath = serverParams[0];
         int serverPort = Integer.parseInt(serverParams[1]);
-        String url = "http://127.0.0.1:" + serverPort + "/" + hiddenPath + '/' + item.getPath();
+        String url = buildServeUrl(serverPort, hiddenPath, item.getPath());
         extractVideoFrame(url, false, cacheKey, bitmap ->
                 applyVideoBitmap(holder, bitmap));
     }
@@ -375,9 +382,30 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
     }
 
     /**
+     * Builds a properly URL-encoded serve URL. Individual path segments are
+     * percent-encoded so that filenames containing spaces, emoji, or other
+     * special characters work correctly with both Glide and
+     * {@link MediaMetadataRetriever}.
+     */
+    private static String buildServeUrl(int port, String hiddenPath, String itemPath) {
+        StringBuilder sb = new StringBuilder("http://127.0.0.1:");
+        sb.append(port).append('/');
+        sb.append(hiddenPath);
+        for (String segment : itemPath.split("/")) {
+            if (!segment.isEmpty()) {
+                sb.append('/').append(Uri.encode(segment));
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Runs {@link MediaMetadataRetriever} on a background thread to extract a
-     * representative frame for the given URL or content URI. Caches the
-     * result so subsequent binds for the same item are instant.
+     * representative frame. For HTTP sources, the first {@value #VIDEO_PEEK_BYTES}
+     * bytes are downloaded to a temp file (via OkHttp Range request) and
+     * {@code setDataSource(path)} is used on the local file — this is far more
+     * reliable than {@code setDataSource(httpUrl)} which fails on non-ASCII
+     * filenames and has a 30-second internal timeout.
      */
     private void extractVideoFrame(String source, boolean isContent, String cacheKey,
                                    VideoFrameCallback callback) {
@@ -387,30 +415,79 @@ public class FileExplorerRecyclerViewAdapter extends RecyclerView.Adapter<FileEx
                 callback.onFrame(cached);
                 return;
             }
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            Bitmap frame = null;
-            try {
-                if (isContent) {
-                    retriever.setDataSource(context, Uri.parse(source));
-                } else {
-                    // HTTP path; works against the local rclone serve
-                    retriever.setDataSource(source, new java.util.HashMap<>());
-                }
-                frame = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-            } catch (RuntimeException e) {
-                FLog.w(TAG, "extractVideoFrame: failed for %s: %s", source, e.toString());
-            } finally {
-                try {
-                    retriever.release();
-                } catch (Exception ignored) {
-                    // release() may throw IOException on some API levels; ignore.
-                }
+            Bitmap frame;
+            if (isContent) {
+                frame = extractFrameFromContent(source);
+            } else {
+                frame = extractFrameFromHttp(source);
             }
             if (frame != null) {
                 videoFrameCache.put(cacheKey, frame);
             }
             callback.onFrame(frame);
         });
+    }
+
+    private Bitmap extractFrameFromContent(String source) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(context, Uri.parse(source));
+            return retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        } catch (RuntimeException e) {
+            FLog.w(TAG, "extractFrameFromContent: failed: %s", e.toString());
+            return null;
+        } finally {
+            try { retriever.release(); } catch (Exception ignored) { }
+        }
+    }
+
+    /**
+     * Downloads the first {@value #VIDEO_PEEK_BYTES} bytes of the video to a
+     * temp file, then extracts a frame from the local file. This avoids the
+     * 30-second timeout and URL-encoding issues of
+     * {@code MediaMetadataRetriever.setDataSource(httpUrl)}.
+     */
+    private Bitmap extractFrameFromHttp(String url) {
+        File tempFile = null;
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Range", "bytes=0-" + (VIDEO_PEEK_BYTES - 1))
+                    .build();
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful() && response.code() != 206) {
+                    FLog.w(TAG, "extractFrameFromHttp: HTTP %d for %s", response.code(), url);
+                    return null;
+                }
+                tempFile = File.createTempFile("thumb", ".video", context.getCacheDir());
+                try (InputStream is = response.body().byteStream();
+                     FileOutputStream fos = new FileOutputStream(tempFile)) {
+                    byte[] buf = new byte[8192];
+                    int n;
+                    while ((n = is.read(buf)) > 0) {
+                        fos.write(buf, 0, n);
+                    }
+                }
+            }
+            FLog.v(TAG, "extractFrameFromHttp: downloaded %d bytes, extracting frame", tempFile.length());
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            try {
+                retriever.setDataSource(tempFile.getAbsolutePath());
+                return retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            } finally {
+                try { retriever.release(); } catch (Exception ignored) { }
+            }
+        } catch (IOException e) {
+            FLog.w(TAG, "extractFrameFromHttp: IO error for %s: %s", url, e.toString());
+            return null;
+        } catch (RuntimeException e) {
+            FLog.w(TAG, "extractFrameFromHttp: error for %s: %s", url, e.toString());
+            return null;
+        } finally {
+            if (tempFile != null && tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
     }
 
     private String videoCacheKey(FileItem item, boolean localLoad) {
